@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kamuk School — Training Book</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#1E2761;--nl:#E6F1FB;--nm:#185FA5;--nd:#0C447C;
+  --green:#085041;--gb:#E1F5EE;--gm:#0F6E56;
+  --amber:#BA7517;--ab:#FAEEDA;--ad:#633806;
+  --red:#791F1F;--rb:#FCEBEB;--rm:#A32D2D;
+  --purple:#3C3489;--pb:#EEEDFE;--pm:#534AB7;
+  --gold:#E8541A;
+  --gray:#F4F6FB;--border:#E2E8F0;
+  --text:#1E293B;--t2:#64748B;--t3:#94A3B8;
+  --r:8px;--rl:12px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F0F4FA;color:var(--text);min-height:100vh;}
+
+/* TOPBAR */
+.topbar{background:var(--navy);padding:0 1.5rem;display:flex;align-items:center;gap:14px;height:56px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.2);}
+.tb-logo{height:38px;object-fit:contain;}
+.tb-divider{width:1px;height:28px;background:rgba(255,255,255,0.2);}
+.tb-title{font-size:14px;font-weight:700;color:white;}
+.tb-sub{font-size:11px;color:rgba(255,255,255,0.5);margin-top:1px;}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.tb-student{font-size:12px;font-weight:700;color:var(--gold);background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.3);padding:4px 12px;border-radius:20px;}
+
+/* STUDENT SELECTOR */
+.selector-screen{max-width:560px;margin:4rem auto;padding:1.5rem;}
+.sel-card{background:white;border:1px solid var(--border);border-radius:var(--rl);padding:2rem;text-align:center;}
+.sel-logo{height:64px;object-fit:contain;margin-bottom:1.25rem;}
+.sel-title{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+.sel-sub{font-size:13px;color:var(--t2);margin-bottom:1.5rem;line-height:1.6;}
+.sel-input{width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:var(--r);font-size:14px;font-family:inherit;color:var(--text);margin-bottom:1rem;}
+.sel-input:focus{outline:none;border-color:var(--nm);}
+.sel-btn{width:100%;padding:13px;border:none;border-radius:var(--r);background:var(--navy);color:white;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;}
+.sel-btn:hover{opacity:0.9;}
+
+/* MAIN LAYOUT */
+.main-wrap{display:none;height:calc(100vh - 56px);}
+.main-wrap.show{display:flex;}
+.sidebar{width:260px;flex-shrink:0;background:white;border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;}
+.content{flex:1;overflow-y:auto;padding:1.5rem;}
+
+/* SIDEBAR */
+.student-card{padding:1.25rem;border-bottom:1px solid var(--border);background:var(--navy);}
+.sc-name{font-size:15px;font-weight:700;color:white;margin-bottom:4px;}
+.sc-meta{font-size:11px;color:rgba(255,255,255,0.6);margin-bottom:8px;}
+.sc-kpi-row{display:flex;gap:6px;flex-wrap:wrap;}
+.kpi-pill{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;}
+.kp-strong{background:var(--gb);color:var(--gm);}
+.kp-dev{background:var(--ab);color:var(--ad);}
+.kp-weak{background:var(--rb);color:var(--rm);}
+
+.nav-section{padding:0.75rem 1rem 0.25rem;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--t3);}
+.nav-item{display:flex;align-items:center;gap:10px;padding:0.625rem 1rem;cursor:pointer;color:var(--t2);font-size:13px;font-weight:500;transition:all 0.15s;border-left:3px solid transparent;}
+.nav-item:hover{background:var(--gray);color:var(--text);}
+.nav-item.active{background:var(--nl);color:var(--navy);border-left-color:var(--navy);font-weight:700;}
+.nav-item i{font-size:16px;flex-shrink:0;}
+.nav-badge{margin-left:auto;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700;}
+.nb-red{background:var(--rb);color:var(--rm);}
+.nb-green{background:var(--gb);color:var(--gm);}
+.nb-blue{background:var(--nl);color:var(--nd);}
+
+/* CARDS */
+.card{background:white;border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin-bottom:1rem;}
+.card-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:1rem;display:flex;align-items:center;gap:8px;}
+.sect-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--t3);margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border);}
+
+/* PHASE BANNER */
+.phase-banner{border-radius:var(--rl);padding:1.25rem 1.5rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.pb1{background:var(--navy);}.pb2{background:var(--purple);}.pb3{background:var(--gm);}
+.pb-phase{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.6);margin-bottom:4px;}
+.pb-name{font-size:20px;font-weight:800;color:white;margin-bottom:4px;}
+.pb-desc{font-size:12px;color:rgba(255,255,255,0.75);line-height:1.5;max-width:500px;}
+.pb-score{font-size:48px;font-weight:800;color:white;line-height:1;}
+.pb-score-label{font-size:11px;color:rgba(255,255,255,0.6);}
+
+/* KPI BARS */
+.kpi-bar-row{display:flex;align-items:center;gap:10px;padding:0.625rem 0;border-bottom:0.5px solid var(--border);}
+.kpi-bar-row:last-child{border-bottom:none;}
+.kbar-name{font-size:12px;font-weight:700;color:var(--text);width:160px;flex-shrink:0;}
+.kbar-bg{flex:1;height:8px;background:var(--gray);border-radius:4px;overflow:hidden;}
+.kbar-fill{height:100%;border-radius:4px;}
+.kbar-val{font-size:13px;font-weight:800;width:36px;text-align:right;flex-shrink:0;}
+.kbar-tag{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;width:76px;text-align:center;flex-shrink:0;}
+
+/* EXERCISE CARDS */
+.ex-card{border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:0.75rem;}
+.ex-header{background:var(--navy);padding:0.875rem 1.25rem;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.ex-title{font-size:13px;font-weight:700;color:white;margin-bottom:4px;}
+.ex-tags{display:flex;gap:5px;flex-wrap:wrap;}
+.ex-tag{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;}
+.tag-w{background:#E6F1FB;color:#0C447C;}
+.tag-d{background:#EEEDFE;color:#3C3489;}
+.tag-s{background:#E1F5EE;color:#085041;}
+.tag-r{background:#FAEEDA;color:#633806;}
+.tag-dr{background:#FCEBEB;color:#791F1F;}
+.ex-prio{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;flex-shrink:0;}
+.prio-c{background:#FCEBEB;color:#A32D2D;}
+.prio-h{background:#FAEEDA;color:#633806;}
+.prio-a{background:#EEEDFE;color:#3C3489;}
+.prio-m{background:#E6F1FB;color:#0C447C;}
+.ex-body{padding:1.25rem;}
+.ex-objective{background:var(--gray);border-radius:var(--r);padding:0.875rem;margin-bottom:0.875rem;font-size:13px;color:var(--text);line-height:1.6;}
+.ex-trainer-script{background:#FFF8F0;border-left:3px solid var(--amber);border-radius:0 var(--r) var(--r) 0;padding:0.875rem;margin-bottom:0.875rem;}
+.ets-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--amber);margin-bottom:6px;}
+.ets-text{font-size:12px;color:var(--ad);line-height:1.7;white-space:pre-line;}
+.ex-steps{margin-bottom:0.875rem;}
+.ex-step{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px;font-size:12px;color:var(--text);line-height:1.5;}
+.step-dot{width:6px;height:6px;border-radius:50%;background:var(--nm);flex-shrink:0;margin-top:5px;}
+.ex-example-bad{background:var(--rb);border-radius:var(--r);padding:0.75rem;margin-bottom:5px;font-size:12px;color:var(--rm);line-height:1.6;}
+.ex-example-good{background:var(--gb);border-radius:var(--r);padding:0.75rem;font-size:12px;color:var(--green);line-height:1.6;}
+.ex-grading{background:var(--nl);border-radius:var(--r);padding:0.75rem;margin-top:0.75rem;font-size:12px;color:var(--nd);line-height:1.6;}
+.ex-redflags{background:var(--rb);border-radius:var(--r);padding:0.75rem;margin-top:0.75rem;}
+.rf-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--rm);margin-bottom:5px;}
+.rf-item{font-size:12px;color:var(--rm);margin-bottom:3px;line-height:1.5;}
+.ex-freq{margin-top:0.75rem;font-size:12px;font-weight:700;color:var(--nm);display:flex;align-items:center;gap:5px;}
+
+/* REFERENCE TABLES */
+.ref-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:1rem;}
+.ref-table thead tr{background:var(--navy);}
+.ref-table thead th{color:white;padding:8px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;}
+.ref-table tbody tr:nth-child(even){background:var(--gray);}
+.ref-table tbody td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+.ref-table tbody tr:last-child td{border-bottom:none;}
+.highlight-row td{font-weight:700;color:var(--navy);}
+
+/* VIDEO CARDS */
+.video-card{background:white;border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:0.75rem;}
+.vc-header{background:var(--rm);padding:0.875rem 1.25rem;display:flex;align-items:center;gap:10px;}
+.vc-title{font-size:13px;font-weight:700;color:white;}
+.vc-meta{font-size:11px;color:rgba(255,255,255,0.75);}
+.vc-body{padding:1rem 1.25rem;}
+.vc-questions{margin-top:0.75rem;}
+.vc-q{font-size:12px;color:var(--text);margin-bottom:4px;line-height:1.5;padding-left:0.75rem;border-left:2px solid var(--border);}
+
+/* INFO BOX */
+.info-box{border-radius:var(--r);padding:1rem;margin-bottom:1rem;font-size:13px;line-height:1.7;}
+.ib-navy{background:var(--nl);border-left:4px solid var(--nm);color:var(--nd);}
+.ib-amber{background:var(--ab);border-left:4px solid var(--amber);color:var(--ad);}
+.ib-green{background:var(--gb);border-left:4px solid var(--gm);color:var(--green);}
+.ib-red{background:var(--rb);border-left:4px solid var(--rm);color:var(--red);}
+
+/* TABS */
+.content-tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:1.25rem;}
+.ctab{padding:0.75rem 1.25rem;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.15s;}
+.ctab.active{color:var(--navy);border-bottom-color:var(--navy);}
+.ctab-content{display:none;}
+.ctab-content.active{display:block;}
+
+/* SPEED DRILL */
+.drill-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem;}
+.drill-item{background:var(--gray);border-radius:var(--r);padding:0.875rem;border:1px solid var(--border);text-align:center;}
+.drill-es{font-size:11px;color:var(--t2);margin-bottom:3px;}
+.drill-en{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:8px;}
+.drill-btns{display:flex;gap:5px;justify-content:center;}
+.drill-btn{padding:4px 12px;border:none;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.15s;}
+.drill-pass{background:var(--gb);color:var(--gm);}
+.drill-fail{background:var(--rb);color:var(--rm);}
+.drill-result{font-size:10px;margin-top:4px;font-weight:700;min-height:14px;}
+
+/* SESSION LOG */
+.session-log-item{background:white;border:1px solid var(--border);border-radius:var(--r);padding:1rem;margin-bottom:0.5rem;}
+.sli-header{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;}
+.sli-date{font-size:11px;color:var(--t3);}
+.sli-trainer{font-size:11px;font-weight:600;color:var(--nm);}
+.sli-text{font-size:13px;color:var(--text);line-height:1.6;}
+
+/* LOADING */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;color:var(--t3);}
+.loading i{font-size:40px;margin-bottom:1rem;opacity:0.3;}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--gm);color:white;padding:0.875rem 1.25rem;border-radius:var(--rl);font-size:13px;font-weight:600;z-index:300;display:none;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,0.2);}
+.toast.show{display:flex;}
+.toast.err{background:var(--rm);}
+
+.btn{padding:8px 14px;border:none;border-radius:var(--r);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:opacity 0.15s;}
+.btn:hover{opacity:0.85;}
+.btn-navy{background:var(--navy);color:white;}
+.btn-outline{background:white;color:var(--t2);border:1px solid var(--border);}
+.btn-green{background:var(--gm);color:white;}
+
+@media(max-width:700px){
+  .sidebar{display:none;}
+  .main-wrap.show{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <img class="tb-logo" src="data:image/png;base64,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" alt="Kamuk School">
+  <div class="tb-divider"></div>
+  <div>
+    <div class="tb-title">Kamuk School — Training Book</div>
+    <div class="tb-sub">Powered by Studio Infinity CR</div>
+  </div>
+  <div class="tb-right">
+    <span class="tb-student" id="tb-student-name" style="display:none;"></span>
+    <button class="btn btn-outline" style="color:white;border-color:rgba(255,255,255,0.3);" onclick="logout()" id="logout-btn" style="display:none;"><i class="ti ti-logout"></i></button>
+  </div>
+</div>
+
+<!-- SELECTOR SCREEN -->
+<div class="selector-screen" id="selector-screen">
+  <div class="sel-card">
+    <img class="sel-logo" src="data:image/png;base64,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" alt="Kamuk School">
+    <div class="sel-title">Infinity Studio Training Book</div>
+    <div class="sel-sub">Seleccioná tu nombre para acceder a tu Kamuk Training Book personalizado con tus ejercicios, material Nexus y plan de sesiones basado en tu perfil.</div>
+    <select class="sel-input" id="student-select" onchange="selectStudent()">
+      <option value="">— Seleccioná tu nombre —</option>
+    </select>
+    <div id="sel-loading" style="font-size:13px;color:var(--t3);margin-top:0.5rem;display:none;"><i class="ti ti-loader" style="animation:spin 1s linear infinite;display:inline-block;margin-right:4px;"></i>Cargando tu perfil...</div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="main-wrap" id="main-wrap">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="student-card">
+      <div class="sc-name" id="sc-name">—</div>
+      <div class="sc-meta" id="sc-meta">—</div>
+      <div class="sc-kpi-row" id="sc-kpis"></div>
+    </div>
+
+    <div class="nav-section">Training Book</div>
+    <div class="nav-item active" onclick="showSection('overview',this)"><i class="ti ti-dashboard"></i>Mi perfil</div>
+    <div class="nav-item" onclick="showSection('exercises',this)"><i class="ti ti-dumbbell"></i>Mis ejercicios<span class="nav-badge nb-red" id="nb-exercises">—</span></div>
+    <div class="nav-item" onclick="showSection('plan',this)"><i class="ti ti-calendar"></i>Plan de sesiones</div>
+    <div class="nav-item" onclick="showSection('drills',this)"><i class="ti ti-bolt"></i>Speed Drills</div>
+
+    <div class="nav-section">Referencia Nexus</div>
+    <div class="nav-item" onclick="showSection('phase1',this)"><i class="ti ti-building"></i>Fase 1 — Arquitectura</div>
+    <div class="nav-item" onclick="showSection('phase2',this)"><i class="ti ti-network"></i>Fase 2 — Expansión</div>
+    <div class="nav-item" onclick="showSection('phase3',this)"><i class="ti ti-flame"></i>Fase 3 — Naturalidad</div>
+
+    <div class="nav-section">Audioteca</div>
+    <div class="nav-item" onclick="showSection('videos',this)"><i class="ti ti-player-play"></i>Videos y simulaciones<span class="nav-badge nb-blue" id="nb-videos">—</span></div>
+
+    <div class="nav-section">Historial</div>
+    <div class="nav-item" onclick="showSection('sessions',this)"><i class="ti ti-notes"></i>Notas de sesiones</div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content" id="content-area">
+    <div class="loading"><i class="ti ti-loader"></i><span>Cargando...</span></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+<style>@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}</style>
+
+<script>
+const INF_URL = 'https://lbspgbeqtcnjrbhiuucu.supabase.co';
+const INF_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxic3BnYmVxdGNuanJiaGl1dWN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwNDgzNzgsImV4cCI6MjA5NjYyNDM3OH0.j1NRrwxmCVipIlHgEPhkdQQfnhMZVK713mFq8LnvufM';
+
+// ── SUPABASE ──────────────────────────────────────────────
+async function dbGetAll(table){
+  const url = INF_URL+'/rest/v1/'+table+'?select=id,data';
+  const res = await fetch(url,{headers:{'apikey':INF_KEY,'Authorization':'Bearer '+INF_KEY}});
+  return await res.json();
+}
+async function dbSet(table,id,data){
+  await fetch(INF_URL+'/rest/v1/'+table,{method:'POST',
+    headers:{'apikey':INF_KEY,'Authorization':'Bearer '+INF_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
+    body:JSON.stringify({id:id,data:data,updated_at:new Date().toISOString()})
+  });
+}
+
+// ── STATE ─────────────────────────────────────────────────
+var ALL_STUDENTS = {};
+var ALL_VIDEOS = {};
+var CURRENT = null;
+var DRILL_RESULTS = {};
+var currentSection = 'overview';
+
+// ── NEXUS DATA ────────────────────────────────────────────
+var KPI_NAMES = {IG:'Idea Generation',ST:'Structural Thinking',RA:'Recovery Ability',PS:'Problem Solving',R:'Responsiveness'};
+
+var SPEED_DRILLS = [
+  {es:'Ella dice',en:'She says'},{es:'Yo dije',en:'I said'},
+  {es:'El va',en:'He goes'},{es:'Eso fue',en:'That was'},
+  {es:'Nosotros damos',en:'We give'},{es:'Ellos dieron',en:'They gave'},
+  {es:'Ustedes dejan',en:'You leave'},{es:'Nosotros dejamos',en:'We left'},
+  {es:'Esa mantendra',en:'That will keep'},{es:'El vendria',en:'He would come'},
+  {es:'Yo tendria',en:'I would have'},{es:'Estamos teniendo',en:'We are having'},
+];
+
+var IRREGULAR_VERBS = [
+  {inf:'To come',past:'came',part:'come'},{inf:'To let',past:'let',part:'let'},
+  {inf:'To go',past:'went',part:'gone'},{inf:'To put',past:'put',part:'put'},
+  {inf:'To take',past:'took',part:'taken'},{inf:'To give',past:'gave',part:'given'},
+  {inf:'To get',past:'got',part:'gotten'},{inf:'To keep',past:'kept',part:'kept'},
+  {inf:'To make',past:'made',part:'made'},{inf:'To do',past:'did',part:'done'},
+  {inf:'To say',past:'said',part:'said'},{inf:'To see',past:'saw',part:'seen'},
+  {inf:'To send',past:'sent',part:'sent'},{inf:'To be',past:'was/were',part:'been'},
+  {inf:'To have',past:'had',part:'had'},{inf:'To seem',past:'seemed',part:'seemed'},
+];
+
+var LINKERS = {
+  add:['and','also','in addition','furthermore','as well','not only that'],
+  reason:['because','since','due to','as','given that'],
+  result:['so','therefore','as a result','consequently','which means that'],
+  contrast:['but','however','even though','although','nevertheless','despite this'],
+  sequence:['first','then','after that','finally','eventually'],
+  natural:['the thing is','on top of that','to be honest','actually','at the end of the day']
+};
+
+var NATURAL_EXPRESSIONS = [
+  {es:'La cosa es que',en:'The thing is (that)'},
+  {es:'Encima de eso',en:'On top of that'},
+  {es:'Para ser honesto',en:'To be honest'},
+  {es:'En realidad',en:'Actually'},
+  {es:'Lo que pasa es que',en:'What happens is that'},
+  {es:'Al final del dia',en:'At the end of the day'},
+  {es:'No solo eso',en:'Not only that'},
+  {es:'A pesar de',en:'Despite / In spite of'},
+];
+
+// ── EXERCISE LIBRARY (Nexus-based, by KPI + level) ────────
+var EXERCISES = {
+  IG_critical:{title:'Idea Expansion Drill',kpi:'Idea Generation',type:'writing',priority:'CRITICAL',nexus:'Phase 1',
+    objective:'Eliminate one-sentence responses. Install the habit of expanding every idea without trainer prompting.',
+    script:'Trainer asks any open question. Student responds. If response is under 3 sentences, trainer says only: "Keep going." — Same phrase every time. Never rephrase, never help.',
+    steps:['Ask: "What did you do yesterday?"','Student must produce minimum 3 connected sentences','Structure: Idea + Linker + Expansion + Linker + Close','Mark any response under 3 sentences as INCOMPLETE','Week 2: raise minimum to 5 sentences'],
+    bad:'"I went to work." — One sentence. INCOMPLETE.',
+    good:'"I went to work yesterday, which was actually quite demanding. However, I managed to finish everything on time. As a result, I felt really productive by the end of the day."',
+    grading:'Content is irrelevant. Length + connectors = the only metrics.',
+    freq:'Every session — first 10 minutes. NON-NEGOTIABLE.',
+    flags:['Student repeats "and" more than twice consecutively','Student stops and looks for trainer approval after one sentence']},
+  IG_developing:{title:'1-Minute Monologue — Topic Progression',kpi:'Idea Generation',type:'debate',priority:'HIGH',nexus:'Phase 2',
+    objective:'Build idea density. Sustain 1 minute of continuous discourse without trainer input.',
+    script:'Set a topic. Start visible 60-second timer. Trainer does NOT interrupt, react, or respond. After: count distinct ideas (not sentences).',
+    steps:['Week 1: familiar topics (job, city, routine)','Week 2: moderate topics (current event, product)','Week 3: unfamiliar topics (abstract concept, hypothetical)','Week 4: topic given 5 seconds before speaking','RULE: Silence over 3 seconds = FAILURE. Any word counts.'],
+    bad:'"I think that... uhh... customer service is important... because... people need help." — Silences. Incomplete.',
+    good:'"Customer service is the backbone of any business. The thing is, when a client calls, they already have a problem — so the agent job is to solve it. On top of that, how you communicate is just as important as what you say."',
+    grading:'Ideas per minute: Week 1 = 2+, Week 2 = 3+, Week 3-4 = 4+.',
+    freq:'3x per week — 5 minutes per session.',
+    flags:['Student narrates without connecting ideas','Student repeats the same idea with different words']},
+  ST_critical:{title:'Idea + Linker + Idea — Foundation',kpi:'Structural Thinking',type:'writing',priority:'CRITICAL',nexus:'Phase 1',
+    objective:'Install the Nexus core pattern. No isolated sentences. Ever.',
+    script:'Every isolated sentence (no connector) = trainer taps table once. Student adds connector and continues without restarting.',
+    steps:['Pattern: Idea → Linker → Idea → Linker → Idea','Week 1: Adding — furthermore, in addition, as well','Week 2: Contrasting — however, on the other hand, despite this','Week 3: Cause/result — because, as a result, which means that','Week 4: Natural — the thing is, on top of that, to be honest','Homework: 10 connected sentences daily — linker underlined'],
+    bad:'"I work in customer service. It is difficult. I have to speak English." — Three isolated sentences. UNACCEPTABLE.',
+    good:'"I work in customer service, which means that I have to speak English every day. However, it can be challenging because clients often speak very fast. On top of that, I have to maintain a professional tone even under pressure."',
+    grading:'Every sentence without a connector = 0 points. No partial credit.',
+    freq:'Daily homework (10 sentences). Applied in every oral exchange.',
+    flags:['Student uses "and" as only connector','Student writes connected but speaks disconnected']},
+  ST_developing:{title:'Written Anecdote — Nexus Protocol',kpi:'Structural Thinking',type:'writing',priority:'HIGH',nexus:'Phase 2',
+    objective:'Apply full discourse structure in 15 minutes. Then convert to oral under pressure.',
+    script:'Part 1 (15 min): Student writes independently. Part 2 (Oral): Student reads aloud. Trainer interrupts: "Tell it in past perfect." Student reconstructs orally in a different tense.',
+    steps:['Topic: failure / injustice / difficult decision','REQUIRED: min 5 connectors (different categories)','REQUIRED: min 5 natural expressions','REQUIRED: min 12 lines','REQUIRED: correct temporal coherence throughout','REQUIRED: no isolated sentences','Structure: Context → Event → Problem → Result → Reflection'],
+    bad:'Student writes a list of events without connecting them.',
+    good:'"Actually, I underestimated the situation. The thing is, I thought it was manageable; however, I completely misunderstood the instructions. On top of that, I was under a lot of pressure. As a result, my performance was disappointing. Nevertheless, that experience helped me develop resilience."',
+    grading:'Count: connectors (min 5), natural expressions (min 5), structural sections (5). Deduct for isolated sentences.',
+    freq:'1x per week as main session exercise.',
+    flags:['Student cannot reconstruct orally what they wrote','Student uses only "and" and "but"']},
+  RA_critical:{title:'No Freeze Protocol — 3-Second Rule',kpi:'Recovery Ability',type:'drill',priority:'CRITICAL',nexus:'Phase 1',
+    objective:'Eliminate the freeze response permanently. Any word within 3 seconds. Always.',
+    script:'Visible timer. Trainer fires question or term. Student has 3 seconds to produce ANY word. If freeze past 3 seconds: trainer says "Go." — immediately. An incorrect answer is NOT failure. Silence IS failure.',
+    steps:['Teach substitution techniques first:','1. "Something similar to..." + description','2. "The thing that does..." + function','3. "A kind of... that..." + category + feature','4. "I think it means..." + approximate + "but I am not certain"','Drill: 10 technical terms fired in 3 minutes','Terms: amortization, compliance, procurement, KPI, delinquency, grace period'],
+    bad:'"Amortization is... uhh... I do not know." — FREEZE. Failure.',
+    good:'"Amortization is something similar to a payment schedule — the thing that shows you how your loan balance decreases over time."',
+    grading:'Pass: any response within 3 seconds using substitution. Fail: silence beyond 3 seconds.',
+    freq:'Every session — first 5 minutes. Timer always visible.',
+    flags:['Student says "I do not know" — teach substitution first','Student looks at ceiling before responding — freeze starting']},
+  RA_developing:{title:'Vocabulary Substitution',kpi:'Recovery Ability',type:'roleplay',priority:'HIGH',nexus:'Phase 1-2',
+    objective:'Replace any unknown word with a professional description. No stops allowed.',
+    script:'Trainer gives 10 professional terms. Student explains each to a hypothetical client. Cannot say "I do not know" or pause more than 3 seconds.',
+    steps:['Technique: "Think of it as..." / "Essentially what happens is..." / "The best way to describe it..."','Week 1: Basic financial terms','Week 2: Abstract concepts (compliance, liability, dispute)','Week 3: Term + real client explanation + follow-up question from trainer'],
+    bad:'"I do not know what that is." — Unacceptable.',
+    good:'"Think of it as a short window of time after your due date where you can still pay without a penalty. Essentially, it is the bank giving you a few extra days."',
+    grading:'Was there a substitution? Was it professional? Did it answer the implied question? 1 point each.',
+    freq:'2x per week — 10 minutes.',
+    flags:['Student uses exact same substitution pattern for every word']},
+  PS_critical:{title:'4-Turn Resolution Framework',kpi:'Problem Solving',type:'simulation',priority:'CRITICAL',nexus:'Phase 2',
+    objective:'Build a reliable 4-turn structure for any customer service or professional problem.',
+    script:'Trainer plays client. Student must resolve in 4 turns. Trainer does NOT make it easy. Student cannot transfer the call.',
+    steps:['Turn 1 — ACKNOWLEDGE: "I understand that [problem]. I sincerely apologize."','Turn 2 — INVESTIGATE: "Let me check. Could you confirm [detail]?"','Turn 3 — PROPOSE: "What I can do is [solution]. This will [result]."','Turn 4 — CONFIRM: "Does that work? Is there anything else I can help with?"','If client pushes back at Turn 3: student must offer alternative without transferring'],
+    bad:'"That is not my department." / "There is nothing I can do." / "You need to call back."',
+    good:'"T1: I completely understand your frustration. T2: Let me pull up your account. T3: I am going to reverse that charge immediately. T4: Done — is there anything else?"',
+    grading:'Grade each turn: Present (1), Professional vocabulary (1), Correct tense (1), No transfer (1). Max 16.',
+    freq:'1x per week — full simulation. 15 minutes.',
+    flags:['Student says "I cannot do that" — teach: "What I can do is..."','Student apologizes 3+ times in one turn']},
+  PS_developing:{title:'Escalation De-escalation',kpi:'Problem Solving',type:'simulation',priority:'HIGH',nexus:'Phase 2-3',
+    objective:'Communicate solutions professionally while managing emotional pressure.',
+    script:'Trainer escalates progressively: T1 mild frustration, T2 clearly upset, T3 demands manager, T4 threatens cancellation. Student maintains professional language in ALL 4 turns.',
+    steps:['T1: "Hi, I have a billing issue for a week."','T2: "This is ridiculous. I called three times."','T3: "I want to speak to your manager right now."','T4: "Fine. Cancel my account."','Student: stay calm, take ownership, offer alternative to manager, present retention offer'],
+    bad:'"That is not my problem." / Becoming apologetic to the point of submission.',
+    good:'Empathy without submission. Solution offered at every turn. Retention attempted at T4.',
+    grading:'De-escalated? Solution offered? Retention attempted? Professional vocabulary maintained? 4 x 3 = 12 max.',
+    freq:'1x per week — after PS foundation is solid.',
+    flags:['Student loses professional vocabulary when client gets aggressive']},
+  R_critical:{title:'Rapid Fire — 10 Questions in 2 Minutes',kpi:'Responsiveness',type:'drill',priority:'CRITICAL',nexus:'Phase 1',
+    objective:'Build response speed on familiar topics. Speed is the ONLY metric.',
+    script:'One question every 12 seconds. Timer visible. Trainer does NOT react after answers — fires next question at 12 seconds.',
+    steps:['Q1: What is your name? Q2: Where do you work?','Q3: What time do you start? Q4: What did you do yesterday?','Q5: What is your biggest work challenge?','Q6: How do you handle a difficult client?','Q7: What does your company do?','Q8: What is your favorite part of your job?','Q9: How long in this position? Q10: What would you change?','Week 2: Replace familiar with professional scenarios'],
+    bad:'"Uhh... well... I think that..."',
+    good:'Any complete response within 12 seconds.',
+    grading:'Full answer (3pts), Partial (2pts), Single word (1pt), Silence (0pts). Max 30.',
+    freq:'Every session — first 5 minutes as warm-up.',
+    flags:['Student rushes and produces incomprehensible output — speed without clarity = fail']},
+  R_developing:{title:'Natural Pace Training',kpi:'Responsiveness',type:'roleplay',priority:'HIGH',nexus:'Phase 2',
+    objective:'Train student to match natural English speech speed without requesting accommodations.',
+    script:'Trainer speaks at FULL natural speed. Student cannot ask "Can you speak slower?" Teach coping strategies instead.',
+    steps:['Teach stalling techniques first:','- "Just to make sure I understood..." (buys 3 seconds)','- "That is a great point. Let me address that..." (buys 5 seconds)','5-minute natural-speed conversation','Topics: easy to professional','Student notes after: which moments caused lag?','Target: Zero lag over 2 seconds by week 4'],
+    bad:'Student requests slower speech or stops conversation.',
+    good:'Student uses stalling technique and continues without breaking conversation flow.',
+    grading:'Lag events counted. Target: Week 1 = 10 or fewer, Week 4 = 2 or fewer.',
+    freq:'2x per week — 5 to 10 minutes.',
+    flags:['Student comprehension drops but speed improves — check listening separately']},
+};
+
+// ── INIT ──────────────────────────────────────────────────
+(async function(){
+  try{
+    var rows = await dbGetAll('student_files');
+    rows.forEach(function(r){ ALL_STUDENTS[r.id]=r.data; });
+    var videos = await dbGetAll('video_library');
+    videos.forEach(function(r){ ALL_VIDEOS[r.id]=r.data; });
+    buildStudentSelect();
+    document.getElementById('nb-videos').textContent = Object.keys(ALL_VIDEOS).length;
+  }catch(e){ showToast('Connection error','err'); }
+})();
+
+function buildStudentSelect(){
+  var sel = document.getElementById('student-select');
+  var students = Object.values(ALL_STUDENTS).sort(function(a,b){return (a.info.name||'').localeCompare(b.info.name||'');});
+  students.forEach(function(s){
+    var o = document.createElement('option');
+    o.value = s.id;
+    o.textContent = s.info.name + (s.info.level?' — '+s.info.level:'');
+    sel.appendChild(o);
+  });
+}
+
+function selectStudent(){
+  var id = document.getElementById('student-select').value;
+  if(!id) return;
+  document.getElementById('sel-loading').style.display='block';
+  CURRENT = ALL_STUDENTS[id];
+  if(!CURRENT){ showToast('Student not found','err'); return; }
+  setTimeout(function(){
+    document.getElementById('selector-screen').style.display='none';
+    document.getElementById('main-wrap').classList.add('show');
+    document.getElementById('tb-student-name').textContent = CURRENT.info.name;
+    document.getElementById('tb-student-name').style.display='inline-block';
+    document.getElementById('logout-btn').style.display='flex';
+    buildSidebarProfile();
+    showSection('overview', document.querySelector('.nav-item'));
+    var ex = getExercises();
+    document.getElementById('nb-exercises').textContent = ex.length;
+  },400);
+}
+
+function logout(){
+  CURRENT = null;
+  document.getElementById('main-wrap').classList.remove('show');
+  document.getElementById('selector-screen').style.display='block';
+  document.getElementById('tb-student-name').style.display='none';
+  document.getElementById('student-select').value='';
+  document.getElementById('sel-loading').style.display='none';
+}
+
+function buildSidebarProfile(){
+  if(!CURRENT) return;
+  var info = CURRENT.info||{};
+  document.getElementById('sc-name').textContent = info.name||'—';
+  document.getElementById('sc-meta').textContent = (info.level||'—')+' · Score '+( info.current_score||info.score||'—')+'/25 · '+( info.program||'Individual');
+  var kpis = (CURRENT.kpis||{}).phase1||{};
+  var html = '';
+  Object.keys(KPI_NAMES).forEach(function(k){
+    var v = parseInt(kpis[k])||0;
+    if(v>0){
+      var cls = v>=4?'kp-strong':v>=3?'kp-dev':'kp-weak';
+      html += '<span class="kpi-pill '+cls+'">'+k+':'+v+'</span>';
+    }
+  });
+  document.getElementById('sc-kpis').innerHTML = html;
+}
+
+function getExercises(){
+  if(!CURRENT) return [];
+  var kpis = (CURRENT.kpis||{}).phase1||{};
+  var exercises = [];
+  var sorted = Object.keys(KPI_NAMES).sort(function(a,b){ return (parseInt(kpis[a])||0)-(parseInt(kpis[b])||0); });
+  sorted.forEach(function(kpi){
+    var v = parseInt(kpis[kpi])||0;
+    var key = v<=2?kpi+'_critical':v<=3?kpi+'_developing':null;
+    if(key && EXERCISES[key]) exercises.push(EXERCISES[key]);
+  });
+  var order = {CRITICAL:0,HIGH:1,ADVANCED:2,MEDIUM:3};
+  exercises.sort(function(a,b){ return (order[a.priority]||5)-(order[b.priority]||5); });
+  return exercises.slice(0,6);
+}
+
+function getPhase(){
+  if(!CURRENT) return 1;
+  return parseInt((CURRENT.info||{}).phase)||1;
+}
+
+function showSection(id, btn){
+  currentSection = id;
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+  if(btn) btn.classList.add('active');
+  var area = document.getElementById('content-area');
+
+  if(id==='overview') renderOverview(area);
+  else if(id==='exercises') renderExercises(area);
+  else if(id==='plan') renderPlan(area);
+  else if(id==='drills') renderDrills(area);
+  else if(id==='phase1') renderPhase1(area);
+  else if(id==='phase2') renderPhase2(area);
+  else if(id==='phase3') renderPhase3(area);
+  else if(id==='videos') renderVideos(area);
+  else if(id==='sessions') renderSessions(area);
+}
+
+// ── SECTION RENDERERS ─────────────────────────────────────
+function renderOverview(area){
+  if(!CURRENT){area.innerHTML='';return;}
+  var info = CURRENT.info||{};
+  var kpis = (CURRENT.kpis||{}).phase1||{};
+  var total = parseInt(info.current_score||info.score)||0;
+  var level = info.level||'—';
+  var phase = getPhase();
+  var phaseNames = {0:'Not started',1:'Phase 1 — Arquitectura',2:'Phase 2 — Expansion',3:'Phase 3 — Naturalidad',4:'Assessment Center',5:'Completed'};
+  var phaseCls = phase<=1?'pb1':phase===2?'pb2':'pb3';
+  var phaseDesc = {1:'Focus: pronouns, 16 irregular verbs, WILL vs WOULD, ING vs TO, -ED. Response under 1 second required.',2:'Focus: linkers mandatory, Idea → Linker → Idea, written anecdote, correction on the go.',3:'Focus: natural expressions, prefixes/suffixes, phrasal verbs, reformulation under pressure.'};
+
+  var kpiColors = {1:'var(--rm)',2:'#E05D44',3:'var(--amber)',4:'#5A9E6F',5:'var(--gm)'};
+  var kpiTagNames = {1:'Critical',2:'Weak',3:'Developing',4:'Good',5:'Strong'};
+  var kpiTagColors = {1:['var(--rb)','var(--rm)'],2:['#FEF0ED','#7A2E1B'],3:['var(--ab)','var(--ad)'],4:['#E8F5EE','#2D6A40'],5:['var(--gb)','var(--gm)']};
+
+  var kpiRows = Object.keys(KPI_NAMES).map(function(k){
+    var v = parseInt(kpis[k])||0;
+    var color = kpiColors[v]||'var(--border)';
+    var tc = kpiTagColors[v]||['var(--gray)','var(--t2)'];
+    var tag = kpiTagNames[v]||'—';
+    return '<div class="kpi-bar-row">'
+      +'<span class="kbar-name">'+KPI_NAMES[k]+'</span>'
+      +'<div class="kbar-bg"><div class="kbar-fill" style="width:'+(v/5*100)+'%;background:'+color+';"></div></div>'
+      +'<span class="kbar-val" style="color:'+color+';">'+v+'/5</span>'
+      +'<span class="kbar-tag" style="background:'+tc[0]+';color:'+tc[1]+';">'+tag+'</span>'
+      +'</div>';
+  }).join('');
+
+  var exercises = getExercises();
+  var topEx = exercises.slice(0,2).map(function(ex){
+    var prioBg = ex.priority==='CRITICAL'?'var(--rb)':'var(--ab)';
+    var prioColor = ex.priority==='CRITICAL'?'var(--rm)':'var(--ad)';
+    var el = document.createElement('div');
+    el.style.cssText = 'background:var(--gray);border-radius:var(--r);padding:0.875rem;margin-bottom:6px;display:flex;align-items:center;gap:10px;cursor:pointer;';
+    el.onclick = function(){ goToExercises(); };
+    el.innerHTML = '<i class="ti ti-dumbbell" style="color:var(--nm);font-size:18px;flex-shrink:0;"></i>'
+      +'<div><div style="font-size:13px;font-weight:700;color:var(--text);">'+ex.title+'</div>'
+      +'<div style="font-size:11px;color:var(--t2);">'+ex.kpi+' - '+ex.nexus+'</div></div>'
+      +'<span style="margin-left:auto;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;background:'+prioBg+';color:'+prioColor+';">'+ex.priority+'</span>';
+    return el.outerHTML;
+  }).join('');
+
+  var notes = (CURRENT.notes||[]).slice(-1)[0];
+
+  area.innerHTML =
+    '<div class="phase-banner '+phaseCls+'">'
+    +'<div><div class="pb-phase">NEXUS — CURRENT PHASE</div><div class="pb-name">'+(phaseNames[phase]||'—')+'</div><div class="pb-desc">'+(phaseDesc[phase]||'')+'</div></div>'
+    +'<div style="text-align:right;"><div class="pb-score">'+total+'</div><div class="pb-score-label">score / 25 · '+level+'</div></div>'
+    +'</div>'
+
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">'
+
+    +'<div class="card" style="margin-bottom:0;">'
+    +'<div class="card-title"><i class="ti ti-chart-bar"></i>KPI Profile</div>'
+    +kpiRows
+    +'</div>'
+
+    +'<div>'
+    +'<div class="card">'
+    +'<div class="card-title"><i class="ti ti-dumbbell"></i>Priority exercises</div>'
+    +(topEx||'<p style="font-size:13px;color:var(--t3);">No exercises assigned yet.</p>')
+    +'<div style="margin-top:8px;"><button class="btn btn-navy" onclick="goToExercises()" style="width:100%;"><i class="ti ti-arrow-right"></i>View all exercises</button></div>'
+    +'</div>'
+
+    +(notes?'<div class="card" style="margin-bottom:0;">'
+    +'<div class="card-title"><i class="ti ti-notes"></i>Last session note</div>'
+    +'<div style="font-size:11px;color:var(--t3);margin-bottom:6px;">'+notes.date+' · '+notes.trainer+'</div>'
+    +'<div style="font-size:13px;color:var(--text);line-height:1.6;">'+notes.text.split('\n').join('<br>').substring(0,200)+'...</div>'
+
+    +'</div>':'')
+    +'</div>'
+    +'</div>'
+
+    +'<div class="card">'
+    +'<div class="card-title"><i class="ti ti-info-circle"></i>Student information</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">'
+    +[['Trainer',info.trainer||'—'],['Program',info.program||'—'],['Start date',info.start||'—'],['Phase',phaseNames[phase]||'—'],['Sessions',((CURRENT.compliance||{}).attended||0)+' attended'],['Fee','CRC '+parseInt(info.fee||0).toLocaleString()+'/mo']].map(function(item){
+      return '<div style="background:var(--gray);border-radius:var(--r);padding:0.875rem;">'
+        +'<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--t3);margin-bottom:4px;">'+item[0]+'</div>'
+        +'<div style="font-size:13px;font-weight:600;color:var(--text);">'+item[1]+'</div>'
+        +'</div>';
+    }).join('')
+    +'</div></div>';
+}
+
+function renderExercises(area){
+  var exercises = getExercises();
+  if(!exercises.length){area.innerHTML='<div class="loading"><i class="ti ti-dumbbell"></i><span>No exercises assigned.</span></div>';return;}
+
+  area.innerHTML = '<h2 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:1rem;">Your exercises — prioritized by KPI gap</h2>'
+    + exercises.map(function(ex){
+      var typeTag = {writing:'tag-w writing',debate:'tag-d debate',simulation:'tag-s simulation',roleplay:'tag-r roleplay',drill:'tag-dr drill'}[ex.type]||'tag-w';
+      var prioCls = {CRITICAL:'prio-c',HIGH:'prio-h',ADVANCED:'prio-a',MEDIUM:'prio-m'}[ex.priority]||'prio-m';
+
+      return '<div class="ex-card">'
+        +'<div class="ex-header">'
+        +'<div><div class="ex-title">'+ex.title+'</div>'
+        +'<div class="ex-tags">'
+        +'<span class="ex-tag '+typeTag+'">'+ex.type+'</span>'
+        +'<span class="ex-tag" style="background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.8);">'+ex.nexus+'</span>'
+        +'</div></div>'
+        +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">'
+        +'<span class="ex-prio '+prioCls+'">'+ex.priority+'</span>'
+        +'<span style="font-size:11px;color:rgba(255,255,255,0.7);">'+ex.kpi+'</span>'
+        +'</div></div>'
+        +'<div class="ex-body">'
+        +'<div class="ex-objective"><strong>Objective:</strong> '+ex.objective+'</div>'
+        +(ex.script?'<div class="ex-trainer-script"><div class="ets-label"><i class="ti ti-microphone" style="margin-right:4px;"></i>Trainer script</div><div class="ets-text">'+ex.script+'</div></div>':'')
+        +'<div class="sect-label">Step by step</div>'
+        +'<div class="ex-steps">'+ex.steps.map(function(s){return '<div class="ex-step"><div class="step-dot"></div><span>'+s+'</span></div>';}).join('')+'</div>'
+        +(ex.bad?'<div class="ex-example-bad"><strong>✗ Incorrect:</strong> '+ex.bad+'</div>':'')
+        +(ex.good?'<div class="ex-example-good"><strong>✓ Target:</strong> '+ex.good+'</div>':'')
+        +(ex.grading?'<div class="ex-grading"><strong>Grading:</strong> '+ex.grading+'</div>':'')
+        +(ex.flags&&ex.flags.length?'<div class="ex-redflags"><div class="rf-label">⚑ Red flags</div>'+ex.flags.map(function(f){return '<div class="rf-item">• '+f+'</div>';}).join('')+'</div>':'')
+        +'<div class="ex-freq"><i class="ti ti-repeat"></i>'+ex.freq+'</div>'
+        +'</div></div>';
+    }).join('');
+}
+
+function renderDrills(area){
+  area.innerHTML = '<h2 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:0.5rem;">Speed Drills</h2>'
+    +'<p style="font-size:13px;color:var(--t2);margin-bottom:1.25rem;">Trainer fires each item. Student responds in under 1 second. Mark pass or fail.</p>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-bolt"></i>Pronoun + Tense — 12 items</div>'
+    +'<div class="drill-grid">'
+    +SPEED_DRILLS.map(function(d,i){
+      return '<div class="drill-item" id="drill-'+i+'">'
+        +'<div class="drill-es">'+d.es+'</div>'
+        +'<div class="drill-en">'+d.en+'</div>'
+        +'<div class="drill-btns">'
+        +'<button class="drill-btn drill-pass" onclick="setDrill('+i+',true)">✓ Pass</button>'
+        +'<button class="drill-btn drill-fail" onclick="setDrill('+i+',false)">✗ Fail</button>'
+        +'</div>'
+        +'<div class="drill-result" id="dr-'+i+'"></div>'
+        +'</div>';
+    }).join('')
+    +'</div></div>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-list"></i>16 Irregular Verbs</div>'
+    +'<table class="ref-table"><thead><tr><th>Presente</th><th>Pasado Simple</th><th>Participio</th></tr></thead><tbody>'
+    +IRREGULAR_VERBS.map(function(v,i){return '<tr class="'+(i%2===0?'':'')+'"><td><strong>'+v.inf+'</strong></td><td style="color:var(--nm);">'+v.past+'</td><td style="color:var(--purple);">'+v.part+'</td></tr>';}).join('')
+    +'</tbody></table></div>';
+}
+
+function setDrill(i, pass){
+  DRILL_RESULTS[i]=pass;
+  var el = document.getElementById('dr-'+i);
+  var card = document.getElementById('drill-'+i);
+  el.textContent = pass?'✓ Pass':'✗ Fail';
+  el.style.color = pass?'var(--gm)':'var(--rm)';
+  card.style.borderColor = pass?'var(--gm)':'var(--rm)';
+  card.style.background = pass?'var(--gb)':'var(--rb)';
+}
+
+function renderPlan(area){
+  var phase = getPhase();
+  var kpis = (CURRENT.kpis||{}).phase1||{};
+  var sorted = Object.keys(KPI_NAMES).sort(function(a,b){return (parseInt(kpis[a])||0)-(parseInt(kpis[b])||0);});
+  var primary = KPI_NAMES[sorted[0]]||'—';
+  var secondary = KPI_NAMES[sorted[1]]||'—';
+
+  var weeks = [
+    {week:'Week 1',focus:'Foundation — '+primary+' priority',note:'All sessions begin with Rapid Fire warm-up (5 min). No exceptions.',color:C_NAVY,sessions:[
+      {num:'S1',title:'Assessment debrief + foundation install',content:'Review KPI profile. Establish 4-week targets. Introduce Idea+Linker+Idea. Assign daily homework: 10 connected sentences.',kpi:primary,type:'writing'},
+      {num:'S2',title:'No-Freeze drill + writing exercise',content:'3-Second Rule drill (5 min). Writing: 10 sentences with Week 1 linkers. Trainer corrects in real time.',kpi:primary,type:'drill'},
+    ]},
+    {week:'Week 2',focus:'Pattern reinforcement + introduce '+secondary,note:'Check homework compliance. Less than 70% done — repeat Week 1.',color:'534AB7',sessions:[
+      {num:'S3',title:'Structured monologue + recovery drill',content:'Recovery drill (5 min). 1-Minute monologue on familiar topic. Introduce contrast linkers.',kpi:secondary,type:'roleplay'},
+      {num:'S4',title:'STAR method + written anecdote',content:'Introduce STAR framework. Student writes one complete STAR response. Oral version in second half.',kpi:'ST + '+primary,type:'writing'},
+    ]},
+    {week:'Week 3',focus:'Pressure introduction',note:'This is where real progress becomes visible. Push the pressure — it is the method.',color:'0F6E56',sessions:[
+      {num:'S5',title:'Basic professional simulation',content:'4-Turn resolution framework. Trainer plays client. Student resolves without transferring.',kpi:'PS + R',type:'simulation'},
+      {num:'S6',title:'Debate + written anecdote',content:'Debate: student defends a position for 3 minutes. Trainer challenges with 3 objections.',kpi:'ST + IG',type:'debate'},
+    ]},
+    {week:'Week 4',focus:'Full pressure + re-assessment',note:'Do not skip the re-assessment. The data is what justifies the next 4 weeks.',color:'BA7517',sessions:[
+      {num:'S7',title:'Advanced simulation — full pressure',content:'Escalation scenario. Student maintains professional language throughout. Recording recommended.',kpi:'PS + RA + R',type:'simulation'},
+      {num:'S8',title:'Full KPI re-assessment + path planning',content:'Same 5 KPIs, same rubric as S1. Compare scores. Plan next 4 weeks.',kpi:'All KPIs',type:'drill'},
+    ]},
+  ];
+
+  var C_NAVY = '1E2761';
+  area.innerHTML = '<h2 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:1rem;">4-Week Session Plan — personalized for your KPI profile</h2>'
+    +weeks.map(function(w){
+      return '<div style="border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:0.875rem;">'
+        +'<div style="background:#'+w.color+';color:white;padding:0.875rem 1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">'
+        +'<div style="font-size:13px;font-weight:700;color:var(--gold);">'+w.week+'</div>'
+        +'<div style="font-size:12px;color:rgba(255,255,255,0.8);">'+w.focus+'</div>'
+        +'</div>'
+        +'<div style="background:var(--ab);padding:6px 1.25rem;font-size:12px;color:var(--ad);border-bottom:1px solid var(--border);">'
+        +'<i class="ti ti-info-circle" style="margin-right:4px;"></i>'+w.note+'</div>'
+        +'<div style="display:grid;grid-template-columns:60px 1fr 1fr 120px;padding:6px 1.25rem;background:var(--gray);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--t3);border-bottom:1px solid var(--border);">'
+        +'<span>#</span><span>Focus</span><span>Content</span><span>KPI target</span></div>'
+        +w.sessions.map(function(s){
+          return '<div style="display:grid;grid-template-columns:60px 1fr 1fr 120px;padding:0.875rem 1.25rem;border-bottom:1px solid var(--border);font-size:12px;align-items:start;">'
+            +'<span style="font-weight:700;color:var(--gold);">'+s.num+'</span>'
+            +'<span style="font-weight:600;color:var(--text);">'+s.title+'</span>'
+            +'<span style="color:var(--t2);line-height:1.5;">'+s.content+'</span>'
+            +'<span><span style="font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;background:var(--nl);color:var(--nd);">'+s.kpi+'</span></span>'
+            +'</div>';
+        }).join('')
+        +'</div>';
+    }).join('');
+}
+
+function renderPhase1(area){
+  area.innerHTML = '<h2 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:1rem;">Phase 1 — Arquitectura</h2>'
+    +'<div class="info-box ib-red"><strong>REGLA DE ORO:</strong> La respuesta debe llegar en menos de 1 segundo. Si el estudiante tarda mas, el area debe trabajarse aunque eso signifique repetirlo 500 veces en un dia.</div>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-users"></i>Tabla de pronombres</div>'
+    +'<table class="ref-table"><thead><tr><th>Español</th><th>Personal</th><th>Indicativo</th><th>Reflexivo</th><th>Posesivo adj.</th></tr></thead><tbody>'
+    +[['Yo','I','to/for me','myself','my'],['Tu, usted','you','to/for you','yourself','your'],['El','he','to/for him','himself','his'],
+      ['Ella','she','to/for her','herself','her'],['Eso/esa','it','to/for it','itself','its'],['Nosotros','we','to/for us','ourselves','our'],
+      ['Ustedes','you','to/for you','yourselves','your'],['Ellos, ellas','they','to/for them','themselves','their']
+    ].map(function(r,i){return '<tr'+(i%2?' style="background:var(--gray)"':'')+'><td><strong>'+r[0]+'</strong></td>'+r.slice(1).map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>';}).join('')
+    +'</tbody></table></div>'
+
+    +'<div class="card"><div class="card-title"><i class="ti ti-bolt"></i>WILL vs WOULD — Los interruptores</div>'
+    +'<div class="info-box ib-navy"><strong>REGLA:</strong> -re en español = WILL (futuro real) · -ria en español = WOULD (hipotetico). Esta distincion debe automatizarse.</div>'
+    +'<table class="ref-table"><thead><tr><th>Espanol</th><th>Termination</th><th>Ingles</th><th>Formula</th><th>Tipo</th></tr></thead><tbody>'
+    +[['Correre','-re','I will run','will + verb','Futuro real'],['Comere','-re','I will eat','will + verb','Decision real'],
+      ['Correria','-ria','I would run','would + verb','Futuro hipotetico'],['Comerias','-rias','You would eat','would + verb','Condicion'],
+    ].map(function(r,i){return '<tr'+(i%2?' style="background:var(--gray)"':'')+'><td><strong>'+r[0]+'</strong></td>'+r.slice(1).map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>';}).join('')
+    +'</tbody></table></div>'
+
+    +'<div class="card"><div class="card-title"><i class="ti ti-list"></i>ING vs TO — Hoja rapida</div>'
+    +'<table class="ref-table"><thead><tr><th>Disparador</th><th>Usa</th><th>Ejemplo</th><th>Regla</th></tr></thead><tbody>'
+    +[['Intencion','TO','I want to work','TO = direccion'],['Necesidad','TO','I need to go','NEED → TO'],
+      ['Disfrute','ING','I enjoy working','Enjoy → ING'],['Actividad general','ING','I like working','ING = actividad'],
+      ['Despues de prep','ING','After working','Prep → ING'],['Accion en proceso','ING','I am working','BE activa ING'],
+    ].map(function(r,i){return '<tr'+(i%2?' style="background:var(--gray)"':'')+'><td><strong>'+r[0]+'</strong></td>'+r.slice(1).map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>';}).join('')
+    +'</tbody></table></div>';
+}
+
+function renderPhase2(area){
+  var linkerRows = Object.keys(LINKERS).map(function(k){
+    var names = {add:'Anadir informacion',reason:'Dar razon',result:'Dar resultado',contrast:'Contrastar',sequence:'Secuencia',natural:'Expresiones naturales'};
+    return '<tr><td><strong>'+names[k]+'</strong></td><td>'+LINKERS[k].join(', ')+'</td></tr>';
+  });
+
+  area.innerHTML = '<h2 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:1rem;">Phase 2 — Expansion</h2>'
+    +'<div class="info-box ib-amber"><strong>ESTRUCTURA OBLIGATORIA:</strong> Idea → Linker → Idea → Linker → Idea<br><br>"I worked yesterday" — Esto NO es conversacion.<br>"I worked yesterday because I had an important meeting, however, it did not go as expected." — CORRECTO.</div>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-network"></i>Linkers por categoria</div>'
+    +'<table class="ref-table"><thead><tr><th>Categoria</th><th>Conectores</th></tr></thead><tbody>'+linkerRows.join('')+'</tbody></table></div>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-pencil"></i>Estructura de la anecdota — 15 minutos</div>'
+    +'<div class="info-box ib-navy"><strong>REQUISITOS OBLIGATORIOS:</strong><br>✓ Minimo 5 conectores (categorias diferentes)<br>✓ Minimo 5 expresiones naturales<br>✓ Minimo 12 lineas<br>✓ Coherencia temporal correcta<br>✓ Sin frases sueltas</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">'
+    +[['① Contexto inicial','¿Cuando? ¿Donde? ¿Quienes?'],['② Evento principal','¿Que paso?'],['③ Problema','¿Que complicacion hubo?'],['④ Resultado','¿Como termino?'],['⑤ Reflexion','¿Que aprendiste?']].map(function(i){
+      return '<div style="background:var(--gray);border-radius:var(--r);padding:0.875rem;">'
+        +'<div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px;">'+i[0]+'</div>'
+        +'<div style="font-size:12px;color:var(--t2);">'+i[1]+'</div></div>';
+    }).join('')
+    +'</div></div>';
+}
+
+function renderPhase3(area){
+  area.innerHTML = '<h2 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:1rem;">Phase 3 — Naturalidad</h2>'
+    +'<div class="info-box ib-green">El estudiante ya ubica tiempos, conecta ideas y usa linkers. Ahora debe sonar natural, reformular, anadir matices y expandir discurso sin pensar en gramatica.</div>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-message"></i>Expresiones naturales — equivalencias</div>'
+    +'<table class="ref-table"><thead><tr><th>Espanol</th><th>Ingles Natural</th></tr></thead><tbody>'
+    +NATURAL_EXPRESSIONS.map(function(e,i){return '<tr'+(i%2?' style="background:var(--gray)"':'')+'><td>'+e.es+'</td><td><strong>'+e.en+'</strong></td></tr>';}).join('')
+    +'</tbody></table></div>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-puzzle"></i>Prefijos y Sufijos</div>'
+    +'<div class="info-box ib-navy"><strong>REGLA:</strong> Prefijo → cambia el significado · Sufijo → cambia la funcion gramatical</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">'
+    +'<div><div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em;">Prefijos</div>'
+    +'<table class="ref-table"><thead><tr><th>Prefijo</th><th>Base</th><th>Resultado</th></tr></thead><tbody>'
+    +[['un-','happy','unhappy'],['dis-','agree','disagree'],['mis-','understand','misunderstand'],['re-','do','redo'],['over-','react','overreact'],['under-','estimate','underestimate']].map(function(r,i){return '<tr'+(i%2?' style="background:var(--gray)"':'')+'><td><strong>'+r[0]+'</strong></td><td>'+r[1]+'</td><td style="color:var(--nm);">'+r[2]+'</td></tr>';}).join('')
+    +'</tbody></table></div>'
+    +'<div><div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em;">Sufijos</div>'
+    +'<table class="ref-table"><thead><tr><th>Sufijo</th><th>Base</th><th>Resultado</th></tr></thead><tbody>'
+    +[['-ness','happy','happiness'],['-ment','develop','development'],['-ful','stress','stressful'],['-less','hope','hopeless'],['-able','manage','manageable'],['-ly','quick','quickly']].map(function(r,i){return '<tr'+(i%2?' style="background:var(--gray)"':'')+'><td><strong>'+r[0]+'</strong></td><td>'+r[1]+'</td><td style="color:var(--nm);">'+r[2]+'</td></tr>';}).join('')
+    +'</tbody></table></div></div></div>';
+}
+
+function renderVideos(area){
+  var videos = Object.values(ALL_VIDEOS);
+  if(!videos.length){
+    area.innerHTML='<div class="loading"><i class="ti ti-player-play"></i><span style="font-size:14px;margin-top:0.5rem;">No hay videos en la audioteca todavia.</span><p style="font-size:12px;margin-top:0.5rem;max-width:260px;text-align:center;">El trainer agrega videos desde el Video Simulation Lab.</p></div>';
+    return;
+  }
+  area.innerHTML = '<h2 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:1rem;">Audioteca — Video Simulation Lab</h2>'
+    +videos.map(function(v){
+      var qs = (v.questions||[]).map(function(q,i){return '<div class="vc-q"><strong>'+( i+1)+'.</strong> '+q.q+'</div>';}).join('');
+      return '<div class="video-card">'
+        +'<div class="vc-header"><i class="ti ti-player-play" style="font-size:18px;color:white;flex-shrink:0;"></i>'
+        +'<div><div class="vc-title">'+(v.title||'Untitled video')+'</div>'
+        +'<div class="vc-meta">'+(v.level||'All levels')+' · '+(v.duration||'—')+'</div></div></div>'
+        +'<div class="vc-body">'
+        +(v.url?'<div style="margin-bottom:1rem;"><a href="'+v.url+'" target="_blank" class="btn btn-navy" style="display:inline-flex;"><i class="ti ti-external-link"></i>Open video</a></div>':'')
+        +(v.description?'<p style="font-size:13px;color:var(--t2);margin-bottom:0.75rem;line-height:1.6;">'+v.description+'</p>':'')
+        +(qs?'<div class="vc-questions"><div class="sect-label">Comprehension questions</div>'+qs+'</div>':'')
+        +'</div></div>';
+    }).join('');
+}
+
+function renderSessions(area){
+  var notes = (CURRENT.notes||[]).slice().reverse();
+  if(!notes.length){
+    area.innerHTML='<div class="loading"><i class="ti ti-notes"></i><span>No session notes yet.</span></div>';
+    return;
+  }
+  var phaseNames = {1:'Phase 1',2:'Phase 2',3:'Phase 3',4:'Assessment Center'};
+  area.innerHTML = '<h2 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:1rem;">Session notes</h2>'
+    +notes.map(function(n){
+      var phColor = {1:'var(--nm)',2:'var(--purple)',3:'var(--gm)',4:'var(--amber)'}[n.phase]||'var(--t3)';
+      return '<div class="session-log-item">'
+        +'<div class="sli-header">'
+        +'<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--nl);color:'+phColor+';">'+(phaseNames[n.phase]||'—')+'</span>'
+        +'<span class="sli-date">'+n.date+'</span>'
+        +'<span class="sli-trainer">'+n.trainer+'</span>'
+        +'</div>'
+        +'<div class="sli-text">'+n.text.split('\n').join('<br>')+'</div>'
+
+        +'</div>';
+    }).join('');
+}
+
+function goToExercises(){ showSection("exercises", document.querySelectorAll(".nav-item")[1]); }
+function showToast(msg,type){
+  var t=document.getElementById('toast');
+  t.className='toast'+(type?' '+type:'');
+  t.innerHTML='<i class="ti ti-'+(type==='err'?'x':'check')+'"></i>'+msg;
+  t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},3000);
+}
+</script>
+</body>
+</html>
