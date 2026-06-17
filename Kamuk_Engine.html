@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kamuk Operational Engine</title>
+<meta name="theme-color" content="#1B9BD1">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Kamuk Engine">
+<link rel="manifest" href="manifest-engine.json">
+<link rel="apple-touch-icon" href="https://infintystudiocr.github.io/Database-/icon-192.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#1B9BD1;--nl:#E8F5FC;--nm:#1478A8;--nd:#0D5E8A;
+  --green:#085041;--gb:#E1F5EE;--gm:#0F6E56;
+  --amber:#BA7517;--ab:#FAEEDA;--ad:#633806;
+  --red:#791F1F;--rb:#FCEBEB;--rm:#A32D2D;
+  --purple:#3C3489;--pb:#EEEDFE;--pm:#534AB7;
+  --gold:#F5A623;--gray:#F4F6FB;--border:#E2E8F0;
+  --text:#1E293B;--t2:#64748B;--t3:#94A3B8;
+  --r:8px;--rl:12px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F0F4FA;color:var(--text);min-height:100vh;}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeIn 0.2s ease;}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--navy);padding:0 1.5rem;display:flex;align-items:center;gap:12px;height:54px;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,0.2);}
+.tb-logo{height:36px;object-fit:contain;}
+.tb-div{width:1px;height:26px;background:rgba(255,255,255,0.2);}
+.tb-title{font-size:13px;font-weight:700;color:white;}
+.tb-sub{font-size:10px;color:rgba(255,255,255,0.5);}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.tb-role{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;}
+.role-master{background:rgba(245,166,35,0.2);color:var(--gold);border:1px solid rgba(245,166,35,0.3);}
+.role-trainer{background:rgba(24,95,165,0.3);color:#7EC8F7;border:1px solid rgba(126,200,247,0.3);}
+.role-student{background:rgba(15,110,86,0.3);color:#6EE7C0;border:1px solid rgba(110,231,192,0.3);}
+.tb-user{font-size:12px;color:rgba(255,255,255,0.8);font-weight:600;}
+
+/* ── LOGIN ── */
+.login-wrap{max-width:420px;margin:5rem auto;padding:1.5rem;}
+.login-card{background:white;border:1px solid var(--border);border-radius:var(--rl);padding:2rem;text-align:center;}
+.login-logo{height:60px;object-fit:contain;margin-bottom:1rem;}
+.login-title{font-size:20px;font-weight:800;color:var(--navy);margin-bottom:4px;}
+.login-sub{font-size:13px;color:var(--t2);margin-bottom:1.5rem;line-height:1.6;}
+.login-tabs{display:flex;border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:1.25rem;}
+.ltab{flex:1;padding:10px;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer;border:none;background:white;font-family:inherit;transition:all 0.15s;}
+.ltab.active{background:var(--navy);color:white;}
+.inp{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--r);font-size:13px;font-family:inherit;color:var(--text);margin-bottom:10px;}
+.inp:focus{outline:none;border-color:var(--nm);}
+.btn{padding:10px 16px;border:none;border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:opacity 0.15s;}
+.btn:hover{opacity:0.85;}
+.btn-navy{background:var(--navy);color:white;}
+.btn-green{background:var(--gm);color:white;}
+.btn-red{background:var(--rm);color:white;}
+.btn-outline{background:white;color:var(--t2);border:1px solid var(--border);}
+.btn-gold{background:var(--gold);color:white;}
+.btn-block{width:100%;justify-content:center;}
+.btn-sm{padding:6px 12px;font-size:11px;}
+
+/* ── LAYOUT ── */
+.app-wrap{display:none;height:calc(100vh - 54px);}
+.app-wrap.show{display:flex;}
+.sidebar{width:240px;flex-shrink:0;background:white;border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;}
+.main{flex:1;overflow-y:auto;padding:1.25rem;}
+
+/* ── SIDEBAR ── */
+.sb-section{padding:0.625rem 1rem 0.25rem;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--t3);}
+.sb-item{display:flex;align-items:center;gap:9px;padding:0.6rem 1rem;cursor:pointer;color:var(--t2);font-size:13px;font-weight:500;border-left:3px solid transparent;transition:all 0.15s;}
+.sb-item:hover{background:var(--gray);color:var(--text);}
+.sb-item.active{background:var(--nl);color:var(--navy);border-left-color:var(--navy);font-weight:700;}
+.sb-item i{font-size:16px;flex-shrink:0;}
+.sb-badge{margin-left:auto;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700;background:var(--rb);color:var(--rm);}
+.sb-badge.blue{background:var(--nl);color:var(--nd);}
+.sb-badge.green{background:var(--gb);color:var(--gm);}
+
+/* ── CARDS ── */
+.card{background:white;border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin-bottom:1rem;}
+.card-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:1rem;display:flex;align-items:center;gap:8px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;}
+.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.75rem;}
+
+/* ── STAT CARDS ── */
+.stat{background:white;border:1px solid var(--border);border-radius:var(--rl);padding:1rem;}
+.stat-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--t3);margin-bottom:6px;}
+.stat-val{font-size:28px;font-weight:800;color:var(--navy);margin-bottom:2px;}
+.stat-sub{font-size:11px;color:var(--t2);}
+
+/* ── TABLES ── */
+.tbl{width:100%;border-collapse:collapse;font-size:13px;}
+.tbl thead tr{background:var(--navy);}
+.tbl thead th{color:white;padding:8px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;}
+.tbl tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s;}
+.tbl tbody tr:hover{background:var(--gray);}
+.tbl tbody td{padding:10px 12px;vertical-align:middle;}
+.tbl tbody tr:last-child{border-bottom:none;}
+
+/* ── BADGES ── */
+.badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;display:inline-block;}
+.b-advanced{background:var(--gb);color:var(--gm);}
+.b-superadmin{background:var(--pb);color:var(--purple);}
+.b-functional{background:var(--ab);color:var(--ad);}
+.b-emerging{background:var(--rb);color:var(--rm);}
+.b-survival{background:#F3F4F6;color:#6B7280;}
+.b-p1{background:var(--nl);color:var(--nd);}
+.b-p2{background:var(--pb);color:var(--purple);}
+.b-p3{background:var(--gb);color:var(--gm);}
+
+/* ── KPI BARS ── */
+.kbar{display:flex;align-items:center;gap:8px;padding:5px 0;}
+.kbar-name{font-size:11px;font-weight:700;width:130px;flex-shrink:0;color:var(--text);}
+.kbar-bg{flex:1;height:7px;background:var(--gray);border-radius:4px;overflow:hidden;}
+.kbar-fill{height:100%;border-radius:4px;transition:width 0.4s;}
+.kbar-val{font-size:12px;font-weight:800;width:30px;text-align:right;flex-shrink:0;}
+.kbar-tag{font-size:10px;padding:1px 7px;border-radius:20px;font-weight:700;width:72px;text-align:center;flex-shrink:0;}
+
+/* ── INFO BOX ── */
+.ib{border-radius:var(--r);padding:0.875rem;margin-bottom:0.875rem;font-size:13px;line-height:1.7;}
+.ib-navy{background:var(--nl);border-left:4px solid var(--nm);color:var(--nd);}
+.ib-amber{background:var(--ab);border-left:4px solid var(--amber);color:var(--ad);}
+.ib-green{background:var(--gb);border-left:4px solid var(--gm);color:var(--green);}
+.ib-red{background:var(--rb);border-left:4px solid var(--rm);color:var(--red);}
+
+/* ── STUDENT PROFILE ── */
+.profile-header{background:var(--navy);border-radius:var(--rl);padding:1.25rem 1.5rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.ph-name{font-size:20px;font-weight:800;color:white;margin-bottom:4px;}
+.ph-meta{font-size:12px;color:rgba(255,255,255,0.65);}
+.ph-score{font-size:48px;font-weight:800;color:var(--gold);line-height:1;}
+.ph-score-label{font-size:11px;color:rgba(255,255,255,0.5);}
+.ph-code{font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(245,166,35,0.2);color:var(--gold);border:1px solid rgba(245,166,35,0.3);font-weight:700;font-family:monospace;}
+
+/* ── TABS ── */
+.tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:1.25rem;overflow-x:auto;}
+.tab{padding:0.75rem 1.25rem;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all 0.15s;flex-shrink:0;}
+.tab.active{color:var(--navy);border-bottom-color:var(--navy);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+
+/* ── CALIBRATION FORM ── */
+.cal-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+.cal-kpi{background:var(--gray);border-radius:var(--r);padding:1rem;}
+.cal-kpi-name{font-size:12px;font-weight:700;color:var(--navy);margin-bottom:8px;}
+.cal-stars{display:flex;gap:4px;}
+.cal-star{width:32px;height:32px;border-radius:6px;border:2px solid var(--border);background:white;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;font-weight:700;color:var(--t3);}
+.cal-star.active{border-color:var(--nm);background:var(--nm);color:white;}
+.cal-star:hover{border-color:var(--nm);}
+
+/* ── EXERCISE CARDS ── */
+.ex-card{border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:0.75rem;}
+.ex-head{background:var(--navy);padding:0.75rem 1rem;display:flex;align-items:center;justify-content:space-between;}
+.ex-title{font-size:13px;font-weight:700;color:white;}
+.ex-body{padding:1rem;}
+.ex-obj{background:var(--gray);border-radius:var(--r);padding:0.75rem;font-size:12px;color:var(--text);line-height:1.6;margin-bottom:0.75rem;}
+.ex-script{background:#FFF8F0;border-left:3px solid var(--amber);padding:0.75rem;border-radius:0 var(--r) var(--r) 0;margin-bottom:0.75rem;}
+.ex-script-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--amber);margin-bottom:4px;}
+.ex-script-text{font-size:12px;color:var(--ad);line-height:1.6;}
+
+/* ── CHART WRAPPER ── */
+.chart-wrap{position:relative;height:220px;margin-bottom:1rem;}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem;}
+.modal-bg.show{display:flex;}
+.modal{background:white;border-radius:var(--rl);padding:1.5rem;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
+.modal-title{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:1.25rem;display:flex;align-items:center;gap:8px;}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.form-group{margin-bottom:10px;}
+.form-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--t2);margin-bottom:4px;display:block;}
+select.inp{appearance:none;}
+textarea.inp{resize:vertical;min-height:80px;}
+
+/* ── SEARCH ── */
+.search-bar{display:flex;gap:8px;margin-bottom:1rem;}
+.search-inp{flex:1;padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--r);font-size:13px;font-family:inherit;}
+.search-inp:focus{outline:none;border-color:var(--nm);}
+
+/* ── RESOURCE MANAGER ── */
+.res-card{background:white;border:1px solid var(--border);border-radius:var(--r);padding:0.875rem;margin-bottom:0.5rem;display:flex;align-items:center;gap:10px;}
+.res-icon{width:36px;height:36px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.res-navy{background:var(--nl);color:var(--nm);}
+.res-green{background:var(--gb);color:var(--gm);}
+.res-amber{background:var(--ab);color:var(--amber);}
+.res-title{font-size:13px;font-weight:600;color:var(--text);}
+.res-meta{font-size:11px;color:var(--t2);}
+.res-actions{margin-left:auto;display:flex;gap:5px;}
+
+/* ── STUDENT PORTAL ── */
+.portal-wrap{max-width:700px;margin:0 auto;padding:1.25rem;}
+.portal-header{background:var(--navy);border-radius:var(--rl);padding:1.5rem;margin-bottom:1rem;text-align:center;}
+.portal-name{font-size:22px;font-weight:800;color:white;margin-bottom:4px;}
+.portal-code{font-size:12px;color:rgba(255,255,255,0.5);font-family:monospace;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--gm);color:white;padding:0.875rem 1.25rem;border-radius:var(--rl);font-size:13px;font-weight:600;z-index:999;display:none;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,0.2);}
+.toast.show{display:flex;}
+.toast.err{background:var(--rm);}
+
+/* ── LOADING ── */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;color:var(--t3);}
+.loading i{font-size:36px;margin-bottom:0.75rem;opacity:0.3;}
+.spin{animation:spin 1s linear infinite;display:inline-block;}
+
+.sect-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--t3);margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border);}
+.divider{height:1px;background:var(--border);margin:1rem 0;}
+.pill{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <img class="tb-logo" id="tb-logo" src="data:image/png;base64,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" alt="Kamuk School" style="height:46px;object-fit:contain;">
+  <div class="tb-div"></div>
+  <div>
+    <div class="tb-title">Kamuk Operational Engine</div>
+    <div class="tb-sub">Operational English Program · Studio Infinity CR</div>
+  </div>
+  <div class="tb-right" id="tb-right" style="display:none;">
+    <button class="btn btn-outline" style="background:transparent;color:white;border-color:rgba(255,255,255,0.3);padding:5px 10px;font-size:11px;" onclick="refreshData()" title="Actualizar datos" id="refresh-btn"><i class="ti ti-refresh"></i></button>
+    <button class="btn btn-outline" style="background:transparent;color:white;border-color:rgba(255,255,255,0.3);padding:5px 10px;font-size:11px;" onclick="goHome()" title="Inicio"><i class="ti ti-home"></i></button>
+    <span class="tb-user" id="tb-user"></span>
+    <span class="tb-role" id="tb-role-badge"></span>
+    <button class="btn btn-outline" style="background:transparent;color:white;border-color:rgba(255,255,255,0.3);padding:5px 10px;font-size:11px;" onclick="logout()"><i class="ti ti-logout"></i></button>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-wrap">
+    <div class="login-card">
+      <img class="login-logo" id="login-logo" src="data:image/png;base64,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" alt="Kamuk School" style="height:100px;object-fit:contain;">
+      <div class="login-title">Kamuk Operational Engine</div>
+      <div class="login-sub">Operational Engine · Powered by Studio Infinity CR · Powered by Nexus Method</div>
+      <div id="login-trainer">
+        <input class="inp" id="l-user" placeholder="Usuario (trainer@kamuk.cr)" type="email">
+        <input class="inp" id="l-pass" placeholder="Contraseña" type="password" onkeydown="if(event.key==='Enter')doLogin()">
+        <button class="btn btn-navy btn-block" onclick="doLogin()"><i class="ti ti-login"></i>Ingresar</button>
+      </div>
+      <div id="login-err" style="font-size:12px;color:var(--rm);margin-top:0.75rem;display:none;"></div>
+      <div style="font-size:11px;color:var(--t3);margin-top:1rem;text-align:center;">¿Eres estudiante? Accedé desde el <strong>Portal del Estudiante</strong> con tu usuario y contraseña.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app-wrap" id="app-wrap">
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div style="padding:1rem;border-bottom:1px solid var(--border);">
+      <div style="font-size:11px;color:var(--t3);margin-bottom:2px;">Infinity Studio CR</div>
+      <div style="font-size:13px;font-weight:700;color:var(--navy);" id="sb-name">—</div>
+    </div>
+    <div id="trainer-nav">
+      <div class="sb-section">Dashboard</div>
+      <div class="sb-item active" onclick="showView('dashboard',this)"><i class="ti ti-dashboard"></i>Overview</div>
+      <div class="sb-item" id="nav-students" onclick="showView('students',this)"><i class="ti ti-users"></i>Estudiantes<span class="sb-badge blue" id="sb-count">0</span></div>
+      <div class="sb-section">Mi clase</div>
+      <div class="sb-item" onclick="showView('kpitracker',this)"><i class="ti ti-refresh"></i>Weekly KPI Tracker</div>
+      <div class="sb-item" id="nav-assign-ex" onclick="showView('assign-exercises',this)"><i class="ti ti-dumbbell"></i>Asignar ejercicios</div>
+      <div class="sb-item" onclick="showView('exercises',this)"><i class="ti ti-books"></i>Catálogo Nexus</div>
+      <div class="sb-item" onclick="showView('calendar',this)"><i class="ti ti-calendar"></i>Calendario</div>
+      <div class="sb-item" onclick="showView('attendance',this)"><i class="ti ti-clipboard-check"></i>Asistencia</div>
+      <div class="sb-item" id="nav-my-profile" onclick="showView('my-profile',this)"><i class="ti ti-id-badge"></i>Mi perfil</div>
+      
+      <div class="sb-section">Analytics</div>
+      <div class="sb-item" onclick="showView('analytics',this)"><i class="ti ti-chart-bar"></i>Estadísticas</div>
+      <div class="sb-item" onclick="showView('reports',this)"><i class="ti ti-file-text"></i>Reportes</div>
+      <div class="sb-section" id="nav-master-section">Master</div>
+      <div class="sb-item" id="nav-resources" onclick="showView('resources',this)"><i class="ti ti-package"></i>Resource Manager</div>
+      <div class="sb-item" id="nav-users" onclick="showView('users',this)"><i class="ti ti-shield"></i>Gestión de usuarios</div>
+      <div class="sb-item" id="nav-roster" onclick="showView('roster',this)"><i class="ti ti-id-badge-2"></i>Trainer Roster</div>
+      <div class="sb-item" id="nav-crm" onclick="showView('crm',this)"><i class="ti ti-target-arrow"></i>CRM · Leads</div>
+      <div class="sb-item" id="nav-diagnostic" onclick="showView('diagnostic',this)"><i class="ti ti-clipboard-check"></i>Diagnóstico</div>
+
+      <div class="sb-item" id="nav-auditlog" onclick="showView('auditlog',this)"><i class="ti ti-history"></i>Log de auditoría</div>
+
+
+      <div class="sb-item" id="nav-nexus-kb" onclick="showView('nexus-kb',this)"><i class="ti ti-bulb"></i>Nexus AI · Base de conocimiento</div>
+
+      <div class="sb-item" onclick="showView('staffchat',this)"><i class="ti ti-messages"></i>Chat de Staff</div>
+
+      <div class="sb-item" id="nav-new-student" onclick="showModal('modal-new-student')"><i class="ti ti-user-plus"></i>Nuevo estudiante</div>
+      <div class="sb-section">Departamentos</div>
+
+
+
+
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="main" id="main-content">
+    <div class="loading"><i class="ti ti-loader spin"></i><span>Cargando...</span></div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-bg" id="modal-new-student">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-user-plus"></i>Nuevo estudiante</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Nombre</label><input class="inp" id="ns-fname" placeholder="Nombre"></div>
+      <div class="form-group"><label class="form-label">Apellido</label><input class="inp" id="ns-lname" placeholder="Apellido"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Email</label><input class="inp" id="ns-email" placeholder="email@ejemplo.com" type="email"></div>
+      <div class="form-group"><label class="form-label">Teléfono</label><input class="inp" id="ns-phone" placeholder="+506 0000-0000"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Programa</label>
+        <select class="inp" id="ns-program"><option>Individual</option><option>Corporate</option><option>Institutional</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Fee mensual (CRC)</label><input class="inp" id="ns-fee" placeholder="75000" type="number"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Observaciones iniciales</label><textarea class="inp" id="ns-obs" placeholder="Notas del trainer..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-new-student')">Cancelar</button>
+      <button class="btn btn-navy" onclick="createStudent()"><i class="ti ti-check"></i>Crear estudiante</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="modal-bg" id="modal-resource">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-plus"></i>Agregar recurso</div>
+    <div class="form-group"><label class="form-label">Título</label><input class="inp" id="res-title" placeholder="Nombre del recurso"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Tipo</label>
+        <select class="inp" id="res-type"><option>Video</option><option>Exercise</option><option>Reference</option><option>Simulation</option><option>Audio</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Fase Nexus</label>
+        <select class="inp" id="res-phase"><option value="1">Fase 1 — Arquitectura</option><option value="2">Fase 2 — Expansión</option><option value="3">Fase 3 — Naturalidad</option><option value="all">Todas</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">URL / Link</label><input class="inp" id="res-url" placeholder="https://..."></div>
+    <div class="form-group"><label class="form-label">KPI objetivo</label>
+      <select class="inp" id="res-kpi"><option value="all">Todos</option><option value="IG">IG — Idea Generation</option><option value="ST">ST — Structural Thinking</option><option value="RA">RA — Recovery Ability</option><option value="PS">PS — Problem Solving</option><option value="R">R — Responsiveness</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Descripción</label><textarea class="inp" id="res-desc" placeholder="Descripción del recurso..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-resource')">Cancelar</button>
+      <button class="btn btn-navy" onclick="saveResource()"><i class="ti ti-check"></i>Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-new-user">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-shield"></i>Usuario</div>
+    <div class="form-group"><label class="form-label">Nombre completo</label><input class="inp" id="nu-name" placeholder="Johnny Ramirez"></div>
+    <div class="form-group"><label class="form-label">Email (usuario)</label><input class="inp" id="nu-email" placeholder="trainer@kamuk.cr" type="email"></div>
+    <div class="form-group"><label class="form-label">Contraseña</label><input class="inp" id="nu-pass" placeholder="contraseña segura" type="password"></div>
+    <div class="form-group"><label class="form-label">Rol</label>
+      <select class="inp" id="nu-role"><option value="trainer">Trainer</option><option value="master">Master Trainer</option><option value="superadmin">Super Admin</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Departamento</label>
+      <select class="inp" id="nu-dept"><option value="training">Training Team</option><option value="admin">Administration</option><option value="marketing">Marketing</option><option value="misc">Miscellaneous</option></select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-new-user')">Cancelar</button>
+      <button class="btn btn-navy" id="nu-save-btn" onclick="createUser()"><i class="ti ti-check"></i>Guardar</button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- MODAL CONFIRMACION GENERICA -->
+<div class="modal-bg" id="modal-confirm">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-title"><i class="ti ti-alert-triangle" style="color:var(--rm);"></i><span id="confirm-title">Confirmar acción</span></div>
+    <div id="confirm-msg" style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:1rem;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-confirm')">Cancelar</button>
+      <button class="btn btn-red" id="confirm-ok-btn"><i class="ti ti-trash"></i>Sí, eliminar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL NOTICIA -->
+<div class="modal-bg" id="modal-news">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-news"></i>Nueva publicación</div>
+    <input type="hidden" id="news-dept">
+    <div class="form-group"><label class="form-label">Título</label><input class="inp" id="news-title" placeholder="Título del anuncio..."></div>
+    <div class="form-group"><label class="form-label">Contenido</label><textarea class="inp" id="news-body" placeholder="Escribí el anuncio..." style="min-height:120px;"></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-news')">Cancelar</button>
+      <button class="btn btn-navy" onclick="saveNews()"><i class="ti ti-check"></i>Publicar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL REGISTRAR PAGO -->
+<div class="modal-bg" id="modal-payment">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-cash"></i>Registrar pago</div>
+    <input type="hidden" id="pay-sid">
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Monto (CRC)</label><input class="inp" id="pay-amount" type="number" placeholder="75000"></div>
+      <div class="form-group"><label class="form-label">Fecha</label><input class="inp" id="pay-date" type="date"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Método</label>
+        <select class="inp" id="pay-method"><option>Transferencia</option><option>Efectivo</option><option>Tarjeta</option><option>SINPE</option><option>Otro</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Estado de pago</label>
+        <select class="inp" id="pay-status"><option value="current">Al día</option><option value="delayed">DELAYED</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Próximo vencimiento</label><input class="inp" id="pay-nextdue" type="date"></div>
+    <div class="form-group"><label class="form-label">Nota</label><textarea class="inp" id="pay-note" placeholder="Observaciones..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-payment')">Cancelar</button>
+      <button class="btn btn-navy" onclick="savePayment()"><i class="ti ti-check"></i>Guardar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL NUEVO LEAD -->
+<div class="modal-bg" id="modal-new-lead">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-target-arrow"></i>Nuevo lead</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Nombre completo</label><input class="inp" id="lead-name" placeholder="Nombre Apellido"></div>
+      <div class="form-group"><label class="form-label">Teléfono</label><input class="inp" id="lead-phone" placeholder="+506 0000-0000"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Email</label><input class="inp" id="lead-email" type="email" placeholder="email@ejemplo.com"></div>
+      <div class="form-group"><label class="form-label">Programa de interés</label>
+        <select class="inp" id="lead-program"><option>Individual</option><option>Corporate</option><option>Institutional</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Clasificación</label>
+      <select class="inp" id="lead-status"><option value="active">Active — paga de una vez</option><option value="prospecto">Prospecto — pide tiempo</option><option value="needs_plan">Needs Plan — bajo recursos</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Notas</label><textarea class="inp" id="lead-notes" placeholder="Contexto del contacto..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-new-lead')">Cancelar</button>
+      <button class="btn btn-navy" onclick="saveLead()"><i class="ti ti-check"></i>Crear lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ASIGNAR DIAGNOSTICO -->
+<div class="modal-bg" id="modal-assign-diagnostic">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-user-check"></i>Asignar diagnóstico</div>
+    <input type="hidden" id="ad-lid">
+    <div style="font-size:13px;color:var(--t2);margin-bottom:10px;">Lead: <strong id="ad-lead-name">—</strong></div>
+    <div class="form-group"><label class="form-label">Trainer asignado</label><select class="inp" id="ad-trainer"></select></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-assign-diagnostic')">Cancelar</button>
+      <button class="btn btn-navy" onclick="saveAssignDiagnostic()"><i class="ti ti-check"></i>Asignar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL EDITAR ESTUDIANTE -->
+<div class="modal-bg" id="modal-edit-student">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-edit"></i>Editar información del estudiante</div>
+    <input type="hidden" id="es-sid">
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Nombre completo</label><input class="inp" id="es-name"></div>
+      <div class="form-group"><label class="form-label">Email</label><input class="inp" id="es-email" type="email"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Teléfono</label><input class="inp" id="es-phone"></div>
+      <div class="form-group"><label class="form-label">Programa</label>
+        <select class="inp" id="es-program"><option>Individual</option><option>Corporate</option><option>Institutional</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Trainer asignado</label><select class="inp" id="es-trainer"></select></div>
+    <div class="form-group"><label class="form-label">Link de sesión (Google Meet/Zoom)</label><input class="inp" id="es-meetlink" placeholder="https://meet.google.com/xxx-xxxx-xxx"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Código personal</label>
+        <div style="display:flex;gap:6px;">
+          <input class="inp" id="es-code" placeholder="Ej: JOSMI-INF-4829" style="flex:1;text-transform:uppercase;">
+          <button class="btn btn-outline btn-sm" onclick="generateStudentCode()" title="Generar código"><i class="ti ti-refresh"></i></button>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Próximo vencimiento de pago</label><input class="inp" id="es-nextdue" type="date"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-edit-student')">Cancelar</button>
+      <button class="btn btn-navy" onclick="saveEditStudent()"><i class="ti ti-check"></i>Guardar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL COMPARTIR LINK -->
+<div class="modal-bg" id="modal-share">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-share"></i><span id="share-modal-title">Compartir</span></div>
+    <textarea class="inp" id="share-text" readonly style="min-height:120px;font-family:monospace;font-size:12px;" onclick="this.select()"></textarea>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-share')">Cerrar</button>
+      <button class="btn btn-green" id="share-whatsapp-btn"><i class="ti ti-brand-whatsapp"></i>Enviar por WhatsApp</button>
+      <button class="btn btn-navy" onclick="copyShareText()"><i class="ti ti-copy"></i>Copiar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL SWAP DE HORARIO -->
+<div class="modal-bg" id="modal-swap">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-replace"></i>Solicitar swap de horario</div>
+    <input type="hidden" id="swap-evid">
+    <div class="ib ib-navy" id="swap-evt-desc"></div>
+    <div class="form-group"><label class="form-label">Pasar a trainer</label><select class="inp" id="swap-target"></select></div>
+    <div class="form-group"><label class="form-label">Nota</label><textarea class="inp" id="swap-note" placeholder="Motivo del cambio..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-swap')">Cancelar</button>
+      <button class="btn btn-navy" onclick="saveSwapRequest()"><i class="ti ti-check"></i>Enviar solicitud</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL COMUNICADO GENERAL -->
+<div class="modal-bg" id="modal-broadcast">
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-title"><i class="ti ti-brand-whatsapp"></i>Comunicado general a trainers</div>
+    <div class="form-group"><label class="form-label">Mensaje</label><textarea class="inp" id="bc-text" placeholder="Escribí el comunicado para todo el equipo..." style="min-height:100px;"></textarea></div>
+    <div class="ib ib-navy">WhatsApp no permite envío masivo automático. Hacé clic en "Enviar" junto a cada trainer (abre WhatsApp Web con el mensaje listo) o usá "Enviar a todos" para abrirlos en secuencia.</div>
+    <div id="bc-list" style="max-height:280px;overflow-y:auto;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-broadcast')">Cerrar</button>
+      <button class="btn btn-navy" onclick="sendBroadcastAll()"><i class="ti ti-send"></i>Enviar a todos</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ANALISIS CON IA -->
+<div class="modal-bg" id="modal-ai-analysis">
+  <div class="modal" style="max-width:600px;">
+    <div class="modal-title"><i class="ti ti-robot"></i>Analizar con IA — Alice</div>
+    <input type="hidden" id="ai-sid">
+    <div class="ib ib-navy">Alice analiza los KPIs del estudiante, detecta patrones, diseña ejercicios nuevos y los asigna automáticamente al Training Book.</div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+      <button class="btn btn-navy" id="ai-run-btn" onclick="runAIAnalysis()"><i class="ti ti-robot"></i>Analizar ahora</button>
+      <span id="ai-status" style="font-size:12px;color:var(--t2);"></span>
+    </div>
+    <details style="margin-bottom:10px;">
+      <summary style="cursor:pointer;font-size:12px;color:var(--t3);">Respaldo manual (si Alice no responde)</summary>
+      <div class="form-group" style="margin-top:8px;"><label class="form-label">Prompt</label>
+        <textarea class="inp" id="ai-prompt-text" readonly style="min-height:120px;font-family:monospace;font-size:11px;" onclick="this.select()"></textarea>
+        <div style="display:flex;gap:8px;margin-top:6px;">
+          <button class="btn btn-outline btn-sm" onclick="copyAIPrompt()"><i class="ti ti-copy"></i>Copiar prompt</button>
+          <a class="btn btn-outline btn-sm" href="https://claude.ai" target="_blank"><i class="ti ti-external-link"></i>Abrir Claude.ai</a>
+        </div>
+      </div>
+    </details>
+    <div class="form-group"><label class="form-label">Respuesta de la IA (editable antes de guardar)</label>
+      <textarea class="inp" id="ai-response-text" placeholder="Acá aparece el análisis..." style="min-height:180px;"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-ai-analysis')">Cerrar</button>
+      <button class="btn btn-navy" onclick="saveAIAnalysis()"><i class="ti ti-device-floppy"></i>Guardar y asignar ejercicios</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL REPORTE VISUAL DEL ESTUDIANTE -->
+<div class="modal-bg" id="modal-visual-report">
+  <div class="modal" style="max-width:480px;max-height:90vh;overflow-y:auto;">
+    <div id="visual-report-content"></div>
+  </div>
+</div>
+
+<!-- MODAL NEXORA INDIVIDUAL -->
+<div class="modal-bg" id="modal-nexora-justify">
+  <div class="modal" style="max-width:500px;">
+    <div class="modal-title"><i class="ti ti-sparkles" style="color:#C084FC;"></i>Configurar Nexora para este estudiante</div>
+    <input type="hidden" id="nexora-sid">
+    <div class="ib ib-navy">Seleccioná el escenario de simulación. Alice asumirá ese rol cuando el estudiante entre a Nexora en su portal.</div>
+    <div class="form-group">
+      <label class="form-label">Tipo de simulación</label>
+      <select class="inp" id="nexora-type">
+        <option value="mock_interview">Mock Interview — Entrevista de trabajo</option>
+        <option value="customer_service">Customer Service — Atención al cliente</option>
+        <option value="team_meeting">Team Meeting — Reunión de equipo</option>
+        <option value="problem_solving">Problem Solving — Resolución de crisis</option>
+        <option value="presentation">Presentation — Presentación ejecutiva</option>
+        <option value="negotiation">Negotiation — Negociación</option>
+        <option value="stakeholder">Stakeholder Discussion — Con directivos</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Industria / Contexto</label>
+      <select class="inp" id="nexora-industry">
+        <option value="corporate">Corporate / Business</option>
+        <option value="tech">Technology</option>
+        <option value="healthcare">Healthcare / Medical</option>
+        <option value="education">Education</option>
+        <option value="finance">Finance / Banking</option>
+        <option value="hospitality">Hospitality / Tourism</option>
+        <option value="retail">Retail / Sales</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Dificultad</label>
+      <select class="inp" id="nexora-difficulty">
+        <option value="1">1 — Básico</option>
+        <option value="2">2 — Elemental</option>
+        <option value="3" selected>3 — Intermedio</option>
+        <option value="4">4 — Avanzado</option>
+        <option value="5">5 — Desafiante</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Justificación (opcional)</label>
+      <textarea class="inp" id="nexora-justify" placeholder="Por qué este estudiante está listo para Nexora..." style="min-height:70px;"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-nexora-justify')">Cancelar</button>
+      <button class="btn btn-navy" style="background:var(--kb);" onclick="confirmStudentNexora()"><i class="ti ti-sparkles"></i>Activar Nexora</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ROSTER TRAINER -->
+<div class="modal-bg" id="modal-roster">
+  <div class="modal" style="max-width:600px;">
+    <div class="modal-title"><i class="ti ti-id-badge"></i><span id="roster-modal-title">Perfil Trainer</span></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Nombre completo</label><input class="inp" id="rt-name" placeholder="Nombre completo"></div>
+      <div class="form-group"><label class="form-label">Edad</label><input class="inp" id="rt-age" placeholder="Ej: 32" type="number"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Teléfono</label><input class="inp" id="rt-phone" placeholder="+506 0000-0000"></div>
+      <div class="form-group"><label class="form-label">Email empresa</label><input class="inp" id="rt-email" placeholder="trainer@kamuk.cr"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Fecha de nacimiento</label><input class="inp" id="rt-birthday" type="date"></div>
+      <div class="form-group"><label class="form-label">Dirección</label><input class="inp" id="rt-address" placeholder="San José, Costa Rica"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Experiencia / Certificaciones</label><input class="inp" id="rt-exp" placeholder="Ej: 5 años, CELTA, TESOL..."></div>
+    <div class="form-group"><label class="form-label">Bio profesional</label><textarea class="inp" id="rt-bio" placeholder="Descripción profesional..."></textarea></div>
+    <div class="form-group"><label class="form-label">Hobbies</label><input class="inp" id="rt-hobbies" placeholder="Música, deportes, viajes..."></div>
+    <div class="form-group"><label class="form-label">Foto de perfil</label>
+      <input class="inp" id="rt-photo" placeholder="https://... (o subí un archivo)">
+      <div style="display:flex;align-items:center;gap:10px;margin-top:6px;">
+        <label class="btn btn-outline btn-sm" style="cursor:pointer;"><i class="ti ti-upload"></i>Subir desde mi computadora<input type="file" accept="image/*" id="rt-photo-file" style="display:none" onchange="handleRosterPhotoUpload(this)"></label>
+        <img id="rt-photo-preview" style="display:none;width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid var(--border);">
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Link de Meet/Zoom personal (para sesiones)</label><input class="inp" id="rt-meetlink" placeholder="https://meet.google.com/xxx-xxxx-xxx"></div>
+    <div class="form-group">
+      <label class="form-label">Acceso a Nexora 2.5 para mis estudiantes</label>
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--gray);border-radius:var(--r);padding:10px;">
+        <input type="checkbox" id="rt-nexora-enabled">
+        <div>
+          <div style="font-size:13px;font-weight:600;">Activar Nexora 2.5 para todos mis estudiantes</div>
+          <div style="font-size:11px;color:var(--t3);">Cuando está activado, tus estudiantes ven el tab "Nexora" en su portal. Desactivalo si querés que solo usen Alice como tutora estándar.</div>
+        </div>
+      </label>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-roster')">Cancelar</button>
+      <button class="btn btn-navy" id="rt-save-btn"><i class="ti ti-check"></i>Guardar perfil</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL ASIGNAR EJERCICIO AL TRAINING BOOK -->
+<div class="modal-bg" id="modal-assign-ex">
+  <div class="modal" style="max-width:620px;">
+    <div class="modal-title"><i class="ti ti-dumbbell"></i>Asignar ejercicio al Training Book</div>
+    <div class="form-group"><label class="form-label">Estudiante</label><select class="inp" id="ae-student"></select></div>
+    <div class="form-group"><label class="form-label">Tipo de ejercicio</label>
+      <select class="inp" id="ae-type" onchange="toggleExType()">
+        <option value="catalog">Del catálogo Nexus (5 KPIs base)</option>
+        <option value="kpi26">Del catálogo de 26 KPIs (Weekly Tracker)</option>
+        <option value="custom">Ejercicio personalizado</option>
+      </select>
+    </div>
+    <div id="ae-kpi26-block" style="display:none;">
+      <div class="form-group"><label class="form-label">KPI (1-26)</label><select class="inp" id="ae-kpi26" onchange="prefillStudentTaskFromKPI26()"></select></div>
+    </div>
+    <div id="ae-catalog-block">
+      <div class="form-group"><label class="form-label">Ejercicio del catálogo</label><select class="inp" id="ae-catalog" onchange="prefillStudentTaskFromCatalog()"></select></div>
+    </div>
+    <div id="ae-custom-block" style="display:none;">
+      <div class="form-group"><label class="form-label">Título del ejercicio</label><input class="inp" id="ae-custom-title" placeholder="Nombre del ejercicio..."></div>
+      <div class="form-group"><label class="form-label">KPI objetivo</label>
+        <select class="inp" id="ae-custom-kpi"><option value="IG">IG — Idea Generation</option><option value="ST">ST — Structural Thinking</option><option value="RA">RA — Recovery Ability</option><option value="PS">PS — Problem Solving</option><option value="R">R — Responsiveness</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Objetivo</label><textarea class="inp" id="ae-custom-obj" placeholder="¿Qué debe lograr el estudiante?"></textarea></div>
+      <div class="form-group"><label class="form-label">Script / Instrucciones</label><textarea class="inp" id="ae-custom-script" placeholder="Pasos detallados..."></textarea></div>
+      <div class="form-group"><label class="form-label">Frecuencia</label><input class="inp" id="ae-custom-freq" placeholder="Ej: 3x por semana, 10 minutos"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Nota personalizada para este estudiante</label><textarea class="inp" id="ae-note" placeholder="Instrucción específica, contexto, ajuste para este estudiante..."></textarea></div>
+    <div class="form-group"><label class="form-label">Instrucción para el estudiante (esto es lo único que él va a ver en su Training Book)</label><textarea class="inp" id="ae-student-task" placeholder="Ej: Practicá expandir tus respuestas usando 'because' y 'on top of that'..."></textarea></div>
+    <div class="form-group"><label class="form-label">Semana asignada</label><input class="inp" id="ae-week" type="date"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-assign-ex')">Cancelar</button>
+      <button class="btn btn-navy" onclick="saveAssignExercise()"><i class="ti ti-check"></i>Asignar al Training Book</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CALENDARIO -->
+<div class="modal-bg" id="modal-calendar">
+  <div class="modal" style="max-width:540px;">
+    <div class="modal-title"><i class="ti ti-calendar-plus"></i>Nuevo evento — Calendario interno</div>
+    <div class="form-group"><label class="form-label">Tipo de evento</label>
+      <select class="inp" id="cal-ev-type" onchange="toggleCalEvType()"><option value="session">Sesión con estudiante</option><option value="calibration">Calibración</option><option value="evaluation">Evaluación</option><option value="internal">Actividad interna (sin estudiante)</option></select>
+    </div>
+    <div class="form-row" id="cal-ev-student-row">
+      <div class="form-group"><label class="form-label">Estudiante</label><select class="inp" id="cal-ev-student"></select></div>
+      <div class="form-group"><label class="form-label">Trainer / Responsable</label><select class="inp" id="cal-ev-trainer"></select></div>
+    </div>
+    <div class="form-group" id="cal-ev-title-row" style="display:none;"><label class="form-label">Título de la actividad</label><input class="inp" id="cal-ev-title" placeholder="Ej: Reunión de equipo, capacitación..."></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Fecha</label><input class="inp" id="cal-ev-date" type="date"></div>
+      <div class="form-group"><label class="form-label">Hora</label><input class="inp" id="cal-ev-time" type="time" value="09:00"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notas</label><textarea class="inp" id="cal-ev-notes" placeholder="Opcional..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-calendar')">Cancelar</button>
+      <button class="btn btn-navy" onclick="saveCalendarEvent()"><i class="ti ti-check"></i>Guardar evento</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ASIGNAR RECURSO A ESTUDIANTE -->
+<div class="modal-bg" id="modal-assign-resource">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-books"></i>Asignar recurso a estudiante</div>
+    <div class="form-group"><label class="form-label">Recurso</label><select class="inp" id="ar-resource"></select></div>
+    <div class="form-group"><label class="form-label">Estudiante</label><select class="inp" id="ar-student"></select></div>
+    <div class="form-group"><label class="form-label">Nota para el estudiante</label><textarea class="inp" id="ar-note" placeholder="Opcional..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-assign-resource')">Cancelar</button>
+      <button class="btn btn-navy" onclick="saveAssignResource()"><i class="ti ti-check"></i>Asignar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPA_URL = 'https://lbspgbeqtcnjrbhiuucu.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxic3BnYmVxdGNuanJiaGl1dWN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwNDgzNzgsImV4cCI6MjA5NjYyNDM3OH0.j1NRrwxmCVipIlHgEPhkdQQfnhMZVK713mFq8LnvufM';
+
+
+// ── CREDENTIALS ──────────────────────────────────────────
+var TRAINERS = {};
+
+async function loadUsers(){
+  try{
+    var rows = await dbGet('kamuk_users');
+    TRAINERS = {};
+    rows.forEach(function(r){ if(r.data) TRAINERS[r.data.email]=r.data; });
+    // Seed master if empty
+    if(!Object.keys(TRAINERS).length){
+      var master = {id:'USR-MASTER-001',email:'trainer@kamuk.cr',pass:'kamuk2025',name:'Johnny Ramirez',role:'superadmin',department:'admin',status:'active'};
+      await dbSet('kamuk_users','USR-MASTER-001',master);
+      TRAINERS['trainer@kamuk.cr']=master;
+    }
+  }catch(e){ console.error('loadUsers error',e); }
+}
+
+// ── STATE ─────────────────────────────────────────────────
+var SESSION = null;
+var DB = {};
+var RESOURCES = {};
+var CAL_ID = null;
+var CAL_SCORES = {};
+var currentView = 'dashboard';
+var CHART_REF = null;
+var FILTER_STATE = { search: '', level: '', phase: '' };
+
+// ── NEXUS DATA ────────────────────────────────────────────
+var KPI_NAMES = { IG:'Idea Generation', ST:'Structural Thinking', RA:'Recovery Ability', PS:'Problem Solving', R:'Responsiveness' };
+var KPI_COLORS = { 1:'#A32D2D', 2:'#C0542A', 3:'#BA7517', 4:'#5A9E6F', 5:'#0F6E56' };
+var KPI_TAGS = { 1:['var(--rb)','var(--rm)','Critical'], 2:['#FEF0ED','#7A2E1B','Weak'], 3:['var(--ab)','var(--ad)','Developing'], 4:['#E8F5EE','#2D6A40','Good'], 5:['var(--gb)','var(--gm)','Strong'] };
+var PHASE_NAMES = { 1:'Phase 1 — Arquitectura', 2:'Phase 2 — Expansión', 3:'Phase 3 — Naturalidad', 4:'Completado' };
+
+var EXERCISES = {
+  IG_critical:{ title:'Idea Expansion Drill', kpi:'IG', priority:'CRITICAL', nexus:'Phase 1', objective:'Eliminar respuestas de una sola oración. Instalar el hábito de expandir cada idea sin que el trainer lo pida.', script:'Trainer hace una pregunta abierta. Si la respuesta es menor a 3 oraciones, el trainer dice únicamente: "Keep going." — Nunca reformular, nunca ayudar.', steps:['Pregunta: "What did you do yesterday?"','Mínimo 3 oraciones conectadas','Estructura: Idea + Linker + Expansión + Linker + Cierre','Semana 2: elevar mínimo a 5 oraciones'], good:'"I went to work yesterday, which was actually quite demanding. However, I managed to finish everything on time. As a result, I felt really productive by the end of the day."', freq:'Cada sesión — primeros 10 minutos.', studentTask:"Cada día, elegí una pregunta simple (¿Qué hiciste ayer? ¿Qué te gusta de tu trabajo?) y respondela EN VOZ ALTA con mínimo 3 oraciones conectadas, usando la estructura Idea + Conector + Expansión + Conector + Cierre. Escribí en tu cuaderno lo que dijiste y subrayá los conectores que usaste." },
+  IG_developing:{ title:'1-Minute Monologue', kpi:'IG', priority:'HIGH', nexus:'Phase 2', objective:'Sostener 1 minuto de discurso continuo sin input del trainer.', script:'Timer de 60 segundos visible. Trainer NO interrumpe. Después: contar ideas distintas.', steps:['Semana 1: temas familiares','Semana 2: temas moderados','Semana 3: temas abstractos'], good:'"Customer service is the backbone of any business. The thing is, when a client calls, they already have a problem — so the agent job is to solve it."', freq:'3x por semana — 5 minutos.', studentTask:"Grabate con el celular hablando 1 minuto sin parar sobre un tema simple (tu rutina, tu trabajo, tu familia). Escuchalo y anotá en tu cuaderno: ¿dónde te trabaste? ¿qué palabra te faltó? Al día siguiente repetilo sobre un tema un poco más abstracto (una opinión, una decisión que tomaste)." },
+  ST_critical:{ title:'Idea + Linker + Idea', kpi:'ST', priority:'CRITICAL', nexus:'Phase 1', objective:'Instalar el patrón core de Nexus. Sin oraciones aisladas. Nunca.', script:'Cada oración aislada (sin conector) = trainer golpea la mesa una vez. Estudiante agrega conector y continúa sin reiniciar.', steps:['Semana 1: Añadir — furthermore, in addition, as well','Semana 2: Contrastar — however, despite this','Semana 3: Causa/resultado — because, as a result','Tarea: 10 oraciones conectadas diarias'], good:'"I work in customer service, which means that I have to speak English every day. However, it can be challenging because clients often speak very fast."', freq:'Tarea diaria + aplicado en todo intercambio oral.', studentTask:"Escribí 10 oraciones conectando 2 ideas con un conector distinto cada vez (however, despite this, furthermore, because, as a result...). Después decilas en voz alta, una por una, sin leer — solo viendo el conector como guía." },
+  ST_developing:{ title:'Anécdota Escrita — Protocolo Nexus', kpi:'ST', priority:'HIGH', nexus:'Phase 2', objective:'Aplicar estructura de discurso completa en 15 minutos.', script:'Parte 1: Escribe 15 min. Parte 2 (Oral): Lee en voz alta. Trainer interrumpe: "Tell it in past perfect."', steps:['Tema: fracaso / injusticia / decisión difícil','REQUERIDO: mínimo 5 conectores de categorías diferentes','REQUERIDO: mínimo 5 expresiones naturales','REQUERIDO: mínimo 12 líneas'], good:'"Actually, I underestimated the situation. The thing is, I thought it was manageable; however, I completely misunderstood the instructions."', freq:'1x por semana como ejercicio principal.', studentTask:"Elegí un tema (un fracaso, una decisión difícil, algo injusto que viviste) y escribí mínimo 12 líneas usando al menos 5 conectores distintos y 5 expresiones nuevas. Después contalo en voz alta usando tu texto como guía, sin leerlo palabra por palabra." },
+  RA_critical:{ title:'No Freeze Protocol — Regla de 3 Segundos', kpi:'RA', priority:'CRITICAL', nexus:'Phase 1', objective:'Eliminar el freeze response permanentemente.', script:'Timer visible. Trainer dispara pregunta o término. Estudiante tiene 3 segundos para producir CUALQUIER palabra. Una respuesta incorrecta NO es falla. Silencio SÍ es falla.', steps:['Enseñar técnicas de sustitución primero','1. "Something similar to..." + descripción','2. "The thing that does..." + función','3. "A kind of... that..." + categoría + feature'], good:'"Amortization is something similar to a payment schedule — the thing that shows how your loan balance decreases over time."', freq:'Cada sesión — primeros 5 minutos.', studentTask:"Elegí 5 objetos o conceptos de tu casa o trabajo. Practicá describirlos EN VOZ ALTA sin decir la palabra exacta, usando: 'something similar to...', 'the thing that does...', 'a kind of... that...'." },
+  RA_developing:{ title:'Vocabulary Substitution', kpi:'RA', priority:'HIGH', nexus:'Phase 1-2', objective:'Reemplazar cualquier palabra desconocida con una descripción profesional.', script:'10 términos profesionales. Estudiante explica cada uno. No puede decir "I do not know".', steps:['Técnica: "Think of it as..." / "Essentially what happens is..."','Semana 1: términos financieros básicos','Semana 2: conceptos abstractos'], good:'"Think of it as a short window of time after your due date where you can still pay without a penalty."', freq:'2x por semana — 10 minutos.', studentTask:"Elegí un término técnico de tu trabajo y practicá explicarlo con tus propias palabras en voz alta usando 'Think of it as...' o 'Essentially what happens is...'. Hacelo con 2-3 términos por semana." },
+  PS_critical:{ title:'4-Turn Resolution Framework', kpi:'PS', priority:'CRITICAL', nexus:'Phase 2', objective:'Construir una estructura de 4 turnos confiable para cualquier problema.', script:'Trainer juega el cliente. Estudiante debe resolver en 4 turnos. Trainer NO facilita. Estudiante no puede transferir la llamada.', steps:['T1 — ACKNOWLEDGE: "I understand that [problema]. I sincerely apologize."','T2 — INVESTIGATE: "Let me check. Could you confirm [detalle]?"','T3 — PROPOSE: "What I can do is [solución]."','T4 — CONFIRM: "Does that work? Anything else I can help with?"'], good:'"T1: I completely understand. T2: Let me pull up your account. T3: I am going to reverse that charge immediately. T4: Done — is there anything else?"', freq:'1x por semana — simulación completa 15 minutos.', studentTask:"Inventá un problema y practicá esta secuencia EN VOZ ALTA, 3 veces: 1) 'I understand that... I sincerely apologize.' 2) 'Let me check, could you confirm...?' 3) 'What I can do is...' 4) 'Does that work? Anything else I can help with?'. Escribí el problema en tu cuaderno primero." },
+  PS_developing:{ title:'Escalation De-escalation', kpi:'PS', priority:'HIGH', nexus:'Phase 2-3', objective:'Comunicar soluciones profesionalmente bajo presión emocional.', script:'Trainer escala progresivamente: T1 frustración leve, T2 claramente molesto, T3 exige manager, T4 amenaza cancelar.', steps:['T1: "Hi, I have a billing issue for a week."','T2: "This is ridiculous. I called three times."','T3: "I want to speak to your manager right now."','T4: "Fine. Cancel my account."'], good:'Empatía sin sumisión. Solución en cada turno. Retención intentada en T4.', freq:'1x por semana — después de que PS foundation esté sólido.', studentTask:"Practicá en voz alta el rol de un cliente molesto ('This is ridiculous, I've called three times', 'I want to speak to your manager'). Después cambiá de rol y respondé esas quejas usando las frases de PS_critical." },
+  R_critical:{ title:'Rapid Fire — 10 Preguntas en 2 Minutos', kpi:'R', priority:'CRITICAL', nexus:'Phase 1', objective:'Construir velocidad de respuesta en temas familiares.', script:'Una pregunta cada 12 segundos. Timer visible. Trainer NO reacciona — dispara la siguiente a los 12 segundos.', steps:['Q1: What is your name? Q2: Where do you work?','Q3: What time do you start? Q4: What did you do yesterday?','Q5: What is your biggest work challenge?','Q6: How do you handle a difficult client?','Semana 2: reemplazar familiares con escenarios profesionales'], good:'Cualquier respuesta completa dentro de 12 segundos.', freq:'Cada sesión — primeros 5 minutos como warm-up.', studentTask:"Practicá responder rápido y en voz alta: ¿Cómo te llamás? ¿Dónde trabajás? ¿A qué hora empezás? ¿Qué hiciste ayer? ¿Cuál es tu mayor reto en el trabajo? ¿Cómo manejás a un cliente difícil? Cronometrá cuánto tardás en empezar a hablar y tratá de reducirlo cada semana." },
+  R_developing:{ title:'Natural Pace Training', kpi:'R', priority:'HIGH', nexus:'Phase 2', objective:'Entrenar al estudiante a igualar la velocidad natural del inglés sin pedir acomodaciones.', script:'Trainer habla a velocidad NATURAL completa. Estudiante no puede pedir que hablen más despacio.', steps:['Enseñar técnicas de stalling:','"Just to make sure I understood..." (gana 3 segundos)','"That is a great point. Let me address that..." (gana 5 segundos)','Conversación de 5 minutos a velocidad natural'], good:'Estudiante usa técnica de stalling y continúa sin romper el flujo.', freq:'2x por semana — 5 a 10 minutos.', studentTask:"Practicá frases para ganar tiempo mientras pensás: 'Just to make sure I understood...' y 'That's a great point, let me address that...'. Usalas en una conversación de 5 minutos cada vez que necesites un segundo para pensar." },
+};
+
+// ── DB ────────────────────────────────────────────────────
+async function dbGet(table){ const r=await fetch(SUPA_URL+'/rest/v1/'+table+'?select=id,data',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}); if(!r.ok){ var t=await r.text(); console.error('dbGet '+table+' failed: '+r.status+' '+t); showToast('Error leyendo '+table+': '+r.status,'err'); return []; } return await r.json(); }
+async function dbSet(table,id,data){
+  const r = await fetch(SUPA_URL+'/rest/v1/'+table,{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},body:JSON.stringify({id,data,updated_at:new Date().toISOString()})});
+  if(!r.ok){
+    var t=await r.text();
+    console.error('dbSet '+table+' failed: '+r.status+' '+t);
+    showToast('NO SE GUARDÓ ('+table+'): '+r.status+' — '+t.substring(0,120),'err');
+    return false;
+  }
+  return true;
+}
+async function dbDel(table,id){ const r=await fetch(SUPA_URL+'/rest/v1/'+table+'?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}); if(!r.ok){ var t=await r.text(); console.error('dbDel '+table+' failed: '+r.status+' '+t); showToast('Error eliminando: '+r.status,'err'); return false; } return true; }
+
+// ── INIT ──────────────────────────────────────────────────
+window.addEventListener('error', function(e){
+  console.error('Global error:', e.error||e.message);
+  try{ showToast('ERROR: '+(e.message||(e.error&&e.error.message)||'desconocido'), 'err'); }catch(x){}
+});
+window.addEventListener('unhandledrejection', function(e){
+  console.error('Unhandled promise rejection:', e.reason);
+  try{ showToast('ERROR: '+((e.reason&&e.reason.message)||e.reason||'promesa rechazada'), 'err'); }catch(x){}
+});
+
+
+
+
+async function loadData(){
+  await loadUsers();
+  await loadRoster();
+  await loadCalendar();
+  await loadAuditLog();
+  await loadNews();
+  await loadSwaps();
+  await loadNexusKB();
+  await loadAttendance();
+  await loadStaffChat();
+  var rows = await dbGet('kamuk_students');
+  DB = {};
+  rows.forEach(function(r){ if(r.data) DB[r.id]=r.data; });
+  var vrows = await dbGet('kamuk_videos');
+  RESOURCES = {};
+  vrows.forEach(function(r){ if(r.data) RESOURCES[r.id]=r.data; });
+  document.getElementById('sb-count').textContent = allStudents().length;
+}
+
+// ── LOGIN ─────────────────────────────────────────────────
+async function doLogin(){
+  var user = document.getElementById('l-user').value.trim().toLowerCase();
+  var pass = document.getElementById('l-pass').value;
+  var err = document.getElementById('login-err');
+
+  // Fallback master hardcodeado — siempre funciona
+  var MASTER_FALLBACK = { email:'admin@kamuk.cr', pass:'admin2025', name:'Admin Kamuk', role:'superadmin' };
+var KAMUK_MASTERS = [
+  {email:'trainer@kamuk.cr',pass:'kamuk2025',name:'Trainer Kamuk',role:'trainer'},
+  {email:'master@kamuk.cr',pass:'master2025',name:'Master Trainer',role:'master'},
+  {email:'admin@kamuk.cr',pass:'admin2025',name:'Admin Kamuk',role:'superadmin'}
+];
+  if(user === MASTER_FALLBACK.email && pass === MASTER_FALLBACK.pass){
+    SESSION = { user, name: MASTER_FALLBACK.name, role: MASTER_FALLBACK.role };
+    await loadData();
+    SESSION.code = getTrainerCode(user);
+    startApp();
+    return;
+  }
+
+  await loadUsers();
+  var trainer = TRAINERS[user];
+  if(!trainer || trainer.pass !== pass){
+    err.textContent = 'Usuario o contraseña incorrectos.';
+    err.style.display = 'block';
+    return;
+  }
+  if(trainer.status === 'suspended'){
+    err.textContent = 'Tu acceso ha sido suspendido. Contactá al Master Trainer.';
+    err.style.display = 'block';
+    return;
+  }
+  SESSION = { user, name: trainer.name, role: trainer.role, department: trainer.department };
+  await loadData();
+  SESSION.code = getTrainerCode(user);
+  await logAction('Inicio de sesión', trainer.email);
+  startApp();
+}
+
+function startApp(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app-wrap').classList.add('show');
+  document.getElementById('tb-right').style.display='flex';
+  document.getElementById('tb-user').textContent = SESSION.name;
+  document.getElementById('tb-role-badge').textContent = hasMasterAccess()?'Master Trainer':'Trainer';
+  document.getElementById('tb-role-badge').className = 'tb-role '+(hasMasterAccess()?'role-master':'role-trainer');
+  document.getElementById('sb-name').textContent = SESSION.name;
+  if(!hasMasterAccess()){
+    // Trainer: ocultar sección Master y sus items
+    document.getElementById('nav-users').style.display='none';
+    document.getElementById('nav-master-section').style.display='none';
+    document.getElementById('nav-crm').style.display='none';
+    document.getElementById('nav-finance').style.display='none';
+    document.getElementById('nav-auditlog').style.display='none';
+    document.getElementById('nav-avail-overview').style.display='none';
+    document.getElementById('nav-broadcast').style.display='none';
+    document.getElementById('nav-nexus-kb').style.display='none';
+    document.getElementById('nav-ops').style.display='none';
+    document.getElementById('nav-new-student').style.display='none';
+    // Trainer: solo ve sus propios estudiantes
+    document.getElementById('nav-students').onclick = function(){ showView('my-students', this); };
+  }
+  if(SESSION.role!=='superadmin'){
+    document.getElementById('nav-transcripts').style.display='none';
+  }
+  // Departamentos: visibilidad según rol/depto del usuario
+  var myDept = SESSION.department || (hasMasterAccess()?'admin':'training');
+  if(!hasMasterAccess() && myDept!=='admin') document.getElementById('nav-dept-admin').style.display='none';
+  if(!hasMasterAccess() && myDept!=='training') document.getElementById('nav-dept-training').style.display='none';
+  if(!hasMasterAccess() && myDept!=='marketing') document.getElementById('nav-dept-marketing').style.display='none';
+  showView('dashboard', document.querySelector('.sb-item'));
+}
+
+function logout(){
+  SESSION=null; DB={}; RESOURCES={};
+  document.getElementById('app-wrap').classList.remove('show');
+  document.getElementById('login-screen').style.display='block';
+  document.getElementById('tb-right').style.display='none';
+  document.getElementById('l-user').value='';
+  document.getElementById('l-pass').value='';
+  document.getElementById('login-err').style.display='none';
+}
+
+// ── NAVIGATION ────────────────────────────────────────────
+async function refreshData(){
+  var btn = document.getElementById('refresh-btn');
+  if(btn) btn.querySelector('i').className = 'ti ti-loader spin';
+  try{
+    await loadData();
+    var cv = currentView;
+    var m = document.getElementById('main-content');
+    if(cv && cv.indexOf('student-')===0) openStudent(cv.substring(8));
+    else if(cv && cv.indexOf('weekly-')===0) renderWeeklyAssessment(m, cv.substring(7));
+    else if(cv && cv.indexOf('kpitracker-')===0) renderKPITracker(m, cv.substring(11));
+    else if(cv && cv.indexOf('pricing-')===0) renderPricingSchedule(m, cv.substring(8));
+    else showView(cv, document.querySelector('.sb-item.active'));
+    showToast('Datos actualizados');
+  }catch(e){
+    showToast('Error al actualizar: '+(e.message||e),'err');
+  }
+  if(btn) btn.querySelector('i').className = 'ti ti-refresh';
+}
+
+function showView(view, btn){
+  if(currentView !== 'students' && view !== 'students') {
+    // only reset if we're actually leaving students
+  }
+  if(view !== 'students') FILTER_STATE = { search: '', level: '', phase: '' };
+  currentView = view;
+  document.querySelectorAll('.sb-item').forEach(function(i){ i.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+  var m = document.getElementById('main-content');
+  if(view==='dashboard') renderDashboard(m);
+  else if(view==='students') renderStudents(m);
+  else if(view==='calibrate') renderCalibrateSelect(m);
+  else if(view==='kpitracker') renderKPITrackerSelect(m);
+  else if(view==='exercises') renderExercises(m);
+  else if(view==='analytics') renderAnalytics(m);
+  else if(view==='reports') renderReports(m);
+  else if(view==='resources') renderResources(m);
+  else if(view==='users') renderUsers(m);
+  else if(view==='roster') renderRoster(m);
+  else if(view==='calendar') renderCalendar(m);
+  else if(view==='my-students') renderMyStudents(m);
+  else if(view==='my-profile') renderMyProfile(m);
+  else if(view==='assign-exercises') renderAssignExercises(m);
+  else if(view==='auditlog') renderAuditLog(m);
+  else if(view==='dept-admin') renderDepartment(m,'admin');
+  else if(view==='dept-training') renderDepartment(m,'training');
+  else if(view==='dept-marketing') renderDepartment(m,'marketing');
+  else if(view==='dept-misc') renderDepartment(m,'misc');
+  else if(view==='diagnostic') renderDiagnostic(m);
+  else if(view==='availability') renderAvailability(m);
+  else if(view==='attendance') renderAttendanceView(m);
+  else if(view==='avail-overview') renderAvailabilityOverview(m);
+  else if(view==='nexus-kb') renderNexusKB(m);
+  else if(view==='ops') renderOpsOverview(m);
+  else if(view==='staffchat') renderStaffChat(m);
+  else if(view==='dashboard') renderDashboard_Admin(m);
+  else if(view==='chattranscripts') renderChatTranscripts(m);
+  else if(view==='crm') renderCRM(m);
+  else if(view==='finance') renderFinance(m);
+}
+
+// ── HELPERS ───────────────────────────────────────────────
+function getLevelBadge(level){ return '<span class="badge b-'+((level||'').toLowerCase())+'">'+level+'</span>'; }
+function getPhaseBadge(p){ return '<span class="badge b-p'+p+'">'+( PHASE_NAMES[p]||'—')+'</span>'; }
+function getScore(s){ var kpis=(s.kpis||{}).phase1||{}; var t=0; Object.keys(KPI_NAMES).forEach(function(k){t+=parseInt(kpis[k])||0;}); return t; }
+function getLevel(score){ return score>=21?'Advanced':score>=16?'Functional':score>=11?'Emerging':'Survival'; }
+function getWeakKPI(s){ var kpis=(s.kpis||{}).phase1||{}; var min=6,kpi=''; Object.keys(KPI_NAMES).forEach(function(k){ var v=parseInt(kpis[k])||0; if(v>0&&v<min){min=v;kpi=k;} }); return kpi; }
+function getExercises(s){ var kpis=(s.kpis||{}).phase1||{}; var ex=[]; var sorted=Object.keys(KPI_NAMES).sort(function(a,b){return (parseInt(kpis[a])||0)-(parseInt(kpis[b])||0);}); sorted.forEach(function(k){ var v=parseInt(kpis[k])||0; var key=v<=2?k+'_critical':v<=3?k+'_developing':null; if(key&&EXERCISES[key]) ex.push(EXERCISES[key]); }); return ex.slice(0,5); }
+function genCode(fname,lname){ var n=(fname||'').substring(0,2).toUpperCase(); var l=(lname||'').substring(0,3).toUpperCase(); var num=Math.floor(1000+Math.random()*8999); return n+l+'-INF-'+num; }
+function fmtDate(d){ if(!d) return '—'; var dt=new Date(d); return dt.toLocaleDateString('es-CR'); }
+
+// ── DASHBOARD ─────────────────────────────────────────────
+function renderDashboard(m){
+  var students = allStudents();
+  var total = students.length;
+  var adv = students.filter(function(s){ return getLevel(getScore(s))==='Advanced'; }).length;
+  var func = students.filter(function(s){ return getLevel(getScore(s))==='Functional'; }).length;
+  var emerg = students.filter(function(s){ return getLevel(getScore(s))==='Emerging'; }).length;
+  var surv = students.filter(function(s){ return getLevel(getScore(s))==='Survival'; }).length;
+
+  var recent = students.slice(-5).reverse();
+
+  m.innerHTML = '<div class="fade">'
+    +'<div class="grid4" style="margin-bottom:1rem;">'
+    +'<div class="stat"><div class="stat-label">Total estudiantes</div><div class="stat-val">'+total+'</div><div class="stat-sub">Infinity ecosystem</div></div>'
+    +'<div class="stat"><div class="stat-label">Advanced</div><div class="stat-val" style="color:var(--gm);">'+adv+'</div><div class="stat-sub">'+(total?Math.round(adv/total*100):0)+'% del total</div></div>'
+    +'<div class="stat"><div class="stat-label">Functional</div><div class="stat-val" style="color:var(--amber);">'+func+'</div><div class="stat-sub">'+(total?Math.round(func/total*100):0)+'% del total</div></div>'
+    +'<div class="stat"><div class="stat-label">Emerging / Survival</div><div class="stat-val" style="color:var(--rm);">'+(emerg+surv)+'</div><div class="stat-sub">Requieren atención</div></div>'
+    +'</div>'
+    +'<div class="grid2">'
+    +'<div class="card"><div class="card-title"><i class="ti ti-chart-pie"></i>Distribución de niveles</div><div class="chart-wrap"><canvas id="chart-levels"></canvas></div></div>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-clock"></i>Actividad reciente</div>'
+    +(recent.length?recent.map(function(s){ return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">'
+      +'<div style="width:32px;height:32px;border-radius:50%;background:var(--nl);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--nm);flex-shrink:0;">'+(s.info&&s.info.name?s.info.name.charAt(0):'?')+'</div>'
+      +'<div><div style="font-size:13px;font-weight:600;">'+((s.info&&s.info.name)||'—')+'</div><div style="font-size:11px;color:var(--t2);">'+getLevel(getScore(s))+' · Score '+getScore(s)+'/25</div></div>'
+      +'<button class="btn btn-outline btn-sm" style="margin-left:auto;" onclick="openStudent(\''+s.id+'\')"><i class="ti ti-arrow-right"></i></button>'
+      +'</div>'; }).join(''):'<div style="font-size:13px;color:var(--t3);padding:1rem 0;">No hay estudiantes aún.</div>')
+    +'</div></div>'
+    +'</div>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-alert-triangle"></i>Estudiantes que requieren atención</div>'
+    +(students.filter(function(s){return getScore(s)<=15;}).length
+      ?'<table class="tbl"><thead><tr><th>Nombre</th><th>Score</th><th>Nivel</th><th>KPI crítico</th><th>Fase</th><th>Acción</th></tr></thead><tbody>'
+        +students.filter(function(s){return getScore(s)<=15;}).map(function(s){
+          var wk=getWeakKPI(s);
+          return '<tr onclick="openStudent(\''+s.id+'\')">'
+            +'<td><strong>'+((s.info&&s.info.name)||'—')+'</strong></td>'
+            +'<td style="color:var(--rm);font-weight:700;">'+getScore(s)+'/25</td>'
+            +'<td>'+getLevelBadge(getLevel(getScore(s)))+'</td>'
+            +'<td>'+(wk?'<span class="badge" style="background:var(--rb);color:var(--rm);">'+wk+' — '+KPI_NAMES[wk]+'</span>':'—')+'</td>'
+            +'<td>'+getPhaseBadge(parseInt((s.info||{}).phase)||1)+'</td>'
+            +'<td><button class="btn btn-navy btn-sm" onclick="event.stopPropagation();openCalibrate(\''+s.id+'\')"><i class="ti ti-refresh"></i>Calibrar</button></td>'
+            +'</tr>';
+        }).join('')+'</tbody></table>'
+      :'<div class="ib ib-green">Todos los estudiantes están por encima del nivel crítico.</div>')
+    +'</div></div>';
+
+  // Chart
+  setTimeout(function(){
+    var ctx = document.getElementById('chart-levels');
+    if(!ctx) return;
+    if(CHART_REF) CHART_REF.destroy();
+    CHART_REF = new Chart(ctx, {
+      type:'doughnut',
+      data:{ labels:['Advanced','Functional','Emerging','Survival'], datasets:[{data:[adv,func,emerg,surv], backgroundColor:['#0F6E56','#BA7517','#A32D2D','#94A3B8'], borderWidth:0}] },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'right', labels:{ font:{size:11}, padding:8 } } } }
+    });
+  },100);
+}
+
+// ── STUDENTS LIST ─────────────────────────────────────────
+function renderStudents(m){
+  m.innerHTML = '<div class="fade">'
+    +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;flex-wrap:wrap;">'
+    +'<h2 style="font-size:16px;font-weight:700;color:var(--navy);flex:1;" id="students-count-title">Estudiantes</h2>'
+    +'<select class="search-inp" style="width:140px;" onchange="filterStudents(this.value)" id="filter-level"><option value="">Todos los niveles</option><option>Advanced</option><option>Functional</option><option>Emerging</option><option>Survival</option></select>'
+    +'<select class="search-inp" style="width:120px;" onchange="filterStudentsByPhase(this.value)" id="filter-phase"><option value="">Todas las fases</option><option value="1">Fase 1</option><option value="2">Fase 2</option><option value="3">Fase 3</option></select>'
+    +'<input class="search-inp" style="width:200px;" placeholder="Buscar por nombre..." oninput="searchStudents(this.value)" id="search-inp" value="">'
+    +'<button class="btn btn-navy btn-sm" onclick="showModal(\'modal-new-student\')"><i class="ti ti-user-plus"></i>Nuevo</button>'
+    +'</div>'
+    +'<div id="students-table"></div>'
+    +'</div>';
+
+  // Restore filter state without triggering re-render cascades
+  document.getElementById('filter-level').value = FILTER_STATE.level;
+  document.getElementById('filter-phase').value = FILTER_STATE.phase;
+  document.getElementById('search-inp').value = FILTER_STATE.search;
+
+  applyStudentFilters();
+}
+
+function applyStudentFilters(){
+  var q = FILTER_STATE.search;
+  var level = FILTER_STATE.level;
+  var phase = FILTER_STATE.phase;
+  var students = allStudents().filter(function(s){
+    var nameMatch = !q || (s.info && s.info.name && s.info.name.toLowerCase().includes(q.toLowerCase()));
+    var levelMatch = !level || getLevel(getScore(s)) === level;
+    var phaseMatch = !phase || String((s.info||{}).phase||1) === phase;
+    return nameMatch && levelMatch && phaseMatch;
+  }).sort(function(a,b){ return ((a.info&&a.info.name)||'').localeCompare((b.info&&b.info.name)||''); });
+
+  var title = document.getElementById('students-count-title');
+  if(title) title.textContent = 'Estudiantes (' + students.length + ')';
+  var tbl = document.getElementById('students-table');
+  if(tbl) tbl.innerHTML = buildStudentsTable(students);
+}
+
+function buildStudentsTable(students){
+  if(!students.length) return '<div class="ib ib-navy">No se encontraron estudiantes.</div>';
+  var isMaster = SESSION && hasMasterAccess();
+  var trainerNames = Object.values(TRAINERS).map(function(u){return u.name;});
+  return '<table class="tbl"><thead><tr><th>Nombre</th><th>Código</th><th>Score</th><th>Nivel</th><th>Fase</th><th>KPI débil</th><th>Trainer</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>'
+    +students.map(function(s){
+      var score=getScore(s); var level=getLevel(score); var wk=getWeakKPI(s);
+      var kpis=(s.kpis||{}).phase1||{};
+      var status = s.status || 'active';
+      var statusBadge = status==='suspended'
+        ? '<span class="badge" style="background:var(--rb);color:var(--rm);">Suspendido</span>'
+        : '<span class="badge" style="background:var(--gb);color:var(--gm);">Activo</span>';
+      var curTrainer = (s.info&&s.info.trainer)||'';
+      var isMasterRow = SESSION && hasMasterAccess();
+      var trainerCell = isMasterRow
+        ? '<select data-sid="'+s.id+'" class="search-inp" style="font-size:11px;padding:4px 8px;" onclick="event.stopPropagation();" onchange="quickReassignTrainer(this.dataset.sid,this.value)">'
+          +trainerNames.map(function(n){ return '<option value="'+n+'" '+(n===curTrainer?'selected':'')+'>'+n+'</option>'; }).join('')
+          +'</select>'
+        : (curTrainer||'—');
+      return '<tr data-sid="'+s.id+'" onclick="openStudent(this.dataset.sid)">'
+        +'<td><strong>'+((s.info&&s.info.name)||'—')+'</strong><div style="font-size:11px;color:var(--t3);">'+((s.info&&s.info.email)||'')+'</div></td>'
+        +'<td><code style="font-size:11px;color:var(--t2);">'+((s.code)||'—')+'</code></td>'
+        +'<td><strong style="color:'+(score>=21?'var(--gm)':score>=16?'var(--amber)':'var(--rm)')+';">'+score+'/25</strong></td>'
+        +'<td>'+getLevelBadge(level)+'</td>'
+        +'<td>'+getPhaseBadge(parseInt((s.info||{}).phase)||1)+'</td>'
+        +'<td>'+(wk?'<span class="badge" style="background:var(--rb);color:var(--rm);">'+wk+':'+((kpis[wk])||'?')+'</span>':'<span style="color:var(--t3);font-size:11px;">—</span>')+'</td>'
+        +'<td onclick="event.stopPropagation();">'+trainerCell+'</td>'
+        +'<td>'+statusBadge+(isMaster&&(s.info&&s.info.paymentStatus)==='delayed'?' <span class="badge" style="background:var(--rb);color:var(--rm);">DELAYED</span>':'')+'</td>'
+        +'<td onclick="event.stopPropagation();" style="display:flex;gap:4px;">'
+        +'<button data-sid="'+s.id+'" class="btn btn-navy btn-sm" onclick="openStudent(this.dataset.sid)"><i class="ti ti-eye"></i></button>'
+        +'<button data-sid="'+s.id+'" class="btn btn-green btn-sm" onclick="openCalibrate(this.dataset.sid)"><i class="ti ti-refresh"></i></button>'
+        +(isMaster?('<button data-sid="'+s.id+'" class="btn btn-outline btn-sm" onclick="toggleStudentStatus(this.dataset.sid)" title="'+(status==='suspended'?'Habilitar':'Suspender')+'"><i class="ti '+(status==='suspended'?'ti-check':'ti-ban')+'"></i></button>'):'')
+        +(isMaster?('<button data-sid="'+s.id+'" class="btn btn-red btn-sm" onclick="deleteStudent(this.dataset.sid)"><i class="ti ti-trash"></i></button>'):'')
+        +'</td></tr>';
+    }).join('')+'</tbody></table>';
+}
+
+function toggleStudentStatus(id){
+  var s = DB[id]; if(!s) return;
+  var name=(s.info&&s.info.name)||id;
+  var newStatus = (s.status==='suspended') ? 'active' : 'suspended';
+  var action = newStatus==='suspended' ? 'suspender' : 'habilitar';
+  confirmAction((newStatus==='suspended'?'Suspender':'Habilitar')+' estudiante', '¿'+(newStatus==='suspended'?'Suspender':'Habilitar')+' el acceso de "'+name+'" a su Training Book y portal?', async function(){
+    s.status = newStatus;
+    await dbSet('kamuk_students', id, s);
+    DB[id]=s;
+    await logAction((newStatus==='suspended'?'Suspendió':'Habilitó')+' estudiante', name);
+    showToast('Estudiante '+(newStatus==='suspended'?'suspendido':'habilitado'));
+    applyStudentFilters();
+  }, newStatus==='suspended'?'Sí, suspender':'Sí, habilitar');
+}
+
+function searchStudents(q){
+  FILTER_STATE.search = q;
+  applyStudentFilters();
+}
+function filterStudents(level){
+  FILTER_STATE.level = level;
+  applyStudentFilters();
+}
+function filterStudentsByPhase(phase){
+  FILTER_STATE.phase = phase;
+  applyStudentFilters();
+}
+
+// ── STUDENT PROFILE ───────────────────────────────────────
+function openStudent(id){
+  var s=DB[id]; if(!s) return;
+  if(!hasMasterAccess() && ((s.info&&s.info.trainer)||'').trim().toLowerCase()!==(SESSION.name||'').trim().toLowerCase()){
+    showToast('No tenés acceso a este estudiante','err');
+    return;
+  }
+  var score=getScore(s); var level=getLevel(score); var phase=parseInt((s.info||{}).phase)||1;
+  var isMaster = hasMasterAccess();
+  var kpis=(s.kpis||{}).phase1||{};
+  var m=document.getElementById('main-content');
+  currentView='student-'+id;
+
+  var kpiBars=Object.keys(KPI_NAMES).map(function(k){
+    var v=parseInt(kpis[k])||0; var col=KPI_COLORS[v]||'var(--border)'; var tc=KPI_TAGS[v]||['var(--gray)','var(--t2)','—'];
+    return '<div class="kbar"><span class="kbar-name">'+KPI_NAMES[k]+'</span>'
+      +'<div class="kbar-bg"><div class="kbar-fill" style="width:'+(v/5*100)+'%;background:'+col+';"></div></div>'
+      +'<span class="kbar-val" style="color:'+col+';">'+v+'/5</span>'
+      +'<span class="kbar-tag" style="background:'+tc[0]+';color:'+tc[1]+';">'+tc[2]+'</span></div>';
+  }).join('');
+
+  var exercises=getExercises(s);
+  var notes=(s.notes||[]).slice(-5).reverse();
+  var history=(s.calibrations||[]).slice(-8);
+
+  m.innerHTML='<div class="fade">'
+    +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem;">'
+    +'<button class="btn btn-outline btn-sm" onclick="showView(\'students\',null)"><i class="ti ti-arrow-left"></i>Volver</button>'
+    +'<button class="btn btn-green btn-sm" onclick="openCalibrate(\''+id+'\')"><i class="ti ti-refresh"></i>Calibrar sesión</button>'
+    +'<button class="btn btn-navy btn-sm" onclick="copyStudentLink(\''+id+'\')"><i class="ti ti-link"></i>Link + credenciales portal</button>'
+    +'<button class="btn btn-outline btn-sm" onclick="copyMeetLink(\''+id+'\')"><i class="ti ti-video"></i>Link sesión (Meet)</button>'
+    +renderAttendanceButtons(id)
+    +'</div>'
+    +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">'
+    +'<button data-sid="'+id+'" class="btn btn-outline btn-sm" onclick="generateStudentVisualReport(this.dataset.sid)"><i class="ti ti-report"></i>Generar reporte</button>'
+    +'<button data-sid="'+id+'" class="btn btn-outline btn-sm" onclick="rotateAndCombineExercises(this.dataset.sid)"><i class="ti ti-repeat"></i>Rotar y combinar</button>'
+    +'<button data-sid="'+id+'" class="btn btn-sm" style="background:'+(s.nexoraEnabled?'rgba(192,132,252,0.2)':'rgba(255,255,255,0.05)')+';border:1px solid '+(s.nexoraEnabled?'#C084FC':'rgba(255,255,255,0.3)')+';color:'+(s.nexoraEnabled?'#C084FC':'var(--t2)')+';font-weight:700;" onclick="toggleStudentNexora(this.dataset.sid)"><i class="ti ti-sparkles"></i> Nexora '+(s.nexoraEnabled?'✓ ON':'OFF')+'</button>'
+
+    +'<div class="profile-header">'
+    +'<div><div class="ph-name">'+((s.info&&s.info.name)||'—')+'</div>'
+    +'<div class="ph-meta">'+((s.info&&s.info.email)||'—')+' · '+((s.info&&s.info.program)||'—')+'</div>'
+    +'<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">'+getLevelBadge(level)+' '+getPhaseBadge(phase)
+    +'<span class="ph-code">'+((s.code)||'—')+'</span></div></div>'
+    +'<div style="text-align:right;"><div class="ph-score">'+score+'</div><div class="ph-score-label">score / 25</div></div>'
+    +'</div>'
+
+    +'<div class="tabs" id="profile-tabs">'
+    +'<div class="tab active" onclick="switchTab(\'kpis\',this)">KPIs & Ejercicios</div>'
+    +'<div class="tab" onclick="switchTab(\'progress\',this)">Progreso</div>'
+    +'<div class="tab" onclick="switchTab(\'sessions\',this)">Notas de sesión</div>'
+    +'<div class="tab" onclick="switchTab(\'info\',this)">Información</div>'
+    +(isMaster?'<div class="tab" onclick="switchTab(\'pagos\',this)">Pagos</div>':'')
+    +'</div>'
+
+    +'<div class="tab-pane active" id="pane-kpis">'
+    +'<div class="grid2">'
+    +'<div class="card" style="margin-bottom:0;"><div class="card-title"><i class="ti ti-chart-bar"></i>KPI Profile</div>'+kpiBars+'</div>'
+    +'<div class="card" style="margin-bottom:0;"><div class="card-title"><i class="ti ti-dumbbell"></i>Ejercicios prioritarios</div>'
+    +(exercises.length?exercises.map(function(ex){ return '<div style="background:var(--gray);border-radius:var(--r);padding:0.875rem;margin-bottom:6px;">'
+      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">'
+      +'<span class="badge" style="background:'+(ex.priority==='CRITICAL'?'var(--rb)':'var(--ab)')+';color:'+(ex.priority==='CRITICAL'?'var(--rm)':'var(--ad)')+';">'+ex.priority+'</span>'
+      +'<span style="font-size:13px;font-weight:700;color:var(--text);">'+ex.title+'</span></div>'
+      +'<div style="font-size:11px;color:var(--t2);">'+ex.kpi+' · '+ex.nexus+'</div></div>'; }).join(''):'<div style="font-size:13px;color:var(--t3);">Sin ejercicios asignados.</div>')
+    +'</div></div></div>'
+
+    +'<div class="tab-pane" id="pane-progress">'
+    +renderProgressBlock(s, id)
+    +'<div class="card"><div class="card-title"><i class="ti ti-trending-up"></i>Evolución de KPIs (diagnóstico inicial)</div>'
+    +(history.length>=2?'<div class="chart-wrap"><canvas id="chart-progress"></canvas></div>':'<div class="ib ib-navy">Se necesitan mínimo 2 calibraciones para mostrar el gráfico de evolución.</div>')
+    +'</div>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-calendar"></i>Historial de calibraciones</div>'
+    +(history.length?'<table class="tbl"><thead><tr><th>Fecha</th><th>IG</th><th>ST</th><th>RA</th><th>PS</th><th>R</th><th>Score</th></tr></thead><tbody>'
+      +history.map(function(c){ var t=Object.values(c.kpis||{}).reduce(function(a,v){return a+(parseInt(v)||0);},0);
+        return '<tr><td>'+fmtDate(c.date)+'</td>'+Object.keys(KPI_NAMES).map(function(k){ var v=parseInt((c.kpis||{})[k])||0; return '<td style="color:'+( KPI_COLORS[v]||'var(--t3)')+';font-weight:700;">'+v+'</td>'; }).join('')+'<td><strong>'+t+'</strong></td></tr>';
+      }).join('')+'</tbody></table>'
+    :'<div style="font-size:13px;color:var(--t3);">Aún no hay calibraciones registradas.</div>')
+    +'</div></div>'
+
+    +'<div class="tab-pane" id="pane-sessions">'
+    +'<div class="card"><div class="card-title"><i class="ti ti-notes"></i>Notas de sesión</div>'
+    +(notes.length?notes.map(function(n){ return '<div style="background:var(--gray);border-radius:var(--r);padding:1rem;margin-bottom:8px;">'
+      +'<div style="font-size:11px;color:var(--t3);margin-bottom:4px;">'+fmtDate(n.date)+' · '+n.trainer+'</div>'
+      +'<div style="font-size:13px;color:var(--text);line-height:1.6;">'+n.text+'</div></div>'; }).join('')
+    :'<div style="font-size:13px;color:var(--t3);">Sin notas de sesión.</div>')
+    +'</div></div>'
+
+    +'<div class="tab" onclick="switchTab(\'training-book\',this)">Training Book</div>'
+    +'<div class="tab" onclick="switchTab(\'resources\',this)">Recursos</div>'
+    +'<div class="tab-pane" id="pane-training-book">'
+    +'<div class="card"><div class="card-title" style="display:flex;align-items:center;justify-content:space-between;"><span><i class="ti ti-dumbbell"></i>Training Book</span><button class="btn btn-navy btn-sm" data-sid="'+id+'" onclick="openAssignExModal(this.dataset.sid)"><i class="ti ti-plus"></i>Asignar ejercicio</button></div>'
+    +((s.trainingBook&&s.trainingBook.length)
+      ? s.trainingBook.slice().reverse().map(function(ex){
+          var isMaster = SESSION&&hasMasterAccess();
+          var canEdit = isMaster || (SESSION&&SESSION.name===ex.assignedBy);
+          return '<div style="border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px;overflow:hidden;">'
+            +'<div style="background:var(--navy);padding:8px 12px;display:flex;align-items:center;gap:8px;">'
+            +'<span class="badge" style="background:rgba(255,255,255,0.2);color:white;">'+ex.kpi+'</span>'
+            +'<span style="font-size:13px;font-weight:700;color:white;flex:1;">'+ex.title+'</span>'
+            +(ex.type==='custom'?'<span class="badge" style="background:rgba(245,166,35,0.3);color:var(--gold);">Custom</span>':'')
+            +(canEdit?'<button data-sid="'+id+'" data-exid="'+ex.id+'" class="btn btn-sm" style="background:rgba(255,255,255,0.1);color:white;" onclick="removeTrainingBookEx(this.dataset.sid,this.dataset.exid)"><i class="ti ti-x"></i></button>':'')
+            +'</div>'
+            +'<div style="padding:10px 12px;">'
+            +(ex.objective?'<div style="font-size:12px;color:var(--text);margin-bottom:6px;line-height:1.6;"><strong>Objetivo:</strong> '+ex.objective+'</div>':'')
+            +(ex.script?'<div style="background:var(--ab);border-left:3px solid var(--amber);padding:8px;border-radius:0 var(--r) var(--r) 0;font-size:12px;color:var(--ad);margin-bottom:6px;line-height:1.6;">'+ex.script+'</div>':'')
+            +(ex.note?'<div style="font-size:12px;background:var(--nl);border-left:3px solid var(--nm);padding:8px;border-radius:0 var(--r) var(--r) 0;color:var(--nd);margin-bottom:6px;">📌 '+ex.note+'</div>':'')
+            +'<div style="display:flex;gap:8px;font-size:11px;color:var(--t3);">'
+            +(ex.freq?'<span><i class="ti ti-repeat"></i> '+ex.freq+'</span>':'')
+            +(ex.week?'<span><i class="ti ti-calendar"></i> '+(/^\d+$/.test(String(ex.week))?('Semana '+ex.week):('Sem. '+fmtDate(ex.week)))+'</span>':'')
+            +(ex.assignedBy?'<span><i class="ti ti-user"></i> '+ex.assignedBy+'</span>':'')
+            +'</div></div></div>';
+        }).join('')
+      : '<div style="font-size:13px;color:var(--t3);padding:1rem 0;">Sin ejercicios asignados. Usá el botón de arriba para agregar.</div>')
+    +'</div></div>'
+    +'<div class="tab-pane" id="pane-resources">'
+    +'<div class="card"><div class="card-title"><i class="ti ti-books"></i>Recursos asignados</div>'
+    +((s.resources&&s.resources.length)?s.resources.map(function(r){ var res=RESOURCES[r.id]||{}; return '<div class="res-card"><div class="res-icon res-navy"><i class="ti ti-file"></i></div><div style="flex:1;"><div class="res-title">'+(res.title||r.id)+'</div><div class="res-meta">'+(r.note||'')+'</div></div>'+(res.url?'<a href="'+res.url+'" target="_blank" class="btn btn-outline btn-sm"><i class="ti ti-external-link"></i></a>':'')+'</div>'; }).join(''):'<div style="font-size:13px;color:var(--t3);">Sin recursos asignados.</div>')
+    +'<div style="margin-top:10px;"><button class="btn btn-navy btn-sm" onclick="openAssignResource(\'\')">' +'<i class="ti ti-plus"></i>Asignar recurso</button></div>'
+    +'</div></div>'
+    +'<div class="tab-pane" id="pane-info">'
+    +'<div class="card"><div class="card-title" style="display:flex;align-items:center;justify-content:space-between;"><span><i class="ti ti-info-circle"></i>Información del estudiante</span>'
+    +(isMaster?'<button data-sid="'+id+'" class="btn btn-navy btn-sm" onclick="openEditStudentModal(this.dataset.sid)"><i class="ti ti-edit"></i>Editar información</button>':'')
+    +'</div>'
+    +'<div class="grid2">'
+    +[['Nombre completo',(s.info&&s.info.name)||'—'],['Email',(s.info&&s.info.email)||'—'],['Teléfono',(s.info&&s.info.phone)||'—'],['Programa',(s.info&&s.info.program)||'—'],['Inicio',fmtDate(s.info&&s.info.start)],['Trainer asignado',(s.info&&s.info.trainer)||'—'],['Código personal',(s.code)||'—']].map(function(f){ return '<div style="background:var(--gray);border-radius:var(--r);padding:0.875rem;"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--t3);margin-bottom:4px;">'+f[0]+'</div><div style="font-size:13px;font-weight:600;color:var(--text);">'+f[1]+'</div></div>'; }).join('')
+    +'</div></div>'
+    +(s.diagnosticReport ? renderDiagnosticReportCard(s.diagnosticReport, id) : '')
+    +(s.aiAnalysis ? '<div class="card"><div class="card-title"><i class="ti ti-robot"></i>Análisis con IA — '+fmtDate(s.aiAnalysis.date)+'</div>'
+        +'<div style="font-size:13px;color:var(--text);line-height:1.7;">'+(s.aiAnalysis.summary||'—')+'</div>'
+        +'<details style="margin-top:8px;"><summary style="cursor:pointer;font-size:12px;color:var(--t3);">Ver respuesta completa</summary><div style="font-size:12px;color:var(--text);line-height:1.6;white-space:pre-wrap;margin-top:6px;">'+s.aiAnalysis.text+'</div></details>'
+        +'</div>' : '')
+    +renderPortalAccessCard(s, id, isMaster)
+    +'</div>'
+    +renderPagosTab(s, id, isMaster)
+    +'</div>';
+
+  // Progress chart
+  if(history.length>=2){
+    setTimeout(function(){
+      var ctx=document.getElementById('chart-progress'); if(!ctx) return;
+      var labels=history.map(function(c){ return fmtDate(c.date); });
+      var datasets=Object.keys(KPI_NAMES).map(function(k,i){ var colors=['#1B9BD1','#0F6E56','#BA7517','#A32D2D','#534AB7'];
+        return { label:k, data:history.map(function(c){ return parseInt((c.kpis||{})[k])||0; }), borderColor:colors[i], backgroundColor:'transparent', tension:0.3, pointRadius:4 };
+      });
+      new Chart(ctx,{ type:'line', data:{labels,datasets}, options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ min:0, max:5, ticks:{ stepSize:1 } } }, plugins:{ legend:{ position:'bottom' } } } });
+    },100);
+  }
+}
+
+function switchTab(id, btn){
+  document.querySelectorAll('.tabs .tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+  var pane=document.getElementById('pane-'+id);
+  if(pane) pane.classList.add('active');
+}
+
+var STUDENT_PORTAL_URL = 'https://kamukschool.github.io/Operarive-Training-Database/Kamuk_Student_Portal.html';
+
+function copyStudentLink(id){
+  var s=DB[id]; if(!s) return;
+  if(!s.portalUser||!s.portalPass){ showToast('Generá las credenciales del portal primero (tab Información)','err'); return; }
+  var text = 'Portal del Estudiante — Kamuk School · Studio Infinity CR\n'+STUDENT_PORTAL_URL+'\n\nUsuario: '+s.portalUser+'\nContraseña: '+s.portalPass;
+  showShareModal('Link y credenciales del portal', text, ((s.info&&s.info.phone)||''));
+}
+
+function copyMeetLink(id){
+  var s=DB[id]; if(!s) return;
+  var link = (s.info&&s.info.meetLink)||'';
+  if(!link){
+    var trainerName = (s.info&&s.info.trainer)||'';
+    var u = Object.values(TRAINERS).find(function(t){ return (t.name||'').trim().toLowerCase()===trainerName.trim().toLowerCase(); });
+    var profile = u ? (ROSTER['ROSTER-'+u.id]||{}) : {};
+    link = profile.meetLink||'';
+  }
+  if(!link){ showToast('Sin link de Meet configurado (ni del estudiante ni del trainer)','err'); return; }
+  showShareModal('Link de sesión', link, ((s.info&&s.info.phone)||''));
+}
+
+function showShareModal(title, text, phone){
+  document.getElementById('share-modal-title').textContent = title;
+  document.getElementById('share-text').value = text;
+  var waBtn = document.getElementById('share-whatsapp-btn');
+  var waUrl = 'https://wa.me/'+(phone?phone.replace(/[^0-9]/g,''):'')+'?text='+encodeURIComponent(text);
+  waBtn.onclick = function(){ window.open(waUrl,'_blank'); };
+  showModal('modal-share');
+}
+
+function copyShareText(){
+  var ta = document.getElementById('share-text');
+  ta.select(); ta.setSelectionRange(0,99999);
+  try{
+    var ok = document.execCommand('copy');
+    if(ok){ showToast('Copiado al portapapeles'); return; }
+  }catch(e){}
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(ta.value).then(function(){ showToast('Copiado al portapapeles'); }).catch(function(){ showToast('No se pudo copiar — seleccioná el texto manualmente','err'); });
+  } else {
+    showToast('Seleccioná el texto y copiá con Ctrl+C','err');
+  }
+}
+
+// ── CALIBRATION ───────────────────────────────────────────
+
+
+// ── CALIBRATE SELECT ──────────────────────────────────────
+function renderCalibrateSelect(m){
+  var students=allStudents().sort(function(a,b){ return ((a.info&&a.info.name)||'').localeCompare((b.info&&b.info.name)||''); });
+  m.innerHTML='<div class="fade"><h2 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:1rem;">Weekly Calibration</h2>'
+    +'<div class="ib ib-amber">Seleccioná un estudiante para registrar la calibración de la semana. Los KPIs se actualizan automáticamente en todas las herramientas.</div>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-users"></i>Seleccioná el estudiante</div>'
+    +students.map(function(s){ var score=getScore(s); var wk=getWeakKPI(s); var kpis=(s.kpis||{}).phase1||{};
+      return '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">'
+        +'<div style="width:36px;height:36px;border-radius:50%;background:var(--nl);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--nm);flex-shrink:0;">'+(s.info&&s.info.name?s.info.name.charAt(0):'?')+'</div>'
+        +'<div style="flex:1;"><div style="font-size:13px;font-weight:700;">'+((s.info&&s.info.name)||'—')+'</div>'
+        +'<div style="font-size:11px;color:var(--t2);">Score '+score+'/25 · '+(wk?'KPI débil: '+wk+'='+((kpis[wk])||'?'):'KPIs OK')+'</div></div>'
+        +getLevelBadge(getLevel(score))
+        +'<button class="btn btn-green btn-sm" onclick="openCalibrate(\''+s.id+'\')"><i class="ti ti-refresh"></i>Calibrar</button>'
+        +'</div>';
+    }).join('')+'</div></div>';
+}
+
+// ── EXERCISES ─────────────────────────────────────────────
+function renderExercises(m){
+  m.innerHTML='<div class="fade"><h2 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:1rem;">Biblioteca de ejercicios Nexus</h2>'
+    +Object.values(EXERCISES).map(function(ex){ return '<div class="ex-card">'
+      +'<div class="ex-head"><div>'
+      +'<div class="ex-title">'+ex.title+'</div>'
+      +'<div style="margin-top:4px;display:flex;gap:5px;">'
+      +'<span class="badge" style="background:'+(ex.priority==='CRITICAL'?'rgba(163,45,45,0.3)':'rgba(186,117,23,0.3)')+';color:white;">'+ex.priority+'</span>'
+      +'<span class="badge" style="background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.8);">'+ex.kpi+'</span>'
+      +'<span class="badge" style="background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.8);">'+ex.nexus+'</span>'
+      +'</div></div></div>'
+      +'<div class="ex-body">'
+      +'<div class="ex-obj"><strong>Objetivo:</strong> '+ex.objective+'</div>'
+      +'<div class="ex-script"><div class="ex-script-label"><i class="ti ti-microphone"></i> Trainer script</div><div class="ex-script-text">'+ex.script+'</div></div>'
+      +(ex.good?'<div style="background:var(--gb);border-radius:var(--r);padding:0.75rem;font-size:12px;color:var(--green);line-height:1.6;margin-bottom:0.5rem;"><strong>✓ Target:</strong> '+ex.good+'</div>':'')
+      +'<div style="font-size:12px;font-weight:700;color:var(--nm);display:flex;align-items:center;gap:5px;"><i class="ti ti-repeat"></i>'+ex.freq+'</div>'
+      +'</div></div>';
+    }).join('')+'</div>';
+}
+
+// ── ANALYTICS ─────────────────────────────────────────────
+function renderAnalytics(m){
+  var students = hasMasterAccess() ? allStudents() : getMyStudents();
+  var avgByKPI={};
+  Object.keys(KPI_NAMES).forEach(function(k){ var vals=students.map(function(s){ return parseInt(((s.kpis||{}).phase1||{})[k])||0; }).filter(Boolean); avgByKPI[k]=vals.length?vals.reduce(function(a,b){return a+b;},0)/vals.length:0; });
+
+  m.innerHTML='<div class="fade"><h2 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:1rem;">Analytics'+(hasMasterAccess()?'':' — Mis estudiantes')+'</h2>'
+    +(hasMasterAccess()?'':'<div class="ib ib-navy">Mostrando estadísticas únicamente de tus estudiantes asignados.</div>')
+    +'<div class="grid4" style="margin-bottom:1rem;">'
+    +Object.keys(KPI_NAMES).map(function(k){ var avg=avgByKPI[k]; var col=KPI_COLORS[Math.round(avg)]||'var(--t3)';
+      return '<div class="stat"><div class="stat-label">'+k+' — '+KPI_NAMES[k].split(' ')[0]+'</div><div class="stat-val" style="color:'+col+';">'+avg.toFixed(1)+'</div><div class="stat-sub">promedio del grupo</div></div>';
+    }).join('')+'</div>'
+    +'<div class="grid2">'
+    +'<div class="card"><div class="card-title"><i class="ti ti-chart-radar"></i>KPI promedio del grupo</div><div class="chart-wrap"><canvas id="chart-kpi-avg"></canvas></div></div>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-chart-bar"></i>Distribución de scores</div><div class="chart-wrap"><canvas id="chart-scores"></canvas></div></div>'
+    +'</div>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-list"></i>Ranking de estudiantes</div>'
+    +'<table class="tbl"><thead><tr><th>#</th><th>Nombre</th><th>Score</th><th>Nivel</th><th>IG</th><th>ST</th><th>RA</th><th>PS</th><th>R</th></tr></thead><tbody>'
+    +students.sort(function(a,b){return getScore(b)-getScore(a);}).map(function(s,i){ var kpis=(s.kpis||{}).phase1||{};
+      return '<tr onclick="openStudent(\''+s.id+'\')">'
+        +'<td style="font-weight:700;color:var(--t3);">'+(i+1)+'</td>'
+        +'<td><strong>'+((s.info&&s.info.name)||'—')+'</strong></td>'
+        +'<td><strong style="color:'+(getScore(s)>=21?'var(--gm)':getScore(s)>=16?'var(--amber)':'var(--rm)')+';">'+getScore(s)+'/25</strong></td>'
+        +'<td>'+getLevelBadge(getLevel(getScore(s)))+'</td>'
+        +Object.keys(KPI_NAMES).map(function(k){ var v=parseInt(kpis[k])||0; return '<td style="color:'+(KPI_COLORS[v]||'var(--t3)')+';font-weight:700;">'+(v||'—')+'</td>'; }).join('')
+        +'</tr>';
+    }).join('')+'</tbody></table></div></div>';
+
+  setTimeout(function(){
+    // Radar chart
+    var r=document.getElementById('chart-kpi-avg');
+    if(r) new Chart(r,{ type:'radar', data:{ labels:Object.values(KPI_NAMES), datasets:[{label:'Promedio grupo',data:Object.keys(KPI_NAMES).map(function(k){return avgByKPI[k];}),borderColor:'#1B9BD1',backgroundColor:'rgba(30,39,97,0.15)',pointBackgroundColor:'#1B9BD1'}] }, options:{ responsive:true,maintainAspectRatio:false, scales:{ r:{ min:0,max:5,ticks:{stepSize:1} } }, plugins:{legend:{display:false}} } });
+
+    // Score distribution
+    var buckets={Advanced:0,Functional:0,Emerging:0,Survival:0};
+    students.forEach(function(s){ buckets[getLevel(getScore(s))]++; });
+    var sc=document.getElementById('chart-scores');
+    if(sc) new Chart(sc,{ type:'bar', data:{ labels:Object.keys(buckets), datasets:[{data:Object.values(buckets),backgroundColor:['#0F6E56','#BA7517','#A32D2D','#94A3B8'],borderRadius:6}] }, options:{ responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}, scales:{ y:{ beginAtZero:true,ticks:{stepSize:1} } } } });
+  },100);
+}
+
+// ── REPORTS ───────────────────────────────────────────────
+function renderReports(m){
+  var students=(hasMasterAccess() ? allStudents() : getMyStudents()).sort(function(a,b){return((a.info&&a.info.name)||'').localeCompare((b.info&&b.info.name)||'');});
+  m.innerHTML='<div class="fade"><h2 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:1rem;">Reportes'+(hasMasterAccess()?'':' — Mis estudiantes')+'</h2>'
+    +'<div class="ib ib-navy">Seleccioná un estudiante para generar su reporte de progreso completo. '+(hasMasterAccess()?'':'Solo podés generar reportes de tus estudiantes asignados.')+'</div>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-file-text"></i>Reporte individual</div>'
+    +students.map(function(s){ return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">'
+      +'<strong style="flex:1;">'+((s.info&&s.info.name)||'—')+'</strong>'
+      +getLevelBadge(getLevel(getScore(s)))
+      +'<span style="font-size:12px;color:var(--t2);">'+getScore(s)+'/25</span>'
+      +'<button class="btn btn-navy btn-sm" onclick="generateReport(\''+s.id+'\')"><i class="ti ti-download"></i>Generar reporte</button>'
+      +'</div>'; }).join('')
+    +'</div></div>';
+}
+
+function generateReport(id){
+  var s=DB[id]; if(!s) return;
+  if(!hasMasterAccess() && ((s.info&&s.info.trainer)||'').trim().toLowerCase()!==(SESSION.name||'').trim().toLowerCase()){ showToast('Solo podés generar reportes de tus estudiantes asignados','err'); return; }
+  var kpis=(s.kpis||{}).phase1||{};
+  var score=getScore(s); var level=getLevel(score);
+  var cals=(s.calibrations||[]);
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Reporte — '+(s.info&&s.info.name)+'</title>'
+    +'<style>body{font-family:Arial,sans-serif;max-width:800px;margin:2rem auto;color:#1E293B;} h1{color:#1B9BD1;} table{width:100%;border-collapse:collapse;} th{background:#1B9BD1;color:white;padding:8px;} td{padding:8px;border-bottom:1px solid #E2E8F0;} .badge{padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;}</style>'
+    +'</head><body>'
+    +'<h1>Infinity Studio CR — Reporte de Progreso</h1>'
+    +'<h2>'+(s.info&&s.info.name)+'</h2>'
+    +'<p>Nivel: <strong>'+level+'</strong> · Score: <strong>'+score+'/25</strong> · Código: <strong>'+(s.code||'—')+'</strong></p>'
+    +'<h3>KPIs Actuales</h3><table><tr><th>KPI</th><th>Score</th><th>Estado</th></tr>'
+    +Object.keys(KPI_NAMES).map(function(k){ var v=parseInt(kpis[k])||0; var tags=KPI_TAGS[v]||['','','—']; return '<tr><td>'+KPI_NAMES[k]+'</td><td>'+v+'/5</td><td><span class="badge" style="background:'+tags[0]+';color:'+tags[1]+';">'+tags[2]+'</span></td></tr>'; }).join('')
+    +'</table>'
+    +(cals.length?'<h3>Historial de Calibraciones</h3><table><tr><th>Fecha</th><th>IG</th><th>ST</th><th>RA</th><th>PS</th><th>R</th><th>Score</th></tr>'
+      +cals.map(function(c){ var t=Object.values(c.kpis||{}).reduce(function(a,v){return a+(parseInt(v)||0);},0); return '<tr><td>'+fmtDate(c.date)+'</td>'+Object.keys(KPI_NAMES).map(function(k){return '<td>'+((c.kpis||{})[k]||'—')+'</td>';}).join('')+'<td><strong>'+t+'</strong></td></tr>'; }).join('')+'</table>':'')
+
+    +'</body></html>';
+  var blob = new Blob([html], {type:'text/html'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = ((s.info&&s.info.name)||'Student').replace(/ /g,'_')+'_Reporte.html';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('/Database-/sw.js').catch(function(){});
+  });
+}
+
+async function renderDashboard_Admin(m){
+  m.innerHTML = '<div class="fade"><h2 style="font-size:16px;font-weight:700;margin-bottom:1rem;"><i class="ti ti-chart-dots" style="color:#1B9BD1;"></i> Dashboard — Kamuk School</h2>'
+    + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:1rem;">'
+    + '<div class="card" style="text-align:center;"><div style="font-size:28px;font-weight:900;color:#5CB85C;" id="dash-server-status">...</div><div style="font-size:11px;color:var(--t3);">Servidor</div></div>'
+    + '<div class="card" style="text-align:center;"><div style="font-size:28px;font-weight:900;color:#F5A623;" id="dash-eleven-remaining">...</div><div style="font-size:11px;color:var(--t3);">Créditos ElevenLabs</div></div>'
+    + '<div class="card" style="text-align:center;"><div style="font-size:28px;font-weight:900;color:#1B9BD1;" id="dash-students">...</div><div style="font-size:11px;color:var(--t3);">Estudiantes Kamuk</div></div>'
+    + '<div class="card" style="text-align:center;"><div style="font-size:28px;font-weight:900;color:#7C3AED;" id="dash-alice">...</div><div style="font-size:11px;color:var(--t3);">Sesiones Alice</div></div>'
+    + '</div>'
+    + '<div class="card"><div class="card-title"><i class="ti ti-activity" style="color:#1B9BD1;"></i>Estado del sistema</div>'
+    + '<div id="dash-detail" style="font-size:13px;color:var(--t2);">Cargando...</div>'
+    + '</div>'
+    + '<div style="text-align:right;margin-top:8px;"><button class="btn btn-outline btn-sm" id="dash-refresh-btn"><i class="ti ti-refresh"></i>Actualizar</button></div>'
+    + '</div>';
+
+  document.getElementById('dash-refresh-btn').onclick = function(){ renderDashboard_Admin(document.getElementById('main-content')); };
+
+  try {
+    const r = await fetch('https://alice-by-infinity.onrender.com/dashboard?secret='+encodeURIComponent(ANALYZE_SECRET||''));
+    if(!r.ok){ document.getElementById('dash-detail').textContent='Error conectando al servidor.'; return; }
+    const d = await r.json();
+
+    document.getElementById('dash-server-status').textContent='✓ Online';
+    if(d.elevenlabs) document.getElementById('dash-eleven-remaining').textContent=(d.elevenlabs.remaining||0).toLocaleString();
+    
+    // Kamuk students count
+    try {
+      const rows = await dbGet('kamuk_students');
+      document.getElementById('dash-students').textContent = rows.length;
+    } catch(e){ document.getElementById('dash-students').textContent='?'; }
+
+    // Alice sessions (kamuk)
+    try {
+      const sRows = await dbGet('kamuk_sessions');
+      const aliceSessions = sRows.filter(function(r){ return r.id && r.id.startsWith('ALICE-LIMIT-KAM-'); }).length;
+      document.getElementById('dash-alice').textContent = aliceSessions;
+    } catch(e){ document.getElementById('dash-alice').textContent='?'; }
+
+    document.getElementById('dash-detail').innerHTML =
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">'
+      +'<div><strong>Servidor</strong><br>Uptime: '+(d.server?.uptime||'?')+'<br>Node: '+(d.server?.node||'?')+'</div>'
+      +'<div><strong>ElevenLabs</strong><br>Plan: '+(d.elevenlabs?.plan||'?')+'<br>Usados: '+(d.elevenlabs?.used?.toLocaleString()||'?')+' / '+(d.elevenlabs?.limit?.toLocaleString()||'?')+'</div>'
+      +'<div><strong>Última actualización</strong><br>'+(d.timestamp?new Date(d.timestamp).toLocaleString('es-CR'):'?')+'</div>'
+      +'</div>';
+
+  } catch(e){
+    document.getElementById('dash-detail').textContent = 'Error: '+e.message;
+  }
+}
+
+
+// ── KNOWLEDGE BASE ────────────────────────────────────────────
+async function openKBModal(){
+  showModal('modal-kb');
+  document.getElementById('kb-title').value='';
+  document.getElementById('kb-content').value='';
+  document.getElementById('kb-status').textContent='';
+  document.getElementById('kb-file').value='';
+  await loadKBEntries();
+}
+
+async function loadKBEntries(){
+  try {
+    var rows = await dbGet('kamuk_sessions');
+    var kbRows = rows.filter(function(r){ return r.id && r.id.startsWith('KB-'); });
+    var count = document.getElementById('kb-count');
+    if(count) count.textContent = kbRows.length + ' entradas';
+    var list = document.getElementById('kb-entries-list');
+    if(!list) return;
+    list.innerHTML = '';
+    if(kbRows.length === 0){
+      list.innerHTML = '<div style="font-size:12px;color:var(--t3);text-align:center;padding:1rem;">Sin material aún.</div>';
+      return;
+    }
+    kbRows.forEach(function(r){
+      var d = r.data || {};
+      var div = document.createElement('div');
+      div.style.cssText = 'display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--gl);font-size:12px;';
+      div.innerHTML = '<div style="flex:1;"><div style="font-weight:600;">'+(d.title||'Sin título')+'</div><div style="color:var(--t3);">'+(d.category||'general')+' · '+(d.content||'').slice(0,50)+'...</div></div>';
+      var btn = document.createElement('button');
+      btn.style.cssText = 'background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;';
+      btn.textContent = '×';
+      btn.onclick = (function(id){ return function(){ deleteKBEntry(id); }; })(r.id);
+      div.appendChild(btn);
+      list.appendChild(div);
+    });
+  } catch(e){ console.error(e); }
+}
+
+async function saveKBEntry(){
+  var title = document.getElementById('kb-title').value.trim();
+  var content = document.getElementById('kb-content').value.trim();
+  var category = document.getElementById('kb-category').value;
+  var fileInput = document.getElementById('kb-file');
+  var st = document.getElementById('kb-status');
+  if(!content && fileInput.files.length > 0){
+    var file = fileInput.files[0];
+    content = await new Promise(function(res){
+      var reader = new FileReader();
+      reader.onload = function(e){ res(e.target.result); };
+      reader.readAsText(file);
+    });
+    if(!title) title = file.name;
+  }
+  if(!content){ st.textContent='Agregá contenido o seleccioná un archivo.'; return; }
+  if(!title) title = category+' — '+new Date().toLocaleDateString('es-CR');
+  st.textContent='Guardando...';
+  try {
+    var id='KB-'+Date.now();
+    await dbSet('kamuk_sessions',id,{title:title,category:category,content:content.slice(0,10000),createdAt:new Date().toISOString(),createdBy:SESSION.name||'Trainer'});
+    st.style.color='#22C55E';
+    st.textContent='Guardado. Alice usará este material.';
+    document.getElementById('kb-title').value='';
+    document.getElementById('kb-content').value='';
+    document.getElementById('kb-file').value='';
+    await loadKBEntries();
+  } catch(e){
+    st.textContent='Error guardando.';
+  }
+}
+
+async function deleteKBEntry(id){
+  if(!confirm('Eliminar este material?')) return;
+  try {
+    await fetch(SUPA_URL+'/rest/v1/kamuk_sessions?id=eq.'+id,{method:'DELETE',headers:{apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY}});
+    await loadKBEntries();
+    showToast('Material eliminado');
+  } catch(e){ showToast('Error','err'); }
+}
+</script>
+
+
+
+</body>
+</html>
