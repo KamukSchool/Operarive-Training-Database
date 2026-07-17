@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Kamuk School · Operative Training</title>
+<meta name="theme-color" content="#0E7490">
+<meta name="description" content="Portal operacional Kamuk School — Engine, estudiantes y simulaciones Nexora.">
+<style>
+  :root{
+    --ink:#0F172A;--muted:#475569;--line:#E2E8F0;
+    --teal:#0E7490;--teal-dark:#155E75;--sky:#1B9BD1;
+    --bg:#F0F9FF;--card:#FFFFFF;--gold:#D97706;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    color:var(--ink);background:
+      radial-gradient(ellipse 80% 50% at 10% 0%,rgba(27,155,209,.14),transparent 55%),
+      radial-gradient(ellipse 60% 40% at 100% 10%,rgba(14,116,144,.1),transparent 50%),
+      var(--bg);
+    min-height:100vh;min-height:100dvh;
+    padding:max(24px,env(safe-area-inset-top)) 20px max(32px,env(safe-area-inset-bottom));
+  }
+  .wrap{max-width:920px;margin:0 auto;}
+  header{margin-bottom:2rem;}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--teal-dark);background:rgba(14,116,144,.1);
+    border:1px solid rgba(14,116,144,.22);padding:8px 12px;border-radius:999px;
+    margin-bottom:1rem;
+  }
+  h1{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-bottom:.6rem;}
+  .lead{font-size:16px;line-height:1.6;color:var(--muted);max-width:40rem;}
+  .lead strong{color:var(--ink);}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:1.75rem;}
+  a.card{
+    display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit;
+    background:var(--card);border:1px solid var(--line);border-radius:18px;padding:1.25rem 1.2rem;
+    box-shadow:0 10px 28px rgba(15,23,42,.06);transition:transform .15s,border-color .15s,box-shadow .15s;
+    min-height:160px;
+  }
+  a.card:hover{transform:translateY(-2px);border-color:rgba(14,116,144,.35);box-shadow:0 14px 36px rgba(14,116,144,.12);}
+  a.card .tag{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);}
+  a.card h2{font-size:1.15rem;font-weight:800;}
+  a.card p{font-size:13px;line-height:1.5;color:var(--muted);flex:1;}
+  a.card .go{font-size:13px;font-weight:800;color:var(--teal-dark);}
+  .note{
+    margin-top:1.75rem;padding:14px 16px;border-radius:14px;
+    background:rgba(255,255,255,.75);border:1px solid var(--line);
+    font-size:13px;line-height:1.55;color:var(--muted);
+  }
+  footer{margin-top:2rem;font-size:12px;color:#94A3B8;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="kicker">Kamuk School · Operative Training</div>
+      <h1>Acceso operacional</h1>
+      <p class="lead">
+        Hub del cliente <strong>Kamuk School</strong>. Engine para trainers, portal de estudiantes y laboratorio Nexora.
+        Proyecto hermano — <strong>no es Infinity Studio CR</strong>.
+      </p>
+    </header>
+
+    <div class="grid">
+      <a class="card" href="Kamuk_Engine.html">
+        <span class="tag">Trainers</span>
+        <h2>Kamuk Engine</h2>
+        <p>Tablero operacional: estudiantes, KPIs, sesiones y control del programa.</p>
+        <span class="go">Abrir Engine →</span>
+      </a>
+      <a class="card" href="Kamuk_Student_Portal.html">
+        <span class="tag">Estudiantes</span>
+        <h2>Portal del estudiante</h2>
+        <p>Login de alumnos KAM-, progreso, práctica y acceso a simulaciones.</p>
+        <span class="go">Abrir Portal →</span>
+      </a>
+      <a class="card" href="nexora.html">
+        <span class="tag">Simulación</span>
+        <h2>Nexora Lab</h2>
+        <p>Simulaciones de inglés operacional bajo presión (escenarios de trabajo).</p>
+        <span class="go">Abrir Nexora →</span>
+      </a>
+    </div>
+
+    <p class="note">
+      Si esta página no carga desde GitHub Pages, en el repo andá a
+      <strong>Settings → Pages → Deploy from branch → main / (root)</strong> y guardá.
+      URL esperada:
+      <code>https://kamukschool.github.io/Operarive-Training-Database/</code>
+    </p>
+
+    <footer>Kamuk School · Operative Training Database</footer>
+  </div>
+</body>
+</html>
