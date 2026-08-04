@@ -18,8 +18,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 <link rel="stylesheet" href="https://studioinfinitycr.com/css/daily-inspiration.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://studioinfinitycr.com/js/live-kpi-charts.js?v=20260804"></script>
-<script src="js/live-kpi-charts.js?v=20260804"></script>
+<script src="https://studioinfinitycr.com/js/live-kpi-charts.js?v=20260804qa1"></script>
+<script src="js/live-kpi-charts.js?v=20260804qa1"></script>
 <script src="https://studioinfinitycr.com/infinity-auth.js?v=20260711auth2"></script>
 <script src="https://studioinfinitycr.com/nexora-profile.js?v=voice-sync-6"></script>
 <script src="https://studioinfinitycr.com/js/nexora-voice-lock.js?v=6"></script>
@@ -33,20 +33,21 @@
 <script src="https://studioinfinitycr.com/js/alice-pronunciation.js"></script>
 <script src="https://studioinfinitycr.com/js/alice-reminders.js"></script>
 <script src="https://studioinfinitycr.com/js/b2b-alice-report.js"></script>
-<script src="https://studioinfinitycr.com/js/tutor-reply.js"></script>
+<script src="https://studioinfinitycr.com/js/tutor-reply.js?v=20260804qa1"></script>
+<script src="js/tutor-reply.js?v=20260804qa1"></script>
 <script src="https://studioinfinitycr.com/js/jill-learner-intent.js?v=20260711ops"></script>
 <script src="https://studioinfinitycr.com/js/jill-canon-router.js?v=20260804canon1"></script>
 <script src="https://studioinfinitycr.com/js/jill-canon-visual.js?v=20260804canon1"></script>
 <script src="https://studioinfinitycr.com/js/jill-canon-drill.js?v=20260711ops"></script>
-<script src="https://studioinfinitycr.com/js/ai-board-directive.js?v=20260804ai1"></script>
-<script src="js/ai-board-directive.js?v=20260804ai1"></script>
+<script src="https://studioinfinitycr.com/js/ai-board-directive.js?v=20260804ai2"></script>
+<script src="js/ai-board-directive.js?v=20260804ai2"></script>
 <script src="https://studioinfinitycr.com/js/jill-lesson-clip.js?v=20260715teach1"></script>
-<script src="https://studioinfinitycr.com/js/jill-visual-stage.js?v=20260804ai1"></script>
-<script src="js/jill-visual-stage.js?v=20260804ai1"></script>
+<script src="https://studioinfinitycr.com/js/jill-visual-stage.js?v=20260804ai2"></script>
+<script src="js/jill-visual-stage.js?v=20260804ai2"></script>
 <script src="https://studioinfinitycr.com/js/claire-toeic-board.js?v=20260715sync1"></script>
 <script src="https://studioinfinitycr.com/js/jill-calibration.js?v=20260707a"></script>
-<script src="https://studioinfinitycr.com/js/jill-foundations.js?v=20260804ai1"></script>
-<script src="js/jill-foundations.js?v=20260804ai1"></script>
+<script src="https://studioinfinitycr.com/js/jill-foundations.js?v=20260804ai2"></script>
+<script src="js/jill-foundations.js?v=20260804ai2"></script>
 <script src="https://studioinfinitycr.com/js/trainer-drill-engine.js?v=20260707k"></script>
 <script src="https://studioinfinitycr.com/js/jill-f0-gate.js?v=20260709utf8"></script>
 <script src="https://studioinfinitycr.com/js/jill-structure-drill.js?v=20260711been"></script>
@@ -59,7 +60,8 @@
 <script src="https://studioinfinitycr.com/js/infinity-victory.js?v=20260710utf8"></script>
 <script src="https://studioinfinitycr.com/js/jill-foundations-modules.js?v=20260713m07"></script>
 <script src="https://studioinfinitycr.com/js/jill-quiz.js?v=20260717visible"></script>
-<script src="https://studioinfinitycr.com/js/tts-chunks.js?v=20260711jota"></script>
+<script src="https://studioinfinitycr.com/js/tts-chunks.js?v=20260804ai2"></script>
+<script src="js/tts-chunks.js?v=20260804ai2"></script>
 <script src="https://studioinfinitycr.com/js/nexora-stream-voice.js"></script>
 <script src="https://studioinfinitycr.com/js/ptt-mic.js?v=20260730echo2"></script>
 <style>
@@ -5647,7 +5649,7 @@ function aliceActivateVisualStage(text){
   if(col && !/^nexus_/i.test(String(col))) col = null;
   if(!col && sticky && /^nexus_/i.test(sticky)) col = sticky;
 
-  if (ai.design && ai.design.title) {
+  if (ai.design && ai.design.title && !(ai.trackId && typeof AiBoardDirective !== 'undefined' && AiBoardDirective.isValidForTutor(ai.trackId, 'alice'))) {
     var dShown = JillVisualStage.show(plain, 'whiteboard', null, {
       tutor: 'alice',
       userTopic: userTopic || col || '',
@@ -7020,7 +7022,7 @@ function jillActivateVisualStage(text, contentType){
     }
   }
 
-  if (ai.design && ai.design.title) {
+  if (ai.design && ai.design.title && !(ai.trackId && typeof AiBoardDirective !== 'undefined' && AiBoardDirective.isValidForTutor(ai.trackId, 'jill'))) {
     var shownDesign = JillVisualStage.show(ai.clean || text, 'whiteboard', bundle, {
       userTopic: userAsk || '',
       column: col || null,

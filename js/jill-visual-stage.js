@@ -328,8 +328,8 @@
       }
     }
 
-    // ── AI-designed board (no SVG track) ──
-    if (design && design.title && typeof global.AiBoardDirective !== 'undefined') {
+    // ── AI-designed board (only when no canon track column) ──
+    if (!col && design && design.title && typeof global.AiBoardDirective !== 'undefined') {
       var dHtml = global.AiBoardDirective.designHtml(design);
       if (dHtml) {
         activate(
@@ -408,6 +408,9 @@
   function scoreOral(text) {
     if (!active || typeof JillCanonDrill === 'undefined') return null;
     var trackId = currentColumn;
+    if (!trackId || trackId === 'ai_design' || /^nexus_/i.test(trackId) || /^toeic_/i.test(trackId)) {
+      return null;
+    }
     var result = JillCanonDrill.scoreUtterance(text, trackId);
     var snap = JillCanonDrill.snapshot();
     setRing(snap.combined || result.score || 0);

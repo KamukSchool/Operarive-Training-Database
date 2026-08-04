@@ -46,22 +46,34 @@
   var ALIAS = {
     presente: 'present',
     present: 'present',
+    present_simple: 'present',
+    present_tense: 'present',
     pr: 'present',
     pasado: 'past',
+    pasado_simple: 'past',
     past: 'past',
+    past_simple: 'past',
     ps: 'past',
     continuo: 'progressive',
     progresivo: 'progressive',
     progressive: 'progressive',
+    presente_continuo: 'progressive',
+    present_continuous: 'progressive',
+    present_progressive: 'progressive',
     'presente continuo': 'progressive',
     pc: 'progressive',
     perfecto: 'perfect',
     perfect: 'perfect',
+    present_perfect: 'perfect',
+    presente_perfecto: 'perfect',
     prp: 'perfect',
     future: 'future',
     futuro: 'future',
+    futuro_simple: 'future',
     will: 'future',
     'future perfect': 'future_perfect',
+    future_perfect: 'future_perfect',
+    futuro_perfecto: 'future_perfect',
     gerundio: 'gerundio',
     gerund: 'gerundio',
     'to vs ing': 'gerundio',
@@ -69,7 +81,8 @@
     preposiciones: 'prepositions',
     prepositions: 'prepositions',
     modales: 'modales',
-    modal: 'modales',
+    // coin-method modal (separate from will/would class track "modales")
+    modal: 'modal',
     moneda: 'modal',
     irregular: 'irregular_verbs',
     irregulares: 'irregular_verbs',
@@ -86,8 +99,17 @@
     recovery: 'nexus_recovery',
     idea: 'nexus_idea_chain',
     nexus: 'nexus_idea_chain',
-    chunking: 'nexus_idea_chain'
+    chunking: 'nexus_idea_chain',
+    idea_chain: 'nexus_idea_chain'
   };
+
+  function softCollapse(text) {
+    // Preserve paragraph breaks for TTS cadence; only flatten repeated spaces
+    return String(text || '')
+      .replace(/[ \t\f\v]{2,}/g, ' ')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+  }
 
   function esc(s) {
     return String(s || '')
@@ -98,17 +120,17 @@
   }
 
   function normalizeId(raw) {
-    var id = String(raw || '')
-      .trim()
-      .toLowerCase()
-      .replace(/\s+/g, '_')
-      .replace(/[^a-z0-9_]/g, '');
+    var spaced = String(raw || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    if (!spaced) return null;
+    if (ALIAS[spaced]) return ALIAS[spaced];
+    var id = spaced.replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
     if (!id) return null;
     if (FOUNDATIONS[id] || NEXUS[id]) return id;
     if (ALIAS[id]) return ALIAS[id];
-    // spaces as words already collapsed
-    var spaced = String(raw || '').trim().toLowerCase();
-    if (ALIAS[spaced]) return ALIAS[spaced];
+    // loose: "will have" etc. already handled; try hyphen → underscore
+    var hyp = id.replace(/-/g, '_');
+    if (FOUNDATIONS[hyp] || NEXUS[hyp]) return hyp;
+    if (ALIAS[hyp]) return ALIAS[hyp];
     return null;
   }
 
@@ -171,31 +193,37 @@
       return '';
     });
 
-    // legacy board ids sometimes appear as JILL_META track
-    text = text.replace(/\s{2,}/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+    // Prefer canon track when both BOARD + BOARD_DESIGN appear (SVG first; design is fallback)
+    if (trackId && design) {
+      // keep design only as caption fallback metadata; consumers prefer trackId
+    }
 
     return {
       trackId: trackId,
       focus: focus,
       design: design,
-      clean: text,
-      hadDirective: had
+      clean: softCollapse(text),
+      hadDirective: had,
+      preferTrack: !!(trackId)
     };
   }
 
   function strip(raw) {
-    return String(raw || '')
-      .replace(/\[\[\s*BOARD\s*:[^\]]*\]\]/gi, '')
-      .replace(/\[\[\s*BOARD_DESIGN\s*:[^\]]*\]\]/gi, '')
-      .replace(/\s{2,}/g, ' ')
-      .trim();
+    // Design before bare BOARD so BOARD_DESIGN is fully removed
+    return softCollapse(
+      String(raw || '')
+        .replace(/\[\[\s*BOARD_DESIGN\s*:[^\]]*\]\]/gi, '')
+        .replace(/\[\[\s*BOARD\s*:[^\]]*\]\]/gi, '')
+    );
   }
 
   function designHtml(design) {
     if (!design || !design.title) return '';
     var lines = (design.lines || []).map(function (line) {
-      var bad = /✗|✘|wrong|incorrect|no\b|evitar|error/i.test(line);
-      var good = /✓|✔|ok|correct|bien|target|bueno/i.test(line);
+      var bad = /✗|✘|wrong|incorrect|evitar|error típico|no digas|never say|mal:/i.test(line)
+        || /^\s*(✗|✘|x\b|no:)/i.test(line);
+      var good = /✓|✔|correct|bien:|bueno:|target|good example/i.test(line)
+        || /^\s*(✓|✔|ok:)/i.test(line);
       var cls = bad ? ' is-bad' : (good ? ' is-good' : '');
       return '<div class="ai-board-line' + cls + '">' + esc(line) + '</div>';
     }).join('');
@@ -235,12 +263,12 @@
     isValidForTutor: isValidForTutor,
     systemHint: systemHint,
     listTracks: listTracks,
-    VERSION: '20260804ai1'
+    VERSION: '20260804ai2'
   };
-})(typeof window !== 'undefined' ? window : this);
+})(typeof globalThis !== 'undefined' ? globalThis : (typeof window !== 'undefined' ? window : this));
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = typeof globalThis !== 'undefined' && globalThis.AiBoardDirective
+  module.exports = (typeof globalThis !== 'undefined' && globalThis.AiBoardDirective)
     ? globalThis.AiBoardDirective
     : null;
 }

@@ -563,6 +563,20 @@
       return (Date.parse(a.at) || 0) - (Date.parse(b.at) || 0);
     });
 
+    // Dedupe near-identical times (same second + same source)
+    var deduped = [];
+    for (var di = 0; di < points.length; di++) {
+      var cur = points[di];
+      var prev = deduped[deduped.length - 1];
+      if (prev && prev.source === cur.source
+        && Math.abs((Date.parse(cur.at) || 0) - (Date.parse(prev.at) || 0)) < 1500
+        && Number(prev.score) === Number(cur.score)) {
+        continue;
+      }
+      deduped.push(cur);
+    }
+    points = deduped;
+
     // Keep last 12
     if (points.length > 12) points = points.slice(-12);
 
