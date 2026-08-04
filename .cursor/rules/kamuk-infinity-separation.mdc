@@ -1,0 +1,27 @@
+---
+description: Kamuk is a twin of Infinity — same product UX, never Infinity data
+alwaysApply: true
+---
+
+# Kamuk boundary (twin ≠ mix)
+
+This repo is **Kamuk School** operational stack. It is a **product twin** of Infinity Studio (same Portal/Engine capabilities) but **must never use Infinity student data**.
+
+## Only Kamuk data
+
+- Supabase: `https://lbspgbeqtcnjrbhiuucu.supabase.co`
+- Tables: `kamuk_students`, `kamuk_users`, `kamuk_sessions`, …
+- Student IDs: `KAM-…`
+- Login: `product: 'kamuk'` · never fall back to `infinity_students`
+- Public hub: `https://kamukschool.github.io/Operarive-Training-Database/`
+
+## Hard bans
+
+- Do not point apps at Infinity Supabase (`rxruvpfd…`) for students/users/sessions.
+- Do not copy/sync student rows between Infinity and Kamuk unless explicitly ordered as a one-off migration **into** Kamuk tables (never shared tables).
+- Do not send Kamuk trainees to Infinity Student Portal URLs in Engine messages (`STUDENT_PORTAL_URL` must stay Kamuk portal).
+- Do not “repair” a down Kamuk DB by writing into Infinity.
+
+## Twin rebuild
+
+When parity with Infinity is requested, regenerate from Infinity sources **then** rebind colors, tables, IDs, portal URL, and `product: 'kamuk'`. Shared CDN for JS is OK; shared **data** is not.
