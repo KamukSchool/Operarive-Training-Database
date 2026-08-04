@@ -1,30 +1,35 @@
 # Operarive Training Database — Kamuk School
 
-Proyecto **hermano / cliente**: stack operacional para **Kamuk School** (Tibás).  
-**No pertenece a Infinity Studio CR** como producto público; se opera aparte para el colegio.
+**Twin de Infinity Studio CR** — misma experiencia de producto (Portal, Engine, Nexora, IA, juegos, evaluación), **datos y accesos 100% separados**.
+
+| | Infinity | Kamuk |
+|--|--|--|
+| Repo | INFINTYSTUDIOCR/Database- | KamukSchool/Operarive-Training-Database |
+| Supabase | infinity_* | kamuk_* (`lbspgbeqtcnjrbhiuucu`) |
+| IDs | `IS-` | `KAM-` |
+| Brand | púrpura | azul Kamuk |
+| Portal | studioinfinitycr.com | https://kamukschool.github.io/Operarive-Training-Database/Kamuk_Student_Portal.html |
+| Engine | studioinfinitycr.com | https://kamukschool.github.io/Operarive-Training-Database/Kamuk_Engine.html |
 
 ## Apps
 
 | Archivo | Uso |
 |---------|-----|
-| `index.html` | Hub de entrada (GitHub Pages) |
-| `Kamuk_Engine.html` | Engine / trainers |
-| `Kamuk_Student_Portal.html` | Portal estudiantes (`KAM-`, tablas `kamuk_*`) |
-| `nexora.html` | Laboratorio de simulación |
+| `index.html` | Hub GitHub Pages |
+| `Kamuk_Student_Portal.html` | Paridad Infinity Student Portal |
+| `Kamuk_Engine.html` | Paridad Infinity Nexus Engine |
+| `nexora.html` | Lab Nexora |
+
+## Build
+
+Desde el monorepo Infinity:
+
+```bash
+node scripts/_archive_kamuk/build-kamuk-twin.mjs
+```
+
+Static JS/CSS se cargan desde `studioinfinitycr.com` (solo librerías). **No** se leen tablas Infinity.
 
 ## GitHub Pages
 
-1. Settings → Pages  
-2. Source: **Deploy from a branch**  
-3. Branch: `main` / **root**  
-4. Public URL: https://kamukschool.github.io/Operarive-Training-Database/
-
-## Datos
-
-- Estudiantes: `kamuk_students`  
-- Sesiones / logs: `kamuk_sessions`  
-- IDs típicos: `KAM-…`
-
-## Nota operacional
-
-Mantener este repo **separado** del marketing/site de Infinity. Actualizaciones de Engine/Portal/Nexora se hacen aquí cuando el cliente lo necesita en producción.
+https://kamukschool.github.io/Operarive-Training-Database/
