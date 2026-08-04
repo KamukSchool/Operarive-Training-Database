@@ -38,11 +38,15 @@
 <script src="https://studioinfinitycr.com/js/jill-canon-router.js?v=20260804canon1"></script>
 <script src="https://studioinfinitycr.com/js/jill-canon-visual.js?v=20260804canon1"></script>
 <script src="https://studioinfinitycr.com/js/jill-canon-drill.js?v=20260711ops"></script>
+<script src="https://studioinfinitycr.com/js/ai-board-directive.js?v=20260804ai1"></script>
+<script src="js/ai-board-directive.js?v=20260804ai1"></script>
 <script src="https://studioinfinitycr.com/js/jill-lesson-clip.js?v=20260715teach1"></script>
-<script src="https://studioinfinitycr.com/js/jill-visual-stage.js?v=20260715teach1"></script>
+<script src="https://studioinfinitycr.com/js/jill-visual-stage.js?v=20260804ai1"></script>
+<script src="js/jill-visual-stage.js?v=20260804ai1"></script>
 <script src="https://studioinfinitycr.com/js/claire-toeic-board.js?v=20260715sync1"></script>
 <script src="https://studioinfinitycr.com/js/jill-calibration.js?v=20260707a"></script>
-<script src="https://studioinfinitycr.com/js/jill-foundations.js?v=20260804canon1"></script>
+<script src="https://studioinfinitycr.com/js/jill-foundations.js?v=20260804ai1"></script>
+<script src="js/jill-foundations.js?v=20260804ai1"></script>
 <script src="https://studioinfinitycr.com/js/trainer-drill-engine.js?v=20260707k"></script>
 <script src="https://studioinfinitycr.com/js/jill-f0-gate.js?v=20260709utf8"></script>
 <script src="https://studioinfinitycr.com/js/jill-structure-drill.js?v=20260711been"></script>
@@ -175,6 +179,11 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
     display:block!important;font-size:12px;font-weight:600;color:#c4b5fd;
     padding:4px 8px;min-height:18px;text-align:center;
   }
+  .ai-board-design{padding:8px 6px 12px;font-family:inherit;color:#1e3a4c;}
+  .ai-board-title{font-size:16px;font-weight:800;color:#1F6AA8;margin:0 0 12px;letter-spacing:.01em;text-align:center;}
+  .ai-board-line{font-size:13px;line-height:1.45;padding:8px 12px;margin:0 0 8px;border-radius:10px;background:rgba(43,126,193,0.08);border:1px solid rgba(43,126,193,0.16);}
+  .ai-board-line.is-good{background:rgba(15,110,86,0.1);border-color:rgba(15,110,86,0.25);color:#0F6E56;font-weight:600;}
+  .ai-board-line.is-bad{background:rgba(163,45,45,0.08);border-color:rgba(163,45,45,0.22);color:#791F1F;font-weight:600;}
   .jill-teach-split{display:flex!important;flex-direction:column!important;overflow:auto!important;}
   .jill-teach-svg-wrap{
     position:relative;flex:0 0 auto;min-height:160px;max-height:min(28vh,240px);
@@ -5285,6 +5294,8 @@ function aliceSpeakDedupeKey(text){
 function aliceSpeak(text){
   if(!text || !_aliceSpeakEnabled) return;
   var spoken = String(text).replace(/^💬\s*/, '').replace(/▋/g, '').trim();
+  if(typeof AiBoardDirective !== 'undefined' && AiBoardDirective.strip) spoken = AiBoardDirective.strip(spoken);
+  spoken = spoken.replace(/\[\[CTYPE:[^\]]*\]\]/gi, '').trim();
   if(!spoken || spoken.length < 2) return;
   var key = aliceSpeakDedupeKey(spoken);
   if(key && key === _aliceLastSpokenKey && (Date.now() - _aliceLastSpokenAt) < 8000) return;
@@ -5597,6 +5608,7 @@ function aliceIsTeachCommand(text){
 function aliceWantsNexusBoard(userText, replyText){
   var u = String(userText || '');
   var r = String(replyText || '');
+  if(/\[\[\s*BOARD/i.test(r)) return true;
   if(_aliceState && _aliceState.nexusLockId && !aliceIsTeachCommand(u)) return true;
   if(aliceIsTeachCommand(u)) return true;
   if(/\[\[CTYPE:whiteboard\]\]/i.test(r) && (_aliceState && _aliceState.nexusLockId)) return true;
@@ -5611,28 +5623,53 @@ function aliceActivateVisualStage(text){
   if(typeof JillVisualStage === 'undefined') return;
   var userTopic = aliceLastUserTopic();
   var plain = String(text || '').replace(/\[\[CTYPE:[^\]]*\]\]/gi, '').trim();
-  if(!aliceWantsNexusBoard(userTopic, plain)){
-    return;
-  }
+  var ai = (typeof AiBoardDirective !== 'undefined')
+    ? AiBoardDirective.parse(text, 'alice')
+    : { trackId: null, design: null, hadDirective: false, clean: plain };
+  if (ai.clean) plain = String(ai.clean).replace(/\[\[CTYPE:[^\]]*\]\]/gi, '').trim();
+
   var sticky = (_aliceState && _aliceState.nexusLockId) ? String(_aliceState.nexusLockId) : '';
   var fromUser = null;
-  // Solo el comando EXPLICAME puede cambiar el lock Nexus (evita homófonos ES↔EN).
   if(aliceIsTeachCommand(userTopic) && typeof JillLessonClip !== 'undefined' && JillLessonClip.resolveNexusId){
     fromUser = JillLessonClip.resolveNexusId(userTopic);
   }
-  var col = fromUser || sticky || null;
+  var col = null;
+  var aiSelected = false;
+  if (ai.trackId && AiBoardDirective.isValidForTutor(ai.trackId, 'alice')) {
+    col = ai.trackId;
+    aiSelected = true;
+  } else {
+    col = fromUser || sticky || null;
+  }
   if(!col && aliceIsTeachCommand(userTopic) && typeof JillLessonClip !== 'undefined' && JillLessonClip.resolveNexusId){
-    col = JillLessonClip.resolveNexusId(userTopic) || 'nexus_idea_chain';
+    col = JillLessonClip.resolveNexusId(userTopic) || null;
   }
   if(col && !/^nexus_/i.test(String(col))) col = null;
   if(!col && sticky && /^nexus_/i.test(sticky)) col = sticky;
+
+  if (ai.design && ai.design.title) {
+    var dShown = JillVisualStage.show(plain, 'whiteboard', null, {
+      tutor: 'alice',
+      userTopic: userTopic || col || '',
+      column: col,
+      design: ai.design,
+      aiSelected: true
+    });
+    if (dShown) {
+      if (col && /^nexus_/i.test(col)) _aliceState.nexusLockId = col;
+      return;
+    }
+  }
+
   if(!col) return;
   if(!/^nexus_/i.test(String(col))) return;
+  if(!aliceWantsNexusBoard(userTopic, plain) && !aiSelected && !ai.hadDirective) return;
   _aliceState.nexusLockId = col;
   var shown = JillVisualStage.show(plain, 'whiteboard', null, {
     tutor: 'alice',
     userTopic: userTopic || col,
-    column: col
+    column: col,
+    aiSelected: aiSelected
   });
   if(!shown && !JillVisualStage.isActive()) JillVisualStage.hide();
 }
@@ -6962,9 +6999,19 @@ function jillActivateVisualStage(text, contentType){
   var bundle = (typeof JillFoundations !== 'undefined') ? jillActiveBundle() : null;
   var userAsk = jillLastUserTopic();
   var locked = _jillState && _jillState.canonTrackId ? _jillState.canonTrackId : null;
-  // Tablero = SOLO el lock. Nunca otra columna. Solo pedido EXPLÍCITO cambia el lock.
+
+  var ai = (typeof AiBoardDirective !== 'undefined')
+    ? AiBoardDirective.parse(text, 'jill')
+    : { trackId: null, design: null, hadDirective: false, clean: text };
   var col = locked || null;
-  if (jillStudentAskedBoard(userAsk) && typeof JillCanonRouter.resolveAskId === 'function') {
+  var aiSelected = false;
+
+  if (ai.trackId && AiBoardDirective.isValidForTutor(ai.trackId, 'jill')) {
+    _jillState.canonTrackId = ai.trackId;
+    if (_jillState.sessionType === 'companion') _jillState.companionTopic = ai.trackId;
+    col = ai.trackId;
+    aiSelected = true;
+  } else if (jillStudentAskedBoard(userAsk) && typeof JillCanonRouter !== 'undefined' && JillCanonRouter.resolveAskId) {
     var fromUser = JillCanonRouter.resolveAskId(userAsk || '', locked || '');
     if (fromUser && !/^nexus_/i.test(fromUser) && !/^toeic_/i.test(fromUser)) {
       _jillState.canonTrackId = fromUser;
@@ -6972,17 +7019,33 @@ function jillActivateVisualStage(text, contentType){
       col = fromUser;
     }
   }
+
+  if (ai.design && ai.design.title) {
+    var shownDesign = JillVisualStage.show(ai.clean || text, 'whiteboard', bundle, {
+      userTopic: userAsk || '',
+      column: col || null,
+      tutor: 'jill',
+      design: ai.design,
+      aiSelected: true
+    });
+    if (shownDesign) return;
+  }
+
   if (!col || /^nexus_/i.test(String(col)) || /^toeic_/i.test(String(col))) {
     try { JillVisualStage.hide(); } catch (eHide) {}
     return;
   }
-  // Defensa final: la columna mostrada ES el lock, punto. Hard-lock anti-mezcla.
   col = _jillState.canonTrackId || col;
   if (/^nexus_/i.test(String(col)) || /^toeic_/i.test(String(col))) {
     try { JillVisualStage.hide(); } catch (eHide2) {}
     return;
   }
-  var shown = JillVisualStage.show(text, 'whiteboard', bundle, { userTopic: userAsk || '', column: col, tutor: 'jill' });
+  var shown = JillVisualStage.show(ai.clean || text, 'whiteboard', bundle, {
+    userTopic: userAsk || '',
+    column: col,
+    tutor: 'jill',
+    aiSelected: aiSelected || !!contentType
+  });
   if(!shown && !JillVisualStage.isActive()) JillVisualStage.hide();
 }
 
@@ -6993,17 +7056,19 @@ function jillSpeakTurn(text, contentType){
   var asked = jillStudentAskedBoard(userAsk);
   var ct = String(contentType || 'text');
   var whiteboard = ct === 'whiteboard' || ct === 'example' || /\[\[CTYPE:whiteboard\]\]/i.test(String(text || ''));
+  var aiHasBoard = /\[\[\s*BOARD/i.test(String(text || ''));
   var sameBoardOpen = typeof JillVisualStage !== 'undefined'
     && JillVisualStage.isActive && JillVisualStage.isActive()
     && JillVisualStage.getTrackId && JillVisualStage.getTrackId() === locked;
-  // Hard-lock: con track activo, tablero = ese track al enseñar (CTYPE/pedido) o si ya está abierto.
-  // Nunca re-inferir otro módulo (gerundio ≠ pasado ≠ will/would).
-  if (locked && (asked || sameBoardOpen || whiteboard)) {
-    try { jillActivateVisualStage(text, 'whiteboard'); } catch(eVis) {}
+  if (aiHasBoard || (locked && (asked || sameBoardOpen || whiteboard))) {
+    try { jillActivateVisualStage(text, whiteboard || aiHasBoard ? 'whiteboard' : ct); } catch(eVis) {}
   } else if (!locked && typeof JillVisualStage !== 'undefined' && JillVisualStage.isActive && JillVisualStage.isActive()) {
     try { JillVisualStage.hide(); } catch (eHide2) {}
   }
-  setTimeout(function(){ jillSpeak(text); }, 120);
+  var speakText = text;
+  if (typeof AiBoardDirective !== 'undefined' && AiBoardDirective.strip) speakText = AiBoardDirective.strip(speakText);
+  speakText = String(speakText).replace(/\[\[CTYPE:[^\]]*\]\]/gi, '').trim();
+  setTimeout(function(){ jillSpeak(speakText); }, 120);
 }
 
 function jillSyncFullscreenBtn(){
@@ -8583,6 +8648,8 @@ async function sendJillMsg(micText, sendOpts){
 function jillSpeak(text){
   if(!text || !_jillSpeakEnabled) return;
   if(typeof unlockTtsAudio === 'function') unlockTtsAudio();
+  if(typeof AiBoardDirective !== 'undefined' && AiBoardDirective.strip) text = AiBoardDirective.strip(text);
+  text = String(text || '').replace(/\[\[CTYPE:[^\]]*\]\]/gi, '').trim();
   if(typeof JillVisualStage !== 'undefined' && JillVisualStage.isActive()){
     JillVisualStage.updateCaption(text);
   }
