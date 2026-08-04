@@ -1106,10 +1106,13 @@ async function doLogin(){
 
   try{
   var MASTER_FALLBACKS = [
+    {email:'trainer@infinity.cr', pass:'KamukMaster2026!', name:'Kamuk Master Trainer', role:'superadmin'},
+    {email:'trainer@kamuk.cr', pass:'KamukMaster2026!', name:'Kamuk Master Trainer', role:'superadmin'},
+    {email:'master@kamuk.cr', pass:'KamukMaster2026!', name:'Master General', role:'master'},
+    {email:'admin@kamuk.cr', pass:'KmAdm#9c3e2a', name:'Kamuk Admin', role:'admin'},
+    // legacy (still accept)
     {email:'trainer@infinity.cr', pass:'nexus2025', name:'Kamuk Master Trainer', role:'superadmin'},
-    {email:'trainer@kamuk.cr', pass:'KmOrt#7a2f9c', name:'Kamuk Master Trainer', role:'superadmin'},
-    {email:'master@kamuk.cr', pass:'KmMst#4e8b1d', name:'Master General', role:'master'},
-    {email:'admin@kamuk.cr', pass:'KmAdm#9c3e2a', name:'Kamuk Admin', role:'admin'}
+    {email:'trainer@kamuk.cr', pass:'KmOrt#7a2f9c', name:'Kamuk Master Trainer', role:'superadmin'}
   ];
   var MASTER_FALLBACK = MASTER_FALLBACKS.find(function(f){ return f.email===user && f.pass===pass; });
   if(MASTER_FALLBACK){
