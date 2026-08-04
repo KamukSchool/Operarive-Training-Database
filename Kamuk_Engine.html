@@ -315,6 +315,7 @@ textarea.inp{resize:vertical;min-height:80px;}
       <div class="sb-item" onclick="showView('availability',this)"><i class="ti ti-clock"></i>Mi disponibilidad</div>
       <div class="sb-section">Analytics</div>
       <div class="sb-item" onclick="showView('analytics',this)"><i class="ti ti-chart-bar"></i>Estadísticas</div>
+      <div class="sb-item" id="nav-usage-cohort" onclick="showView('usage-cohort',this)"><i class="ti ti-database"></i>Uso · cohorte (30)</div>
       <div class="sb-item" onclick="showView('reports',this)"><i class="ti ti-file-text"></i>Reportes</div>
       <div class="sb-section" id="nav-master-section">Master</div>
       <div class="sb-item" id="nav-resources" onclick="showView('resources',this)"><i class="ti ti-package"></i>Resource Manager</div>
@@ -1244,6 +1245,7 @@ function showView(view, btn){
   else if(view==='kpitracker') renderKPITrackerSelect(m);
   else if(view==='exercises') renderExercises(m);
   else if(view==='analytics') renderAnalytics(m);
+  else if(view==='usage-cohort') renderUsageCohort(m);
   else if(view==='reports') renderReports(m);
   else if(view==='resources') renderResources(m);
   else if(view==='users') renderUsers(m);
@@ -1824,6 +1826,237 @@ function renderAnalytics(m){
     var sc=document.getElementById('chart-scores');
     if(sc) new Chart(sc,{ type:'bar', data:{ labels:Object.keys(buckets), datasets:[{data:Object.values(buckets),backgroundColor:['#0F6E56','#BA7517','#A32D2D','#94A3B8'],borderRadius:6}] }, options:{ responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}, scales:{ y:{ beginAtZero:true,ticks:{stepSize:1} } } } });
   },100);
+}
+
+// ── USO COHORTE KAMUK (PRACT-* + usageArchive · reutilizable) ──
+function usageCohortDayDefault(){
+  return new Date().toISOString().slice(0,10);
+}
+
+async function loadKamukPracticeSessions(day){
+  var dayStr = day || usageCohortDayDefault();
+  var idxId = 'USAGE-IDX-kamuk-' + dayStr;
+  var indexRows = await dbQuery('kamuk_sessions?select=id,data&id=eq.'+encodeURIComponent(idxId)+'&limit=1');
+  var indexEvents = (indexRows[0] && indexRows[0].data && indexRows[0].data.events) || [];
+
+  // Full PRACT rows (transcript + eval) — product-scoped prefix
+  var practRows = await dbQuery('kamuk_sessions?select=id,data,updated_at&id=like.PRACT-kamuk-%25&order=updated_at.desc&limit=200');
+  var sessions = (practRows || []).map(function(r){
+    var d = r.data || {};
+    return {
+      id: r.id,
+      at: d.at || r.updated_at || '',
+      day: d.day || String(d.at || '').slice(0,10),
+      studentId: d.studentId || '',
+      surface: d.surface || '—',
+      mode: d.mode || '',
+      score: d.score != null ? d.score : null,
+      summary: d.summary || '',
+      transcript: d.transcript || '',
+      transcriptChars: d.transcriptChars || (d.transcript ? d.transcript.length : 0),
+      evaluation: d.evaluation || null,
+      topics: d.topics || []
+    };
+  });
+  // Prefer day filter
+  var daySessions = sessions.filter(function(s){ return s.day === dayStr || String(s.at).slice(0,10) === dayStr; });
+  if(!daySessions.length && indexEvents.length){
+    // Fallback: show index stubs if PRACT rows not yet readable
+    daySessions = indexEvents.map(function(e){
+      return {
+        id: e.id,
+        at: e.at,
+        day: dayStr,
+        studentId: e.studentId,
+        surface: e.surface,
+        score: e.score,
+        summary: '',
+        transcript: '',
+        transcriptChars: e.transcriptChars || 0
+      };
+    });
+  }
+  return { day: dayStr, indexEvents: indexEvents, sessions: daySessions, allRecent: sessions.slice(0, 40) };
+}
+
+function openUsageSessionDetail(sessionId){
+  var raw = window._usageSessionsById && window._usageSessionsById[sessionId];
+  if(!raw){ showToast('Sesión no encontrada','err'); return; }
+  var name = '—';
+  try {
+    var st = typeof STUDENTS !== 'undefined' && STUDENTS[raw.studentId] ? STUDENTS[raw.studentId] : null;
+    if(!st && typeof ALL_STUDENTS !== 'undefined') st = ALL_STUDENTS[raw.studentId];
+    name = (st && st.info && st.info.name) || (st && st.name) || raw.studentId || '—';
+  } catch(e){}
+  var evalStr = '';
+  try { evalStr = raw.evaluation ? (typeof raw.evaluation === 'string' ? raw.evaluation : JSON.stringify(raw.evaluation, null, 2)) : ''; } catch(e){ evalStr = ''; }
+  var html = '<div class="fade">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">'
+    +'<h2 style="font-size:16px;font-weight:700;color:var(--navy);margin:0;"><i class="ti ti-file-description"></i> Sesión archivada</h2>'
+    +'<button type="button" class="btn btn-outline btn-sm" onclick="renderUsageCohort(document.getElementById(\'main-content\'))"><i class="ti ti-arrow-left"></i>Volver</button>'
+    +'</div>'
+    +'<div class="card" style="margin-bottom:12px;">'
+    +'<div style="font-size:13px;line-height:1.7;">'
+    +'<strong>'+name+'</strong> · <code style="font-size:11px;">'+raw.studentId+'</code><br>'
+    +'Surface: <strong>'+raw.surface+(raw.mode?(' / '+raw.mode):'')+'</strong> · Score: <strong>'+(raw.score!=null?raw.score:'—')+'</strong><br>'
+    +'Fecha: '+(raw.at?new Date(raw.at).toLocaleString('es-CR'):'—')+' · Chars transcript: '+(raw.transcriptChars||0)
+    +(raw.summary?('<br>Resumen: '+String(raw.summary).replace(/</g,'&lt;')):'')
+    +'</div></div>'
+    +(raw.transcript
+      ? '<div class="card"><div class="card-title"><i class="ti ti-messages"></i>Transcript (para reutilizar en futuro QA / planes)</div>'
+        +'<pre style="white-space:pre-wrap;font-size:12px;line-height:1.55;max-height:420px;overflow:auto;margin:0;background:var(--gray);padding:12px;border-radius:8px;">'
+        +String(raw.transcript).replace(/</g,'&lt;')+'</pre></div>'
+      : '<div class="ib ib-navy">Sin transcript en este registro (score/meta sí). Cuando el backend archive evals, aparecerán textos completos aquí.</div>')
+    +(evalStr
+      ? '<div class="card" style="margin-top:12px;"><div class="card-title">Evaluation JSON</div>'
+        +'<pre style="white-space:pre-wrap;font-size:11px;max-height:240px;overflow:auto;margin:0;">'+String(evalStr).replace(/</g,'&lt;')+'</pre></div>'
+      : '')
+    +'</div>';
+  document.getElementById('main-content').innerHTML = html;
+}
+
+async function renderUsageCohort(m){
+  if(!m) m = document.getElementById('main-content');
+  var day = (window._usageCohortDay || usageCohortDayDefault());
+  m.innerHTML = '<div class="fade"><div class="loading"><i class="ti ti-loader spin"></i><span>Cargando uso de la cohorte Kamuk…</span></div></div>';
+  var pack;
+  try {
+    pack = await loadKamukPracticeSessions(day);
+  } catch(e){
+    m.innerHTML = '<div class="ib" style="border-color:#A32D2D;color:#A32D2D;">No se pudo leer kamuk_sessions: '+(e.message||e)+'</div>';
+    return;
+  }
+
+  var studentsMap = {};
+  try {
+    (typeof allStudents === 'function' ? allStudents() : []).forEach(function(s){ if(s&&s.id) studentsMap[s.id]=s; });
+  } catch(e){}
+  // Also merge STUDENTS global if present
+  try {
+    if(typeof STUDENTS === 'object' && STUDENTS){
+      Object.keys(STUDENTS).forEach(function(id){ studentsMap[id]=STUDENTS[id]; });
+    }
+  } catch(e){}
+
+  window._usageSessionsById = {};
+  pack.sessions.forEach(function(s){ window._usageSessionsById[s.id]=s; });
+  pack.allRecent.forEach(function(s){ if(!window._usageSessionsById[s.id]) window._usageSessionsById[s.id]=s; });
+
+  var bySurface = {};
+  var unique = {};
+  pack.sessions.forEach(function(s){
+    bySurface[s.surface] = (bySurface[s.surface]||0)+1;
+    if(s.studentId) unique[s.studentId]=true;
+  });
+  var nUnique = Object.keys(unique).length;
+  var totalChars = pack.sessions.reduce(function(a,s){ return a+(s.transcriptChars||0); },0);
+
+  // Roster cards — usage archive pointers
+  var roster = Object.keys(studentsMap).map(function(id){
+    var s = studentsMap[id];
+    var arch = (s.usageArchive||[]).slice(-5).reverse();
+    var aliceN = (s.aliceSessions||[]).length;
+    var histN = (s.kpis && s.kpis.history) ? s.kpis.history.length : 0;
+    return {
+      id: id,
+      name: (s.info&&s.info.name)||s.name||id,
+      arch: arch,
+      aliceN: aliceN,
+      histN: histN,
+      nexora: s.nexoraSessionCount || (s.nexoraSessions||[]).length || 0
+    };
+  }).sort(function(a,b){ return (b.arch.length+b.aliceN)-(a.arch.length+a.aliceN); });
+
+  // Soft limit badge for 30 seats
+  var rosterCount = roster.length;
+  var seatsNote = rosterCount >= 30
+    ? 'Cohorte llena / encima de ~30 ('+rosterCount+')'
+    : rosterCount + ' de ~30 cupos con registro en Engine';
+
+  m.innerHTML = '<div class="fade">'
+    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:1rem;">'
+    +'<div><h2 style="font-size:16px;font-weight:700;color:var(--navy);margin:0 0 4px;"><i class="ti ti-database"></i> Uso de la cohorte Kamuk</h2>'
+    +'<div style="font-size:12px;color:var(--t3);">Todo lo archivado vive en <code>kamuk_sessions</code> (PRACT-*) + punteros en cada alumno. No se mezcla con Infinity.</div></div>'
+    +'<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">'
+    +'<input type="date" id="usage-day" value="'+day+'" class="inp" style="max-width:160px;" />'
+    +'<button type="button" class="btn btn-metal btn-sm" id="usage-reload"><i class="ti ti-refresh"></i>Actualizar</button>'
+    +'<button type="button" class="btn btn-outline btn-sm" id="usage-export"><i class="ti ti-download"></i>Exportar JSON</button>'
+    +'</div></div>'
+
+    +'<div class="grid4" style="margin-bottom:1rem;">'
+    +'<div class="stat"><div class="stat-label">Sesiones (día)</div><div class="stat-val" style="color:var(--navy);">'+pack.sessions.length+'</div><div class="stat-sub">'+day+'</div></div>'
+    +'<div class="stat"><div class="stat-label">Alumnos activos</div><div class="stat-val" style="color:#0F6E56;">'+nUnique+'</div><div class="stat-sub">con práctica este día</div></div>'
+    +'<div class="stat"><div class="stat-label">Transcript chars</div><div class="stat-val" style="color:#BA7517;">'+totalChars.toLocaleString()+'</div><div class="stat-sub">texto reutilizable</div></div>'
+    +'<div class="stat"><div class="stat-label">Roster Engine</div><div class="stat-val" style="color:#1B9BD1;">'+rosterCount+'</div><div class="stat-sub">'+seatsNote+'</div></div>'
+    +'</div>'
+
+    +'<div class="card" style="margin-bottom:1rem;"><div class="card-title"><i class="ti ti-chart-pie"></i>Por producto de sesión</div>'
+    +(Object.keys(bySurface).length
+      ? '<div style="display:flex;flex-wrap:wrap;gap:8px;">'+Object.keys(bySurface).map(function(k){
+          return '<span style="background:rgba(43,126,193,0.12);color:var(--navy);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;">'+k+': '+bySurface[k]+'</span>';
+        }).join('')+'</div>'
+      : '<div style="font-size:13px;color:var(--t3);">Aún no hay PRACT- de este día. Cuando alumnos cierren Alice/Jill/Nexora/Drill (backend desplegado), aparecen aquí.</div>')
+    +'</div>'
+
+    +'<div class="card" style="margin-bottom:1rem;"><div class="card-title"><i class="ti ti-list-details"></i>Sesiones del día · click para transcript</div>'
+    +'<div style="overflow:auto;"><table class="tbl"><thead><tr><th>Hora</th><th>Alumno</th><th>Surface</th><th>Score</th><th>Chars</th><th></th></tr></thead><tbody>'
+    +(pack.sessions.length ? pack.sessions.slice().sort(function(a,b){ return String(b.at).localeCompare(String(a.at)); }).map(function(s){
+        var nm = (studentsMap[s.studentId] && ((studentsMap[s.studentId].info&&studentsMap[s.studentId].info.name)||studentsMap[s.studentId].name)) || s.studentId || '—';
+        var t = s.at ? new Date(s.at).toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit'}) : '—';
+        return '<tr style="cursor:pointer;" data-sid="'+String(s.id).replace(/"/g,'&quot;')+'" class="usage-row">'
+          +'<td>'+t+'</td><td><strong>'+nm+'</strong><div style="font-size:10px;color:var(--t3);">'+s.studentId+'</div></td>'
+          +'<td>'+s.surface+'</td><td>'+(s.score!=null?s.score:'—')+'</td><td>'+(s.transcriptChars||0)+'</td>'
+          +'<td><button type="button" class="btn btn-outline btn-sm usage-open" data-sid="'+String(s.id).replace(/"/g,'&quot;')+'">Ver</button></td></tr>';
+      }).join('')
+      : '<tr><td colspan="6" style="color:var(--t3);">Sin sesiones archivadas este día.</td></tr>')
+    +'</tbody></table></div></div>'
+
+    +'<div class="card"><div class="card-title"><i class="ti ti-users"></i>Roster · memoria en fichas (usageArchive / KPI / Alice)</div>'
+    +'<div style="overflow:auto;max-height:360px;"><table class="tbl"><thead><tr><th>Alumno</th><th>Archive</th><th>Alice</th><th>KPI hist</th><th>Nexora</th><th>Último</th></tr></thead><tbody>'
+    +(roster.length ? roster.map(function(r){
+        var last = r.arch[0];
+        return '<tr onclick="openStudent(\''+r.id+'\')" style="cursor:pointer;">'
+          +'<td><strong>'+r.name+'</strong></td>'
+          +'<td>'+r.arch.length+'</td><td>'+r.aliceN+'</td><td>'+r.histN+'</td><td>'+r.nexora+'</td>'
+          +'<td style="font-size:11px;">'+(last ? ((last.surface||'')+' · '+(last.score!=null?last.score:'—')+' · '+String(last.at||'').slice(0,10)) : '—')+'</td></tr>';
+      }).join('')
+      : '<tr><td colspan="6">Sin alumnos cargados en Engine.</td></tr>')
+    +'</tbody></table></div></div>'
+
+    +'<div class="ib ib-navy" style="margin-top:12px;">Deploy backend: las filas <code>PRACT-kamuk-*</code> se crean al evaluar (Alice/Jill/Nexora/Drill). El portal Pages solo no alcanza: hace falta el server con <code>product-usage-store</code>.</div>'
+    +'</div>';
+
+  var dayEl = document.getElementById('usage-day');
+  var reload = document.getElementById('usage-reload');
+  var exp = document.getElementById('usage-export');
+  if(reload) reload.onclick = function(){
+    window._usageCohortDay = (dayEl && dayEl.value) || usageCohortDayDefault();
+    renderUsageCohort(m);
+  };
+  if(dayEl) dayEl.onchange = function(){ window._usageCohortDay = dayEl.value; };
+  if(exp) exp.onclick = function(){
+    var blob = new Blob([JSON.stringify({
+      product: 'kamuk',
+      day: pack.day,
+      sessions: pack.sessions,
+      indexEvents: pack.indexEvents,
+      roster: roster.map(function(r){ return { id:r.id, name:r.name, aliceN:r.aliceN, histN:r.histN, nexora:r.nexora, usageArchive:r.arch }; })
+    }, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'kamuk-usage-'+pack.day+'.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    showToast('Export listo');
+  };
+  m.querySelectorAll('.usage-open, .usage-row').forEach(function(el){
+    el.addEventListener('click', function(ev){
+      var id = el.getAttribute('data-sid');
+      if(!id) return;
+      ev.preventDefault();
+      openUsageSessionDetail(id);
+    });
+  });
 }
 
 // ── REPORTS ───────────────────────────────────────────────

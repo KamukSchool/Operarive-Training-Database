@@ -18,7 +18,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 <link rel="stylesheet" href="https://studioinfinitycr.com/css/daily-inspiration.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://studioinfinitycr.com/js/live-kpi-charts.js?v=20260627"></script>
+<script src="https://studioinfinitycr.com/js/live-kpi-charts.js?v=20260804"></script>
+<script src="js/live-kpi-charts.js?v=20260804"></script>
 <script src="https://studioinfinitycr.com/infinity-auth.js?v=20260711auth2"></script>
 <script src="https://studioinfinitycr.com/nexora-profile.js?v=voice-sync-6"></script>
 <script src="https://studioinfinitycr.com/js/nexora-voice-lock.js?v=6"></script>
@@ -526,6 +527,12 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
 .chart-wrap{position:relative;height:220px;margin-bottom:1rem;min-width:0;width:100%;overflow:hidden;}
 .chart-wrap canvas{display:block;max-width:100%;}
 .chart-wrap-bars{background:rgba(255,255,255,0.05);border-radius:10px;padding:6px 8px;box-sizing:border-box;}
+.chart-interactive{cursor:pointer;transition:transform .35s ease,box-shadow .35s ease;}
+.chart-interactive:hover{transform:translateY(-2px);}
+.kpi-detail-panel{font-size:12px;line-height:1.5;padding:10px 12px;border-radius:10px;background:var(--gray,#f3f4f6);color:var(--text,#1a1a1a);margin-top:8px;min-height:2.4em;border:1px solid var(--border,rgba(0,0,0,.08));}
+.kpi-detail-flash{animation:kpiDetailPulse .5s ease;}
+@keyframes kpiDetailPulse{0%{background:rgba(43,126,193,.15)}100%{background:var(--gray,#f3f4f6)}}
+.kpi-chart-hint{font-size:11px;color:var(--t3,#6b7280);margin:0 0 8px;}
 
 .portal-wrap{max-width:700px;margin:0 auto;padding:1.25rem;padding-left:96px;}
 .portal-header{background:var(--navy);border-radius:var(--rl);padding:1.5rem;margin-bottom:1rem;text-align:center;}
@@ -1358,12 +1365,17 @@ function showPortal(s){
   var kpis=(s.kpis||{}).phase1||{};
   var exercises=getExercises(s);
 
-  var kpiChartHtml='<div class="grid2" style="gap:8px;"><div class="chart-wrap" style="height:180px;"><canvas id="portal-macro-radar"></canvas></div>'
-    +'<div class="chart-wrap" style="height:180px;"><canvas id="portal-macro-bar"></canvas></div></div>';
+  var kpiChartHtml='<p class="kpi-chart-hint"><i class="ti ti-hand-click"></i> Tocá un KPI o punto del timeline — los gráficos se actualizan con tus sesiones.</p>'
+    +'<div class="grid2" style="gap:8px;"><div class="chart-wrap chart-interactive" style="height:180px;"><canvas id="portal-macro-radar"></canvas></div>'
+    +'<div class="chart-wrap chart-interactive" style="height:180px;"><canvas id="portal-macro-bar"></canvas></div></div>'
+    +'<div id="portal-kpi-detail" class="kpi-detail-panel">Tocá un KPI, barra o punto del timeline para ver el detalle.</div>';
 
   var notes=(s.notes||[]).slice(-3).reverse();
   var cals=(s.calibrations||[]).slice(-5);
   var tb=(s.trainingBook||[]).slice().reverse();
+  var hasTimeline = (cals.length >= 2)
+    || ((s.kpis && s.kpis.history && s.kpis.history.length) || 0) >= 1
+    || ((s.aliceSessions || []).length >= 1);
 
   // ── PROGRESO ──────────────────────────────────────────
   var progresoHtml = (typeof NexusPortal !== 'undefined' ? NexusPortal.renderTrackBadge(s) + ' ' : '')
@@ -1372,8 +1384,9 @@ function showPortal(s){
     + (typeof AliceProgress !== 'undefined' ? AliceProgress.renderProgressAddon(s) : '')
     + renderProgressBlock(s)
     +'<div class="card"><div class="card-title"><i class="ti ti-chart-bar"></i>Mis KPIs</div>'+kpiChartHtml+'</div>'
-    +(cals.length>=2?'<div class="card"><div class="card-title"><i class="ti ti-trending-up"></i>Mi progreso (diagnóstico)</div>'
-      +'<div class="chart-wrap"><canvas id="portal-chart"></canvas></div></div>':'')
+    +(hasTimeline?'<div class="card"><div class="card-title"><i class="ti ti-trending-up"></i>Mi progreso en el tiempo</div>'
+      +'<p class="kpi-chart-hint">Se anima con cada Alice / Jill / Nexora / calibración guardada.</p>'
+      +'<div class="chart-wrap chart-interactive"><canvas id="portal-chart"></canvas></div></div>':'')
     +(function(){
       var myEvts = Object.values(CALENDAR_EVENTS).filter(function(e){ return e.studentId===s.id && new Date(e.date)>=new Date(); }).sort(function(a,b){ return new Date(a.date)-new Date(b.date); });
       var typeLabel={session:'Sesión',calibration:'Calibración',evaluation:'Evaluación'};
@@ -2761,6 +2774,11 @@ function resolvePortalAreaAverages(last){
 
 function initPortalLiveCharts(s){
   if(typeof LiveKpiCharts==='undefined'||!s) return;
+  if(typeof LiveKpiCharts.setTheme==='function') LiveKpiCharts.setTheme('kamuk');
+  if(!window._portalKpiDetailBound && typeof LiveKpiCharts.bindPortalDetail==='function'){
+    LiveKpiCharts.bindPortalDetail('portal-kpi-detail');
+    window._portalKpiDetailBound=true;
+  }
   LiveKpiCharts.mountWhenReady(['portal-macro-radar','portal-macro-bar','portal-progress-radar','portal-progress-bar','portal-chart'], function(){
     LiveKpiCharts.destroyPrefix('portal-');
     var kpis=(s.kpis||{}).phase1||{};
@@ -2772,14 +2790,11 @@ function initPortalLiveCharts(s){
     var last=hist.length?hist[hist.length-1]:null;
     var areas=resolvePortalAreaAverages(last);
     if(areas.length) LiveKpiCharts.updateAreasDark('portal-prog','portal-progress-radar','portal-progress-bar',areas);
-    var cals=(s.calibrations||[]).slice(-5);
-    if(cals.length>=2){
-      LiveKpiCharts.updateLine('portal-line','portal-chart',
-        cals.map(function(c){ return fmtDate(c.date); }),
-        Object.keys(KPI_NAMES).map(function(k,i){
-          var colors=['#2B7EC1','#0F6E56','#D97706','#A32D2D','#1F6AA8'];
-          return { label:k, data:cals.map(function(c){ return parseInt((c.kpis||{})[k])||0; }), borderColor:colors[i], backgroundColor:'transparent', tension:0.3, pointRadius:3 };
-        }), kMax);
+    var series = typeof LiveKpiCharts.collectPortalTimeline==='function'
+      ? LiveKpiCharts.collectPortalTimeline(s, typeof fmtDate==='function'?fmtDate:null)
+      : null;
+    if(series && series.hasSeries && document.getElementById('portal-chart')){
+      LiveKpiCharts.updateLine('portal-line','portal-chart', series.labels, series.datasets, series.yMax || kMax);
     }
   });
 }
@@ -2801,7 +2816,7 @@ function startPortalProgressPoll(){
       window._portalStudent=fresh;
       initPortalLiveCharts(fresh);
     }).catch(function(){});
-  },120000);
+  },30000);
 }
 
 function renderProgressBlock(s){
@@ -2837,8 +2852,8 @@ function renderProgressBlock(s){
     +'</div></div>'
 
     +'<div style="display:grid;grid-template-columns:minmax(0,0.92fr) minmax(0,1.08fr);gap:1rem;align-items:stretch;margin-bottom:1rem;" data-live-charts="canvas-v2">'
-    +'<div class="chart-wrap" style="height:200px;min-width:0;"><canvas id="portal-progress-radar"></canvas></div>'
-    +'<div class="chart-wrap chart-wrap-bars" style="height:200px;min-width:0;"><canvas id="portal-progress-bar"></canvas></div>'
+    +'<div class="chart-wrap chart-interactive" style="height:200px;min-width:0;"><canvas id="portal-progress-radar"></canvas></div>'
+    +'<div class="chart-wrap chart-wrap-bars chart-interactive" style="height:200px;min-width:0;"><canvas id="portal-progress-bar"></canvas></div>'
     +'</div>'
 
     +'<div style="margin-bottom:0.75rem;">'
