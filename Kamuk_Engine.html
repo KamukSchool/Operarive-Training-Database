@@ -883,7 +883,7 @@ async function loadUsers(){
     rows.forEach(function(r){ if(r.data) TRAINERS[String(r.data.email||'').trim().toLowerCase()]=r.data; });
     // Seed master if empty
     if(!Object.keys(TRAINERS).length){
-      var master = {id:'USR-MASTER-001',email:'trainer@infinity.cr',pass:'KamukMaster2026!',name:'Johnny Ramirez',role:'superadmin',department:'admin',status:'active'};
+      var master = {id:'USR-MASTER-001',email:'trainer@infinity.cr',pass:'kamuk2026',name:'Johnny Ramirez',role:'superadmin',department:'admin',status:'active'};
       await dbSet('kamuk_users','USR-MASTER-001',master);
       TRAINERS['trainer@infinity.cr']=master;
     }
@@ -1697,7 +1697,7 @@ function switchTab(id, btn){
   }
 }
 
-var STUDENT_PORTAL_URL = 'https://kamukschool.github.io/Operarive-Training-Database/Kamuk_Student_Portal.html';
+var STUDENT_PORTAL_URL = 'https://kamukschool.github.io/Operarive-Training-Database/';
 var _pendingPaymentAfterShare = null;
 
 function normalizeWaPhone(phone){
