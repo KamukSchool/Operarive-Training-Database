@@ -1139,10 +1139,11 @@ async function savePracticeMinutes(mins){
   try{
     var studentId=localStorage.getItem('nexora_student_id');
     if(!studentId) return;
-    var table=studentId.startsWith('KAM-')?'kamuk_students':'infinity_students';
-    var supUrl=studentId.startsWith('KAM-')?'https://lbspgbeqtcnjrbhiuucu.supabase.co':'https://rxruvpfdpgowmpvydacd.supabase.co';
-    var supKey=studentId.startsWith('KAM-')?'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxic3BnYmVxdGNuanJiaGl1dWN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwNDgzNzgsImV4cCI6MjA5NjYyNDM3OH0.j1NRrwxmCVipIlHgEPhkdQQfnhMZVK713mFq8LnvufM':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4cnV2cGZkcGdvd21wdnlkYWNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NjI3NzcsImV4cCI6MjA2MDMzODc3N30.RMexOWL9WHtQJzAOqTNbMQUZhwlf2SJr3RqEFJiLw90';
-    var rows=await fetch(supUrl+'/rest/v1/'+table+'?id=eq.'+studentId,{headers:{apikey:supKey,Authorization:'Bearer '+supKey}}).then(function(r){return r.json();});
+    var isKamuk=studentId.startsWith('KAM-');
+    var table=isKamuk?'kamuk_students':'infinity_students';
+    var supUrl=isKamuk?'https://lbspgbeqtcnjrbhiuucu.supabase.co':'https://rxruvpfdpgowmpvydacd.supabase.co';
+    var supKey=isKamuk?'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxic3BnYmVxdGNuanJiaGl1dWN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwNDgzNzgsImV4cCI6MjA5NjYyNDM3OH0.j1NRrwxmCVipIlHgEPhkdQQfnhMZVK713mFq8LnvufM':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4cnV2cGZkcGdvd21wdnlkYWNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExMzQ4MjAsImV4cCI6MjA5NjcxMDgyMH0.WzwMUnsuZfzkP2QoQzJnnvvgnG-saWkn1IQVDv-_roE';
+    var rows=await fetch(supUrl+'/rest/v1/'+table+'?id=eq.'+encodeURIComponent(studentId),{headers:{apikey:supKey,Authorization:'Bearer '+supKey}}).then(function(r){return r.ok?r.json():[];});
     if(rows&&rows[0]){
       var d=rows[0].data||{};
       d.nexoraPracticeMinutes=(d.nexoraPracticeMinutes||0)+mins;
