@@ -2,12 +2,24 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kamuk Portal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kamuk Portal del Estudiante</title>
 <meta http-equiv="refresh" content="0;url=./">
-<script>(function(){location.replace('./'+(location.search||'')+(location.hash||''));})();</script>
+<link rel="canonical" href="./">
+<script>
+  // Single entry: portal lives at index (repo root on GitHub Pages).
+  var q = location.search || '';
+  var h = location.hash || '';
+  location.replace('./' + q + h);
+</script>
 </head>
-<body style="font-family:system-ui;padding:2rem;text-align:center">
-<p>Abriendo el <a href="./">Portal del Estudiante Kamuk</a>…</p>
+<body style="font-family:system-ui,sans-serif;padding:2rem;text-align:center;color:#0F172A;background:#F0F9FF;">
+  <p style="margin-bottom:1rem;">El Portal del Estudiante Kamuk está en la entrada del sitio.</p>
+  <p><a href="./" style="font-weight:800;color:#0E7490;">Entrar al Portal →</a></p>
+  <p style="margin-top:2rem;font-size:13px;color:#64748B;">
+    <a href="Kamuk_Engine.html" style="color:#64748B;">Engine (trainers)</a>
+    ·
+    <a href="ops.html" style="color:#64748B;">Ops hub</a>
+  </p>
 </body>
 </html>
