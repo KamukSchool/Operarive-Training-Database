@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Tense Raiders — Infinity Studio</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Outfit:wght@500;700;800&display=swap');
+  :root{ --gold:#E8C547; --moss:#86efac; --blood:#f87171; --ink:#07060C; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;height:100dvh}
+  body{
+    display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+    background:
+      radial-gradient(ellipse at 50% 0%,#1a2a12 0%,transparent 50%),
+      radial-gradient(ellipse at 80% 90%,#2a1208 0%,transparent 40%),
+      #050508;
+    font-family:Outfit,system-ui,sans-serif;overflow:auto;overscroll-behavior:contain;color:#fff;
+    touch-action:pan-y;
+  }
+  #stage{
+    flex:1 1 auto;width:100%;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:52px 8px 8px;box-sizing:border-box;
+  }
+  canvas{
+    display:block;border-radius:12px;
+    box-shadow:0 0 0 1px rgba(134,239,172,.3),0 0 0 3px rgba(0,0,0,.8),0 16px 40px rgba(0,0,0,.55);
+    max-width:100%;max-height:100%;width:auto;height:auto;touch-action:none;cursor:pointer;
+  }
+  #hud{
+    position:fixed;top:0;left:0;right:0;width:100%;
+    padding:6px 8px;padding-top:max(6px,env(safe-area-inset-top));
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;z-index:5;pointer-events:none;
+    background:linear-gradient(180deg,rgba(5,5,8,.92),rgba(5,5,8,.55) 70%,transparent);
+  }
+  .pill{
+    background:linear-gradient(180deg,rgba(14,20,10,.92),rgba(8,6,12,.88));
+    border:1px solid rgba(134,239,172,.35);border-radius:999px;padding:5px 10px;
+    font-size:11px;font-weight:800;backdrop-filter:blur(12px);white-space:nowrap;
+  }
+  #muteBtn,#fsBtn{appearance:none}
+  .pill.gold{color:var(--gold)}
+  .pill.moss{color:var(--moss)}
+  .pill.blood{color:var(--blood)}
+  #hud-right{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;align-items:center}
+  #toast{
+    position:fixed;top:48px;left:50%;transform:translateX(-50%) translateY(-8px);opacity:0;
+    pointer-events:none;z-index:8;font-family:Cinzel,serif;font-weight:900;font-size:clamp(16px,5vw,26px);
+    letter-spacing:.06em;text-shadow:0 0 20px rgba(232,197,71,.8),0 4px 0 #000;transition:opacity .2s,transform .2s;
+    max-width:92vw;text-align:center;
+  }
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  #load{
+    position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 50% 40%,#142010,#050508 70%);z-index:30;gap:16px
+  }
+  #load.hide{opacity:0;pointer-events:none;transition:opacity .45s}
+  #load img{width:96px;height:96px;filter:drop-shadow(0 0 24px rgba(134,239,172,.45))}
+  #load-bar{width:min(280px,70vw);height:10px;background:#141810;border-radius:99px;overflow:hidden;border:1px solid rgba(134,239,172,.35)}
+  #load-fill{height:100%;width:0;background:linear-gradient(90deg,#14532d,var(--moss),#fff7ed);transition:width .12s}
+</style>
+</head>
+<body>
+<div id="load">
+  <img src="assets/icon.png" alt="" onerror="this.style.display='none'">
+  <div style="font-family:Cinzel,serif;font-size:22px;letter-spacing:.12em;color:var(--gold)">TENSE RAIDERS</div>
+  <div id="load-bar"><div id="load-fill"></div></div>
+  <div id="load-txt" style="font-size:12px;opacity:.7">Abriendo el pack Mini Knight…</div>
+  <div id="build-tag" style="font-size:10px;opacity:.45;letter-spacing:.08em;margin-top:4px">hub50-tr2</div>
+</div>
+<div id="hud">
+  <div class="pill moss">YOU <span id="youVal">0</span> · RAID <span id="raidVal">0</span></div>
+  <div class="pill gold">CLUE <span id="clueVal">0</span>/10 · FIRST TO 7</div>
+  <div id="hud-right">
+    <button type="button" id="fsBtn" class="pill" style="pointer-events:auto;cursor:pointer;font:inherit;color:var(--gold)">PANTALLA</button>
+    <button type="button" id="muteBtn" class="pill" style="pointer-events:auto;cursor:pointer;font:inherit;color:var(--gold)">SONIDO</button>
+    <div class="pill blood">BEST <span id="bestVal">0</span></div>
+  </div>
+</div>
+<div id="toast"></div>
+<div id="stage"><canvas id="c"></canvas></div>
+<script src="../_shared/infinity-quiz-bank.js?v=q5"></script>
+<script src="../_shared/infinity-arcade-run.js?v=r2"></script>
+<script>
+(async function () {
+  const TR_BUILD = 'hub50-tr2';
+  const Run = window.InfinityArcadeRun;
+  const WIN = 7;
+  const MAX_CLUES = 10;
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  const _arc = CanvasRenderingContext2D.prototype.arc;
+  CanvasRenderingContext2D.prototype.arc = function (x, y, r, ...rest) {
+    return _arc.call(this, x, y, Math.max(0.1, Math.abs(+r || 0)), ...rest);
+  };
+  const loadFill = document.getElementById('load-fill');
+  const loadTxt = document.getElementById('load-txt');
+  const toastEl = document.getElementById('toast');
+  let dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  function resize() {
+    const stage = document.getElementById('stage');
+    const padX = 16;
+    const padY = 8;
+    const hudH = Math.max(48, (document.getElementById('hud')?.offsetHeight || 48) + 8);
+    const availW = Math.max(280, Math.min((stage?.clientWidth || window.innerWidth) - padX, window.innerWidth - padX));
+    const availH = Math.max(180, Math.min((stage?.clientHeight || window.innerHeight) - padY, window.innerHeight - hudH - padY));
+    let cssW = availW;
+    let cssH = Math.round(cssW * 0.5625);
+    if (cssH > availH) {
+      cssH = availH;
+      cssW = Math.round(cssH / 0.5625);
+    }
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.style.width = cssW + 'px';
+    canvas.style.height = cssH + 'px';
+    canvas.width = Math.round(cssW * dpr);
+    canvas.height = Math.round(cssH * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  window.addEventListener('orientationchange', function () { setTimeout(resize, 120); });
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', resize);
+  const W = () => Math.max(1, canvas.clientWidth || 0);
+  const H = () => Math.max(1, canvas.clientHeight || 0);
+
+  const CHAR_DEFS = {
+    knight: { idle: 10, attack: 8, hurt: 8, dead: 8 },
+    goblin: { idle: 10, attack: 8, hurt: 8, dead: 8 },
+    skeleton: { idle: 10, attack: 8, hurt: 8, dead: 8 },
+    bat: { idle: 10, attack: 8, hurt: 8, dead: 8, fly: 8 }
+  };
+  const chars = {};
+  let loaded = 0;
+  let total = 0;
+  Object.keys(CHAR_DEFS).forEach((name) => {
+    Object.keys(CHAR_DEFS[name]).forEach((anim) => { total += CHAR_DEFS[name][anim]; });
+  });
+  function tickLoad(label) {
+    loaded++;
+    loadFill.style.width = Math.min(100, (loaded / total) * 100) + '%';
+    if (label) loadTxt.textContent = label;
+  }
+  loadTxt.textContent = 'Cargando Mini Knight PNG…';
+  await Promise.all(
+    Object.keys(CHAR_DEFS).flatMap((name) => {
+      chars[name] = {};
+      return Object.keys(CHAR_DEFS[name]).map(
+        (anim) =>
+          new Promise((res) => {
+            const n = CHAR_DEFS[name][anim];
+            const frames = [];
+            let left = n;
+            for (let i = 0; i < n; i++) {
+              const img = new Image();
+              img.onload = img.onerror = () => {
+                left--;
+                tickLoad(name + '/' + anim);
+                if (left <= 0) {
+                  chars[name][anim] = frames;
+                  res();
+                }
+              };
+              img.src = 'assets/chars/' + name + '/' + anim + '/' + i + '.png?v=tr1';
+              frames[i] = img;
+            }
+          })
+      );
+    })
+  );
+
+  const UI_MAP = {
+    parch: 'tile_0000.png',
+    parchFancy: 'tile_0006.png',
+    ribbonL: 'tile_0043.png',
+    ribbonM: 'tile_0044.png',
+    ribbonR: 'tile_0045.png',
+    btnL: 'tile_0069.png',
+    btnM: 'tile_0070.png',
+    btnR: 'tile_0071.png'
+  };
+  const ui = {};
+  loadTxt.textContent = 'Desplegando pergaminos…';
+  await Promise.all(
+    Object.keys(UI_MAP).map(
+      (key) =>
+        new Promise((res) => {
+          const img = new Image();
+          img.onload = () => { ui[key] = img; res(); };
+          img.onerror = () => res();
+          img.src = 'assets/ui/' + UI_MAP[key] + '?v=ui3';
+        })
+    )
+  );
+
+  const SFX_NAMES = ['slash', 'hit', 'ok', 'bad', 'tick', 'tickUrgent', 'win', 'lose', 'start', 'ambient', 'click'];
+  const sfxRaw = {};
+  loadTxt.textContent = 'Cargando sonidos de combate…';
+  await Promise.all(
+    SFX_NAMES.map(async (name) => {
+      try {
+        const res = await fetch('assets/sfx/' + name + '.wav?v=sfx1');
+        if (res.ok) sfxRaw[name] = await res.arrayBuffer();
+      } catch (_) {}
+      tickLoad(name);
+    })
+  );
+
+  console.info('[TR]', TR_BUILD);
+  document.getElementById('load').classList.add('hide');
+  setTimeout(() => document.getElementById('load')?.remove(), 500);
+
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  let actx = null;
+  let master = null;
+  let muted = false;
+  let ambientSrc = null;
+  let ambientGain = null;
+  let lastTickSec = -1;
+  const sfxBuf = {};
+
+  async function ensureAudio() {
+    if (!actx) {
+      actx = new AudioCtx();
+      master = actx.createGain();
+      master.gain.value = 0.85;
+      master.connect(actx.destination);
+      for (const name of SFX_NAMES) {
+        if (!sfxRaw[name]) continue;
+        try { sfxBuf[name] = await actx.decodeAudioData(sfxRaw[name].slice(0)); } catch (_) {}
+      }
+    }
+    if (actx.state === 'suspended') await actx.resume();
+  }
+  function sfx(name, vol) {
+    if (muted || !actx || !sfxBuf[name]) return;
+    try {
+      const src = actx.createBufferSource();
+      src.buffer = sfxBuf[name];
+      const g = actx.createGain();
+      g.gain.value = vol == null ? 0.7 : vol;
+      src.connect(g);
+      g.connect(master);
+      src.start();
+    } catch (_) {}
+  }
+  function startAmbient() {
+    if (muted || !actx || !sfxBuf.ambient || ambientSrc) return;
+    try {
+      ambientSrc = actx.createBufferSource();
+      ambientSrc.buffer = sfxBuf.ambient;
+      ambientSrc.loop = true;
+      ambientGain = actx.createGain();
+      ambientGain.gain.value = 0.22;
+      ambientSrc.connect(ambientGain);
+      ambientGain.connect(master);
+      ambientSrc.start();
+    } catch (_) {}
+  }
+
+  const STATES = { TITLE: 'title', PLAY: 'play', ENDING: 'ending' };
+  let gameState = STATES.TITLE;
+  let youScore = 0;
+  let raidScore = 0;
+  let clueNum = 0;
+  let questionsAnswered = 0;
+  let currentQ = null;
+  let options = [];
+  let timerMax = 10;
+  let best = Number(localStorage.getItem('tr-best') || 0) || 0;
+  const quiz = { phase: 'ready', locked: false, born: 0, phaseAt: 0, pendingKill: false, advancing: false };
+  let floaters = [];
+  let shake = 0;
+  let pendingEnd = null;
+
+  const Bank = window.InfinityQuizBank;
+  const FALLBACK = {
+    prompt: 'RAID · Ayer el cliente ___ (call).',
+    correct: 'called',
+    wrong: ['calls', 'calling', 'call']
+  };
+  let rotator = Bank
+    ? Bank.createRotator({ flavor: 'raiders', cats: ['tense'], wrongCount: 3 })
+    : null;
+
+  function nextClue() {
+    try {
+      if (rotator) return rotator.next();
+    } catch (_) {}
+    return FALLBACK;
+  }
+
+  function actor(key, xSide) {
+    return {
+      key,
+      xSide,
+      anim: key === 'bat' ? 'fly' : 'idle',
+      frame: 0,
+      t: 0,
+      loop: true,
+      dead: false
+    };
+  }
+  let hero = actor('knight', 'left');
+  let raider = actor('goblin', 'right');
+
+  function raiderKeyForClue(n) {
+    if (n >= 9) return 'goblin';
+    if (n >= 6) return 'bat';
+    if (n >= 3) return 'skeleton';
+    return 'goblin';
+  }
+
+  function setAnim(who, name, loop) {
+    const pack = chars[who.key];
+    if (!pack || !pack[name] || !pack[name].length) name = who.key === 'bat' ? 'fly' : 'idle';
+    who.anim = name;
+    who.frame = 0;
+    who.t = 0;
+    who.loop = loop !== false && (name === 'idle' || name === 'fly');
+    if (name === 'dead') who.dead = true;
+  }
+
+  function tickActor(who, dt) {
+    const pack = chars[who.key];
+    if (!pack) return;
+    const frames = pack[who.anim] || pack.idle || pack.fly;
+    if (!frames || !frames.length) return;
+    const fps = who.anim === 'idle' || who.anim === 'fly' ? 10 : 14;
+    who.t += dt;
+    if (who.t < 1 / fps) return;
+    who.t = 0;
+    who.frame++;
+    if (who.frame >= frames.length) {
+      if (who.loop) who.frame = 0;
+      else {
+        who.frame = frames.length - 1;
+        if (!who.dead && (who.anim === 'hurt' || who.anim === 'attack')) {
+          setAnim(who, who.key === 'bat' ? 'fly' : 'idle', true);
+        }
+      }
+    }
+  }
+
+  function drawActor(who) {
+    const pack = chars[who.key];
+    if (!pack) return;
+    const frames = pack[who.anim] || pack.idle || pack.fly;
+    const img = frames && frames[who.frame | 0];
+    if (!img || !img.complete || !img.naturalWidth) return;
+    const targetH = H() * (who.key === 'bat' ? 0.28 : 0.52);
+    const scale = targetH / img.naturalHeight;
+    const dw = img.naturalWidth * scale;
+    const dh = img.naturalHeight * scale;
+    const x = who.xSide === 'left' ? W() * 0.22 : W() * 0.78;
+    const y = H() * 0.72;
+    ctx.save();
+    ctx.translate(x, y);
+    if (who.xSide === 'right') ctx.scale(-1, 1);
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(img, -dw / 2, -dh, dw, dh);
+    ctx.restore();
+  }
+
+  function uiReady(img) { return img && img.complete && img.naturalWidth; }
+
+  function nineSlice(img, x, y, dw, dh) {
+    if (!uiReady(img)) {
+      ctx.fillStyle = 'rgba(40,28,14,0.92)';
+      roundRect(ctx, x, y, dw, dh, 8);
+      ctx.fill();
+      return;
+    }
+    const iw = img.naturalWidth;
+    const ih = img.naturalHeight;
+    const s = Math.max(6, Math.min(18, Math.floor(Math.min(iw, ih) * 0.28)));
+    const mw = iw - s * 2;
+    const mh = ih - s * 2;
+    const dwm = dw - s * 2;
+    const dhm = dh - s * 2;
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(img, 0, 0, s, s, x, y, s, s);
+    ctx.drawImage(img, iw - s, 0, s, s, x + dw - s, y, s, s);
+    ctx.drawImage(img, 0, ih - s, s, s, x, y + dh - s, s, s);
+    ctx.drawImage(img, iw - s, ih - s, s, s, x + dw - s, y + dh - s, s, s);
+    if (dwm > 0) {
+      ctx.drawImage(img, s, 0, mw, s, x + s, y, dwm, s);
+      ctx.drawImage(img, s, ih - s, mw, s, x + s, y + dh - s, dwm, s);
+    }
+    if (dhm > 0) {
+      ctx.drawImage(img, 0, s, s, mh, x, y + s, s, dhm);
+      ctx.drawImage(img, iw - s, s, s, mh, x + dw - s, y + s, s, dhm);
+    }
+    if (dwm > 0 && dhm > 0) ctx.drawImage(img, s, s, mw, mh, x + s, y + s, dwm, dhm);
+    ctx.imageSmoothingEnabled = true;
+  }
+
+  function drawHBar(L, M, R, x, y, w, h) {
+    if (!uiReady(L) || !uiReady(M) || !uiReady(R)) {
+      ctx.fillStyle = 'rgba(20,28,16,0.95)';
+      roundRect(ctx, x, y, w, h, 6);
+      ctx.fill();
+      return;
+    }
+    const endW = Math.min(Math.max(h * 0.55, 14), w * 0.22);
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(L, x, y, endW, h);
+    ctx.drawImage(R, x + w - endW, y, endW, h);
+    ctx.drawImage(M, x + endW - 1, y, Math.max(1, w - endW * 2 + 2), h);
+    ctx.imageSmoothingEnabled = true;
+  }
+
+  function roundRect(c, x, y, w, h, r) {
+    const rr = Math.max(0.5, Math.min(r, w / 2, h / 2));
+    c.beginPath();
+    c.moveTo(x + rr, y);
+    c.arcTo(x + w, y, x + w, y + h, rr);
+    c.arcTo(x + w, y + h, x, y + h, rr);
+    c.arcTo(x, y + h, x, y, rr);
+    c.arcTo(x, y, x + w, y, rr);
+    c.closePath();
+  }
+
+  function toast(msg, ms) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toastEl.classList.remove('show'), ms || 900);
+  }
+
+  function addText(x, y, msg, color, sc) {
+    floaters.push({ x, y, msg, color, sc: sc || 1, life: 1 });
+  }
+
+  function updateHUD() {
+    document.getElementById('youVal').textContent = String(youScore);
+    document.getElementById('raidVal').textContent = String(raidScore);
+    document.getElementById('clueVal').textContent = String(Math.min(MAX_CLUES, clueNum));
+    document.getElementById('bestVal').textContent = String(best);
+  }
+
+  function questionTimer() {
+    const n = questionsAnswered || 0;
+    if (n >= 8) return 3;
+    if (n >= 5) return 6;
+    if (n >= 3) return 8;
+    return 10;
+  }
+
+  function forceFallbackClue() {
+    currentQ = FALLBACK;
+    options = [
+      { word: 'called', isCorrect: true },
+      { word: 'calls', isCorrect: false },
+      { word: 'calling', isCorrect: false },
+      { word: 'call', isCorrect: false }
+    ];
+    timerMax = questionTimer();
+    quiz.phase = 'ready';
+    quiz.locked = false;
+    quiz.born = performance.now();
+    quiz.phaseAt = quiz.born;
+    quiz.pendingKill = false;
+    quiz.advancing = false;
+  }
+
+  /** Sync replace q+options → phase ready. No setTimeout path. */
+  function loadNextQuestion() {
+    if (gameState !== STATES.PLAY || pendingEnd) return;
+    try {
+      currentQ = nextClue();
+      if (!currentQ || !currentQ.correct) currentQ = FALLBACK;
+      let wrong = (currentQ.wrong || []).filter((w) => w && w !== currentQ.correct).slice(0, 3);
+      while (wrong.length < 3) wrong.push(['idk', 'like', 'um...'][wrong.length]);
+      options = [
+        { word: String(currentQ.correct), isCorrect: true },
+        ...wrong.map((w) => ({ word: String(w), isCorrect: false }))
+      ];
+      options.sort(() => Math.random() - 0.5);
+      timerMax = questionTimer();
+      quiz.phase = 'ready';
+      quiz.locked = false;
+      quiz.born = performance.now();
+      quiz.phaseAt = quiz.born;
+      quiz.pendingKill = false;
+      quiz.advancing = false;
+      spawnRaider();
+      if (!options.length) forceFallbackClue();
+    } catch (err) {
+      console.error('[TR loadNextQuestion]', err);
+      forceFallbackClue();
+    }
+  }
+
+  function maybeFinish() {
+    if (youScore >= WIN) {
+      pendingEnd = 'win';
+      quiz.pendingKill = true;
+      setAnim(raider, 'dead', false);
+      setAnim(hero, 'attack', false);
+      return true;
+    }
+    if (raidScore >= WIN) {
+      pendingEnd = 'lose';
+      quiz.pendingKill = true;
+      setAnim(hero, 'dead', false);
+      setAnim(raider, 'attack', false);
+      return true;
+    }
+    if (clueNum >= MAX_CLUES) {
+      pendingEnd = youScore > raidScore ? 'win' : youScore < raidScore ? 'lose' : 'lose';
+      quiz.pendingKill = true;
+      if (pendingEnd === 'win') setAnim(raider, 'dead', false);
+      else setAnim(hero, 'dead', false);
+      return true;
+    }
+    return false;
+  }
+
+  function spawnRaider() {
+    const key = raiderKeyForClue(clueNum);
+    if (raider.key !== key || raider.dead) {
+      raider = actor(key, 'right');
+    }
+  }
+
+  function endResolving(reason) {
+    if (gameState !== STATES.PLAY) return;
+    if (quiz.phase !== 'resolving' && quiz.phase !== 'advance') return;
+    if (quiz.pendingKill || pendingEnd) {
+      quiz.phase = 'advance';
+      quiz.locked = true;
+      quiz.phaseAt = performance.now();
+      finishRaid();
+      return;
+    }
+    loadNextQuestion();
+  }
+
+  function finishRaid() {
+    if (gameState !== STATES.PLAY) return;
+    gameState = STATES.ENDING;
+    if (youScore > best) {
+      best = youScore;
+      try { localStorage.setItem('tr-best', String(best)); } catch (_) {}
+    }
+    updateHUD();
+    sfx(pendingEnd === 'win' ? 'win' : 'lose');
+    if (Run) {
+      Run.clearRun('raiders');
+      Run.recordFinish('raiders', youScore, pendingEnd === 'win');
+    }
+    toast(pendingEnd === 'win' ? (Run ? Run.win() : 'RAID CLEARED') : (Run ? Run.lose() : 'RAID FAILED'), 1600);
+  }
+
+  function persistRaid() {
+    if (!Run || gameState !== STATES.PLAY || pendingEnd) return;
+    Run.saveRun('raiders', {
+      youScore: youScore,
+      raidScore: raidScore,
+      clueNum: clueNum,
+      questionsAnswered: questionsAnswered,
+      raiderKey: raider && raider.key
+    });
+  }
+
+  function tickQuiz(now) {
+    if (gameState !== STATES.PLAY) return;
+
+    if (!options.length || !currentQ) {
+      if (quiz.pendingKill || pendingEnd) {
+        quiz.phase = 'advance';
+        quiz.phaseAt = now;
+        quiz.locked = true;
+        finishRaid();
+      } else {
+        loadNextQuestion();
+      }
+      return;
+    }
+
+    if (quiz.phase === 'resolving') {
+      const age = now - quiz.phaseAt;
+      if (age >= 280) {
+        endResolving(age >= 700 ? 'wall-700' : 'wall-280');
+        return;
+      }
+      if (age >= 700) {
+        endResolving('wall-700');
+        return;
+      }
+      return;
+    }
+
+    if (quiz.phase === 'advance') {
+      const age = now - quiz.phaseAt;
+      if (age > 900 || !options.length || !currentQ) {
+        if (quiz.pendingKill || pendingEnd) finishRaid();
+        else loadNextQuestion();
+      }
+      return;
+    }
+
+    if (quiz.phase === 'ready' && quiz.locked) quiz.locked = false;
+  }
+
+  function startPlay(resume) {
+    const save = resume && Run ? Run.loadRun('raiders') : null;
+    youScore = save ? save.youScore || 0 : 0;
+    raidScore = save ? save.raidScore || 0 : 0;
+    clueNum = save ? save.clueNum || 0 : 0;
+    questionsAnswered = save ? save.questionsAnswered || 0 : 0;
+    pendingEnd = null;
+    floaters = [];
+    hero = actor('knight', 'left');
+    raider = actor(save && save.raiderKey ? save.raiderKey : 'goblin', 'right');
+    if (rotator) rotator.reset();
+    gameState = STATES.PLAY;
+    loadNextQuestion();
+    updateHUD();
+    sfx('start');
+    startAmbient();
+    toast(save ? 'SEGUÍ. El rival no paró.' : (Run ? Run.challenge() : 'RETO'), 1100);
+    persistRaid();
+  }
+
+  function answer(opt) {
+    if (gameState !== STATES.PLAY || quiz.phase !== 'ready' || quiz.locked || !options.length || !opt) return;
+    quiz.phase = 'resolving';
+    quiz.locked = true;
+    quiz.phaseAt = performance.now();
+    quiz.pendingKill = false;
+    clueNum++;
+    questionsAnswered++;
+
+    if (opt.isCorrect) {
+      youScore++;
+      setAnim(hero, 'attack', false);
+      setAnim(raider, 'hurt', false);
+      sfx('slash');
+      sfx('ok');
+      addText(W() * 0.78, H() * 0.28, Run ? Run.hit() : '+1', '#86efac', 1.2);
+      toast(Run ? Run.hit() : 'LIMPIO', 700);
+      updateHUD();
+      maybeFinish();
+      persistRaid();
+    } else {
+      raidScore++;
+      setAnim(raider, 'attack', false);
+      setAnim(hero, 'hurt', false);
+      sfx('hit');
+      sfx('bad');
+      addText(W() * 0.22, H() * 0.28, 'BURLEO', '#f87171', 1.2);
+      addText(W() * 0.5, H() * 0.38, Run ? Run.mock() : '"' + opt.word + '" no', '#fda4af');
+      toast(Run ? Run.mock() : 'RAID +1', 900);
+      updateHUD();
+      maybeFinish();
+      persistRaid();
+    }
+  }
+
+  function drawDungeon(now) {
+    const w = W(), h = H();
+    const g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, '#1a2418');
+    g.addColorStop(0.55, '#12140e');
+    g.addColorStop(1, '#0a0c08');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+    const flick = 0.55 + Math.sin(now / 180) * 0.2 + Math.sin(now / 73) * 0.1;
+    function torch(tx) {
+      const grd = ctx.createRadialGradient(tx, h * 0.28, 4, tx, h * 0.32, h * 0.28);
+      grd.addColorStop(0, 'rgba(255,200,80,' + (0.55 * flick) + ')');
+      grd.addColorStop(0.4, 'rgba(234,88,12,' + (0.18 * flick) + ')');
+      grd.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grd;
+      ctx.fillRect(tx - h * 0.28, 0, h * 0.56, h * 0.7);
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.arc(tx, h * 0.22, 5 + flick * 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    torch(w * 0.12);
+    torch(w * 0.88);
+    ctx.fillStyle = '#1c1810';
+    ctx.fillRect(0, h * 0.72, w, h * 0.28);
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.fillRect(0, h * 0.72, w, 6);
+  }
+
+  function wrapText(text, maxW, font) {
+    ctx.font = font;
+    const words = String(text || '').split(' ');
+    const lines = [];
+    let line = '';
+    for (let i = 0; i < words.length; i++) {
+      const test = line ? line + ' ' + words[i] : words[i];
+      if (ctx.measureText(test).width > maxW && line) {
+        lines.push(line);
+        line = words[i];
+      } else line = test;
+    }
+    if (line) lines.push(line);
+    return lines.slice(0, 3);
+  }
+
+  function drawClue() {
+    if (!currentQ || gameState !== STATES.PLAY) return;
+    const w = W(), h = H();
+    const pw = w * 0.72;
+    const px = (w - pw) / 2;
+    const py = h * 0.04;
+    const ph = h * 0.16;
+    nineSlice(ui.parchFancy || ui.parch, px, py, pw, ph);
+    const line = String(currentQ.prompt || '');
+    let fs = Math.round(h * 0.028);
+    let font = '700 ' + fs + 'px Outfit,sans-serif';
+    let lines = wrapText(line, pw * 0.86, font);
+    while (fs > 11 && lines.length > 2) {
+      fs -= 1;
+      font = '700 ' + fs + 'px Outfit,sans-serif';
+      lines = wrapText(line, pw * 0.86, font);
+    }
+    ctx.fillStyle = '#2a1a0a';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const startY = py + ph / 2 - ((lines.length - 1) * (fs + 4)) / 2;
+    lines.forEach((ln, i) => ctx.fillText(ln, w / 2, startY + i * (fs + 4)));
+  }
+
+  function drawTimerBar() {
+    if (!currentQ || gameState !== STATES.PLAY || quiz.phase !== 'ready' || quiz.locked) return;
+    const left = Math.max(0, timerMax - (performance.now() - quiz.born) / 1000);
+    const pct = left / timerMax;
+    const secLeft = Math.ceil(left);
+    if (secLeft !== lastTickSec && left > 0 && left <= 3.2) {
+      lastTickSec = secLeft;
+      sfx(left <= 1.6 ? 'tickUrgent' : 'tick');
+    }
+    if (left > 3.2) lastTickSec = -1;
+    const x = W() * 0.14, y = H() * 0.21, bw = W() * 0.72, bh = 8;
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    roundRect(ctx, x, y, bw, bh, 4);
+    ctx.fill();
+    ctx.fillStyle = pct > 0.4 ? '#86efac' : pct > 0.2 ? '#fbbf24' : '#f43f5e';
+    roundRect(ctx, x, y, bw * pct, bh, 4);
+    ctx.fill();
+    if (left <= 0 && options.length && quiz.phase === 'ready' && !quiz.locked) {
+      quiz.phase = 'resolving';
+      quiz.locked = true;
+      quiz.phaseAt = performance.now();
+      quiz.pendingKill = false;
+      clueNum++;
+      questionsAnswered++;
+      raidScore++;
+      setAnim(raider, 'attack', false);
+      setAnim(hero, 'hurt', false);
+      sfx('bad');
+      addText(W() * 0.5, H() * 0.4, Run ? Run.timeout() : 'TIMEOUT', '#f43f5e', 1.15);
+      persistRaid();
+      updateHUD();
+      maybeFinish();
+    }
+  }
+
+  function drawTiles() {
+    if (!options.length || gameState !== STATES.PLAY) return;
+    // PLAY: NO parchment overlay — clue + tiles stay docked. Options strip only.
+    const w = W(), h = H();
+    const locked = quiz.phase !== 'ready' || quiz.locked;
+    const cols = 2;
+    const gap = 8;
+    const btnW = (w * 0.72 - gap) / 2;
+    const btnH = Math.max(36, h * 0.08);
+    const ox = w * 0.14;
+    const oy = h * 0.82;
+    if (locked) ctx.globalAlpha = 0.55;
+    options.forEach((opt, i) => {
+      const col = i % cols;
+      const row = (i / cols) | 0;
+      const x = ox + col * (btnW + gap);
+      const y = oy + row * (btnH + 6);
+      drawHBar(ui.btnL, ui.btnM, ui.btnR, x, y, btnW, btnH);
+      ctx.fillStyle = '#1a1208';
+      ctx.font = '800 ' + Math.round(btnH * 0.38) + 'px Outfit,sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(opt.word), x + btnW / 2, y + btnH / 2 + 1);
+      opt.rect = { x, y, w: btnW, h: btnH };
+    });
+    if (locked) ctx.globalAlpha = 1;
+  }
+
+  function drawTitle(now) {
+    drawDungeon(now);
+    hero.xSide = 'left';
+    raider.xSide = 'right';
+    raider.key = 'goblin';
+    if (raider.anim !== 'idle') setAnim(raider, 'idle', true);
+    if (hero.anim !== 'idle') setAnim(hero, 'idle', true);
+    drawActor(hero);
+    drawActor(raider);
+    const w = W(), h = H();
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#E8C547';
+    ctx.font = '900 ' + Math.round(h * 0.07) + 'px Cinzel,serif';
+    ctx.fillText('TENSE RAIDERS', w / 2, h * 0.14);
+    ctx.fillStyle = '#bbf7d0';
+    ctx.font = '700 ' + Math.round(h * 0.026) + 'px Outfit,sans-serif';
+    ctx.fillText(Run ? Run.rivalLine('raiders') : 'First to 7. El goblin se burla.', w / 2, h * 0.21);
+    const hasSave = Run && Run.hasRun('raiders');
+    const bw = w * 0.4, bh = h * 0.085;
+    const bx = (w - bw) / 2, by = h * 0.78;
+    drawHBar(ui.btnL, ui.btnM, ui.btnR, bx, by, bw, bh);
+    ctx.fillStyle = '#1a1208';
+    ctx.font = '900 ' + Math.round(bh * 0.38) + 'px Cinzel,serif';
+    ctx.fillText(hasSave ? 'CONTINUAR' : 'RETO', w / 2, by + bh / 2 + 1);
+    drawTitle._rect = { x: bx, y: by, w: bw, h: bh };
+    drawTitle._fresh = null;
+    if (hasSave) {
+      const fy = by + bh + 10;
+      const fh = bh * 0.7;
+      ctx.fillStyle = 'rgba(0,0,0,0.45)';
+      roundRect(ctx, bx, fy, bw, fh, 8);
+      ctx.fill();
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '800 ' + Math.round(fh * 0.38) + 'px Outfit,sans-serif';
+      ctx.fillText('NUEVO RETO', w / 2, fy + fh / 2 + 1);
+      drawTitle._fresh = { x: bx, y: fy, w: bw, h: fh };
+    }
+  }
+
+  function drawEnding() {
+    const w = W(), h = H();
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.fillRect(0, 0, w, h);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = pendingEnd === 'win' ? '#86efac' : '#f87171';
+    ctx.font = '900 ' + Math.round(h * 0.08) + 'px Cinzel,serif';
+    ctx.fillText(pendingEnd === 'win' ? (Run ? Run.win() : 'CERRADO') : (Run ? Run.lose() : 'TE COMIÓ'), w / 2, h * 0.18);
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = '800 ' + Math.round(h * 0.035) + 'px Outfit,sans-serif';
+    ctx.fillText(youScore + '  —  ' + raidScore, w / 2, h * 0.28);
+    const bw = w * 0.36, bh = h * 0.09;
+    const bx = (w - bw) / 2, by = h * 0.84;
+    drawHBar(ui.btnL, ui.btnM, ui.btnR, bx, by, bw, bh);
+    ctx.fillStyle = '#1a1208';
+    ctx.font = '900 ' + Math.round(bh * 0.38) + 'px Cinzel,serif';
+    ctx.fillText('OTRA RAID', w / 2, by + bh / 2 + 1);
+    drawEnding._rect = { x: bx, y: by, w: bw, h: bh };
+  }
+
+  function hit(rect, mx, my) {
+    return rect && mx >= rect.x && mx <= rect.x + rect.w && my >= rect.y && my <= rect.y + rect.h;
+  }
+
+  canvas.addEventListener('pointerdown', async (ev) => {
+    await ensureAudio();
+    const r = canvas.getBoundingClientRect();
+    const mx = ((ev.clientX - r.left) / r.width) * W();
+    const my = ((ev.clientY - r.top) / r.height) * H();
+    if (gameState === STATES.TITLE) {
+      if (hit(drawTitle._fresh, mx, my)) {
+        if (Run) Run.clearRun('raiders');
+        startPlay(false);
+        return;
+      }
+      startPlay(!!(Run && Run.hasRun('raiders')));
+      return;
+    }
+    if (gameState === STATES.ENDING) {
+      if (Run) Run.clearRun('raiders');
+      startPlay(false);
+      return;
+    }
+    if (gameState === STATES.PLAY && quiz.phase === 'ready' && !quiz.locked) {
+      for (let i = 0; i < options.length; i++) {
+        if (hit(options[i].rect, mx, my)) {
+          sfx('click', 0.4);
+          answer(options[i]);
+          return;
+        }
+      }
+    }
+  });
+
+  document.getElementById('muteBtn').addEventListener('click', async () => {
+    muted = !muted;
+    document.getElementById('muteBtn').textContent = muted ? 'MUDO' : 'SONIDO';
+    if (!muted) {
+      await ensureAudio();
+      startAmbient();
+    } else if (ambientGain) ambientGain.gain.value = 0;
+  });
+  document.getElementById('fsBtn').addEventListener('click', () => {
+    const el = document.documentElement;
+    if (!document.fullscreenElement) el.requestFullscreen?.();
+    else document.exitFullscreen?.();
+  });
+
+  let last = performance.now();
+  function loop(now) {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    if (shake > 0) shake *= 0.86;
+    tickActor(hero, dt);
+    tickActor(raider, dt);
+    // Quiz SM tick MUST run even during hitstop
+    tickQuiz(now);
+
+    ctx.save();
+    if (shake > 0.4) ctx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake);
+    if (gameState === STATES.TITLE) drawTitle(now);
+    else {
+      drawDungeon(now);
+      drawActor(hero);
+      drawActor(raider);
+      drawClue();
+      drawTimerBar();
+      drawTiles();
+      if (gameState === STATES.ENDING) drawEnding();
+    }
+    floaters = floaters.filter((f) => {
+      f.life -= dt * 0.9;
+      f.y -= 28 * dt;
+      if (f.life <= 0) return false;
+      ctx.globalAlpha = Math.max(0, f.life);
+      ctx.fillStyle = f.color;
+      ctx.font = '800 ' + Math.round(H() * 0.03 * f.sc) + 'px Outfit,sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(f.msg, f.x, f.y);
+      ctx.globalAlpha = 1;
+      return true;
+    });
+    ctx.restore();
+    requestAnimationFrame(loop);
+  }
+  updateHUD();
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) persistRaid();
+  });
+  window.addEventListener('pagehide', persistRaid);
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

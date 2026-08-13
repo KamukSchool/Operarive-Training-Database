@@ -1,0 +1,9 @@
+{
+  "idle": {
+    "file": "hub-idle.png",
+    "frames": 12,
+    "w": 157,
+    "h": 221,
+    "fps": 10
+  }
+}

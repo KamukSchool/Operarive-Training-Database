@@ -1,0 +1,238 @@
+{
+  "frame": {
+    "w": 180,
+    "h": 200
+  },
+  "anims": {
+    "idle": {
+      "frames": 12,
+      "fps": 10,
+      "file": "assets/idle.png"
+    },
+    "idle_b": {
+      "frames": 12,
+      "fps": 10,
+      "file": "assets/idle_b.png"
+    },
+    "attack": {
+      "frames": 12,
+      "fps": 18,
+      "file": "assets/attack.png"
+    },
+    "attack_b": {
+      "frames": 10,
+      "fps": 18,
+      "file": "assets/attack_b.png"
+    },
+    "attack_c": {
+      "frames": 11,
+      "fps": 16,
+      "file": "assets/attack_c.png"
+    },
+    "attack_d": {
+      "frames": 10,
+      "fps": 16,
+      "file": "assets/attack_d.png"
+    },
+    "attack_e": {
+      "frames": 17,
+      "fps": 16,
+      "file": "assets/attack_e.png"
+    },
+    "air_a": {
+      "frames": 12,
+      "fps": 16,
+      "file": "assets/air_a.png"
+    },
+    "air_b": {
+      "frames": 10,
+      "fps": 16,
+      "file": "assets/air_b.png"
+    },
+    "fireball": {
+      "frames": 8,
+      "fps": 14,
+      "file": "assets/fireball.png"
+    },
+    "dance": {
+      "frames": 8,
+      "fps": 10,
+      "file": "assets/dance.png"
+    },
+    "dash": {
+      "frames": 13,
+      "fps": 18,
+      "file": "assets/dash.png"
+    },
+    "dash_back": {
+      "frames": 15,
+      "fps": 18,
+      "file": "assets/dash_back.png"
+    },
+    "die": {
+      "frames": 16,
+      "fps": 10,
+      "file": "assets/die.png"
+    },
+    "die_b": {
+      "frames": 19,
+      "fps": 10,
+      "file": "assets/die_b.png"
+    },
+    "duck": {
+      "frames": 12,
+      "fps": 12,
+      "file": "assets/duck.png"
+    },
+    "greet": {
+      "frames": 17,
+      "fps": 12,
+      "file": "assets/greet.png"
+    },
+    "horse_atk": {
+      "frames": 12,
+      "fps": 16,
+      "file": "assets/horse_atk.png"
+    },
+    "horse_atk_b": {
+      "frames": 10,
+      "fps": 16,
+      "file": "assets/horse_atk_b.png"
+    },
+    "horse_gallop": {
+      "frames": 5,
+      "fps": 12,
+      "file": "assets/horse_gallop.png"
+    },
+    "horse_idle": {
+      "frames": 8,
+      "fps": 8,
+      "file": "assets/horse_idle.png"
+    },
+    "hurt": {
+      "frames": 6,
+      "fps": 14,
+      "file": "assets/hurt.png"
+    },
+    "hurt_idle": {
+      "frames": 15,
+      "fps": 8,
+      "file": "assets/hurt_idle.png"
+    },
+    "kick": {
+      "frames": 9,
+      "fps": 16,
+      "file": "assets/kick.png"
+    },
+    "jump": {
+      "frames": 6,
+      "fps": 12,
+      "file": "assets/jump.png"
+    },
+    "roll": {
+      "frames": 5,
+      "fps": 14,
+      "file": "assets/roll.png"
+    },
+    "run": {
+      "frames": 6,
+      "fps": 14,
+      "file": "assets/run.png"
+    },
+    "run_attack": {
+      "frames": 14,
+      "fps": 16,
+      "file": "assets/run_attack.png"
+    },
+    "block": {
+      "frames": 8,
+      "fps": 12,
+      "file": "assets/block.png"
+    },
+    "shield": {
+      "frames": 12,
+      "fps": 12,
+      "file": "assets/shield.png"
+    },
+    "arrow": {
+      "frames": 11,
+      "fps": 14,
+      "file": "assets/arrow.png"
+    },
+    "slide": {
+      "frames": 8,
+      "fps": 14,
+      "file": "assets/slide.png"
+    },
+    "guard": {
+      "frames": 27,
+      "fps": 10,
+      "file": "assets/guard.png"
+    },
+    "suspicious": {
+      "frames": 9,
+      "fps": 10,
+      "file": "assets/suspicious.png"
+    },
+    "throw": {
+      "frames": 10,
+      "fps": 14,
+      "file": "assets/throw.png"
+    },
+    "walk": {
+      "frames": 6,
+      "fps": 10,
+      "file": "assets/walk.png"
+    },
+    "sleep": {
+      "frames": 20,
+      "fps": 6,
+      "file": "assets/sleep.png"
+    },
+    "sit": {
+      "frames": 12,
+      "fps": 8,
+      "file": "assets/sit.png"
+    },
+    "mount_idle": {
+      "frames": 8,
+      "fps": 8,
+      "file": "assets/mount_idle.png"
+    },
+    "mount_gallop": {
+      "frames": 5,
+      "fps": 12,
+      "file": "assets/mount_gallop.png"
+    }
+  },
+  "vfx": {
+    "slash": {
+      "frames": 4,
+      "path": "assets/slash"
+    },
+    "explosion": {
+      "frames": 6,
+      "path": "assets/explosion"
+    },
+    "slam": {
+      "frames": 5,
+      "path": "assets/slam"
+    },
+    "smoke": {
+      "frames": 10,
+      "path": "assets/smoke"
+    },
+    "fireball": {
+      "frames": 5,
+      "path": "assets/vfx_fireball"
+    },
+    "smoke_up": {
+      "frames": 10,
+      "path": "assets/smoke_up"
+    },
+    "spin": {
+      "frames": 2,
+      "path": "assets/spin"
+    }
+  }
+}

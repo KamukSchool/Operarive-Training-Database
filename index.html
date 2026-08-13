@@ -59,11 +59,12 @@
 <script src="https://studioinfinitycr.com/js/jill-progress.js?v=20260707rd"></script>
 <script src="https://studioinfinitycr.com/js/infinity-victory.js?v=20260710utf8"></script>
 <script src="https://studioinfinitycr.com/js/jill-foundations-modules.js?v=20260713m07"></script>
-<script src="https://studioinfinitycr.com/js/jill-quiz.js?v=20260717visible"></script>
-<script src="https://studioinfinitycr.com/js/tts-chunks.js?v=20260804ai2"></script>
-<script src="js/tts-chunks.js?v=20260804ai2"></script>
+<script src="games/_shared/infinity-arcade-run.js?v=r2"></script>
+<script src="js/jill-quiz.js?v=20260813park2"></script>
+<script src="https://studioinfinitycr.com/js/tts-chunks.js?v=20260811nocut"></script>
+<script src="js/tts-chunks.js?v=20260811nocut"></script>
 <script src="https://studioinfinitycr.com/js/nexora-stream-voice.js"></script>
-<script src="https://studioinfinitycr.com/js/ptt-mic.js?v=20260730echo2"></script>
+<script src="https://studioinfinitycr.com/js/ptt-mic.js?v=20260811nocut"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -741,7 +742,23 @@ body.tt-fs-lock{overflow:hidden;position:fixed;width:100%;height:100%;height:100
 .inf-arcade-fs-title{font-size:13px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#e9d5ff;}
 .inf-arcade-fs-title span{display:block;font-size:11px;letter-spacing:0;font-weight:700;color:rgba(255,255,255,.65);text-transform:none;margin-top:2px;}
 .inf-arcade-fs-close{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:#e9d5ff;border-radius:10px;padding:8px 12px;font-size:12px;font-weight:800;cursor:pointer;}
-.inf-arcade-fs-body{flex:1 1 auto;overflow:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 24px;padding-bottom:max(24px,env(safe-area-inset-bottom));width:100%;max-width:520px;margin:0 auto;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;}
+.inf-arcade-fs-body{flex:1 1 auto;overflow:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 24px;padding-bottom:max(24px,env(safe-area-inset-bottom));width:100%;max-width:520px;margin:0 auto;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;min-height:0;}
+.inf-arcade-fs-body.is-knight-fit{max-width:none;width:100%;height:100%;flex:1 1 auto;min-height:0;padding:0;overflow:hidden;align-items:stretch;}
+.inf-arcade-fs-body.is-rapid-fit{max-width:none;width:100%;height:100%;flex:1 1 auto;min-height:0;padding:6px 10px 8px;padding-bottom:max(8px,env(safe-area-inset-bottom));overflow:hidden;align-items:stretch;box-sizing:border-box;}
+.inf-arcade-fs.is-rapid-mode .inf-arcade-fs-bar{padding:8px 12px;padding-top:max(8px,env(safe-area-inset-top));}
+.inf-arcade-fs.is-rapid-mode:fullscreen .inf-arcade-fs-body,
+.inf-arcade-fs.is-rapid-mode:-webkit-full-screen .inf-arcade-fs-body{height:100%;}
+.inf-knight-frame{flex:1 1 auto;width:100%;height:100%;min-height:0;border:0;border-radius:0;background:#050508;display:block;}
+.inf-arcade-fs.is-knight-mode{background:#050508;}
+.inf-arcade-fs.is-knight-mode .inf-arcade-fs-bar{
+  position:absolute;top:0;left:0;right:0;z-index:5;padding:8px 10px;padding-top:max(8px,env(safe-area-inset-top));
+  border:0;background:linear-gradient(180deg,rgba(0,0,0,.72),transparent);pointer-events:none;
+}
+.inf-arcade-fs.is-knight-mode .inf-arcade-fs-title{font-size:11px;opacity:.85}
+.inf-arcade-fs.is-knight-mode .inf-arcade-fs-close{pointer-events:auto;padding:7px 10px;font-size:11px;backdrop-filter:blur(8px)}
+.inf-arcade-fs:fullscreen,.inf-arcade-fs:-webkit-full-screen{width:100%;height:100%;max-height:none;}
+.inf-arcade-fs.is-knight-mode:fullscreen .inf-arcade-fs-body,
+.inf-arcade-fs.is-knight-mode:-webkit-full-screen .inf-arcade-fs-body{height:100%;}
 .inf-arcade-fs-modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;width:100%;}
 .inf-arcade-fs-mode-btn{text-align:left;border:1px solid rgba(196,181,253,.35);background:linear-gradient(145deg,rgba(255,255,255,.1),rgba(43,126,193,.28));color:#fff;border-radius:16px;padding:14px;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.2);}
 .inf-arcade-fs-mode-btn strong{display:block;font-size:14px;margin-bottom:4px;}
@@ -1288,6 +1305,8 @@ function applyServerStudentFlags(d){
   else if(d.companionEnabled == null) CURRENT_STUDENT.companionEnabled = true;
   if(typeof d.aliceEnabled !== 'boolean' && d.aliceEnabled == null) CURRENT_STUDENT.aliceEnabled = true;
   if(typeof d.jillEnabled !== 'boolean' && d.jillEnabled == null) CURRENT_STUDENT.jillEnabled = false;
+  if(typeof d.arcadeFloorOptIn === 'boolean') CURRENT_STUDENT.arcadeFloorOptIn = d.arcadeFloorOptIn;
+  if(d.arcadeMeta && typeof d.arcadeMeta === 'object') CURRENT_STUDENT.arcadeMeta = d.arcadeMeta;
   window._currentStudent = CURRENT_STUDENT;
   window._portalStudent = CURRENT_STUDENT;
 }
@@ -1439,12 +1458,12 @@ function showPortal(s){
   var vocabCard = (typeof JillVocab !== 'undefined') ? JillVocab.renderRecursosCard(s) : '';
   var arcadeGate = studentGamesOn(s)
     ? '<div class="inf-arcade-stage" id="portal-arcade-stage">'
-      + '<div class="inf-arcade-kicker">INSERT COIN · SKILL TESTS</div>'
-      + '<button type="button" class="inf-arcade-enter" onclick="openInfinityArcadeLobby()"><i class="ti ti-device-gamepad-2"></i> Abrir Infinity Arcade</button>'
-      + '<div class="inf-arcade-note">Rapid Drill, Challenge Drill, Language Arcade y más — todo en la máquina.</div>'
+      + '<div class="inf-arcade-kicker">COMPANION · PISO KAMUK</div>'
+      + '<button type="button" class="inf-arcade-enter" onclick="openInfinityArcadeLobby()"><i class="ti ti-cards"></i> Abrir Companion Hub</button>'
+      + '<div class="inf-arcade-note">Knight, Thief, Raiders y Rapid — add-on de Companion. Ranking solo entre estudiantes Kamuk.</div>'
       + '<div id="portal-quiz-container" style="display:none;"></div>'
       + '</div>'
-    : '<div style="font-size:13px;color:var(--t3);">Activá Jill, Modo Libre o Alice para entrar al Arcade.</div>';
+    : '<div style="font-size:13px;color:var(--t3);">Activá Jill, Modo Libre, Alice o Companion para entrar al Arcade.</div>';
   var recursosHtml = '<div class="card"><div class="card-title"><i class="ti ti-book"></i>Lectura — Jill + leer</div>'
     +'<div style="font-size:12px;color:var(--t2);line-height:1.65;margin-bottom:10px;">Después de practicar con Jill, leé <strong>5–10 min</strong> en voz baja o alta. Anotá palabras nuevas en tu cuaderno — entran a tu vocab activo.</div>'
     +'<div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">'
@@ -2105,9 +2124,9 @@ function drillMountOpts(){
   if(tab === 'jill') tier = 'foundations';
   return { drillTier: tier, drillOwner: tab === 'alice' ? 'alice' : 'jill' };
 }
-/** Jill, Modo Libre, Alice o Alice+ — acceso a juegos (Rapid drill, quiz). */
+/** Jill, Modo Libre, Alice o Companion — acceso al arcade (mismo patrón trainer). */
 function studentGamesOn(s){
-  return studentJillTabOn(s) || studentAliceTabOn(s);
+  return studentJillTabOn(s) || studentAliceTabOn(s) || studentCompanionOn(s);
 }
 function portalQuizBundle(){
   if(typeof JillFoundations !== 'undefined' && CURRENT_STUDENT){
@@ -2117,18 +2136,19 @@ function portalQuizBundle(){
 }
 function portalOpenPracticeQuiz(){
   if(!studentGamesOn(CURRENT_STUDENT)){
-    showToast('Activá Jill, Modo Libre o Alice con tu trainer.','err');
+    showToast('Activá Jill, Modo Libre, Alice o Companion con tu trainer.','err');
     return;
   }
   switchPortalTab('recursos');
   setTimeout(function(){ openInfinityArcadeLobby(); }, 120);
 }
 
-/** Hub de juegos — agregá entradas aquí para que salgan en la máquina. */
+/** Hub de juegos — Knight / Thief / Raiders / Rapid (Companion add-on). */
 var INFINITY_ARCADE_GAMES = [
-  { id: 'rapid', title: 'Rapid Drill', icon: 'ti-flame', btnClass: 'inf-arcade-btn-rapid', run: 'rapid' },
-  { id: 'challenge', title: 'Challenge Drill', icon: 'ti-bolt', btnClass: 'inf-arcade-btn-challenge', run: 'challenge' },
-  { id: 'language', title: 'Language Arcade', icon: 'ti-device-gamepad-2', btnClass: 'inf-arcade-btn-modes', run: 'modes' }
+  { id: 'knight', title: "Knight's Quest", icon: 'ti-sword', btnClass: 'inf-arcade-btn-modes', run: 'knight' },
+  { id: 'thief', title: 'Shadow Thief', icon: 'ti-mask', btnClass: 'inf-arcade-btn-modes', run: 'thief' },
+  { id: 'raiders', title: 'Tense Raiders', icon: 'ti-swords', btnClass: 'inf-arcade-btn-modes', run: 'raiders' },
+  { id: 'rapid', title: 'Rapid Drill', icon: 'ti-flame', btnClass: 'inf-arcade-btn-rapid', run: 'rapid' }
 ];
 
 function ensureInfinityArcadeLobby(){
@@ -2140,7 +2160,7 @@ function ensureInfinityArcadeLobby(){
   el.setAttribute('aria-modal', 'true');
   el.innerHTML =
     '<div class="inf-arcade-lobby-bar">'
-    + '<div class="inf-arcade-lobby-label">INFINITY ARCADE</div>'
+    + '<div class="inf-arcade-lobby-label">KAMUK HUB</div>'
     + '<button type="button" onclick="closeInfinityArcadeLobby()"><i class="ti ti-x"></i> Cerrar</button>'
     + '</div>'
     + '<div id="portal-arcade-cabinet" style="width:100%;display:flex;justify-content:center;"></div>'
@@ -2150,7 +2170,7 @@ function ensureInfinityArcadeLobby(){
 
 function openInfinityArcadeLobby(){
   if(!studentGamesOn(CURRENT_STUDENT)){
-    showToast('Activá Jill, Modo Libre o Alice con tu trainer.','err');
+    showToast('Activá Jill, Modo Libre, Alice o Companion con tu trainer.','err');
     return;
   }
   ensureInfinityArcadeLobby();
@@ -2411,8 +2431,11 @@ function infinityArcadeRunGame(gameId){
   }
   if(!g) return;
   if(g.run === 'rapid') return infinityArcadePickRapid();
-  if(g.run === 'challenge') return infinityArcadePickChallenge();
-  if(g.run === 'modes') return openInfinityArcadeMonitor();
+  if(g.run === 'knight') return launchInfinityCasinoGame('knight');
+  if(g.run === 'thief') return launchInfinityCasinoGame('thief');
+  if(g.run === 'raiders') return launchInfinityCasinoGame('raiders');
+  if(g.run === 'challenge') return infinityArcadePickRapid();
+  if(g.run === 'modes') return (typeof openInfinityCasinoFloor === 'function') ? openInfinityCasinoFloor() : openInfinityArcadeMonitor();
   if(g.run && String(g.run).indexOf('arcade:') === 0){
     return infinityArcadeStartMode(String(g.run).slice(7));
   }
@@ -2428,15 +2451,20 @@ function infinityArcadePickRapid(){
     return;
   }
   closeInfinityArcadeMonitor(true);
+  if(typeof closeInfinityCasinoTitle === 'function') closeInfinityCasinoTitle();
   window._rapidDrillTier = 'foundations';
-  openInfinityArcadeFullscreen('Rapid Drill', 'Kaboom · Foundations');
+  openInfinityArcadeFullscreen('Rapid Drill', 'Foundations · Piso Kamuk');
+  var fs = document.getElementById('inf-arcade-fs');
+  if(fs) fs.classList.add('is-rapid-mode');
   var body = document.getElementById('inf-arcade-fs-body');
   if(!body) return;
-  body.innerHTML = '<div style="margin-bottom:10px;">'
-    + ((typeof JillQuiz !== 'undefined' && CURRENT_STUDENT) ? JillQuiz.renderNemesisTopics(CURRENT_STUDENT) : '')
-    + '</div><div id="inf-arcade-fs-quiz"></div>';
+  body.classList.add('is-rapid-fit');
+  body.innerHTML = '<div id="inf-arcade-fs-quiz" class="jill-rapid-fit-root"></div>';
   var zone = document.getElementById('inf-arcade-fs-quiz');
-  if(zone) JillQuiz.mount(zone, CURRENT_STUDENT, portalQuizBundle(), null, { drillTier: 'foundations', drillOwner: 'jill' });
+  if(zone) JillQuiz.mount(zone, CURRENT_STUDENT, portalQuizBundle(), null, { drillTier: 'foundations', drillOwner: 'jill', fitScreen: true });
+  if(typeof infinityArcadeRequestBrowserFullscreen === 'function'){
+    infinityArcadeRequestBrowserFullscreen(fs);
+  }
 }
 
 function infinityArcadePickChallenge(){
@@ -2459,7 +2487,7 @@ function ensureInfinityArcadeFullscreen(){
   el.setAttribute('aria-modal', 'true');
   el.innerHTML =
     '<div class="inf-arcade-fs-bar">'
-    + '<div class="inf-arcade-fs-title" id="inf-arcade-fs-title">INFINITY ARCADE<span id="inf-arcade-fs-sub">Skill Tests</span></div>'
+    + '<div class="inf-arcade-fs-title" id="inf-arcade-fs-title">KAMUK HUB<span id="inf-arcade-fs-sub">Companion</span></div>'
     + '<button type="button" class="inf-arcade-fs-close" onclick="closeInfinityArcadeFullscreen()"><i class="ti ti-x"></i> Cerrar</button>'
     + '</div>'
     + '<div class="inf-arcade-fs-body" id="inf-arcade-fs-body"></div>';
@@ -2472,24 +2500,67 @@ function openInfinityArcadeFullscreen(title, subtitle){
   var t = document.getElementById('inf-arcade-fs-title');
   var body = document.getElementById('inf-arcade-fs-body');
   if(t){
-    t.innerHTML = String(title || 'INFINITY ARCADE')
-      + '<span id="inf-arcade-fs-sub">'+String(subtitle || 'Skill Tests')+'</span>';
+    t.innerHTML = String(title || 'KAMUK HUB')
+      + '<span id="inf-arcade-fs-sub">'+String(subtitle || 'Companion')+'</span>';
   }
-  if(body) body.innerHTML = '';
-  if(fs) fs.classList.add('is-open');
+  if(body){
+    body.classList.remove('is-knight-fit');
+    body.classList.remove('is-rapid-fit');
+    body.innerHTML = '';
+  }
+  if(fs){
+    fs.classList.remove('is-knight-mode');
+    fs.classList.remove('is-rapid-mode');
+    fs.classList.add('is-open');
+  }
   document.body.classList.add('inf-arcade-fs-lock');
   window._infArcadeFsOpen = true;
 }
 
+function infinityArcadeRequestBrowserFullscreen(el){
+  var target = el || document.getElementById('inf-arcade-fs');
+  if(!target) return;
+  var active = document.fullscreenElement || document.webkitFullscreenElement;
+  if(active === target) return;
+  var req = target.requestFullscreen || target.webkitRequestFullscreen || target.webkitRequestFullScreen;
+  if(!req) return;
+  try{
+    var p = req.call(target);
+    if(p && typeof p.catch === 'function') p.catch(function(){});
+  }catch(e){}
+}
+
+function infinityArcadeExitBrowserFullscreen(){
+  var active = document.fullscreenElement || document.webkitFullscreenElement;
+  if(!active) return;
+  var exit = document.exitFullscreen || document.webkitExitFullscreen;
+  if(!exit) return;
+  try{
+    var p = exit.call(document);
+    if(p && typeof p.catch === 'function') p.catch(function(){});
+  }catch(e){}
+}
+
 function closeInfinityArcadeFullscreen(){
+  infinityArcadeExitBrowserFullscreen();
   var fs = document.getElementById('inf-arcade-fs');
-  if(fs) fs.classList.remove('is-open');
+  if(fs){
+    fs.classList.remove('is-open');
+    fs.classList.remove('is-knight-mode');
+    fs.classList.remove('is-rapid-mode');
+  }
   document.body.classList.remove('inf-arcade-fs-lock');
   window._infArcadeFsOpen = false;
   window._arcadeState = null;
   var body = document.getElementById('inf-arcade-fs-body');
-  if(body) body.innerHTML = '';
-  if(window._infArcadeLobbyOpen){
+  if(body){
+    body.classList.remove('is-knight-fit');
+    body.classList.remove('is-rapid-fit');
+    body.innerHTML = '';
+  }
+  if(typeof openInfinityCasinoFloor === 'function'){
+    openInfinityCasinoFloor();
+  } else if(window._infArcadeLobbyOpen){
     openInfinityArcadeMonitor();
   } else {
     openInfinityArcadeLobby();
@@ -3278,6 +3349,203 @@ function repeatQuiz(containerId){
 
 function submitQuiz(containerId){
   if(window._arcadeState) finishArcadeRound(containerId || window._arcadeState.containerId);
+}
+
+function arcadeCrToday(){
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Costa_Rica' });
+}
+function arcadeDefaultMeta(){
+  return {
+    dayStreak: 0,
+    lastPlayDate: '',
+    lifetimeBestStreak: 0,
+    lifetimeXp: 0,
+    coins: 0,
+    trophies: [],
+    lastPrizeId: '',
+    playedToday: false
+  };
+}
+function arcadeLoadLocalMeta(sid){
+  try{
+    var raw = localStorage.getItem('inf-arcade-meta-'+(sid || 'guest'));
+    return raw ? Object.assign(arcadeDefaultMeta(), JSON.parse(raw)) : arcadeDefaultMeta();
+  }catch(e){ return arcadeDefaultMeta(); }
+}
+function arcadeSaveLocalMeta(sid, meta){
+  try{ localStorage.setItem('inf-arcade-meta-'+(sid || 'guest'), JSON.stringify(meta || arcadeDefaultMeta())); }catch(e){}
+}
+function arcadeGetMeta(s){
+  s = s || CURRENT_STUDENT || {};
+  var base = arcadeDefaultMeta();
+  var fromStudent = (s.arcadeMeta && typeof s.arcadeMeta === 'object') ? s.arcadeMeta : null;
+  var fromLocal = arcadeLoadLocalMeta(s.id || s.portalUser || 'guest');
+  var meta = Object.assign(base, fromLocal, fromStudent || {});
+  if(!Array.isArray(meta.trophies)) meta.trophies = [];
+  var today = arcadeCrToday();
+  if(meta.lastPlayDate && meta.lastPlayDate !== today){
+    var last = new Date(meta.lastPlayDate + 'T12:00:00');
+    var now = new Date(today + 'T12:00:00');
+    var diff = Math.round((now - last) / 86400000);
+    if(diff > 1) meta.dayStreak = 0;
+    meta.playedToday = false;
+  } else if(meta.lastPlayDate === today){
+    meta.playedToday = true;
+  }
+  return meta;
+}
+function arcadePersistMeta(s, meta){
+  s = s || CURRENT_STUDENT;
+  if(!s) {
+    arcadeSaveLocalMeta('guest', meta);
+    return meta;
+  }
+  s.arcadeMeta = meta;
+  arcadeSaveLocalMeta(s.id || s.portalUser || 'guest', meta);
+  return meta;
+}
+
+function arcadeFloorKamukId(s){
+  var id = String((s && s.id) || '');
+  return id.indexOf('KAM-') === 0 ? id : '';
+}
+function arcadeFloorFirstName(s){
+  var n = String((s && s.info && s.info.name) || (s && s.name) || '').trim().split(/\s+/)[0];
+  return n || 'Alguien';
+}
+function arcadeFloorIsOn(s){
+  s = s || CURRENT_STUDENT;
+  if(s && typeof s.arcadeFloorOptIn === 'boolean') return !!s.arcadeFloorOptIn;
+  try{ return localStorage.getItem('inf-arcade-floor-on') === '1'; }catch(e){ return false; }
+}
+function arcadeFloorCacheEmpty(me){
+  return { on:false, rows:[], me: me || '' };
+}
+async function arcadeFloorUnpublish(){
+  var s = CURRENT_STUDENT;
+  var kid = arcadeFloorKamukId(s);
+  if(!kid || typeof dbSet !== 'function') return;
+  await dbSet('kamuk_sessions', 'ARCADE-FLOOR-'+kid, {
+    id: kid,
+    name: arcadeFloorFirstName(s),
+    optIn: false,
+    games: {},
+    updatedAt: new Date().toISOString()
+  });
+}
+async function arcadeFloorPublish(patch){
+  var s = CURRENT_STUDENT;
+  var kid = arcadeFloorKamukId(s);
+  if(!kid || !arcadeFloorIsOn(s) || typeof dbSet !== 'function') return;
+  var meta = (typeof InfinityArcadeRun !== 'undefined' && InfinityArcadeRun.loadMeta) ? InfinityArcadeRun.loadMeta() : {};
+  var games = {};
+  ['knight','thief','raiders','rapid'].forEach(function(g){
+    var m = meta[g] || {};
+    games[g] = { best: m.best||0, last: m.lastScore||0, streak: m.streak||0 };
+  });
+  if(patch && patch.game){
+    var g = patch.game;
+    var prev = games[g] || { best:0, last:0, streak:0 };
+    games[g] = {
+      best: Math.max(prev.best||0, patch.best||patch.score||0),
+      last: patch.score||0,
+      streak: patch.streak||0
+    };
+  }
+  await dbSet('kamuk_sessions', 'ARCADE-FLOOR-'+kid, {
+    id: kid,
+    name: arcadeFloorFirstName(s),
+    optIn: true,
+    games: games,
+    updatedAt: new Date().toISOString()
+  });
+}
+async function arcadeFloorLoad(){
+  var s = CURRENT_STUDENT;
+  var me = arcadeFloorKamukId(s);
+  if(!arcadeFloorIsOn(s)){
+    window._arcadeFloorCache = arcadeFloorCacheEmpty(me);
+    if(typeof InfinityArcadeRun !== 'undefined'){
+      if(InfinityArcadeRun.setFloorOn) InfinityArcadeRun.setFloorOn(false);
+      if(InfinityArcadeRun.setFloorBoard) InfinityArcadeRun.setFloorBoard([], me);
+    }
+    return window._arcadeFloorCache;
+  }
+  var rows = [];
+  try{ rows = await dbQuery('kamuk_sessions?select=id,data&id=like.ARCADE-FLOOR-*'); }catch(e){ rows = []; }
+  var board = [];
+  (rows||[]).forEach(function(r){
+    var d = r && r.data;
+    if(!d || d.optIn === false) return;
+    var sid = String(d.id || String(r.id||'').replace(/^ARCADE-FLOOR-/, ''));
+    if(sid.indexOf('KAM-') !== 0) return;
+    board.push({
+      id: sid,
+      name: d.name || 'Alguien',
+      games: d.games || {}
+    });
+  });
+  window._arcadeFloorCache = { on:true, rows:board, me:me };
+  if(typeof InfinityArcadeRun !== 'undefined'){
+    if(InfinityArcadeRun.setFloorOn) InfinityArcadeRun.setFloorOn(true);
+    if(InfinityArcadeRun.setFloorBoard) InfinityArcadeRun.setFloorBoard(board, me);
+  }
+  return window._arcadeFloorCache;
+}
+function arcadeFloorPushToFrames(){
+  var cache = window._arcadeFloorCache || arcadeFloorCacheEmpty(CURRENT_STUDENT && CURRENT_STUDENT.id);
+  var msg = { type:'inf-arcade-floor', on:!!cache.on, board: cache.on ? (cache.rows||[]) : [], me: cache.me||'' };
+  var frames = document.querySelectorAll('.inf-knight-frame');
+  for(var i=0;i<frames.length;i++){
+    try{ if(frames[i].contentWindow) frames[i].contentWindow.postMessage(msg, '*'); }catch(e){}
+  }
+}
+async function arcadeFloorSetOptIn(on){
+  var s = CURRENT_STUDENT;
+  var kid = arcadeFloorKamukId(s);
+  on = !!on;
+  try{ localStorage.setItem('inf-arcade-floor-on', on ? '1' : '0'); }catch(e){}
+  if(s){
+    s.arcadeFloorOptIn = on;
+    if(kid && typeof dbSet === 'function') dbSet('kamuk_students', kid, s).catch(function(){});
+  }
+  if(typeof InfinityArcadeRun !== 'undefined' && InfinityArcadeRun.setFloorOn){
+    InfinityArcadeRun.setFloorOn(on);
+  }
+  if(!on){
+    await arcadeFloorUnpublish();
+    window._arcadeFloorCache = arcadeFloorCacheEmpty(kid);
+    if(typeof InfinityArcadeRun !== 'undefined' && InfinityArcadeRun.setFloorBoard){
+      InfinityArcadeRun.setFloorBoard([], kid);
+    }
+    arcadeFloorPushToFrames();
+    return window._arcadeFloorCache;
+  }
+  await arcadeFloorPublish();
+  await arcadeFloorLoad();
+  arcadeFloorPushToFrames();
+  return window._arcadeFloorCache;
+}
+window.onInfinityArcadeFinish = function(payload){
+  if(!arcadeFloorIsOn() || !payload) return;
+  arcadeFloorPublish(payload).then(function(){ return arcadeFloorLoad(); }).then(function(){ arcadeFloorPushToFrames(); });
+};
+window.addEventListener('message', function(ev){
+  var d = ev && ev.data;
+  if(!d || typeof d !== 'object') return;
+  if(d.type === 'inf-arcade-hello'){ arcadeFloorPushToFrames(); return; }
+  if(d.type === 'inf-arcade-finish'){
+    if(typeof window.onInfinityArcadeFinish === 'function') window.onInfinityArcadeFinish(d);
+  }
+});
+function arcadeHudHtml(s){
+  var meta = arcadeGetMeta(s);
+  return '<div class="arcade-hud">'
+    + '<span>🔥 DAY '+meta.dayStreak+'</span>'
+    + '<span>⭐ XP '+meta.lifetimeXp+'</span>'
+    + '<span>🪙 '+meta.coins+'</span>'
+    + '<span>🏆 BEST '+meta.lifetimeBestStreak+'</span>'
+    + '</div>';
 }
 
 function renderArcadeMenuHtml(containerId){
@@ -4887,6 +5155,7 @@ async function sendAliceMessage(micText){
   var text = (micText || (input ? input.value : '') || '').trim();
   if(!text) return;
   _aliceSending = true;
+  _aliceSendLockAt = Date.now();
   var micBtn = document.getElementById('alice-mic-btn');
   if(micBtn) micBtn.classList.add('ptt-busy');
   var statusEl = document.getElementById('alice-status');
@@ -4894,7 +5163,7 @@ async function sendAliceMessage(micText){
   var unwatchAlice = voiceSendWatchdog(function(){ return _aliceSending; }, function(){
     aliceUnlockMicAndSend(false);
     if(statusEl) statusEl.textContent = 'Tardó demasiado — intentá de nuevo o escribí tu respuesta.';
-  }, 38000);
+  }, 28000);
   aliceCancelSpeech();
   if(typeof PttMic !== 'undefined') PttMic.stop(document.getElementById('alice-mic-btn'));
   aliceStopMic();
@@ -4936,9 +5205,8 @@ async function sendAliceMessage(micText){
     aliceRenderHistoryMessages();
     if(statusEl) statusEl.textContent = '';
     aliceQueueFullReply(forcedAlice);
-    if(micBtn) micBtn.classList.remove('ptt-busy');
     unwatchAlice();
-    _aliceSending = false;
+    aliceUnlockMicAndSend(false);
     return;
   }
 
@@ -5186,6 +5454,7 @@ var _aliceSpeakEnabled = false;
 var _aliceLastSpokenKey = '';
 var _aliceLastSpokenAt = 0;
 var _aliceLastSpokenText = '';
+var _aliceSendLockAt = 0;
 
 /** Collapse STT echo/repeats so Alice does not scold the student for her own voice. */
 function aliceNormalizeMicTranscript(raw){
@@ -5198,18 +5467,20 @@ function aliceNormalizeMicTranscript(raw){
   text = text.replace(/\s+/g, ' ').trim();
   var last = String(_aliceLastSpokenText || '').replace(/\s+/g, ' ').trim().toLowerCase();
   var now = text.toLowerCase();
-  var recent = (Date.now() - (_aliceLastSpokenAt || 0)) < 12000;
+  // Companion: shorter echo window so real student turns are not wiped as "Alice echo"
+  var echoWin = (_aliceState && _aliceState.sessionType === 'companion') ? 4500 : 9000;
+  var recent = (Date.now() - (_aliceLastSpokenAt || 0)) < echoWin;
   if(recent && last && now){
     if(now === last) return '';
-    if(last.indexOf(now) >= 0 && now.length >= 4) return '';
-    if(now.indexOf(last) >= 0 && last.length >= 12 && now.length < last.length * 1.35) return '';
-    // Heavy overlap with last Alice line → treat as echo
+    // Only drop near-identical echoes (avoid killing short student answers)
+    if(last.indexOf(now) >= 0 && now.length >= 12) return '';
+    if(now.indexOf(last) >= 0 && last.length >= 18 && now.length < last.length * 1.2) return '';
     var a = now.split(/\s+/).filter(Boolean);
     var b = last.split(/\s+/).filter(Boolean);
-    if(a.length >= 2 && b.length >= 2){
+    if(a.length >= 4 && b.length >= 4){
       var hit = 0;
       a.forEach(function(w){ if(b.indexOf(w) >= 0) hit++; });
-      if(hit / a.length >= 0.85) return '';
+      if(hit / a.length >= 0.92) return '';
     }
   }
   return text;
@@ -5313,19 +5584,34 @@ function aliceSpeak(text){
 function bindAlicePttMic(){
   var btn = document.getElementById('alice-mic-btn');
   if(!btn || typeof PttMic === 'undefined') return;
-  if(btn._pttBound) return;
+  // Always fresh bind — old DOM/stuck PTT left the mic dead for students like Jimena
+  if(typeof PttMic.destroy === 'function') PttMic.destroy(btn);
+  else if(btn._pttBound){ try { PttMic.reset(btn); } catch(e0) {} btn._pttBound = false; }
   var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   PttMic.bind({
     btn: btn,
     // Accent selector affects TTS only — STT must stay English or Chrome mangles speech
     lang: 'en-US',
-    settleMs: 280,
+    settleMs: isMobile ? 120 : 180,
+    maxHoldMs: 45000,
     canStart: function(){
-      if(!_aliceState.sessionActive) return false;
-      if(_aliceSending){
-        var st = document.getElementById('alice-status');
-        if(st) st.textContent = 'Esperá a que Alice termine de responder…';
+      if(!_aliceState.sessionActive){
+        var st0 = document.getElementById('alice-status');
+        if(st0) st0.textContent = 'Tocá “Iniciar sesión” primero, después el micrófono.';
         return false;
+      }
+      if(_aliceSending){
+        // Auto-recover zombie send lock (mic looked “stuck”)
+        if(!_aliceSendLockAt) _aliceSendLockAt = Date.now();
+        if(Date.now() - _aliceSendLockAt > 12000){
+          aliceUnlockMicAndSend(false);
+        } else {
+          var st = document.getElementById('alice-status');
+          if(st) st.textContent = 'Esperá a que Alice termine de responder…';
+          return false;
+        }
+      } else {
+        _aliceSendLockAt = 0;
       }
       return true;
     },
@@ -5333,7 +5619,8 @@ function bindAlicePttMic(){
       if(typeof unlockTtsAudio === 'function') unlockTtsAudio();
       aliceInterruptSpeaking();
       aliceStopMic();
-      btn.classList.remove('ptt-busy');
+      btn.classList.remove('ptt-busy','ptt-active');
+      btn.style.pointerEvents = '';
     },
     normalizeTranscript: function(raw){
       var cleaned = aliceNormalizeMicTranscript(raw);
@@ -5349,14 +5636,20 @@ function bindAlicePttMic(){
       var th = aliceTheme();
       if(b){
         b.classList.toggle('ptt-active', !!listening);
-        if(listening){ b.style.background='rgba(255,92,92,0.3)'; b.style.borderColor='#FF5C5C'; b.style.color='white'; }
+        if(listening){ b.style.background='rgba(255,92,92,0.3)'; b.style.borderColor='#FF5C5C'; b.style.color='white'; b.style.pointerEvents=''; }
         else { b.style.background='rgba('+th.rgb+',0.12)'; b.style.borderColor='rgba('+th.rgb+',0.35)'; b.style.color=th.accent; }
       }
       if(statusEl) statusEl.textContent = listening ? '🎤 Escuchando… soltá el botón cuando termines' : '';
     },
     onSend: function(text){ if(text) sendAliceMessage(text); },
+    onEmpty: function(){
+      var st = document.getElementById('alice-status');
+      if(st) st.textContent = 'No te escuché bien — mantené el mic un poco más y hablá cerca del teléfono.';
+      btn.classList.remove('ptt-busy','ptt-active');
+    },
     onError: function(code){
       btn.classList.remove('ptt-active','ptt-busy');
+      btn.style.pointerEvents = '';
       var st = document.getElementById('alice-status');
       if(!st) return;
       if(code === 'not-allowed' || code === 'service-not-allowed'){
@@ -5365,7 +5658,7 @@ function bindAlicePttMic(){
         st.textContent = 'No se encontró micrófono (o está ocupado) — revisá el dispositivo o escribí tu respuesta.';
       } else if(code === 'no-sr' || code === 'start-failed'){
         st.textContent = isMobile
-          ? 'Voz no disponible en este navegador — escribí tu respuesta abajo.'
+          ? 'Voz no disponible en este navegador — usá Chrome y escribí si hace falta.'
           : 'Usá Chrome o Edge para voz, o escribí tu respuesta.';
       } else {
         st.textContent = 'Micrófono interrumpido — mantené presionado de nuevo o escribí tu respuesta.';
@@ -5849,15 +6142,39 @@ function aliceUnlockMicAndSend(clearStatus){
   _aliceSending = false;
   _aliceSpeakEnabled = true;
   var btn = document.getElementById('alice-mic-btn');
-  if(btn){ btn.classList.remove('ptt-busy','ptt-active'); }
+  if(btn){ btn.classList.remove('ptt-busy','ptt-active'); btn.style.pointerEvents = ''; }
   if(typeof PttMic !== 'undefined'){
-    if(btn) PttMic.reset(btn);
-    else PttMic.resetAll();
+    if(btn){
+      if(typeof PttMic.destroy === 'function') PttMic.destroy(btn);
+      else PttMic.reset(btn);
+    } else if(typeof PttMic.resetAll === 'function') PttMic.resetAll();
   }
   aliceStopMic();
+  try { bindAlicePttMic(); } catch(eRebind) {}
   if(clearStatus !== false){
     var st = document.getElementById('alice-status');
     if(st && (st.textContent.indexOf('Escuchando') >= 0 || st.textContent.indexOf('pensando') >= 0 || st.textContent.indexOf('conecta') >= 0)) st.textContent = '';
+  }
+}
+
+function jillUnlockMicAndSend(clearStatus){
+  _jillSending = false;
+  _jillSpeakEnabled = true;
+  var btn = document.getElementById('jill-mic-btn');
+  if(btn){ btn.classList.remove('ptt-busy','ptt-active'); btn.style.pointerEvents = ''; }
+  if(typeof PttMic !== 'undefined'){
+    if(btn){
+      if(typeof PttMic.destroy === 'function') PttMic.destroy(btn);
+      else PttMic.reset(btn);
+    }
+  }
+  jillStopMic();
+  try { bindJillPttMic(); } catch(eRebind) {}
+  if(clearStatus !== false){
+    var st = document.getElementById('jill-status');
+    if(st && (st.textContent.indexOf('Escuchando') >= 0 || st.textContent.indexOf('responde') >= 0 || st.textContent.indexOf('Jill') >= 0)){
+      if(st.textContent.indexOf('Esperá') >= 0 || st.textContent.indexOf('responde') >= 0) st.textContent = '';
+    }
   }
 }
 
@@ -6653,6 +6970,19 @@ function nexoraPlayBrowserTts(text, onEnded, onError){
 }
 
 function nexoraArmTtsWatchdog(textLen){
+  if(typeof armTtsPlaybackWatchdog === 'function'){
+    armTtsPlaybackWatchdog({
+      textLen: textLen,
+      clearTimer: function(){ clearTimeout(_nxTtsWatchdog); },
+      setTimer: function(fn, delay){ clearTimeout(_nxTtsWatchdog); _nxTtsWatchdog = setTimeout(fn, delay); },
+      getBusy: function(){ return _nxTTSBusy; },
+      setBusy: function(v){ _nxTTSBusy = !!v; },
+      getAudio: function(){ return window._nxAudio; },
+      setAudio: function(a){ window._nxAudio = a; },
+      onAdvance: function(){ _nxPlayingChunk = null; if(typeof _nxTTSFlushPortal === 'function') _nxTTSFlushPortal(); }
+    });
+    return;
+  }
   clearTimeout(_nxTtsWatchdog);
   var ms = typeof ttsWatchdogMs === 'function' ? ttsWatchdogMs(textLen) : 120000;
   _nxTtsWatchdog = setTimeout(function(){
@@ -6660,7 +6990,7 @@ function nexoraArmTtsWatchdog(textLen){
     _nxTTSBusy = false;
     if(window._nxAudio){ try{ window._nxAudio.pause(); }catch(e){} window._nxAudio = null; }
     _nxPlayingChunk = null;
-    _nxTTSFlushPortal();
+    if(typeof _nxTTSFlushPortal === 'function') _nxTTSFlushPortal();
   }, ms);
 }
 
@@ -6831,8 +7161,14 @@ document.addEventListener('visibilitychange', function(){
     }
     jillPauseAudio();
     if(window._nxAudio) try{ window._nxAudio.pause(); }catch(e){}
-    if(typeof PttMic !== 'undefined') PttMic.resetAll();
+    if(typeof PttMic !== 'undefined'){
+      if(typeof PttMic.destroyAll === 'function') PttMic.destroyAll();
+      else PttMic.resetAll();
+    }
     aliceStopMic();
+    jillStopMic();
+    _aliceSending = false;
+    _jillSending = false;
   } else {
     if(window._activePortalTab === 'alice' && _aliceState.sessionActive){
       _aliceSpeakEnabled = true;
@@ -6848,7 +7184,7 @@ document.addEventListener('visibilitychange', function(){
     if(window._activePortalTab === 'nexora' && _nxState.active) resumeNexoraRuntime();
     if(window._activePortalTab === 'jill'){
       _jillSpeakEnabled = true;
-      _jillSending = false;
+      jillUnlockMicAndSend(false);
       try { bindJillPttMic(); } catch(e) {}
     }
   }
@@ -6903,31 +7239,34 @@ var _jillTtsRetry = {};
 var _jillTtsWatchdog = null;
 
 function jillArmTtsWatchdog(textLen){
+  if(typeof armTtsPlaybackWatchdog === 'function'){
+    armTtsPlaybackWatchdog({
+      textLen: textLen,
+      clearTimer: function(){ clearTimeout(_jillTtsWatchdog); },
+      setTimer: function(fn, delay){ clearTimeout(_jillTtsWatchdog); _jillTtsWatchdog = setTimeout(fn, delay); },
+      getBusy: function(){ return _jillTTSBusy; },
+      setBusy: function(v){ _jillTTSBusy = !!v; },
+      getAudio: function(){ return _jillState.audio; },
+      setAudio: function(a){ _jillState.audio = a; },
+      onAdvance: function(){ _jillState.speaking = _jillTTSQueue.length > 0; _jillTTSFlush(); }
+    });
+    return;
+  }
   clearTimeout(_jillTtsWatchdog);
   var ms = typeof ttsWatchdogMs === 'function' ? ttsWatchdogMs(textLen) : 120000;
-  // Si el audio queda pausado (fullscreen/DOM), no esperar 2 min: reanudar o seguir.
   var stallChecks = 0;
-  _jillTtsWatchdog = setTimeout(function tick(){
+  var t0 = Date.now();
+  function tick(){
     if(!_jillTTSBusy) return;
     var a = _jillState.audio;
-    if(a && !a.ended && a.paused && a.currentTime > 0.05 && stallChecks < 8){
-      stallChecks += 1;
-      var p = a.play();
-      if(p && typeof p.catch === 'function') p.catch(function(){});
-      _jillTtsWatchdog = setTimeout(tick, 900);
-      return;
-    }
-    if(a && !a.ended && !a.paused){
-      // aún hablando — rearmar timeout restante
-      var left = Math.max(4000, ms - Math.floor((a.currentTime || 0) * 1000));
-      _jillTtsWatchdog = setTimeout(tick, Math.min(left, 20000));
-      return;
-    }
-    _jillTTSBusy = false;
-    if(_jillState.audio){ try{ _jillState.audio.pause(); }catch(e){} _jillState.audio = null; }
-    _jillState.speaking = _jillTTSQueue.length > 0;
-    _jillTTSFlush();
-  }, Math.min(ms, 12000));
+    var elapsed = Date.now() - t0;
+    if(!a){ if(elapsed < ms){ _jillTtsWatchdog = setTimeout(tick, 1000); return; } _jillTTSBusy = false; _jillState.speaking = _jillTTSQueue.length > 0; _jillTTSFlush(); return; }
+    if(!a.ended && a.paused && a.currentTime > 0.02 && stallChecks < 16){ stallChecks++; try{ var p=a.play(); if(p&&p.catch)p.catch(function(){}); }catch(e){} _jillTtsWatchdog=setTimeout(tick,900); return; }
+    if(!a.ended && !a.paused){ var dur=Number(a.duration)||0; var cur=Number(a.currentTime)||0; var leftMs=dur>0&&isFinite(dur)?Math.max(4000,Math.ceil((dur-cur)*1000)+5000):Math.max(8000,ms-elapsed); _jillTtsWatchdog=setTimeout(tick,Math.min(leftMs,25000)); return; }
+    if(a.ended||elapsed>=ms){ _jillTTSBusy=false; if(_jillState.audio){try{_jillState.audio.pause();}catch(e){}} _jillState.audio=null; _jillState.speaking=_jillTTSQueue.length>0; _jillTTSFlush(); return; }
+    _jillTtsWatchdog=setTimeout(tick,1000);
+  }
+  _jillTtsWatchdog=setTimeout(tick,3000);
 }
 
 function jillLastUserTopic(){
@@ -7373,29 +7712,34 @@ function alicePrunePrefetchCache(){
 }
 
 function aliceArmTtsWatchdog(textLen){
+  if(typeof armTtsPlaybackWatchdog === 'function'){
+    armTtsPlaybackWatchdog({
+      textLen: textLen,
+      clearTimer: function(){ clearTimeout(_aliceTtsWatchdog); },
+      setTimer: function(fn, delay){ clearTimeout(_aliceTtsWatchdog); _aliceTtsWatchdog = setTimeout(fn, delay); },
+      getBusy: function(){ return _aliceTTSBusy; },
+      setBusy: function(v){ _aliceTTSBusy = !!v; },
+      getAudio: function(){ return window._aliceAudio; },
+      setAudio: function(a){ window._aliceAudio = a; },
+      onAdvance: function(){ _aliceTTSFlush(); }
+    });
+    return;
+  }
   clearTimeout(_aliceTtsWatchdog);
   var ms = typeof ttsWatchdogMs === 'function' ? ttsWatchdogMs(textLen) : 120000;
-  // Si el audio queda pausado (fullscreen/DOM), reanudar — no cortar explicaciones John.
   var stallChecks = 0;
-  _aliceTtsWatchdog = setTimeout(function tick(){
+  var t0 = Date.now();
+  function tick(){
     if(!_aliceTTSBusy) return;
     var a = window._aliceAudio;
-    if(a && !a.ended && a.paused && a.currentTime > 0.05 && stallChecks < 8){
-      stallChecks += 1;
-      var p = a.play();
-      if(p && typeof p.catch === 'function') p.catch(function(){});
-      _aliceTtsWatchdog = setTimeout(tick, 900);
-      return;
-    }
-    if(a && !a.ended && !a.paused){
-      var left = Math.max(4000, ms - Math.floor((a.currentTime || 0) * 1000));
-      _aliceTtsWatchdog = setTimeout(tick, Math.min(left, 20000));
-      return;
-    }
-    _aliceTTSBusy = false;
-    if(window._aliceAudio){ try{ window._aliceAudio.pause(); }catch(e){} window._aliceAudio = null; }
-    _aliceTTSFlush();
-  }, Math.min(ms, 12000));
+    var elapsed = Date.now() - t0;
+    if(!a){ if(elapsed < ms){ _aliceTtsWatchdog = setTimeout(tick, 1000); return; } _aliceTTSBusy = false; _aliceTTSFlush(); return; }
+    if(!a.ended && a.paused && a.currentTime > 0.02 && stallChecks < 16){ stallChecks++; try{ var p=a.play(); if(p&&p.catch)p.catch(function(){}); }catch(e){} _aliceTtsWatchdog=setTimeout(tick,900); return; }
+    if(!a.ended && !a.paused){ var dur=Number(a.duration)||0; var cur=Number(a.currentTime)||0; var leftMs=dur>0&&isFinite(dur)?Math.max(4000,Math.ceil((dur-cur)*1000)+5000):Math.max(8000,ms-elapsed); _aliceTtsWatchdog=setTimeout(tick,Math.min(leftMs,25000)); return; }
+    if(a.ended||elapsed>=ms){ _aliceTTSBusy=false; if(window._aliceAudio){try{window._aliceAudio.pause();}catch(e){}} window._aliceAudio=null; _aliceTTSFlush(); return; }
+    _aliceTtsWatchdog=setTimeout(tick,1000);
+  }
+  _aliceTtsWatchdog=setTimeout(tick,3000);
 }
 
 function aliceCleanTtsText(text){
@@ -7582,8 +7926,8 @@ function scrollJillMessages(){
 function bindJillPttMic(){
   var btn = document.getElementById('jill-mic-btn');
   if(!btn || typeof PttMic === 'undefined') return;
-  if(btn._pttBound) return;
-  btn._pttBound = true;
+  if(typeof PttMic.destroy === 'function') PttMic.destroy(btn);
+  else { btn._pttBound = false; }
   var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   PttMic.bind({
     btn: btn,
@@ -7594,6 +7938,8 @@ function bindJillPttMic(){
       }
       return 'es-CR';
     },
+    settleMs: isMobile ? 120 : 180,
+    maxHoldMs: 45000,
     normalizeTranscript: function(raw){
       if(typeof JillLearnerIntent === 'undefined' || !JillLearnerIntent.normalizeUtterance) return raw;
       var n = JillLearnerIntent.normalizeUtterance(raw, { fromMic: true });
@@ -7605,9 +7951,16 @@ function bindJillPttMic(){
     },
     canStart: function(){
       if(_jillSending){
-        var st = document.getElementById('jill-status');
-        if(st && !st.textContent) st.textContent = 'Esperá a que Jill termine de responder…';
-        return false;
+        if(!_jillSendLockAt) _jillSendLockAt = Date.now();
+        if(Date.now() - _jillSendLockAt > 12000){
+          jillUnlockMicAndSend(false);
+        } else {
+          var st = document.getElementById('jill-status');
+          if(st) st.textContent = 'Esperá a que Jill termine de responder…';
+          return false;
+        }
+      } else {
+        _jillSendLockAt = 0;
       }
       return true;
     },
@@ -7616,14 +7969,15 @@ function bindJillPttMic(){
       // NO auto-fullscreen aquí: pausa/corta el TTS a mitad de explicación.
       jillInterruptSpeaking();
       jillStopMic();
-      btn.classList.remove('ptt-busy');
+      btn.classList.remove('ptt-busy','ptt-active');
+      btn.style.pointerEvents = '';
     },
     onUi: function(listening){
       var b = document.getElementById('jill-mic-btn');
       var statusEl = document.getElementById('jill-status');
       if(b){
         b.classList.toggle('ptt-active', !!listening);
-        if(listening){ b.style.background='rgba(255,92,92,0.3)'; b.style.borderColor='#FF5C5C'; b.style.color='white'; }
+        if(listening){ b.style.background='rgba(255,92,92,0.3)'; b.style.borderColor='#FF5C5C'; b.style.color='white'; b.style.pointerEvents=''; }
         else { b.style.background='rgba(61,220,151,0.15)'; b.style.borderColor='rgba(61,220,151,0.4)'; b.style.color='#86EFAC'; }
       }
       if(statusEl){
@@ -7634,13 +7988,19 @@ function bindJillPttMic(){
       }
     },
     onSend: function(text){ if(text) sendJillMsg(text, { fromMic: true }); },
+    onEmpty: function(){
+      var st = document.getElementById('jill-status');
+      if(st) st.textContent = 'No te escuché bien — mantené el mic un poco más y hablá cerca del teléfono.';
+      btn.classList.remove('ptt-busy','ptt-active');
+    },
     onError: function(code){
       btn.classList.remove('ptt-active','ptt-busy');
+      btn.style.pointerEvents = '';
       var st = document.getElementById('jill-status');
       if(!st) return;
       if(code === 'no-sr' || code === 'start-failed'){
         st.textContent = isMobile
-          ? 'Voz no disponible en este navegador — escribí tu respuesta abajo.'
+          ? 'Voz no disponible en este navegador — usá Chrome y escribí si hace falta.'
           : 'Usá Chrome o Edge para voz, o escribí tu respuesta.';
       } else {
         st.textContent = 'Micrófono interrumpido — mantené presionado de nuevo o escribí tu respuesta.';
@@ -7659,6 +8019,7 @@ function jillStopAll(){
 
 var _jillMicText = '';
 var _jillSending = false;
+var _jillSendLockAt = 0;
 
 function jillGetContext(s){
   if(typeof JillFoundations !== 'undefined'){
@@ -8449,13 +8810,17 @@ async function sendJillMsg(micText, sendOpts){
   }
   var text = rawText;
   _jillSending = true;
+  _jillSendLockAt = Date.now();
   if(typeof unlockTtsAudio === 'function') unlockTtsAudio();
   // No forzar fullscreen al enviar: corta la voz. Solo botón FS o mic lo pide.
   var micBtn = document.getElementById('jill-mic-btn');
   if(micBtn) micBtn.classList.add('ptt-busy');
   var statusEl = document.getElementById('jill-status');
   if(statusEl) statusEl.textContent = isCompanion ? 'Jill Modo Libre responde…' : 'Jill responde…';
-  var unwatchJill = voiceSendWatchdog(function(){ return _jillSending; }, function(){ _jillSending = false; });
+  var unwatchJill = voiceSendWatchdog(function(){ return _jillSending; }, function(){
+    jillUnlockMicAndSend(false);
+    if(statusEl) statusEl.textContent = 'Tardó demasiado — intentá de nuevo o escribí tu respuesta.';
+  }, 28000);
   jillCancelSpeech();
   if(typeof PttMic !== 'undefined') PttMic.stop(document.getElementById('jill-mic-btn'));
   jillStopMic();
@@ -8526,9 +8891,8 @@ async function sendJillMsg(micText, sendOpts){
     jillSpeakTurn(drillEval.forcedReply, 'text');
     jillRenderHistoryMessages();
     if(statusEl) statusEl.textContent = '';
-    if(micBtn) micBtn.classList.remove('ptt-busy');
     unwatchJill();
-    _jillSending = false;
+    jillUnlockMicAndSend(false);
     return;
   }
 
@@ -8641,9 +9005,8 @@ async function sendJillMsg(micText, sendOpts){
   } finally {
     clearTimeout(tid);
     if(_jillStreamCtrl === ctrl) _jillStreamCtrl = null;
-    if(micBtn) micBtn.classList.remove('ptt-busy');
     unwatchJill();
-    _jillSending = false;
+    jillUnlockMicAndSend(false);
   }
 }
 
@@ -8727,5 +9090,6 @@ if(document.readyState === 'loading'){
   </div>
 </div>
 
+<script src="js/infinity-casino-floor.js?v=20260813kamuk1"></script>
 </body>
 </html>

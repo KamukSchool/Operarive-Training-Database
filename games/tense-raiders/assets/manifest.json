@@ -1,0 +1,38 @@
+﻿{
+    "pack":  "GraphicRiver Mini Knight Sprites Pack",
+    "hubIdle":  {
+                    "frames":  12,
+                    "cellW":  168,
+                    "cellH":  140
+                },
+    "chars":  {
+                  "knight":  {
+                                 "attack":  8,
+                                 "hurt":  8,
+                                 "dead":  8,
+                                 "idle":  10,
+                                 "run":  8
+                             },
+                  "goblin":  {
+                                 "attack":  8,
+                                 "hurt":  8,
+                                 "dead":  8,
+                                 "idle":  10,
+                                 "run":  8
+                             },
+                  "bat":  {
+                              "attack":  8,
+                              "hurt":  8,
+                              "dead":  8,
+                              "fly":  8,
+                              "idle":  10
+                          },
+                  "skeleton":  {
+                                   "attack":  8,
+                                   "hurt":  8,
+                                   "dead":  8,
+                                   "idle":  10,
+                                   "run":  8
+                               }
+              }
+}

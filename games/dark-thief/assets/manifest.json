@@ -1,0 +1,78 @@
+{
+  "frame": {
+    "w": 815,
+    "h": 759
+  },
+  "anims": {
+    "idle": {
+      "frames": 12,
+      "fps": 10,
+      "file": "assets/idle.png"
+    },
+    "idle_b": {
+      "frames": 16,
+      "fps": 10,
+      "file": "assets/idle_b.png"
+    },
+    "attack": {
+      "frames": 12,
+      "fps": 16,
+      "file": "assets/attack.png"
+    },
+    "bow": {
+      "frames": 12,
+      "fps": 14,
+      "file": "assets/bow.png"
+    },
+    "throw": {
+      "frames": 8,
+      "fps": 14,
+      "file": "assets/throw.png"
+    },
+    "run": {
+      "frames": 8,
+      "fps": 14,
+      "file": "assets/run.png"
+    },
+    "walk": {
+      "frames": 16,
+      "fps": 12,
+      "file": "assets/walk.png"
+    },
+    "roll": {
+      "frames": 8,
+      "fps": 16,
+      "file": "assets/roll.png"
+    },
+    "crouch": {
+      "frames": 16,
+      "fps": 10,
+      "file": "assets/crouch.png"
+    },
+    "hurt": {
+      "frames": 8,
+      "fps": 14,
+      "file": "assets/hurt.png"
+    },
+    "death": {
+      "frames": 12,
+      "fps": 10,
+      "file": "assets/death.png"
+    },
+    "jump": {
+      "frames": 6,
+      "fps": 12,
+      "file": "assets/jump.png"
+    },
+    "slide": {
+      "frames": 1,
+      "fps": 12,
+      "file": "assets/slide.png"
+    },
+    "climb": {
+      "frames": 8,
+      "fps": 12,
+      "file": "assets/climb.png"
+    }
+  }
+}

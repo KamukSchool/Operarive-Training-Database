@@ -1,0 +1,5 @@
+Tense Raiders sprites: GraphicRiver Mini Knight Sprites Pack
+(Knight / Goblin / Skeleton / Bats PNG sequences)
+
+UI tiles: Kenney Pixel Adventure UI (CC0) — see ui/License.txt
+SFX: Infinity Knight's Quest combat WAVs
