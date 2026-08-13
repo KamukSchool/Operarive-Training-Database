@@ -6,7 +6,7 @@
   'use strict';
 
   var MANTRA = 'LINK · IDEA · LINK';
-  var VER = '20260813kamuk2';
+  var VER = '20260813kamuk3';
   var stageIdx = 0;
   var stageTimer = null;
   var stagePauseUntil = 0;

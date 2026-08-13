@@ -61,6 +61,7 @@
 <script src="https://studioinfinitycr.com/js/jill-foundations-modules.js?v=20260713m07"></script>
 <script src="games/_shared/infinity-arcade-run.js?v=r2"></script>
 <script src="js/jill-quiz.js?v=20260813park2"></script>
+<script src="js/infinity-casino-floor.js?v=20260813kamuk3"></script>
 <script src="https://studioinfinitycr.com/js/tts-chunks.js?v=20260811nocut"></script>
 <script src="js/tts-chunks.js?v=20260811nocut"></script>
 <script src="https://studioinfinitycr.com/js/nexora-stream-voice.js"></script>
@@ -2152,6 +2153,7 @@ var INFINITY_ARCADE_GAMES = [
 ];
 
 function ensureInfinityArcadeLobby(){
+  if(typeof openInfinityCasinoFloor === 'function') return;
   if(document.getElementById('inf-arcade-lobby')) return;
   var el = document.createElement('div');
   el.id = 'inf-arcade-lobby';
@@ -2308,34 +2310,8 @@ function playInfinityArcadeIntro(){
   }, 1650);
 }
 
-function renderInfinityArcadeCabinet(containerId){
-  if(typeof openInfinityCasinoFloor === 'function'){
-    openInfinityCasinoFloor();
-    return;
-  }
-  var c = document.getElementById(containerId || 'portal-arcade-cabinet');
-  if(!c) return;
-  if(!studentGamesOn(CURRENT_STUDENT)){
-    c.innerHTML = '<div style="font-size:13px;color:#c4b5fd;padding:12px;text-align:center;">Activá Jill, Modo Libre, Alice o Companion para el Hub.</div>';
-    return;
-  }
-  var hint = document.getElementById('inf-arcade-tap-hint');
-  if(hint) hint.hidden = true;
-  c.innerHTML =
-    '<div class="inf-arcade-cabinet-wrap" id="inf-arcade-wrap" role="button" tabindex="0" aria-label="Abrir menú de juegos" onclick="zoomInfinityArcadeToMonitor()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();zoomInfinityArcadeToMonitor();}">'
-    + '<img class="inf-arcade-cabinet-img" src="https://studioinfinitycr.com/assets/infinity-arcade-cabinet.png" alt="Infinity Arcade" draggable="false">'
-    + '<div class="inf-arcade-marquee-glow" id="inf-arcade-marquee-glow" aria-hidden="true"></div>'
-    + '<div class="inf-arcade-hotspot inf-arcade-hotspot-marquee" id="inf-arcade-ring-marquee" aria-hidden="true"></div>'
-    + '<div class="inf-arcade-hotspot inf-arcade-hotspot-screen" id="inf-arcade-ring-screen" aria-hidden="true"></div>'
-    + '<div class="inf-arcade-screen" id="inf-arcade-screen" aria-live="polite">'
-    +   '<div class="inf-arcade-screen-inner" id="inf-arcade-screen-inner">'
-    +     '<div class="inf-arcade-boot">INSERT COIN…</div>'
-    +   '</div>'
-    + '</div>'
-    + '</div>';
-  var img = c.querySelector('.inf-arcade-cabinet-img');
-  bindInfinityArcadeScreenLayout(img);
-  playInfinityArcadeIntro();
+function renderInfinityArcadeCabinet(){
+  if(typeof openInfinityCasinoFloor === 'function') openInfinityCasinoFloor();
 }
 
 function showInfinityArcadeHome(){
@@ -2380,23 +2356,14 @@ function ensureInfinityArcadeMonitor(){
 }
 
 function zoomInfinityArcadeToMonitor(){
-  if(!studentGamesOn(CURRENT_STUDENT)) return;
-  var wrap = document.getElementById('inf-arcade-wrap');
-  if(wrap){
-    wrap.classList.remove('is-zooming');
-    void wrap.offsetWidth;
-    wrap.classList.add('is-zooming');
-  }
-  var hint = document.getElementById('inf-arcade-tap-hint');
-  if(hint) hint.hidden = true;
-  clearTimeout(window._infArcadeZoomT);
-  window._infArcadeZoomT = setTimeout(function(){
-    openInfinityArcadeMonitor();
-    if(wrap) wrap.classList.remove('is-zooming');
-  }, 400);
+  if(typeof openInfinityCasinoFloor === 'function') openInfinityCasinoFloor();
 }
 
 function openInfinityArcadeMonitor(){
+  if(typeof openInfinityCasinoFloor === 'function'){
+    openInfinityCasinoFloor();
+    return;
+  }
   ensureInfinityArcadeMonitor();
   var mon = document.getElementById('inf-arcade-monitor');
   var grid = document.getElementById('inf-arcade-monitor-grid');
@@ -2449,7 +2416,8 @@ function infinityArcadeRunGame(gameId){
 }
 
 function showInfinityArcadeModes(){
-  openInfinityArcadeMonitor();
+  if(typeof openInfinityCasinoFloor === 'function') openInfinityCasinoFloor();
+  else openInfinityArcadeMonitor();
 }
 
 function infinityArcadePickRapid(){
@@ -9093,6 +9061,6 @@ if(document.readyState === 'loading'){
   </div>
 </div>
 
-<script src="js/infinity-casino-floor.js?v=20260813kamuk2"></script>
+<script src="js/infinity-casino-floor.js?v=20260813kamuk3"></script>
 </body>
 </html>
