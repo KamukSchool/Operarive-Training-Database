@@ -1463,7 +1463,7 @@ function showPortal(s){
       + '<div class="inf-arcade-note">Knight, Thief, Raiders y Rapid — add-on de Companion. Ranking solo entre estudiantes Kamuk.</div>'
       + '<div id="portal-quiz-container" style="display:none;"></div>'
       + '</div>'
-    : '<div style="font-size:13px;color:var(--t3);">Activá Jill, Modo Libre, Alice o Companion para entrar al Arcade.</div>';
+    : '<div style="font-size:13px;color:var(--t3);">Activá Jill, Modo Libre, Alice o Companion para entrar al Hub.</div>';
   var recursosHtml = '<div class="card"><div class="card-title"><i class="ti ti-book"></i>Lectura — Jill + leer</div>'
     +'<div style="font-size:12px;color:var(--t2);line-height:1.65;margin-bottom:10px;">Después de practicar con Jill, leé <strong>5–10 min</strong> en voz baja o alta. Anotá palabras nuevas en tu cuaderno — entran a tu vocab activo.</div>'
     +'<div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">'
@@ -1488,8 +1488,8 @@ function showPortal(s){
     +'</div>'
 
     +'<div class="inf-skill" style="background:linear-gradient(165deg,#E8F4FC,#fff);">'
-    +'<h3><i class="ti ti-device-gamepad-2"></i> Infinity Arcade</h3>'
-    +'<p class="inf-skill-lead">Hub de juegos a pantalla completa. Rapid Drill, Challenge Drill y Language Arcade.</p>'
+    +'<h3><i class="ti ti-device-gamepad-2"></i> Companion Hub</h3>'
+    +'<p class="inf-skill-lead">Add-on de Companion. Knight, Thief, Raiders y Rapid — a pantalla completa.</p>'
     + arcadeGate
     +'</div>';
 
@@ -2173,24 +2173,27 @@ function openInfinityArcadeLobby(){
     showToast('Activá Jill, Modo Libre, Alice o Companion con tu trainer.','err');
     return;
   }
-  ensureInfinityArcadeLobby();
-  var lobby = document.getElementById('inf-arcade-lobby');
-  if(lobby) lobby.classList.add('is-open');
-  document.body.classList.add('inf-arcade-lobby-lock');
-  window._infArcadeLobbyOpen = true;
-  renderInfinityArcadeCabinet('portal-arcade-cabinet');
+  var old = document.getElementById('inf-arcade-lobby');
+  if(old) old.classList.remove('is-open');
+  document.body.classList.remove('inf-arcade-lobby-lock');
+  window._infArcadeLobbyOpen = false;
+  if(typeof openInfinityCasinoFloor === 'function'){
+    openInfinityCasinoFloor();
+    return;
+  }
+  showToast('Hub no cargó. Recargá el portal.','err');
 }
 
 function closeInfinityArcadeLobby(){
+  if(typeof closeInfinityCasinoFloor === 'function'){
+    closeInfinityCasinoFloor();
+    return;
+  }
   closeInfinityArcadeMonitor(true);
   var lobby = document.getElementById('inf-arcade-lobby');
   if(lobby) lobby.classList.remove('is-open');
   document.body.classList.remove('inf-arcade-lobby-lock');
   window._infArcadeLobbyOpen = false;
-  clearTimeout(window._infArcadeBootTimer);
-  clearTimeout(window._infArcadeIntroT1);
-  clearTimeout(window._infArcadeIntroT2);
-  clearTimeout(window._infArcadeIntroT3);
 }
 
 function layoutInfinityArcadeScreen(){
@@ -2306,10 +2309,14 @@ function playInfinityArcadeIntro(){
 }
 
 function renderInfinityArcadeCabinet(containerId){
+  if(typeof openInfinityCasinoFloor === 'function'){
+    openInfinityCasinoFloor();
+    return;
+  }
   var c = document.getElementById(containerId || 'portal-arcade-cabinet');
   if(!c) return;
   if(!studentGamesOn(CURRENT_STUDENT)){
-    c.innerHTML = '<div style="font-size:13px;color:#c4b5fd;padding:12px;text-align:center;">Activá Jill, Modo Libre o Alice para el Arcade.</div>';
+    c.innerHTML = '<div style="font-size:13px;color:#c4b5fd;padding:12px;text-align:center;">Activá Jill, Modo Libre, Alice o Companion para el Hub.</div>';
     return;
   }
   var hint = document.getElementById('inf-arcade-tap-hint');
@@ -2560,10 +2567,6 @@ function closeInfinityArcadeFullscreen(){
   }
   if(typeof openInfinityCasinoFloor === 'function'){
     openInfinityCasinoFloor();
-  } else if(window._infArcadeLobbyOpen){
-    openInfinityArcadeMonitor();
-  } else {
-    openInfinityArcadeLobby();
   }
 }
 
@@ -9090,6 +9093,6 @@ if(document.readyState === 'loading'){
   </div>
 </div>
 
-<script src="js/infinity-casino-floor.js?v=20260813kamuk1"></script>
+<script src="js/infinity-casino-floor.js?v=20260813kamuk2"></script>
 </body>
 </html>
