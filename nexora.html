@@ -165,6 +165,21 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--off);color:var(--
 .sp-title{font-size:15px;font-weight:700;color:var(--navy);}
 .sp-desc{font-size:12px;color:var(--t2);margin-top:3px;}
 
+/* PROFESSIONAL CASE OPERATIONS */
+.case-brief{border:1px solid var(--gl);border-radius:var(--r);padding:12px 14px;margin-bottom:12px;background:#F8FAFC;}
+.case-brief-label{font-size:10px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.case-brief-value{font-size:12px;line-height:1.45;color:var(--t2);}
+.case-sla{display:flex;align-items:center;justify-content:space-between;border-left:4px solid var(--green);background:#F0FDF4;padding:10px 12px;margin-bottom:12px;}
+.case-sla.warn{border-left-color:var(--orange);background:#FFFBEB;}
+.case-sla.breach{border-left-color:var(--red);background:#FEF2F2;}
+.case-sla-time{font-family:monospace;font-size:18px;font-weight:800;color:var(--navy);}
+.case-action{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid var(--gl);border-radius:var(--r);padding:10px 12px;margin-bottom:8px;background:white;}
+.case-action button{border:1px solid var(--navy);background:white;color:var(--navy);border-radius:6px;padding:7px 10px;font-size:11px;font-weight:700;cursor:pointer;}
+.case-action button:disabled{border-color:var(--gl);color:var(--t3);background:var(--off);cursor:default;}
+.case-action-meta{font-size:11px;color:var(--t3);margin-top:3px;}
+.case-action-result{font-size:11px;color:var(--t2);margin-top:4px;}
+.case-note-conflict{border-left:3px solid var(--orange);padding:8px 10px;background:#FFFBEB;font-size:12px;color:var(--t2);margin-bottom:7px;}
+
 /* QA SCREEN */
 .qa-screen{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:300;display:none;align-items:center;justify-content:center;padding:1rem;}
 .qa-card{background:white;border-radius:20px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;}
@@ -424,7 +439,17 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--off);color:var(--
   <div class="autoin-card">
     <img src="https://studioinfinitycr.com/assets/logos/nexora.png" alt="Nexora">
     <h2>Nexora Simulation Lab</h2>
-    <p>You will receive a call from a client. Search their phone number in the CRM, navigate tabs to find relevant info, and resolve their issue — all in English.</p>
+    <p id="autoin-description">You will receive a call from a client. Search their phone number in the CRM, navigate tabs to find relevant info, and resolve their issue — all in English.</p>
+    <div id="interview-role-selector" style="display:none;margin-bottom:16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:14px;text-align:left;">
+      <label for="interview-role" style="display:block;font-size:12px;font-weight:700;color:rgba(255,255,255,0.7);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em;">Position you are interviewing for</label>
+      <select id="interview-role" onchange="setInterviewTarget(this.value)" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:#17172b;color:white;font-size:13px;">
+        <option value="customer_support">Customer Support Specialist</option>
+        <option value="sales">Sales Representative</option>
+        <option value="administrative">Administrative Assistant</option>
+        <option value="entry_tech">Entry-Level Technical Support</option>
+      </select>
+      <div style="font-size:11px;color:rgba(255,255,255,0.48);line-height:1.5;margin-top:8px;">Six behavioral questions. The recruiter will probe incomplete STAR answers and assess hiring evidence, English, and professional soft skills.</div>
+    </div>
     <div id="neg-role-selector" style="display:none;margin-bottom:16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:14px;">
       <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.6);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em;">Your negotiation role</div>
       <div style="display:flex;gap:8px;">
@@ -440,7 +465,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--off);color:var(--
         </button>
       </div>
     </div>
-    <button class="autoin-btn" onclick="nexoraAutoIn()"><i class="ti ti-phone-incoming"></i>Auto-In — Ready for calls</button>
+    <button class="autoin-btn" id="autoin-start-btn" onclick="nexoraAutoIn()"><i class="ti ti-phone-incoming"></i>Auto-In — Ready for calls</button>
   </div>
 </div>
 
@@ -451,7 +476,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--off);color:var(--
       <div style="font-size:12px;opacity:0.7;margin-bottom:4px;" id="qa-title">CALL EVALUATION</div>
       <div style="display:flex;align-items:baseline;gap:16px;">
         <div><div class="qa-score-big" id="qa-score">—</div><div style="font-size:12px;opacity:0.6;">Overall Score</div></div>
-        <div><div style="font-size:36px;font-weight:900;" id="qa-satisfaction">—</div><div style="font-size:12px;opacity:0.6;">Client Satisfaction /10</div></div>
+        <div><div style="font-size:36px;font-weight:900;" id="qa-satisfaction">—</div><div style="font-size:12px;opacity:0.6;" id="qa-secondary-label">Client Satisfaction /10</div></div>
         <div style="margin-left:auto;text-align:right;"><div style="font-size:24px;font-weight:800;" id="qa-time">—</div><div style="font-size:11px;opacity:0.6;">Talk time</div><div style="font-size:18px;font-weight:800;margin-top:4px;" id="qa-practice">+0 min</div><div style="font-size:11px;opacity:0.6;">Practice added</div></div>
       </div>
     </div>
@@ -608,7 +633,11 @@ async function verifyNexoraStudentAccess(){
     var r = await infinityFetch('/auth/verify');
     var d = {};
     try{ d = await r.json(); }catch(e){}
-    if(!r.ok || d.ok === false){
+    // Only a definitive rejection from the server closes the lab. A cold start,
+    // 5xx, or offline backend must never lock a valid student out of Nexora —
+    // every tutor API still enforces access on the server side.
+    var rejected = r.status === 401 || r.status === 403 || (d && d.ok === false);
+    if(rejected){
       if(typeof clearAuthToken === 'function') clearAuthToken();
       var msg = (d && d.code === 'NEXORA_DISABLED')
         ? 'Nexora no está activo en tu cuenta. Pedí a tu trainer que lo habilite.'
@@ -620,10 +649,11 @@ async function verifyNexoraStudentAccess(){
       showNexoraAccessGate('Nexora no está activo en tu cuenta. Pedí a tu trainer que lo habilite.');
       return false;
     }
+    if(!r.ok) showToast('Verificación de acceso no disponible — seguí practicando');
     return true;
   }catch(e){
-    showNexoraAccessGate('No se pudo verificar tu acceso. Volvé al Portal del Estudiante e intentá de nuevo.');
-    return false;
+    showToast('Sin conexión al servidor de acceso — el lab sigue disponible');
+    return true;
   }
 }
 
@@ -740,32 +770,127 @@ function refreshNexoraScenario(prevId){
 }
 
 function applyScenarioToUI(sc){
+  if(!sc){ configureNexoraStartScreen(null); return; }
   var titleEl=document.getElementById('sp-title');
   if(titleEl) titleEl.textContent=sc.title + (sc.sessionLabel ? ' · '+sc.sessionLabel : '');
+  configureNexoraStartScreen(sc);
   /* desc intentionally hidden from agent UI — issue emerges on the call */
+}
+
+var NEXORA_INTERVIEW_ROLES={
+  customer_support:{
+    label:'Customer Support Specialist',
+    questions:[
+      'Tell me about a time you handled a difficult or upset customer.',
+      'Describe a situation where you had to solve a problem with incomplete information.',
+      'Tell me about a time you took ownership of an issue beyond the basic handoff.',
+      'Give me an example of how you managed competing priorities or a heavy queue.',
+      'Describe a conflict with a teammate or supervisor and how you handled it.',
+      'Tell me about a measurable improvement you made to service quality or efficiency.'
+    ]
+  },
+  sales:{
+    label:'Sales Representative',
+    questions:[
+      'Tell me about a time you turned an initial rejection into progress or a sale.',
+      'Describe a situation where you had to uncover a customer need that was not obvious.',
+      'Give me an example of how you managed a demanding target or quota.',
+      'Tell me about a deal you lost and what you changed afterward.',
+      'Describe a conflict with a client or teammate during a sales process.',
+      'Tell me about a result you achieved and the specific metrics behind it.'
+    ]
+  },
+  administrative:{
+    label:'Administrative Assistant',
+    questions:[
+      'Tell me about a time you managed several urgent priorities at once.',
+      'Describe a situation where your attention to detail prevented a problem.',
+      'Give me an example of handling confidential or sensitive information.',
+      'Tell me about a process you organized or improved.',
+      'Describe a difficult request from a manager or stakeholder and how you handled it.',
+      'Tell me about a mistake you made, how you owned it, and the result.'
+    ]
+  },
+  entry_tech:{
+    label:'Entry-Level Technical Support',
+    questions:[
+      'Tell me about a time you diagnosed a problem you had not seen before.',
+      'Describe how you explained a technical issue to a non-technical person.',
+      'Give me an example of learning a new tool or system quickly.',
+      'Tell me about a time your first solution did not work and what you did next.',
+      'Describe a team conflict or disagreement while solving a technical problem.',
+      'Tell me about a technical or process improvement and its measurable result.'
+    ]
+  }
+};
+var _nxInterviewRole='customer_support';
+
+function setInterviewTarget(key){
+  if(NEXORA_INTERVIEW_ROLES[key]) _nxInterviewRole=key;
+}
+
+function configureNexoraStartScreen(sc){
+  var isInterview=!!(sc&&sc.type==='star_interview');
+  var selector=document.getElementById('interview-role-selector');
+  var desc=document.getElementById('autoin-description');
+  var btn=document.getElementById('autoin-start-btn');
+  if(selector) selector.style.display=isInterview?'block':'none';
+  if(desc) desc.textContent=isInterview
+    ? 'Complete a serious, role-specific interview in English with a professional recruiter. Answer with evidence using Situation, Task, Action, and Result.'
+    : 'You will receive a call from a client. Search their phone number in the CRM, navigate tabs to find relevant info, and resolve their issue — all in English.';
+  if(btn) btn.innerHTML=isInterview
+    ? '<i class="ti ti-briefcase"></i> Start Professional Interview'
+    : '<i class="ti ti-phone-incoming"></i>Auto-In — Ready for calls';
+}
+
+function applyInterviewTarget(sc){
+  if(!sc||sc.type!=='star_interview') return sc;
+  var target=NEXORA_INTERVIEW_ROLES[_nxInterviewRole]||NEXORA_INTERVIEW_ROLES.customer_support;
+  var copy=Object.assign({},sc);
+  copy.candidateRole=target.label;
+  copy.title=target.label+' — Professional STAR Interview';
+  copy.desc='Structured behavioral interview for '+target.label+'.';
+  copy.starFocus=target.questions.slice();
+  copy.questionCount=target.questions.length;
+  copy.interviewer=copy.interviewer||'Alex Morgan';
+  copy.role='Senior Talent Acquisition Partner';
+  copy.company=copy.company||'Regional Employer';
+  return copy;
 }
 
 // ── STATE ─────────────────────────────────────────────────────
 var _nx={
   agent:'',scenario:null,profile:null,profiles:[],
   active:false,onHold:false,callStart:null,callTimer:null,talkSecs:0,
-  holdEvents:[],holdStart:null,transcript:[],history:[],
+  holdEvents:[],holdStart:null,crmActions:[],transcript:[],history:[],
   mic:null,micOn:false
 };
 
 // ── INIT ──────────────────────────────────────────────────────
+function showNexoraStartScreen(){
+  var start=document.getElementById('autoin-screen');
+  if(start) start.style.display='flex';
+}
+
+// Every step is individually fenced: a single failing subsystem (voice, scenario
+// bank, saved session) must still leave the student on a usable start screen.
 window.onload=function(){
-  clearNexoraDemoFlagsIfPortal();
-  bindAllNexoraPttMics();
-  var savedAgent=localStorage.getItem('nexora_agent');
-  if(savedAgent){_nx.agent=savedAgent.split(/\s+/)[0];document.getElementById('agent-inp').value=_nx.agent;}
-  var nxConfig=loadNexoraEngineConfig();
-  invalidateNexoraLabIfConfigChanged();
-  var prev=(_nx.scenario&&scenarioMatchesConfig(_nx.scenario,nxConfig))?_nx.scenario.id:null;
-  _nx.scenario=pickScenarioFromConfig(nxConfig,prev);
-  if(_nx.scenario) applyScenarioToUI(_nx.scenario);
-  if(restoreNexoraLabRuntime()) return;
-  document.getElementById('autoin-screen').style.display='flex';
+  try{ clearNexoraDemoFlagsIfPortal(); }catch(e){}
+  try{ bindAllNexoraPttMics(); }catch(e){}
+  try{
+    var savedAgent=localStorage.getItem('nexora_agent');
+    var agentInp=document.getElementById('agent-inp');
+    if(savedAgent){_nx.agent=savedAgent.split(/\s+/)[0];if(agentInp) agentInp.value=_nx.agent;}
+  }catch(e){}
+  try{
+    var nxConfig=loadNexoraEngineConfig();
+    invalidateNexoraLabIfConfigChanged();
+    var prev=(_nx.scenario&&scenarioMatchesConfig(_nx.scenario,nxConfig))?_nx.scenario.id:null;
+    _nx.scenario=pickScenarioFromConfig(nxConfig,prev);
+    applyScenarioToUI(_nx.scenario);
+  }catch(e){ _nx.scenario=null; }
+  try{ if(restoreNexoraLabRuntime()) return; }catch(e){}
+  showNexoraStartScreen();
 };
 
 function setAgent(v){var n=String(v||'').trim().split(/\s+/)[0]||'Agent';_nx.agent=n;localStorage.setItem('nexora_agent',n);}
@@ -902,7 +1027,7 @@ function saveNexoraLabRuntime(){
     sessionStorage.setItem('nexora_lab_runtime', JSON.stringify({
       active:_nx.active, onHold:_nx.onHold, profile:_nx.profile, scenario:_nx.scenario,
       history:_nx.history, transcript:_nx.transcript, talkSecs:_nx.talkSecs,
-      holdEvents:_nx.holdEvents, agent:_nx.agent, screen:detectNexoraLabScreen()
+      holdEvents:_nx.holdEvents, crmActions:_nx.crmActions, agent:_nx.agent, screen:detectNexoraLabScreen()
     }));
   }catch(e){}
 }
@@ -919,6 +1044,7 @@ function restoreNexoraLabRuntime(){
     if(typeof assignNexoraProfile==='function') assignNexoraProfile(_nx.profile);
     _nx.history=s.history||[]; _nx.transcript=s.transcript||[];
     _nx.talkSecs=s.talkSecs||0; _nx.holdEvents=s.holdEvents||[];
+    _nx.crmActions=s.crmActions||[];
     _nx.onHold=!!s.onHold; _nx.active=true;
     if(s.agent){ _nx.agent=s.agent; document.getElementById('agent-inp').value=s.agent; }
     _nx.callStart=Date.now()-(_nx.talkSecs*1000);
@@ -968,16 +1094,31 @@ function resumeNexoraLab(){
 function nexoraAutoIn(){
   refreshNexoraScenario(_nx.scenario ? _nx.scenario.id : null);
   var sc = _nx.scenario;
+  if(!sc){
+    showToast('No hay escenario activo — pedí a tu trainer que active una sesión de Nexora');
+    showNexoraStartScreen();
+    return;
+  }
   if((sc.type||'')==='star_interview'){
-    sc=personalizeStarInterviewer(sc);
+    sc=applyInterviewTarget(personalizeStarInterviewer(sc));
     _nx.scenario=sc;
   }
   _nx.profile=genProfile(sc);
   if(typeof assignNexoraProfile==='function') assignNexoraProfile(_nx.profile);
   _nx.profiles.push(_nx.profile);
-  _nx.history=[];_nx.transcript=[];_nx.holdEvents=[];_nx.talkSecs=0;_nx.onHold=false;
+  _nx.history=[];_nx.transcript=[];_nx.holdEvents=[];_nx.crmActions=[];_nx.talkSecs=0;_nx.onHold=false;
   document.getElementById('autoin-screen').style.display='none';
-  
+
+  try{
+    nexoraOpenScenarioSurface(sc);
+  }catch(e){
+    // Never leave the student on a blank lab: fall back to the start screen.
+    showToast('No se pudo abrir la simulación — intentá de nuevo');
+    showNexoraStartScreen();
+  }
+}
+
+function nexoraOpenScenarioSurface(sc){
   var scType = sc.type || 'customer_service';
   if(scType === 'star_interview'){
     showStarInterviewDisplay(sc);
@@ -1138,6 +1279,7 @@ function startTimer(){
     var t=Math.floor(total/60)+':'+String(total%60).padStart(2,'0');
     document.getElementById('timer-display').textContent=t;
     document.getElementById('co-timer').textContent=t;
+    updateCrmSla();
   },1000);
 }
 
@@ -1494,11 +1636,11 @@ function endStakeholder(){
 
 // ── STAR INTERVIEW DISPLAY ────────────────────────────────────
 function showStarInterviewDisplay(sc){
-  // Reuse interview display but with STAR context panel
+  // Reuse the professional meeting surface without exposing future questions.
   var screen = document.getElementById('interview-screen');
   screen.style.display = 'flex';
   document.getElementById('iv-company').textContent = sc.company || 'Company';
-  document.getElementById('iv-role').textContent = 'STAR Interview — ' + sc.title;
+  document.getElementById('iv-role').textContent = 'Candidate role — ' + (sc.candidateRole||sc.title);
 
   var participants = document.getElementById('iv-participants');
   participants.innerHTML = '';
@@ -1513,16 +1655,12 @@ function showStarInterviewDisplay(sc){
     +'</div>';
   participants.appendChild(bubble);
 
-  // STAR focus panel
-  if(sc.starFocus && sc.starFocus.length){
-    var starPanel = document.createElement('div');
-    starPanel.style.cssText = 'background:rgba(43,126,193,0.2);border:1px solid rgba(124,58,237,0.4);border-radius:12px;padding:12px;max-width:260px;';
-    starPanel.innerHTML = '<div style="font-size:11px;font-weight:800;color:#A78BFA;margin-bottom:8px;letter-spacing:0.05em;">STAR QUESTIONS FOCUS</div>'
-      +sc.starFocus.map(function(q,i){
-        return '<div style="font-size:11px;color:rgba(255,255,255,0.7);margin-bottom:6px;padding-left:8px;border-left:2px solid #1F6AA8;">'+(i+1)+'. '+q+'</div>';
-      }).join('');
-    participants.appendChild(starPanel);
-  }
+  var starPanel = document.createElement('div');
+  starPanel.style.cssText = 'background:rgba(43,126,193,0.2);border:1px solid rgba(31,106,168,0.4);border-radius:12px;padding:14px;max-width:260px;';
+  starPanel.innerHTML = '<div style="font-size:11px;font-weight:800;color:#79B9E8;margin-bottom:9px;letter-spacing:0.05em;">STRUCTURED INTERVIEW</div>'
+    +'<div style="font-size:12px;color:white;font-weight:700;margin-bottom:7px;">'+(sc.questionCount||6)+' behavioral questions</div>'
+    +'<div style="font-size:11px;color:rgba(255,255,255,0.68);line-height:1.55;">Answer with Situation, Task, Action, and Result. The recruiter may challenge vague, incomplete, or unsupported claims.</div>';
+  participants.appendChild(starPanel);
 
   // You bubble
   var you = document.createElement('div');
@@ -1546,7 +1684,10 @@ function showStarInterviewDisplay(sc){
 
   aliceEnterMode(sc,'iv-status-text',ivName,'START_STAR_INTERVIEW',{
     interviewerName:sc.interviewer,role:sc.role,company:sc.company,
-    starFocus:sc.starFocus||[]
+    candidateRole:sc.candidateRole||sc.title,
+    starFocus:sc.starFocus||[],
+    questionCount:sc.questionCount||6,
+    interviewAnswerCount:0
   });
 }
 
@@ -1703,6 +1844,80 @@ function crmAccessTabHtml(sc, p){
     +'<div class="billing-row"><span>Unlock available</span><span style="color:var(--green);">After identity verification</span></div>';
 }
 
+function crmOperationsTabHtml(sc){
+  var f=sc&&sc.crmFriction;
+  if(!f) return '';
+  var used={};
+  (_nx.crmActions||[]).forEach(function(a){used[a.id]=a;});
+  var notes=(f.conflictingNotes||[]).map(function(n){
+    return '<div class="case-note-conflict">'+n+'</div>';
+  }).join('');
+  var actions=(f.actions||[]).map(function(a,i){
+    var prior=used[a.id];
+    return '<div class="case-action"><div><div style="font-size:12px;font-weight:700;color:var(--navy);">'+a.label+'</div>'
+      +'<div class="case-action-meta">Operational impact: '+(a.cost||'None recorded')+'</div>'
+      +(prior?'<div class="case-action-result">'+prior.outcome+'</div>':'')+'</div>'
+      +'<button '+(prior?'disabled':'')+' onclick="recordCrmAction('+i+',this)">'+(prior?'Recorded':'Execute')+'</button></div>';
+  }).join('');
+  return '<div class="case-sla" id="case-sla"><div><div class="case-brief-label">Case SLA</div><div style="font-size:11px;color:var(--t2);">Resolve or disposition before breach</div></div><div class="case-sla-time" id="case-sla-time">—</div></div>'
+    +'<div class="case-brief"><div class="case-brief-label">Agent objective</div><div class="case-brief-value">'+sc.objective+'</div></div>'
+    +'<div class="case-brief"><div class="case-brief-label">Operational obstacle</div><div class="case-brief-value">'+sc.obstacle+'</div></div>'
+    +'<div class="case-brief"><div class="case-brief-label">Required disposition</div><div class="case-brief-value">'+sc.measurableClose+'</div></div>'
+    +'<div class="case-brief"><div class="case-brief-label">Policy</div><div class="case-brief-value">'+f.policy+'</div></div>'
+    +'<div class="case-brief"><div class="case-brief-label">History gap</div><div class="case-brief-value">'+f.incompleteHistory+'</div></div>'
+    +'<div class="section-title">Conflicting records</div>'+notes
+    +'<div class="section-title" style="margin-top:14px;">Case actions</div>'+actions;
+}
+
+function ensureCrmOperationsTab(sc){
+  if(!sc||!sc.crmFriction) return;
+  var tabs=document.querySelector('#crm-main .tabs');
+  var tabContent=document.querySelector('#crm-main .tab-content');
+  if(!tabs||!tabContent) return;
+  var btn=document.getElementById('tab-operations-btn');
+  if(!btn){
+    btn=document.createElement('div');
+    btn.className='tab';
+    btn.id='tab-operations-btn';
+    btn.onclick=function(){switchTab('operations',btn);updateCrmSla();};
+    btn.innerHTML='<i class="ti ti-clipboard-check"></i>Case Operations';
+    tabs.insertBefore(btn,tabs.firstChild);
+  }
+  var pane=document.getElementById('tab-operations');
+  if(!pane){
+    pane=document.createElement('div');
+    pane.className='tab-pane';
+    pane.id='tab-operations';
+    tabContent.appendChild(pane);
+  }
+  pane.innerHTML=crmOperationsTabHtml(sc);
+  updateCrmSla();
+}
+
+function recordCrmAction(index,btn){
+  var sc=_nx.scenario;
+  var actions=sc&&sc.crmFriction&&sc.crmFriction.actions;
+  var action=actions&&actions[index];
+  if(!action||(_nx.crmActions||[]).some(function(a){return a.id===action.id;})) return;
+  var event={id:action.id,label:action.label,cost:action.cost||'',scoreImpact:action.scoreImpact||0,outcome:action.outcome||'',time:_nx.talkSecs};
+  _nx.crmActions.push(event);
+  if(btn){btn.disabled=true;btn.textContent='Recorded';}
+  ensureCrmOperationsTab(sc);
+  saveNexoraLabRuntime();
+  showToast('Case action recorded');
+}
+
+function updateCrmSla(){
+  var el=document.getElementById('case-sla');
+  var timeEl=document.getElementById('case-sla-time');
+  var limit=_nx.scenario&&_nx.scenario.crmFriction&&_nx.scenario.crmFriction.slaSeconds;
+  if(!el||!timeEl||!limit) return;
+  var remaining=Math.max(0,limit-_nx.talkSecs);
+  timeEl.textContent=Math.floor(remaining/60)+':'+String(remaining%60).padStart(2,'0');
+  el.classList.toggle('warn',remaining>0&&remaining<=120);
+  el.classList.toggle('breach',remaining===0);
+}
+
 function applyCrmScenarioVisuals(sc, p){
   if(!p) return;
   syncProfileWithScenario(p, sc);
@@ -1740,6 +1955,7 @@ function applyCrmScenarioVisuals(sc, p){
       }).join('')+changes.innerHTML;
     }
   }
+  ensureCrmOperationsTab(sc);
 }
 
 function getCRMByIndustry(sc, p){
@@ -2155,6 +2371,19 @@ function buildNexoraPayload(message, history, p, sc){
       issueType:(p.issueType||(sc&&sc.issueType)||null),
       issueTitle:(sc&&sc.title)||null,
       issueDesc:(sc&&sc.desc)||null,
+      objective:(sc&&sc.objective)||null,
+      obstacle:(sc&&sc.obstacle)||null,
+      hiddenAgenda:(sc&&sc.hiddenAgenda)||null,
+      measurableClose:(sc&&sc.measurableClose)||null,
+      arcBeats:(sc&&sc.arcBeats)||[],
+      interviewerName:(sc&&sc.interviewer)||null,
+      recruiterRole:(sc&&sc.role)||null,
+      company:(sc&&sc.company)||null,
+      candidateRole:(sc&&sc.candidateRole)||null,
+      starFocus:(sc&&sc.starFocus)||[],
+      questionCount:(sc&&sc.questionCount)||0,
+      interviewAnswerCount:(history||[]).filter(function(m){return m&&m.role==='user';}).length,
+      crmActions:_nx.crmActions||[],
       onlineAccessLocked:!!(p.crmState&&p.crmState.onlineAccess&&p.crmState.onlineAccess.status==='Locked'),
       cardBlocked:!!(p.crmState&&p.crmState.cardAccess)
     }
@@ -2265,7 +2494,7 @@ async function sendToAlice(text){
   _nx.transcript.push('AGENT: '+text);
   saveNexoraLabRuntime();
   var st=nexoraStatusEl();
-  if(st) st.textContent=(p.firstName||'Client')+' is responding...';
+  if(st) st.textContent=(sc&&sc.type==='star_interview'?'Recruiter':(p.firstName||'Client'))+' is responding...';
   var nxPrefetchState = {};
   var nxSan=function(raw){ return sanitizeNexoraReply(String(raw||''), p); };
   try{
@@ -2536,10 +2765,10 @@ async function generateQA(isTransfer){
   var talkTime=_nx.talkSecs;
   var min=Math.floor(talkTime/60);var sec=String(talkTime%60).padStart(2,'0');
   var scType=_nx.scenario?(_nx.scenario.type||'customer_service'):'customer_service';
-  var qaLabel={'customer_service':'CALL EVALUATION','interview':'INTERVIEW EVALUATION','meeting':'MEETING EVALUATION','negotiation':'NEGOTIATION EVALUATION'};
+  var qaLabel={'customer_service':'CALL EVALUATION','star_interview':'RECRUITER DEBRIEF','interview':'INTERVIEW EVALUATION','meeting':'MEETING EVALUATION','negotiation':'NEGOTIATION EVALUATION'};
   document.getElementById('qa-title').textContent=(qaLabel[scType]||'EVALUATION')+' · '+(_nx.scenario?_nx.scenario.title.toUpperCase():'');
   document.getElementById('qa-time').textContent=min+':'+sec;
-  document.getElementById('qa-body').innerHTML='<div style="text-align:center;padding:2rem;color:var(--t3);">Alice is preparing your evaluation...</div>';
+  document.getElementById('qa-body').innerHTML='<div style="text-align:center;padding:2rem;color:var(--t3);">'+(scType==='star_interview'?'Recruiter is preparing your hiring debrief...':'Preparing your evaluation...')+'</div>';
 
   try{
     var evalUrl=isNexoraPublicDemo()?('/demo/nexora-lab/eval'):('/nexora-eval');
@@ -2551,6 +2780,7 @@ async function generateQA(isTransfer){
       agentName:_nx.agent||'Agent',
       talkTime:talkTime,
       holdEvents:_nx.holdEvents,
+      crmActions:_nx.crmActions,
       transferred:isTransfer
     }:{
       transcript:_nx.transcript.join('\n'),
@@ -2559,6 +2789,7 @@ async function generateQA(isTransfer){
       agentName:_nx.agent||'Agent',
       talkTime:talkTime,
       holdEvents:_nx.holdEvents,
+      crmActions:_nx.crmActions,
       transferred:isTransfer
     };
     var r=isNexoraPublicDemo()
@@ -2568,19 +2799,83 @@ async function generateQA(isTransfer){
     if(ev.error) throw new Error(ev.error);
     renderQA(ev,talkTime,isTransfer);
   }catch(e){
-    var fallback={overall_score:70,client_satisfaction:7,wins:['You completed the simulation','Good effort managing the call'],improvements:['Practice more connectors','Work on resolution clarity'],connectors_used:[],connectors_missed:['however','on top of that','therefore'],hold_feedback:'',verdict:'Good effort on this simulation! Every call makes you better. Keep practicing your English skills under pressure.',practice_minutes:Math.max(1,Math.ceil(talkTime/60))};
+    var fallback=scType==='star_interview'
+      ? {overall_score:60,interview_debrief:{leaning:'MAYBE',reasons:['The interview was completed, but the detailed recruiter analysis was unavailable.'],strongest_signal:'You stayed in the professional simulation.',biggest_risk:'Hiring evidence could not be fully verified.'},english:{score:6,summary:'Review the transcript for clarity, grammar, fluency, vocabulary, filler words, and professional register.'},soft_skills:{score:6,summary:'Provide concise examples that show ownership, teamwork, confidence, conflict handling, and leadership.'},star_completeness:{score:5,situation:'Set concise context.',task:'State your responsibility.',action:'Explain your individual actions.',result:'Quantify the outcome.'},content_quality:{score:5,summary:'Use role-relevant evidence, metrics, and specific decisions.'},red_flags:['Detailed analysis unavailable — do not treat this fallback as a hiring decision.'],improvements:['Use one complete STAR example per question.'],practice_fixes:['Prepare six role-specific stories.','Add one metric to every result.','Record and remove repeated filler words.'],wins:['Interview completed'],practice_minutes:Math.max(1,Math.ceil(talkTime/60))}
+      : {overall_score:65,client_satisfaction:6.5,wins:['Case interaction completed'],improvements:['Confirm the required disposition before closing'],metrics:{clarity:{score:7},empathy:{score:7},resolution:{score:6},compliance:{score:6}},debrief:{what_worked:'You maintained a professional interaction.',ticket_risk:'The required disposition was not fully verified.',model_phrase:(_nx.scenario&&_nx.scenario.modelPhrase)||'Let me confirm the action, owner, and timing before we close.',outcome:'Case closed pending supervisor review.'},connectors_used:[],connectors_missed:[],hold_feedback:'',verdict:'Review the case disposition and retry the same customer to improve the close.',practice_minutes:Math.max(1,Math.ceil(talkTime/60))};
     renderQA(fallback,talkTime,isTransfer);
   }
 }
 
+function nexoraEvalText(value){
+  return String(value==null?'':value).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];});
+}
+
+function renderInterviewQA(ev,talkTime){
+  var min=Math.floor(talkTime/60),sec=String(talkTime%60).padStart(2,'0');
+  var debrief=ev.interview_debrief||{};
+  var leaning=String(debrief.leaning||'MAYBE').toUpperCase();
+  document.getElementById('qa-score').textContent=Math.round(ev.overall_score||0);
+  document.getElementById('qa-satisfaction').textContent=leaning;
+  document.getElementById('qa-satisfaction').style.fontSize='25px';
+  document.getElementById('qa-secondary-label').textContent='Hiring leaning';
+  document.getElementById('qa-time').textContent=min+':'+sec;
+  document.getElementById('qa-practice').textContent='+'+(ev.practice_minutes||Math.ceil(talkTime/60))+' min';
+  function list(items,color){
+    return (items||[]).map(function(x){return '<div class="qa-item"><span style="color:'+color+';flex-shrink:0;">→</span>'+nexoraEvalText(x)+'</div>';}).join('');
+  }
+  function dimension(title,obj,fields){
+    obj=obj||{};
+    var rows='<div class="metric-row"><span style="font-size:12px;font-weight:600;color:var(--t2);">Score</span><div class="metric-bar-bg"><div class="metric-bar-fill" style="width:'+((Number(obj.score)||0)*10)+'%;"></div></div><span class="metric-score">'+(Number(obj.score)||0)+'</span></div>';
+    fields.forEach(function(f){if(obj[f.key]) rows+='<div class="qa-item"><strong style="min-width:105px;">'+f.label+'</strong><span>'+nexoraEvalText(obj[f.key])+'</span></div>';});
+    return '<div class="qa-section"><div class="qa-section-title">'+title+'</div>'+rows+'</div>';
+  }
+  var html='<div class="qa-section"><div class="qa-section-title"><i class="ti ti-briefcase"></i>Recruiter decision</div>'
+    +'<div class="qa-item"><strong style="min-width:105px;">Leaning</strong><span>'+nexoraEvalText(leaning)+'</span></div>'
+    +list(debrief.reasons,'var(--purple)')
+    +'<div class="qa-item"><strong style="min-width:105px;">Strongest signal</strong><span>'+nexoraEvalText(debrief.strongest_signal||'Not established')+'</span></div>'
+    +'<div class="qa-item"><strong style="min-width:105px;">Biggest risk</strong><span>'+nexoraEvalText(debrief.biggest_risk||'Insufficient evidence')+'</span></div></div>';
+  html+=dimension('<i class="ti ti-language"></i>English',ev.english,[
+    {key:'clarity',label:'Clarity'},{key:'grammar',label:'Grammar'},{key:'fluency',label:'Fluency'},{key:'vocabulary',label:'Vocabulary'},{key:'filler_words',label:'Fillers'},{key:'register',label:'Register'},{key:'summary',label:'Summary'}
+  ]);
+  html+=dimension('<i class="ti ti-users"></i>Soft skills',ev.soft_skills,[
+    {key:'communication',label:'Communication'},{key:'confidence',label:'Confidence'},{key:'ownership',label:'Ownership'},{key:'teamwork',label:'Teamwork'},{key:'conflict',label:'Conflict'},{key:'leadership',label:'Leadership'},{key:'summary',label:'Summary'}
+  ]);
+  html+=dimension('<i class="ti ti-list-check"></i>STAR completeness',ev.star_completeness,[
+    {key:'situation',label:'Situation'},{key:'task',label:'Task'},{key:'action',label:'Action'},{key:'result',label:'Result'},{key:'summary',label:'Summary'}
+  ]);
+  html+=dimension('<i class="ti ti-file-analytics"></i>Content quality',ev.content_quality,[
+    {key:'impact',label:'Impact'},{key:'metrics',label:'Metrics'},{key:'relevance',label:'Relevance'},{key:'vagueness',label:'Vagueness'},{key:'summary',label:'Summary'}
+  ]);
+  if(ev.wins&&ev.wins.length) html+='<div class="qa-section"><div class="qa-section-title"><i class="ti ti-check"></i>Credible strengths</div>'+list(ev.wins,'var(--green)')+'</div>';
+  if(ev.red_flags&&ev.red_flags.length) html+='<div class="qa-section"><div class="qa-section-title"><i class="ti ti-alert-triangle"></i>Failures / red flags</div>'+list(ev.red_flags,'var(--red)')+'</div>';
+  html+='<div class="qa-section"><div class="qa-section-title"><i class="ti ti-target"></i>Areas to improve</div>'+list(ev.improvements,'var(--orange)')+'</div>';
+  html+='<div class="qa-section"><div class="qa-section-title"><i class="ti ti-repeat"></i>Three practice fixes</div>'+list((ev.practice_fixes||[]).slice(0,3),'var(--purple)')+'</div>';
+  html+='<div style="display:flex;gap:10px;justify-content:center;padding-top:8px;"><button class="btn btn-navy" onclick="retrySameCustomer()"><i class="ti ti-refresh"></i>Retry Interview</button><button class="btn btn-green" onclick="nextCall()"><i class="ti ti-briefcase"></i>Choose Next Interview</button><button class="btn btn-outline" onclick="closeQA()"><i class="ti ti-x"></i>Exit</button></div>';
+  document.getElementById('qa-body').innerHTML=html;
+  savePracticeMinutes(ev.practice_minutes||Math.ceil(talkTime/60));
+}
+
 function renderQA(ev,talkTime,isTransfer){
+  if(_nx.scenario&&_nx.scenario.type==='star_interview'){
+    renderInterviewQA(ev,talkTime);
+    return;
+  }
   var min=Math.floor(talkTime/60);var sec=String(talkTime%60).padStart(2,'0');
+  document.getElementById('qa-satisfaction').style.fontSize='36px';
+  document.getElementById('qa-secondary-label').textContent='Client Satisfaction /10';
   document.getElementById('qa-score').textContent=Math.round(ev.overall_score||0);
   document.getElementById('qa-satisfaction').textContent=(ev.client_satisfaction||0).toFixed(1);
   document.getElementById('qa-time').textContent=min+':'+sec;
   document.getElementById('qa-practice').textContent='+'+(ev.practice_minutes||Math.ceil(talkTime/60))+' min';
 
   var html='';
+
+  var debrief=ev.debrief||{};
+  html+='<div class="qa-section"><div class="qa-section-title"><i class="ti ti-clipboard-check" style="color:var(--navy);"></i>Supervisor debrief</div>'
+    +'<div class="qa-item"><strong style="min-width:108px;">What worked</strong><span>'+(debrief.what_worked||(ev.wins&&ev.wins[0])||'Case interaction completed.')+'</span></div>'
+    +'<div class="qa-item"><strong style="min-width:108px;">Ticket risk</strong><span>'+(debrief.ticket_risk||(ev.improvements&&ev.improvements[0])||'Disposition evidence was incomplete.')+'</span></div>'
+    +'<div class="qa-item"><strong style="min-width:108px;">Model phrase</strong><span>'+(debrief.model_phrase||(_nx.scenario&&_nx.scenario.modelPhrase)||'Let me confirm the action, owner, and timing before we close.')+'</span></div>'
+    +'<div class="qa-item"><strong style="min-width:108px;">Outcome</strong><span>'+(debrief.outcome||'Closed for QA review.')+'</span></div></div>';
 
   // Wins
   if(ev.wins&&ev.wins.length){
@@ -2590,12 +2885,12 @@ function renderQA(ev,talkTime,isTransfer){
 
   // Metrics
   var metrics=[
-    {key:'clarity',label:'Message clarity'},
+    {key:'clarity',label:'Clarity'},
+    {key:'empathy',label:'Empathy'},
     {key:'resolution',label:'Issue resolution'},
-    {key:'attitude',label:'Professionalism'},
+    {key:'compliance',label:'Compliance'},
     {key:'hold_usage',label:'Hold management'},
-    {key:'talk_time_effectiveness',label:'Talk time'},
-    {key:'tool_usage',label:'Tool/CRM usage'},
+    {key:'tool_usage',label:'CRM discipline'},
   ];
   if(ev.metrics){
     html+='<div class="qa-section"><div class="qa-section-title"><i class="ti ti-chart-bar" style="color:var(--purple);"></i>Performance metrics</div>';
@@ -2633,12 +2928,26 @@ function renderQA(ev,talkTime,isTransfer){
 
   // Actions
   html+='<div style="display:flex;gap:10px;justify-content:center;padding-top:8px;">'
+    +'<button class="btn btn-navy" onclick="retrySameCustomer()"><i class="ti ti-refresh"></i>Retry Same Customer</button>'
     +'<button class="btn btn-green" onclick="nextCall()"><i class="ti ti-phone-incoming"></i>Auto-In — Next Call</button>'
     +'<button class="btn btn-outline" onclick="closeQA()"><i class="ti ti-x"></i>Exit</button>'
     +'</div>';
 
   document.getElementById('qa-body').innerHTML=html;
   savePracticeMinutes(ev.practice_minutes||Math.ceil(talkTime/60));
+}
+
+function retrySameCustomer(){
+  document.getElementById('qa-screen').style.display='none';
+  _nx.history=[];_nx.transcript=[];_nx.holdEvents=[];_nx.crmActions=[];_nx.talkSecs=0;_nx.onHold=false;_nx.active=false;
+  if(_nx.scenario&&_nx.scenario.type==='star_interview'){
+    _nx.profile=genProfile(_nx.scenario);
+    showStarInterviewDisplay(_nx.scenario);
+    return;
+  }
+  document.getElementById('crm-main').style.display='none';
+  document.getElementById('empty-state').style.display='flex';
+  showIncomingCall();
 }
 
 function nextCall(){
