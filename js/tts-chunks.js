@@ -403,6 +403,56 @@ function ttsWatchdogMs(textLen) {
   return Math.min(180000, Math.max(75000, Math.ceil(n / 10) * 1000 + 20000));
 }
 
+/** How long to wait for a TTS blob before falling back to another voice. */
+var TTS_FETCH_STALL_MS = 18000;
+
+/** Normalized key used to tell whether two lines are the same spoken sentence. */
+function ttsRepeatKey(text) {
+  return String(text || '')
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * Shared repeat guard for every persona. A reply must never be spoken twice
+ * because two code paths both decided to queue it.
+ */
+function ttsMakeRepeatGuard() {
+  return { key: '', at: 0 };
+}
+
+function ttsIsRepeat(guard, text, windowMs) {
+  if (!guard) return false;
+  var key = ttsRepeatKey(text);
+  if (!key) return false;
+  var within = (Date.now() - (guard.at || 0)) < (windowMs || 12000);
+  return key === guard.key && within;
+}
+
+function ttsMarkSpoken(guard, text) {
+  if (!guard) return;
+  guard.key = ttsRepeatKey(text);
+  guard.at = Date.now();
+}
+
+/** After an interrupt the student may ask the same thing again — let it speak. */
+function ttsResetRepeatGuard(guard) {
+  if (!guard) return;
+  guard.key = '';
+  guard.at = 0;
+}
+
+/** Stop an audio element for good, so a replaced line cannot keep playing. */
+function ttsStopAudio(audio) {
+  if (!audio) return;
+  try { audio.onended = null; } catch (e) { /* ignore */ }
+  try { audio.onerror = null; } catch (e2) { /* ignore */ }
+  try { audio.pause(); } catch (e3) { /* ignore */ }
+  try { audio.currentTime = 0; } catch (e4) { /* ignore */ }
+}
+
 /**
  * Shared TTS playback watchdog for Alice, Jill, Nexora, Claire — ALL students.
  * Never force-kills at a short fixed 12s window while audio is still loading or playing.
@@ -411,6 +461,7 @@ function ttsWatchdogMs(textLen) {
  *  - getBusy / setBusy
  *  - getAudio / setAudio
  *  - onAdvance  (flush next queue item)
+ *  - onFetchStall (optional; speak the line another way instead of dropping it)
  *  - clearTimer / setTimer  (optional; defaults use opts._holder)
  */
 function armTtsPlaybackWatchdog(opts) {
@@ -418,6 +469,10 @@ function armTtsPlaybackWatchdog(opts) {
   if (typeof opts.clearTimer === 'function') opts.clearTimer();
   var textLen = opts.textLen || 0;
   var ms = typeof ttsWatchdogMs === 'function' ? ttsWatchdogMs(textLen) : 120000;
+  // Waiting for the blob is not the same as playing it. The playback budget is
+  // sized for long audio; reusing it for a hung fetch left students in silence
+  // for over a minute.
+  var fetchMs = Math.min(ms, Math.max(6000, Number(opts.fetchMs) || TTS_FETCH_STALL_MS));
   var stallChecks = 0;
   var t0 = Date.now();
   var timer = null;
@@ -437,10 +492,12 @@ function armTtsPlaybackWatchdog(opts) {
 
     // Still waiting for audio fetch — poll, do NOT abandon queue early
     if (!a) {
-      if (elapsed < ms) {
+      if (elapsed < fetchMs) {
         schedule(tick, 1000);
         return;
       }
+      // Prefer saying the line with any available voice over going mute.
+      if (typeof opts.onFetchStall === 'function' && opts.onFetchStall()) return;
       if (typeof opts.setBusy === 'function') opts.setBusy(false);
       if (typeof opts.onAdvance === 'function') opts.onAdvance();
       return;
