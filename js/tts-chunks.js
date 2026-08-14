@@ -403,6 +403,105 @@ function ttsWatchdogMs(textLen) {
   return Math.min(180000, Math.max(75000, Math.ceil(n / 10) * 1000 + 20000));
 }
 
+/**
+ * Shared TTS playback watchdog for Alice, Jill, Nexora, Claire — ALL students.
+ * Never force-kills at a short fixed 12s window while audio is still loading or playing.
+ *
+ * opts:
+ *  - getBusy / setBusy
+ *  - getAudio / setAudio
+ *  - onAdvance  (flush next queue item)
+ *  - clearTimer / setTimer  (optional; defaults use opts._holder)
+ */
+function armTtsPlaybackWatchdog(opts) {
+  opts = opts || {};
+  if (typeof opts.clearTimer === 'function') opts.clearTimer();
+  var textLen = opts.textLen || 0;
+  var ms = typeof ttsWatchdogMs === 'function' ? ttsWatchdogMs(textLen) : 120000;
+  var stallChecks = 0;
+  var t0 = Date.now();
+  var timer = null;
+
+  function schedule(fn, delay) {
+    if (typeof opts.setTimer === 'function') opts.setTimer(fn, delay);
+    else {
+      clearTimeout(timer);
+      timer = setTimeout(fn, delay);
+    }
+  }
+
+  function tick() {
+    if (typeof opts.getBusy === 'function' && !opts.getBusy()) return;
+    var a = typeof opts.getAudio === 'function' ? opts.getAudio() : null;
+    var elapsed = Date.now() - t0;
+
+    // Still waiting for audio fetch — poll, do NOT abandon queue early
+    if (!a) {
+      if (elapsed < ms) {
+        schedule(tick, 1000);
+        return;
+      }
+      if (typeof opts.setBusy === 'function') opts.setBusy(false);
+      if (typeof opts.onAdvance === 'function') opts.onAdvance();
+      return;
+    }
+
+    // Paused mid-play — try to resume (fullscreen / OS interrupts)
+    if (!a.ended && a.paused && a.currentTime > 0.02 && stallChecks < 16) {
+      stallChecks += 1;
+      try {
+        var p = a.play();
+        if (p && typeof p.catch === 'function') p.catch(function () {});
+      } catch (ePlay) { /* ignore */ }
+      schedule(tick, 900);
+      return;
+    }
+
+    // Not started yet
+    if (!a.ended && a.paused && a.currentTime < 0.02) {
+      try {
+        var p0 = a.play();
+        if (p0 && typeof p0.catch === 'function') p0.catch(function () {});
+      } catch (e0) { /* ignore */ }
+      if (elapsed < ms) {
+        schedule(tick, 800);
+        return;
+      }
+    }
+
+    // Still speaking
+    if (!a.ended && !a.paused) {
+      var dur = Number(a.duration) || 0;
+      var cur = Number(a.currentTime) || 0;
+      var leftMs = dur > 0 && isFinite(dur)
+        ? Math.max(4000, Math.ceil((dur - cur) * 1000) + 5000)
+        : Math.max(8000, ms - elapsed);
+      schedule(tick, Math.min(leftMs, 25000));
+      return;
+    }
+
+    // Natural end
+    if (a.ended) {
+      if (typeof opts.setBusy === 'function') opts.setBusy(false);
+      if (typeof opts.setAudio === 'function') opts.setAudio(null);
+      if (typeof opts.onAdvance === 'function') opts.onAdvance();
+      return;
+    }
+
+    // Hard budget only
+    if (elapsed >= ms) {
+      if (typeof opts.setBusy === 'function') opts.setBusy(false);
+      try { if (a) a.pause(); } catch (e) { /* ignore */ }
+      if (typeof opts.setAudio === 'function') opts.setAudio(null);
+      if (typeof opts.onAdvance === 'function') opts.onAdvance();
+      return;
+    }
+    schedule(tick, 1000);
+  }
+
+  schedule(tick, 3000);
+}
+
 function splitTtsChunks(text, maxLen) {
   maxLen = maxLen || 450;
   var sentences = splitTtsSentences(text);
