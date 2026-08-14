@@ -21,9 +21,10 @@
 <script src="https://studioinfinitycr.com/js/jill-trainer-insights.js?v=20260814refresh"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://studioinfinitycr.com/js/nexora-industry-map.js"></script>
+<script src="https://studioinfinitycr.com/js/nexora-simulation-program.js"></script>
 <script src="https://studioinfinitycr.com/js/daily-inspiration.js"></script>
-<script src="js/tts-chunks.js?v=20260814refresh"></script>
-<script src="js/ptt-mic.js?v=20260814refresh"></script>
+<script src="https://studioinfinitycr.com/js/tts-chunks.js?v=20260814refresh"></script>
+<script src="https://studioinfinitycr.com/js/ptt-mic.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/alice-progress.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/alice-badges-cefr.js"></script>
 <script src="https://studioinfinitycr.com/js/alice-pronunciation.js"></script>
@@ -286,7 +287,7 @@ textarea.inp{resize:vertical;min-height:80px;}
         <div style="font-size:11px;color:var(--t3);text-align:center;">Student &amp; trainer PIN access · metallic-blue Training Book</div>
       </div>
       <div id="login-err" style="font-size:12px;color:var(--rm);margin-top:0.75rem;display:none;"></div>
-      <div id="login-student-hint" style="font-size:11px;color:var(--t3);margin-top:1rem;text-align:center;">¿Eres estudiante EN? Accedé en la <a href="./" style="color:var(--navy);font-weight:700;">entrada del sitio (index)</a> con tu usuario y contraseña.</div>
+      <div id="login-student-hint" style="font-size:11px;color:var(--t3);margin-top:1rem;text-align:center;">¿Eres estudiante EN? Accedé desde el <strong>Portal del Estudiante</strong> con tu usuario y contraseña.</div>
     </div>
   </div>
 </div>
@@ -315,13 +316,13 @@ textarea.inp{resize:vertical;min-height:80px;}
       <div class="sb-item" onclick="showView('availability',this)"><i class="ti ti-clock"></i>Mi disponibilidad</div>
       <div class="sb-section">Analytics</div>
       <div class="sb-item" onclick="showView('analytics',this)"><i class="ti ti-chart-bar"></i>Estadísticas</div>
-      <div class="sb-item" id="nav-usage-cohort" onclick="showView('usage-cohort',this)"><i class="ti ti-database"></i>Uso · cohorte (30)</div>
       <div class="sb-item" onclick="showView('reports',this)"><i class="ti ti-file-text"></i>Reportes</div>
       <div class="sb-section" id="nav-master-section">Master</div>
       <div class="sb-item" id="nav-resources" onclick="showView('resources',this)"><i class="ti ti-package"></i>Resource Manager</div>
       <div class="sb-item" id="nav-users" onclick="showView('users',this)"><i class="ti ti-shield"></i>Gestión de usuarios</div>
       <div class="sb-item" id="nav-roster" onclick="showView('roster',this)"><i class="ti ti-id-badge-2"></i>Trainer Roster</div>
       <div class="sb-item" id="nav-crm" onclick="showView('crm',this)"><i class="ti ti-target-arrow"></i>CRM · Leads</div>
+      <div class="sb-item" id="nav-oe50" onclick="showView('oe50-applications',this)"><i class="ti ti-clipboard-list"></i>Aplicaciones · 50</div>
       <div class="sb-item" id="nav-diagnostic" onclick="showView('diagnostic',this)"><i class="ti ti-clipboard-check"></i>Intake Diagnostic</div>
       <div class="sb-item" id="nav-finance" onclick="showView('finance',this)"><i class="ti ti-report-money"></i>Reporte financiero</div>
       <div class="sb-item" id="nav-auditlog" onclick="showView('auditlog',this)"><i class="ti ti-history"></i>Log de auditoría</div>
@@ -329,16 +330,11 @@ textarea.inp{resize:vertical;min-height:80px;}
       <div class="sb-item" id="nav-broadcast" onclick="openBroadcastModal()"><i class="ti ti-brand-whatsapp"></i>Comunicado general</div>
       <div class="sb-item" id="nav-super-brain" onclick="showView('super-brain',this)"><i class="ti ti-brain"></i>A.D.A.M. · Nexus KB</div>
       <div class="sb-item" id="nav-ops" onclick="showView('ops',this)"><i class="ti ti-activity"></i>Operación en vivo</div>
-      <div class="sb-item" id="nav-network" onclick="showView('network',this)"><i class="ti ti-radar"></i>Network Traffic</div>
       <div class="sb-item" onclick="showView('staffchat',this)"><i class="ti ti-messages"></i>Chat de Staff</div>
-      <div class="sb-item" id="nav-dashboard" style="display:none;" onclick="showView('dashboard',this)"><i class="ti ti-chart-dots"></i>Dashboard</div>
       <div class="sb-item" id="nav-transcripts" onclick="showView('chattranscripts',this)"><i class="ti ti-shield-lock"></i>Transcripciones (Super Admin)</div>
       <div class="sb-item" id="nav-new-student" onclick="openNewStudentModal()"><i class="ti ti-user-plus"></i>Nuevo estudiante</div>
-      <div class="sb-section">Departamentos</div>
-      <div class="sb-item" id="nav-dept-admin" onclick="showView('dept-admin',this)"><i class="ti ti-building"></i>Administration</div>
-      <div class="sb-item" id="nav-dept-training" onclick="showView('dept-training',this)"><i class="ti ti-school"></i>Training Team</div>
-      <div class="sb-item" id="nav-dept-marketing" onclick="showView('dept-marketing',this)"><i class="ti ti-speakerphone"></i>Marketing</div>
-      <div class="sb-item" id="nav-dept-misc" onclick="showView('dept-misc',this)"><i class="ti ti-news"></i>Misceláneos</div>
+      <div class="sb-section">Interno</div>
+      <div class="sb-item" id="nav-comms" onclick="showView('comms',this)"><i class="ti ti-news"></i>Comunicados internos</div>
     </div>
   </div>
 
@@ -463,7 +459,13 @@ textarea.inp{resize:vertical;min-height:80px;}
         <select class="inp" id="pay-method"><option>Transferencia</option><option>Efectivo</option><option>Tarjeta</option><option>SINPE</option><option>Otro</option></select>
       </div>
       <div class="form-group"><label class="form-label">Estado de pago</label>
-        <select class="inp" id="pay-status"><option value="current">Al día</option><option value="delayed">DELAYED</option></select>
+        <select class="inp" id="pay-status">
+          <option value="current">Al día</option>
+          <option value="pending">Pendiente</option>
+          <option value="late">Atrasado</option>
+          <option value="overdue">Vencido</option>
+          <option value="paused">En pausa</option>
+        </select>
       </div>
     </div>
     <div class="form-group"><label class="form-label">Próximo vencimiento</label><input class="inp" id="pay-nextdue" type="date"></div>
@@ -598,7 +600,7 @@ textarea.inp{resize:vertical;min-height:80px;}
   <div class="modal" style="max-width:560px;">
     <div class="modal-title"><i class="ti ti-brand-whatsapp"></i>Comunicado general a trainers</div>
     <div class="form-group"><label class="form-label">Mensaje</label><textarea class="inp" id="bc-text" placeholder="Escribí el comunicado para todo el equipo..." style="min-height:100px;"></textarea></div>
-    <div class="ib ib-navy">WhatsApp no permite envío masivo automático. Hacé clic en "Enviar" junto a cada trainer (abre WhatsApp Web con el mensaje listo) o usá "Enviar a todos" para abrirlos en secuencia.</div>
+    <div class="ib ib-navy">Los mensajes se <strong>encolan</strong> en el bridge WhatsApp (no abre pestañas). Requiere bridge encendido en la PC. Máx. recomendado: ~25 por tanda.</div>
     <div id="bc-list" style="max-height:280px;overflow-y:auto;"></div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('modal-broadcast')">Cerrar</button>
@@ -644,15 +646,16 @@ textarea.inp{resize:vertical;min-height:80px;}
   </div>
 </div>
 
-<!-- MODAL NEXORA INDIVIDUAL -->
+<!-- MODAL NEXORA INDIVIDUAL — programador de simulación -->
 <div class="modal-bg" id="modal-nexora-justify">
-  <div class="modal" style="max-width:500px;">
-    <div class="modal-title"><i class="ti ti-sparkles" style="color:#C084FC;"></i>Configurar Nexora para este estudiante</div>
+  <div class="modal" style="max-width:640px;max-height:90vh;overflow:auto;">
+    <div class="modal-title"><i class="ti ti-sparkles" style="color:#79B9E8;"></i>Programar simulación Nexora</div>
     <input type="hidden" id="nexora-sid">
-    <div class="ib ib-navy">Seleccioná el escenario de simulación. Alice asumirá ese rol cuando el estudiante entre a Nexora en su portal.</div>
+    <input type="hidden" id="nexora-simulation-id">
+    <div class="ib ib-navy">Nexora ejecuta <strong>exactamente</strong> este programa. Plantilla por tipo — editá roles, preguntas y criterios antes de guardar.</div>
     <div class="form-group">
       <label class="form-label">Tipo de simulación</label>
-      <select class="inp" id="nexora-type" onchange="syncNexoraEngineIndustryUI()">
+      <select class="inp" id="nexora-type" onchange="nexoraEngineApplyTemplate()">
         <option value="mock_interview">STAR Mock Interview — Entrevista conductual (S→T→A→R)</option>
         <option value="customer_service">Customer Service — Atención al cliente</option>
         <option value="team_meeting">Team Meeting / Team Presentation — Reunión de equipo</option>
@@ -664,7 +667,7 @@ textarea.inp{resize:vertical;min-height:80px;}
     </div>
     <div class="form-group" id="nexora-industry-group">
       <label class="form-label">Industria / Contexto</label>
-      <select class="inp" id="nexora-industry" onchange="syncNexoraEngineIndustryUI()"></select>
+      <select class="inp" id="nexora-industry" onchange="nexoraEngineApplyTemplate()"></select>
       <div id="nexora-industry-hint" style="font-size:11px;color:var(--t2);margin-top:6px;line-height:1.5;"></div>
     </div>
     <div class="form-group">
@@ -677,13 +680,43 @@ textarea.inp{resize:vertical;min-height:80px;}
         <option value="5">5 — Desafiante</option>
       </select>
     </div>
+    <div class="form-group" id="nexora-role-group">
+      <label class="form-label">Puesto a examinar / target role</label>
+      <input class="inp" id="nexora-target-role" placeholder="Customer Support Specialist" onchange="nexoraEngineRefreshQuestions()">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Título del escenario</label>
+      <input class="inp" id="nexora-title" placeholder="Título que verá el estudiante">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descripción / contexto</label>
+      <textarea class="inp" id="nexora-desc" style="min-height:56px;" placeholder="Contexto de la simulación"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Participantes (2–4 para paneles; 1 para CS) — una línea: Nombre — Rol</label>
+      <textarea class="inp" id="nexora-participants" style="min-height:72px;font-family:ui-monospace,monospace;font-size:12px;"></textarea>
+    </div>
+    <div class="form-group" id="nexora-questions-group">
+      <label class="form-label">Plan de preguntas (STAR) — una por línea</label>
+      <textarea class="inp" id="nexora-questions" style="min-height:100px;font-family:ui-monospace,monospace;font-size:12px;"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Objetivos (uno por línea)</label>
+      <textarea class="inp" id="nexora-objectives" style="min-height:64px;"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Puntaje mínimo para aprobar (0–100)</label>
+      <input class="inp" id="nexora-pass-score" type="number" min="0" max="100" value="70">
+    </div>
     <div class="form-group">
       <label class="form-label">Justificación (opcional)</label>
-      <textarea class="inp" id="nexora-justify" placeholder="Por qué este estudiante está listo para Nexora..." style="min-height:70px;"></textarea>
+      <textarea class="inp" id="nexora-justify" placeholder="Por qué este estudiante está listo para Nexora..." style="min-height:56px;"></textarea>
     </div>
-    <div class="modal-footer">
+    <div class="modal-footer" style="flex-wrap:wrap;gap:8px;">
       <button class="btn btn-outline" onclick="closeModal('modal-nexora-justify')">Cancelar</button>
-      <button class="btn btn-navy" style="background:#1F6AA8;" onclick="confirmStudentNexora()"><i class="ti ti-sparkles"></i>Activar Nexora</button>
+      <button class="btn btn-outline" id="nexora-deactivate-btn" style="display:none;color:#EF4444;border-color:#EF4444;" onclick="deactivateStudentNexoraFromModal()"><i class="ti ti-power"></i>Desactivar</button>
+      <button class="btn btn-outline" onclick="previewNexoraFromModal()"><i class="ti ti-eye"></i>Preview</button>
+      <button class="btn btn-navy" style="background:#1F6AA8;" id="nexora-save-btn" onclick="confirmStudentNexora()"><i class="ti ti-sparkles"></i>Guardar programa</button>
     </div>
   </div>
 </div>
@@ -883,7 +916,7 @@ async function loadUsers(){
     rows.forEach(function(r){ if(r.data) TRAINERS[String(r.data.email||'').trim().toLowerCase()]=r.data; });
     // Seed master if empty
     if(!Object.keys(TRAINERS).length){
-      var master = {id:'USR-MASTER-001',email:'trainer@infinity.cr',pass:'kamuk2026',name:'Johnny Ramirez',role:'superadmin',department:'admin',status:'active'};
+      var master = {id:'USR-MASTER-001',email:'trainer@infinity.cr',pass:'nexus2025',name:'Johnny Ramirez',role:'superadmin',department:'admin',status:'active'};
       await dbSet('kamuk_users','USR-MASTER-001',master);
       TRAINERS['trainer@infinity.cr']=master;
     }
@@ -1017,6 +1050,7 @@ async function hydrateFromSessionRows(rows){
   STAFF_CHAT = { messages: [] };
   KB_UPLOADS = [];
   ALICE_CACHE = {};
+  WA_LEADS = {};
   (rows||[]).forEach(function(r){
     if(!r || !r.id) return;
     var id = r.id;
@@ -1031,6 +1065,7 @@ async function hydrateFromSessionRows(rows){
     else if(id==='STAFF-CHAT' && r.data) STAFF_CHAT = r.data;
     else if(id.indexOf('KBFILE-')===0 && r.data) KB_UPLOADS.push(Object.assign({_id:id}, r.data));
     else if(id.indexOf('ACACHE-')===0 && r.data) ALICE_CACHE[id] = r.data;
+    else if(id.indexOf('WA-LEAD-')===0 && r.data) WA_LEADS[id] = r.data;
   });
   AUDIT_LOG.sort(function(a,b){ return new Date(b.ts) - new Date(a.ts); });
   if(AUDIT_LOG.length > 400) AUDIT_LOG = AUDIT_LOG.slice(0, 400);
@@ -1094,7 +1129,7 @@ try{
 
 async function doLogin(){
   var user = document.getElementById('l-user').value.trim().toLowerCase();
-  var pass = String(document.getElementById('l-pass').value || '').trim();
+  var pass = document.getElementById('l-pass').value;
   var err = document.getElementById('login-err');
   if(!user || !pass){
     err.textContent = 'Ingresá tu usuario y contraseña.';
@@ -1105,15 +1140,7 @@ async function doLogin(){
   setLoginLoading(true);
 
   try{
-  // Superadmin emergency set — all accepted (DB pass + legacy + simple)
   var MASTER_FALLBACKS = [
-    {email:'trainer@infinity.cr', pass:'kamuk2026', name:'Kamuk Master Trainer', role:'superadmin'},
-    {email:'trainer@kamuk.cr', pass:'kamuk2026', name:'Kamuk Master Trainer', role:'superadmin'},
-    {email:'master@kamuk.cr', pass:'kamuk2026', name:'Master General', role:'master'},
-    {email:'admin@kamuk.cr', pass:'kamuk2026', name:'Kamuk Admin', role:'admin'},
-    {email:'trainer@infinity.cr', pass:'KamukMaster2026!', name:'Kamuk Master Trainer', role:'superadmin'},
-    {email:'trainer@kamuk.cr', pass:'KamukMaster2026!', name:'Kamuk Master Trainer', role:'superadmin'},
-    {email:'master@kamuk.cr', pass:'KamukMaster2026!', name:'Master General', role:'master'},
     {email:'trainer@infinity.cr', pass:'nexus2025', name:'Kamuk Master Trainer', role:'superadmin'},
     {email:'trainer@kamuk.cr', pass:'KmOrt#7a2f9c', name:'Kamuk Master Trainer', role:'superadmin'},
     {email:'master@kamuk.cr', pass:'KmMst#4e8b1d', name:'Master General', role:'master'},
@@ -1121,45 +1148,34 @@ async function doLogin(){
   ];
   var MASTER_FALLBACK = MASTER_FALLBACKS.find(function(f){ return f.email===user && f.pass===pass; });
   if(MASTER_FALLBACK){
-    SESSION = { user: user, name: MASTER_FALLBACK.name, role: MASTER_FALLBACK.role };
-    try { await loadData(); } catch (eLoad) { console.warn('loadData after master login', eLoad); try { await loadUsers(); await loadCoreData(); } catch (e2) {} }
+    SESSION = { user, name: MASTER_FALLBACK.name, role: MASTER_FALLBACK.role };
+    await loadData();
     SESSION.code = getTrainerCode(user);
-    setLoginLoading(false);
     startApp();
     return;
   }
 
   await loadUsers();
-  var trainer = TRAINERS[user] || TRAINERS[String(user).trim().toLowerCase()];
-  var dbPass = trainer && trainer.pass != null ? String(trainer.pass).trim() : '';
-  if(!trainer || dbPass !== pass){
-    err.textContent = 'Usuario o contraseña incorrectos. Master: trainer@kamuk.cr / kamuk2026';
+  var trainer = TRAINERS[user];
+  if(!trainer || trainer.pass !== pass){
+    err.textContent = 'Usuario o contraseña incorrectos.';
     err.style.display = 'block';
     setLoginLoading(false);
     return;
   }
   if(trainer.status === 'suspended' || trainer.infinityTermsAccepted === false){
-    // Auto-heal master/superadmin lockouts (known ops accounts)
-    if (MASTER_FALLBACKS.some(function(f){ return f.email === user; }) || trainer.role === 'superadmin' || trainer.role === 'master') {
-      trainer.status = 'active';
-      trainer.infinityTermsAccepted = true;
-      try { await dbSet('kamuk_users', trainer.id || trainer.email, trainer); } catch (eHeal) {}
-    } else {
-      err.textContent = 'Tu acceso ha sido suspendido. Contactá al Master Trainer.';
-      err.style.display = 'block';
-      setLoginLoading(false);
-      return;
-    }
+    err.textContent = 'Tu acceso ha sido suspendido. Contactá al Master Trainer.';
+    err.style.display = 'block';
+    setLoginLoading(false);
+    return;
   }
-  SESSION = { user: user, name: trainer.name, role: trainer.role, department: trainer.department };
+  SESSION = { user, name: trainer.name, role: trainer.role, department: trainer.department };
   await loadCoreData();
   SESSION.code = getTrainerCode(user);
   await logAction('Inicio de sesión', trainer.email);
-  setLoginLoading(false);
   startApp();
   }catch(e){
-    console.error('doLogin', e);
-    err.textContent = 'Error de conexión. Intentá de nuevo o usá trainer@kamuk.cr / kamuk2026';
+    err.textContent = 'Error de conexión. Intentá de nuevo.';
     err.style.display = 'block';
     setLoginLoading(false);
   }
@@ -1178,26 +1194,20 @@ function startApp(){
     document.getElementById('nav-users').style.display='none';
     document.getElementById('nav-master-section').style.display='none';
     document.getElementById('nav-crm').style.display='none';
+    document.getElementById('nav-oe50').style.display='none';
     document.getElementById('nav-finance').style.display='none';
     document.getElementById('nav-auditlog').style.display='none';
     document.getElementById('nav-avail-overview').style.display='none';
     document.getElementById('nav-broadcast').style.display='none';
     document.getElementById('nav-super-brain').style.display='none';
     document.getElementById('nav-ops').style.display='none';
-    document.getElementById('nav-network').style.display='none';
     document.getElementById('nav-new-student').style.display='none';
     // Trainer: solo ve sus propios estudiantes
     document.getElementById('nav-students').onclick = function(){ showView('my-students', this); };
   }
   if(SESSION.role!=='superadmin'){
     document.getElementById('nav-transcripts').style.display='none';
-    if(hasMasterAccess()) document.getElementById('nav-dashboard').style.display='flex';
   }
-  // Departamentos: visibilidad según rol/depto del usuario
-  var myDept = SESSION.department || (hasMasterAccess()?'admin':'training');
-  if(!hasMasterAccess() && myDept!=='admin') document.getElementById('nav-dept-admin').style.display='none';
-  if(!hasMasterAccess() && myDept!=='training') document.getElementById('nav-dept-training').style.display='none';
-  if(!hasMasterAccess() && myDept!=='marketing') document.getElementById('nav-dept-marketing').style.display='none';
   showView('dashboard', document.querySelector('.sb-item'));
   maybeShowEngineTermsGate();
   var termsEl = document.getElementById('modal-infinity-terms');
@@ -1264,7 +1274,6 @@ function showView(view, btn){
   else if(view==='kpitracker') renderKPITrackerSelect(m);
   else if(view==='exercises') renderExercises(m);
   else if(view==='analytics') renderAnalytics(m);
-  else if(view==='usage-cohort') renderUsageCohort(m);
   else if(view==='reports') renderReports(m);
   else if(view==='resources') renderResources(m);
   else if(view==='users') renderUsers(m);
@@ -1274,10 +1283,7 @@ function showView(view, btn){
   else if(view==='my-profile') renderMyProfile(m);
   else if(view==='assign-exercises') renderAssignExercises(m);
   else if(view==='auditlog') renderAuditLog(m);
-  else if(view==='dept-admin') renderDepartment(m,'admin');
-  else if(view==='dept-training') renderDepartment(m,'training');
-  else if(view==='dept-marketing') renderDepartment(m,'marketing');
-  else if(view==='dept-misc') renderDepartment(m,'misc');
+  else if(view==='comms' || view==='dept-admin' || view==='dept-training' || view==='dept-marketing' || view==='dept-misc') renderComms(m);
   else if(view==='diagnostic') renderDiagnostic(m);
   else if(view==='availability') renderAvailability(m);
   else if(view==='attendance') renderAttendanceView(m);
@@ -1285,11 +1291,10 @@ function showView(view, btn){
   else if(view==='nexus-kb' || view==='kb-upload' || view==='super-brain') renderSuperBrain(m);
   else if(view==='ops') renderOpsOverview(m);
   else if(view==='staffchat') renderStaffChat(m);
-  else if(view==='dashboard') renderDashboard_Admin(m);
   else if(view==='chattranscripts') renderChatTranscripts(m);
   else if(view==='crm') renderCRM(m);
+  else if(view==='oe50-applications') renderOe50Applications(m);
   else if(view==='finance') renderFinance(m);
-  else if(view==='network') renderNetworkTraffic(m);
 }
 
 // ── HELPERS ───────────────────────────────────────────────
@@ -1355,15 +1360,17 @@ function renderDashboard(m){
   var func = students.filter(function(s){ return getLevelForStudent(getScore(s),s)==='Functional'; }).length;
   var emerg = students.filter(function(s){ return getLevelForStudent(getScore(s),s)==='Emerging'; }).length;
   var surv = students.filter(function(s){ return getLevelForStudent(getScore(s),s)==='Survival'; }).length;
-
+  var today = crTodayYmd();
+  var evtsToday = Object.values(CALENDAR_EVENTS).filter(function(e){ return e && e.date===today; }).length;
+  var latePay = students.filter(function(s){ return isPaymentAttention(s.info||{}); }).length;
   var recent = students.slice(-5).reverse();
 
   m.innerHTML = '<div class="fade">'
     +'<div class="grid4" style="margin-bottom:1rem;">'
     +'<div class="stat"><div class="stat-label">Total estudiantes</div><div class="stat-val">'+total+'</div><div class="stat-sub">Infinity ecosystem</div></div>'
-    +'<div class="stat"><div class="stat-label">Advanced</div><div class="stat-val" style="color:var(--gm);">'+adv+'</div><div class="stat-sub">'+(total?Math.round(adv/total*100):0)+'% del total</div></div>'
-    +'<div class="stat"><div class="stat-label">Functional</div><div class="stat-val" style="color:var(--amber);">'+func+'</div><div class="stat-sub">'+(total?Math.round(func/total*100):0)+'% del total</div></div>'
-    +'<div class="stat"><div class="stat-label">Emerging / Survival</div><div class="stat-val" style="color:var(--rm);">'+(emerg+surv)+'</div><div class="stat-sub">Requieren atención</div></div>'
+    +'<div class="stat"><div class="stat-label">Citas hoy</div><div class="stat-val" style="color:var(--amber);">'+evtsToday+'</div><div class="stat-sub">Calendario EVT</div></div>'
+    +'<div class="stat"><div class="stat-label">Cobros a revisar</div><div class="stat-val" style="color:var(--rm);">'+latePay+'</div><div class="stat-sub">late / overdue / vencido</div></div>'
+    +'<div class="stat"><div class="stat-label">Emerging / Survival</div><div class="stat-val" style="color:var(--rm);">'+(emerg+surv)+'</div><div class="stat-sub">Requieren atención KPI</div></div>'
     +'</div>'
     +'<div class="grid2">'
     +'<div class="card"><div class="card-title"><i class="ti ti-chart-pie"></i>Distribución de niveles</div><div class="chart-wrap"><canvas id="chart-levels"></canvas></div></div>'
@@ -1543,8 +1550,8 @@ function openStudent(id){
     +'<button data-sid="'+id+'" class="btn btn-outline btn-sm" onclick="generateStudentVisualReport(this.dataset.sid)"><i class="ti ti-report"></i>Generar reporte</button>'
     +'<button data-sid="'+id+'" class="btn btn-outline btn-sm" onclick="rotateAndCombineExercises(this.dataset.sid)"><i class="ti ti-repeat"></i>Rotar y combinar</button>'
     +(isMaster?('<button data-sid="'+id+'" data-tutor="jill" class="btn btn-sm" style="background:'+(studentJillOn(s)?'rgba(61,220,151,0.18)':'rgba(255,255,255,0.05)')+';border:1px solid '+(studentJillOn(s)?'#3DDC97':'rgba(255,255,255,0.3)')+';color:'+(studentJillOn(s)?'#3DDC97':'var(--t2)')+';font-weight:700;" onclick="toggleStudentTutor(this.dataset.sid,this.dataset.tutor)"><i class="ti ti-toggle-left"></i> Jill '+(studentJillOn(s)?'✓ ON':'OFF')+'</button>'):'')
-    +(isMaster?('<button data-sid="'+id+'" class="btn btn-sm" style="background:'+(studentJillProOn(s)?'rgba(124,58,237,0.2)':'rgba(255,255,255,0.05)')+';border:1px solid '+(studentJillProOn(s)?'#A78BFA':'rgba(255,255,255,0.3)')+';color:'+(studentJillProOn(s)?'#A8D4F5':'var(--t2)')+';font-weight:700;" onclick="toggleStudentJillPro(this.dataset.sid)"><i class="ti ti-messages"></i> Jill Libre '+(studentJillProOn(s)?'✓ ON':'OFF')+'</button>'):'')
-    +(isMaster?('<button data-sid="'+id+'" data-tutor="alice" class="btn btn-sm" style="background:'+(studentAliceOn(s)?'rgba(192,132,252,0.18)':'rgba(255,255,255,0.05)')+';border:1px solid '+(studentAliceOn(s)?'#C084FC':'rgba(255,255,255,0.3)')+';color:'+(studentAliceOn(s)?'#C084FC':'var(--t2)')+';font-weight:700;" onclick="toggleStudentTutor(this.dataset.sid,this.dataset.tutor)"><i class="ti ti-toggle-right"></i> Alice '+(studentAliceOn(s)?'✓ ON':'OFF')+'</button>'):'')
+    +(isMaster?('<button data-sid="'+id+'" class="btn btn-sm" style="background:'+(studentJillProOn(s)?'rgba(31,106,168,0.2)':'rgba(255,255,255,0.05)')+';border:1px solid '+(studentJillProOn(s)?'#79B9E8':'rgba(255,255,255,0.3)')+';color:'+(studentJillProOn(s)?'#A8D4F5':'var(--t2)')+';font-weight:700;" onclick="toggleStudentJillPro(this.dataset.sid)"><i class="ti ti-messages"></i> Jill Libre '+(studentJillProOn(s)?'✓ ON':'OFF')+'</button>'):'')
+    +(isMaster?('<button data-sid="'+id+'" data-tutor="alice" class="btn btn-sm" style="background:'+(studentAliceOn(s)?'rgba(192,132,252,0.18)':'rgba(255,255,255,0.05)')+';border:1px solid '+(studentAliceOn(s)?'#79B9E8':'rgba(255,255,255,0.3)')+';color:'+(studentAliceOn(s)?'#79B9E8':'var(--t2)')+';font-weight:700;" onclick="toggleStudentTutor(this.dataset.sid,this.dataset.tutor)"><i class="ti ti-toggle-right"></i> Alice '+(studentAliceOn(s)?'✓ ON':'OFF')+'</button>'):'')
     +(isMaster?('<button data-sid="'+id+'" class="btn btn-sm" style="background:'+(studentClaireOn(s)?'rgba(139,92,246,0.2)':'rgba(255,255,255,0.05)')+';border:1px solid '+(studentClaireOn(s)?'#A8D4F5':'rgba(255,255,255,0.3)')+';color:'+(studentClaireOn(s)?'#DDD6FE':'var(--t2)')+';font-weight:700;" onclick="toggleStudentClaire(this.dataset.sid)"><i class="ti ti-headphones"></i> Claire TOEIC '+(studentClaireOn(s)?'✓ ON':'OFF')+'</button>'):'')
     +(isMaster?('<button data-sid="'+id+'" class="btn btn-sm" style="background:'+(s.nexoraEnabled?'rgba(245,166,35,0.18)':'rgba(255,255,255,0.05)')+';border:1px solid '+(s.nexoraEnabled?'#F5A623':'rgba(255,255,255,0.3)')+';color:'+(s.nexoraEnabled?'#F5A623':'var(--t2)')+';font-weight:700;" onclick="toggleStudentNexora(this.dataset.sid)"><i class="ti ti-sparkles"></i> Nexora '+(s.nexoraEnabled?'✓ ON':'OFF')+'</button>'):'')
     +(isMaster?('<button data-sid="'+id+'" class="btn btn-sm" style="background:'+(s.companionEnabled?'rgba(134,239,172,0.18)':'rgba(255,255,255,0.05)')+';border:1px solid '+(s.companionEnabled?'#86EFAC':'rgba(255,255,255,0.3)')+';color:'+(s.companionEnabled?'#86EFAC':'var(--t2)')+';font-weight:700;" onclick="toggleStudentCompanion(this.dataset.sid)"><i class="ti ti-messages"></i> Alice Libre '+(s.companionEnabled?'✓ ON':'OFF')+'</button>'):'')
@@ -1563,7 +1570,6 @@ function openStudent(id){
     +'<div class="tab" onclick="switchTab(\'progress\',this)">Progreso</div>'
     +'<div class="tab" onclick="switchTab(\'sessions\',this)">Notas de sesión</div>'
     +'<div class="tab" onclick="switchTab(\'info\',this)">Información</div>'
-    +'<div class="tab" onclick="switchTab(\'news\',this)">News</div>'
     +(isMaster?'<div class="tab" onclick="switchTab(\'pagos\',this)">Pagos</div>':'')
     +'</div>'
 
@@ -1648,9 +1654,6 @@ function openStudent(id){
     +renderPortalAccessCard(s, id, isMaster)
     +renderTermsStatusCard(s, 'student', id)
     +'</div>'
-    +'<div class="tab-pane" id="pane-news">'+renderInfinityNewsSection()
-    +(isMaster?('<div style="margin-top:10px;">'+paymentWaReminderBtn((s.info&&s.info.name)||'Estudiante', s.info)+'</div>'):'')
-    +'</div>'
     +renderPagosTab(s, id, isMaster)
     +'</div>';
 
@@ -1697,7 +1700,7 @@ function switchTab(id, btn){
   }
 }
 
-var STUDENT_PORTAL_URL = 'https://kamukschool.github.io/Operarive-Training-Database/';
+var STUDENT_PORTAL_URL = 'https://kamukschool.github.io/Operarive-Training-Database/Kamuk_Student_Portal.html';
 var _pendingPaymentAfterShare = null;
 
 function normalizeWaPhone(phone){
@@ -1845,237 +1848,6 @@ function renderAnalytics(m){
     var sc=document.getElementById('chart-scores');
     if(sc) new Chart(sc,{ type:'bar', data:{ labels:Object.keys(buckets), datasets:[{data:Object.values(buckets),backgroundColor:['#0F6E56','#BA7517','#A32D2D','#94A3B8'],borderRadius:6}] }, options:{ responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}, scales:{ y:{ beginAtZero:true,ticks:{stepSize:1} } } } });
   },100);
-}
-
-// ── USO COHORTE KAMUK (PRACT-* + usageArchive · reutilizable) ──
-function usageCohortDayDefault(){
-  return new Date().toISOString().slice(0,10);
-}
-
-async function loadKamukPracticeSessions(day){
-  var dayStr = day || usageCohortDayDefault();
-  var idxId = 'USAGE-IDX-kamuk-' + dayStr;
-  var indexRows = await dbQuery('kamuk_sessions?select=id,data&id=eq.'+encodeURIComponent(idxId)+'&limit=1');
-  var indexEvents = (indexRows[0] && indexRows[0].data && indexRows[0].data.events) || [];
-
-  // Full PRACT rows (transcript + eval) — product-scoped prefix
-  var practRows = await dbQuery('kamuk_sessions?select=id,data,updated_at&id=like.PRACT-kamuk-%25&order=updated_at.desc&limit=200');
-  var sessions = (practRows || []).map(function(r){
-    var d = r.data || {};
-    return {
-      id: r.id,
-      at: d.at || r.updated_at || '',
-      day: d.day || String(d.at || '').slice(0,10),
-      studentId: d.studentId || '',
-      surface: d.surface || '—',
-      mode: d.mode || '',
-      score: d.score != null ? d.score : null,
-      summary: d.summary || '',
-      transcript: d.transcript || '',
-      transcriptChars: d.transcriptChars || (d.transcript ? d.transcript.length : 0),
-      evaluation: d.evaluation || null,
-      topics: d.topics || []
-    };
-  });
-  // Prefer day filter
-  var daySessions = sessions.filter(function(s){ return s.day === dayStr || String(s.at).slice(0,10) === dayStr; });
-  if(!daySessions.length && indexEvents.length){
-    // Fallback: show index stubs if PRACT rows not yet readable
-    daySessions = indexEvents.map(function(e){
-      return {
-        id: e.id,
-        at: e.at,
-        day: dayStr,
-        studentId: e.studentId,
-        surface: e.surface,
-        score: e.score,
-        summary: '',
-        transcript: '',
-        transcriptChars: e.transcriptChars || 0
-      };
-    });
-  }
-  return { day: dayStr, indexEvents: indexEvents, sessions: daySessions, allRecent: sessions.slice(0, 40) };
-}
-
-function openUsageSessionDetail(sessionId){
-  var raw = window._usageSessionsById && window._usageSessionsById[sessionId];
-  if(!raw){ showToast('Sesión no encontrada','err'); return; }
-  var name = '—';
-  try {
-    var st = typeof STUDENTS !== 'undefined' && STUDENTS[raw.studentId] ? STUDENTS[raw.studentId] : null;
-    if(!st && typeof ALL_STUDENTS !== 'undefined') st = ALL_STUDENTS[raw.studentId];
-    name = (st && st.info && st.info.name) || (st && st.name) || raw.studentId || '—';
-  } catch(e){}
-  var evalStr = '';
-  try { evalStr = raw.evaluation ? (typeof raw.evaluation === 'string' ? raw.evaluation : JSON.stringify(raw.evaluation, null, 2)) : ''; } catch(e){ evalStr = ''; }
-  var html = '<div class="fade">'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">'
-    +'<h2 style="font-size:16px;font-weight:700;color:var(--navy);margin:0;"><i class="ti ti-file-description"></i> Sesión archivada</h2>'
-    +'<button type="button" class="btn btn-outline btn-sm" onclick="renderUsageCohort(document.getElementById(\'main-content\'))"><i class="ti ti-arrow-left"></i>Volver</button>'
-    +'</div>'
-    +'<div class="card" style="margin-bottom:12px;">'
-    +'<div style="font-size:13px;line-height:1.7;">'
-    +'<strong>'+name+'</strong> · <code style="font-size:11px;">'+raw.studentId+'</code><br>'
-    +'Surface: <strong>'+raw.surface+(raw.mode?(' / '+raw.mode):'')+'</strong> · Score: <strong>'+(raw.score!=null?raw.score:'—')+'</strong><br>'
-    +'Fecha: '+(raw.at?new Date(raw.at).toLocaleString('es-CR'):'—')+' · Chars transcript: '+(raw.transcriptChars||0)
-    +(raw.summary?('<br>Resumen: '+String(raw.summary).replace(/</g,'&lt;')):'')
-    +'</div></div>'
-    +(raw.transcript
-      ? '<div class="card"><div class="card-title"><i class="ti ti-messages"></i>Transcript (para reutilizar en futuro QA / planes)</div>'
-        +'<pre style="white-space:pre-wrap;font-size:12px;line-height:1.55;max-height:420px;overflow:auto;margin:0;background:var(--gray);padding:12px;border-radius:8px;">'
-        +String(raw.transcript).replace(/</g,'&lt;')+'</pre></div>'
-      : '<div class="ib ib-navy">Sin transcript en este registro (score/meta sí). Cuando el backend archive evals, aparecerán textos completos aquí.</div>')
-    +(evalStr
-      ? '<div class="card" style="margin-top:12px;"><div class="card-title">Evaluation JSON</div>'
-        +'<pre style="white-space:pre-wrap;font-size:11px;max-height:240px;overflow:auto;margin:0;">'+String(evalStr).replace(/</g,'&lt;')+'</pre></div>'
-      : '')
-    +'</div>';
-  document.getElementById('main-content').innerHTML = html;
-}
-
-async function renderUsageCohort(m){
-  if(!m) m = document.getElementById('main-content');
-  var day = (window._usageCohortDay || usageCohortDayDefault());
-  m.innerHTML = '<div class="fade"><div class="loading"><i class="ti ti-loader spin"></i><span>Cargando uso de la cohorte Kamuk…</span></div></div>';
-  var pack;
-  try {
-    pack = await loadKamukPracticeSessions(day);
-  } catch(e){
-    m.innerHTML = '<div class="ib" style="border-color:#A32D2D;color:#A32D2D;">No se pudo leer kamuk_sessions: '+(e.message||e)+'</div>';
-    return;
-  }
-
-  var studentsMap = {};
-  try {
-    (typeof allStudents === 'function' ? allStudents() : []).forEach(function(s){ if(s&&s.id) studentsMap[s.id]=s; });
-  } catch(e){}
-  // Also merge STUDENTS global if present
-  try {
-    if(typeof STUDENTS === 'object' && STUDENTS){
-      Object.keys(STUDENTS).forEach(function(id){ studentsMap[id]=STUDENTS[id]; });
-    }
-  } catch(e){}
-
-  window._usageSessionsById = {};
-  pack.sessions.forEach(function(s){ window._usageSessionsById[s.id]=s; });
-  pack.allRecent.forEach(function(s){ if(!window._usageSessionsById[s.id]) window._usageSessionsById[s.id]=s; });
-
-  var bySurface = {};
-  var unique = {};
-  pack.sessions.forEach(function(s){
-    bySurface[s.surface] = (bySurface[s.surface]||0)+1;
-    if(s.studentId) unique[s.studentId]=true;
-  });
-  var nUnique = Object.keys(unique).length;
-  var totalChars = pack.sessions.reduce(function(a,s){ return a+(s.transcriptChars||0); },0);
-
-  // Roster cards — usage archive pointers
-  var roster = Object.keys(studentsMap).map(function(id){
-    var s = studentsMap[id];
-    var arch = (s.usageArchive||[]).slice(-5).reverse();
-    var aliceN = (s.aliceSessions||[]).length;
-    var histN = (s.kpis && s.kpis.history) ? s.kpis.history.length : 0;
-    return {
-      id: id,
-      name: (s.info&&s.info.name)||s.name||id,
-      arch: arch,
-      aliceN: aliceN,
-      histN: histN,
-      nexora: s.nexoraSessionCount || (s.nexoraSessions||[]).length || 0
-    };
-  }).sort(function(a,b){ return (b.arch.length+b.aliceN)-(a.arch.length+a.aliceN); });
-
-  // Soft limit badge for 30 seats
-  var rosterCount = roster.length;
-  var seatsNote = rosterCount >= 30
-    ? 'Cohorte llena / encima de ~30 ('+rosterCount+')'
-    : rosterCount + ' de ~30 cupos con registro en Engine';
-
-  m.innerHTML = '<div class="fade">'
-    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:1rem;">'
-    +'<div><h2 style="font-size:16px;font-weight:700;color:var(--navy);margin:0 0 4px;"><i class="ti ti-database"></i> Uso de la cohorte Kamuk</h2>'
-    +'<div style="font-size:12px;color:var(--t3);">Todo lo archivado vive en <code>kamuk_sessions</code> (PRACT-*) + punteros en cada alumno. No se mezcla con Infinity.</div></div>'
-    +'<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">'
-    +'<input type="date" id="usage-day" value="'+day+'" class="inp" style="max-width:160px;" />'
-    +'<button type="button" class="btn btn-metal btn-sm" id="usage-reload"><i class="ti ti-refresh"></i>Actualizar</button>'
-    +'<button type="button" class="btn btn-outline btn-sm" id="usage-export"><i class="ti ti-download"></i>Exportar JSON</button>'
-    +'</div></div>'
-
-    +'<div class="grid4" style="margin-bottom:1rem;">'
-    +'<div class="stat"><div class="stat-label">Sesiones (día)</div><div class="stat-val" style="color:var(--navy);">'+pack.sessions.length+'</div><div class="stat-sub">'+day+'</div></div>'
-    +'<div class="stat"><div class="stat-label">Alumnos activos</div><div class="stat-val" style="color:#0F6E56;">'+nUnique+'</div><div class="stat-sub">con práctica este día</div></div>'
-    +'<div class="stat"><div class="stat-label">Transcript chars</div><div class="stat-val" style="color:#BA7517;">'+totalChars.toLocaleString()+'</div><div class="stat-sub">texto reutilizable</div></div>'
-    +'<div class="stat"><div class="stat-label">Roster Engine</div><div class="stat-val" style="color:#1B9BD1;">'+rosterCount+'</div><div class="stat-sub">'+seatsNote+'</div></div>'
-    +'</div>'
-
-    +'<div class="card" style="margin-bottom:1rem;"><div class="card-title"><i class="ti ti-chart-pie"></i>Por producto de sesión</div>'
-    +(Object.keys(bySurface).length
-      ? '<div style="display:flex;flex-wrap:wrap;gap:8px;">'+Object.keys(bySurface).map(function(k){
-          return '<span style="background:rgba(43,126,193,0.12);color:var(--navy);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;">'+k+': '+bySurface[k]+'</span>';
-        }).join('')+'</div>'
-      : '<div style="font-size:13px;color:var(--t3);">Aún no hay PRACT- de este día. Cuando alumnos cierren Alice/Jill/Nexora/Drill (backend desplegado), aparecen aquí.</div>')
-    +'</div>'
-
-    +'<div class="card" style="margin-bottom:1rem;"><div class="card-title"><i class="ti ti-list-details"></i>Sesiones del día · click para transcript</div>'
-    +'<div style="overflow:auto;"><table class="tbl"><thead><tr><th>Hora</th><th>Alumno</th><th>Surface</th><th>Score</th><th>Chars</th><th></th></tr></thead><tbody>'
-    +(pack.sessions.length ? pack.sessions.slice().sort(function(a,b){ return String(b.at).localeCompare(String(a.at)); }).map(function(s){
-        var nm = (studentsMap[s.studentId] && ((studentsMap[s.studentId].info&&studentsMap[s.studentId].info.name)||studentsMap[s.studentId].name)) || s.studentId || '—';
-        var t = s.at ? new Date(s.at).toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit'}) : '—';
-        return '<tr style="cursor:pointer;" data-sid="'+String(s.id).replace(/"/g,'&quot;')+'" class="usage-row">'
-          +'<td>'+t+'</td><td><strong>'+nm+'</strong><div style="font-size:10px;color:var(--t3);">'+s.studentId+'</div></td>'
-          +'<td>'+s.surface+'</td><td>'+(s.score!=null?s.score:'—')+'</td><td>'+(s.transcriptChars||0)+'</td>'
-          +'<td><button type="button" class="btn btn-outline btn-sm usage-open" data-sid="'+String(s.id).replace(/"/g,'&quot;')+'">Ver</button></td></tr>';
-      }).join('')
-      : '<tr><td colspan="6" style="color:var(--t3);">Sin sesiones archivadas este día.</td></tr>')
-    +'</tbody></table></div></div>'
-
-    +'<div class="card"><div class="card-title"><i class="ti ti-users"></i>Roster · memoria en fichas (usageArchive / KPI / Alice)</div>'
-    +'<div style="overflow:auto;max-height:360px;"><table class="tbl"><thead><tr><th>Alumno</th><th>Archive</th><th>Alice</th><th>KPI hist</th><th>Nexora</th><th>Último</th></tr></thead><tbody>'
-    +(roster.length ? roster.map(function(r){
-        var last = r.arch[0];
-        return '<tr onclick="openStudent(\''+r.id+'\')" style="cursor:pointer;">'
-          +'<td><strong>'+r.name+'</strong></td>'
-          +'<td>'+r.arch.length+'</td><td>'+r.aliceN+'</td><td>'+r.histN+'</td><td>'+r.nexora+'</td>'
-          +'<td style="font-size:11px;">'+(last ? ((last.surface||'')+' · '+(last.score!=null?last.score:'—')+' · '+String(last.at||'').slice(0,10)) : '—')+'</td></tr>';
-      }).join('')
-      : '<tr><td colspan="6">Sin alumnos cargados en Engine.</td></tr>')
-    +'</tbody></table></div></div>'
-
-    +'<div class="ib ib-navy" style="margin-top:12px;">Deploy backend: las filas <code>PRACT-kamuk-*</code> se crean al evaluar (Alice/Jill/Nexora/Drill). El portal Pages solo no alcanza: hace falta el server con <code>product-usage-store</code>.</div>'
-    +'</div>';
-
-  var dayEl = document.getElementById('usage-day');
-  var reload = document.getElementById('usage-reload');
-  var exp = document.getElementById('usage-export');
-  if(reload) reload.onclick = function(){
-    window._usageCohortDay = (dayEl && dayEl.value) || usageCohortDayDefault();
-    renderUsageCohort(m);
-  };
-  if(dayEl) dayEl.onchange = function(){ window._usageCohortDay = dayEl.value; };
-  if(exp) exp.onclick = function(){
-    var blob = new Blob([JSON.stringify({
-      product: 'kamuk',
-      day: pack.day,
-      sessions: pack.sessions,
-      indexEvents: pack.indexEvents,
-      roster: roster.map(function(r){ return { id:r.id, name:r.name, aliceN:r.aliceN, histN:r.histN, nexora:r.nexora, usageArchive:r.arch }; })
-    }, null, 2)], { type: 'application/json' });
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'kamuk-usage-'+pack.day+'.json';
-    a.click();
-    URL.revokeObjectURL(a.href);
-    showToast('Export listo');
-  };
-  m.querySelectorAll('.usage-open, .usage-row').forEach(function(el){
-    el.addEventListener('click', function(ev){
-      var id = el.getAttribute('data-sid');
-      if(!id) return;
-      ev.preventDefault();
-      openUsageSessionDetail(id);
-    });
-  });
 }
 
 // ── REPORTS ───────────────────────────────────────────────
@@ -2486,7 +2258,7 @@ function renderRoster(m){
       var nexOn = !!(profile.nexoraEnabled);
       card += '<div style="padding-top:8px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">'
         +'<span style="font-size:11px;color:var(--t3);">Nexora global para sus estudiantes</span>'
-        +'<button data-uid="'+u.id+'" style="display:inline-flex;align-items:center;gap:5px;background:'+(nexOn?'rgba(192,132,252,0.15)':'rgba(255,255,255,0.05)')+';border:1px solid '+(nexOn?'rgba(192,132,252,0.4)':'rgba(255,255,255,0.2)')+';color:'+(nexOn?'#C084FC':'rgba(255,255,255,0.4)')+';border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;" onclick="toggleTrainerNexora(this.dataset.uid)"><i class="ti ti-sparkles"></i>'+(nexOn?'ON':'OFF')+'</button>'
+        +'<button data-uid="'+u.id+'" style="display:inline-flex;align-items:center;gap:5px;background:'+(nexOn?'rgba(192,132,252,0.15)':'rgba(255,255,255,0.05)')+';border:1px solid '+(nexOn?'rgba(192,132,252,0.4)':'rgba(255,255,255,0.2)')+';color:'+(nexOn?'#79B9E8':'rgba(255,255,255,0.4)')+';border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;" onclick="toggleTrainerNexora(this.dataset.uid)"><i class="ti ti-sparkles"></i>'+(nexOn?'ON':'OFF')+'</button>'
         +'</div>';
       card += '<div style="padding-top:8px;">'+paymentWaReminderBtn(profile.name||u.name, profile)+'</div>';
     }
@@ -2707,11 +2479,13 @@ async function saveCalendarEvent(){
       id,
       studentId: sid,
       studentName: (s&&s.info&&s.info.name)||'—',
+      phone: (s&&s.info&&s.info.phone)||'',
       trainer: document.getElementById('cal-ev-trainer').value,
       date: document.getElementById('cal-ev-date').value,
       time: document.getElementById('cal-ev-time').value,
       type: type,
-      notes: document.getElementById('cal-ev-notes').value
+      notes: document.getElementById('cal-ev-notes').value,
+      source: 'engine'
     };
   }
   CALENDAR_EVENTS[id]=evt;
@@ -2719,6 +2493,15 @@ async function saveCalendarEvent(){
   await logAction('Agendó evento de calendario', isInternal?evt.title:(evt.studentName+' — '+evt.date));
   closeModal('modal-calendar');
   showToast('Evento agendado');
+  if(!isInternal && evt.phone){
+    try{
+      var msg = 'Hola '+(evt.studentName||'')+',\nRecordatorio de cita Kamuk School:\n'+evt.date+' a las '+(evt.time||'')+'\nSi necesitás reprogramar, respondé a este chat.';
+      await enqueueWhatsAppMessage(evt.phone, msg, s&&s.info&&s.info.email);
+      showToast('Cita guardada + recordatorio WA encolado');
+    }catch(e){
+      showToast('Cita guardada (WA no encoló: '+(e.message||e)+')','err');
+    }
+  }
   renderCalendar(document.getElementById('main-content'));
 }
 
@@ -2821,8 +2604,6 @@ function renderMyProfile(m){
         }).join('')
         +'</div>';
     })()
-    +renderInfinityNewsSection()
-    +'<div style="margin-top:10px;">'+paymentWaReminderBtn(profile.name||SESSION.name, profile)+'</div>'
     +'</div>'
     +'</div>';
 }
@@ -3075,34 +2856,35 @@ var DEPT_LABELS = {admin:'Administration',training:'Training Team',marketing:'Ma
 var DEPT_ICONS  = {admin:'ti-building',training:'ti-school',marketing:'ti-speakerphone',misc:'ti-news'};
 
 function renderDepartment(m, dept){
-  var canPost = hasMasterAccess() || (SESSION.department===dept);
+  renderComms(m, dept);
+}
+
+function renderComms(m, deptFilter){
+  var canPost = hasMasterAccess();
   var news = Object.keys(NEWS_ITEMS).map(function(k){ var n=NEWS_ITEMS[k]; n._id=k; return n; })
-    .filter(function(n){ return n.dept===dept; })
+    .filter(function(n){ return !deptFilter || n.dept===deptFilter; })
     .sort(function(a,b){ return new Date(b.ts)-new Date(a.ts); });
 
   var html = '<div class="fade">'
     +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">'
-    +'<h2 style="font-size:16px;font-weight:700;color:var(--navy);flex:1;"><i class="ti '+(DEPT_ICONS[dept]||'ti-folder')+'"></i> '+(DEPT_LABELS[dept]||dept)+'</h2>'
-    +(canPost?'<button class="btn btn-navy btn-sm" data-dept="'+dept+'" onclick="openNewsModal(this.dataset.dept)"><i class="ti ti-plus"></i>Publicar</button>':'')
-    +'</div>';
+    +'<h2 style="font-size:16px;font-weight:700;color:var(--navy);flex:1;"><i class="ti ti-news"></i> Comunicados internos</h2>'
+    +(canPost?'<button class="btn btn-navy btn-sm" data-dept="misc" onclick="openNewsModal(this.dataset.dept)"><i class="ti ti-plus"></i>Publicar</button>':'')
+    +'</div>'
+    +'<div class="ib ib-navy">Anuncios operativos del equipo. Un solo tablón (antes Admin / Training / Marketing / Misc).</div>';
 
-  if(dept==='misc'){
-    html += '<div class="ib ib-navy">Espacio compartido para anuncios internos, noticias y avisos generales de Kamuk School.</div>';
+  if(!news.length){
+    html += '<div class="card"><div style="font-size:13px;color:var(--t3);text-align:center;padding:1rem 0;">Sin comunicados todavía.</div></div>';
   } else {
-    html += '<div class="ib ib-amber">Acceso restringido a colaboradores de '+(DEPT_LABELS[dept]||dept)+' y Master Trainer.</div>';
+    html += news.map(function(n){
+      return '<div class="card" style="margin-bottom:10px;">'
+        +'<div style="display:flex;align-items:flex-start;gap:10px;">'
+        +'<div style="flex:1;"><div style="font-size:14px;font-weight:700;color:var(--navy);">'+(n.title||'Sin título')+'</div>'
+        +'<div style="font-size:11px;color:var(--t3);margin:4px 0 8px;">'+(DEPT_LABELS[n.dept]||n.dept||'—')+' · '+(n.author||'')+' · '+fmtDate(n.ts)+'</div>'
+        +'<div style="font-size:13px;line-height:1.6;color:var(--text);white-space:pre-wrap;">'+(n.body||'')+'</div></div>'
+        +(hasMasterAccess()?'<button data-id="'+n._id+'" class="btn btn-red btn-sm" onclick="deleteNews(this.dataset.id)"><i class="ti ti-x"></i></button>':'')
+        +'</div></div>';
+    }).join('');
   }
-
-  html += news.length ? news.map(function(n){
-    return '<div class="card">'
-      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">'
-      +'<strong style="flex:1;font-size:14px;">'+(n.title||'—')+'</strong>'
-      +'<span style="font-size:11px;color:var(--t3);">'+new Date(n.ts).toLocaleDateString('es-CR')+' · '+(n.author||'')+'</span>'
-      +((hasMasterAccess())?'<button data-id="'+n._id+'" class="btn btn-red btn-sm" onclick="deleteNews(this.dataset.id)"><i class="ti ti-x"></i></button>':'')
-      +'</div>'
-      +'<div style="font-size:13px;color:var(--t2);line-height:1.6;white-space:pre-wrap;">'+(n.body||'')+'</div>'
-      +'</div>';
-  }).join('') : '<div style="font-size:13px;color:var(--t3);">Sin publicaciones por el momento.</div>';
-
   html += '</div>';
   m.innerHTML = html;
 }
@@ -3126,7 +2908,7 @@ async function saveNews(){
   await logAction('Publicó en '+(DEPT_LABELS[dept]||dept), title);
   closeModal('modal-news');
   showToast('Publicado');
-  renderDepartment(document.getElementById('main-content'), dept);
+  renderComms(document.getElementById('main-content'));
 }
 
 function deleteNews(id){
@@ -3136,7 +2918,7 @@ function deleteNews(id){
     delete NEWS_ITEMS[id];
     await logAction('Eliminó publicación', (n&&n.title)||id);
     showToast('Publicación eliminada');
-    renderDepartment(document.getElementById('main-content'), n?n.dept:'misc');
+    renderComms(document.getElementById('main-content'));
   });
 }
 
@@ -3146,22 +2928,20 @@ function renderPagosTab(s, id, isMaster){
   if(!isMaster) return '';
   var payments = (s.payments||[]).slice().reverse();
   var info = s.info||{};
-  syncPaymentStatusFromCalendar(info);
-  var calFlag = paymentFlagBadgeHtml(info);
-  var status = info.paymentStatus || 'current';
-  var statusBadge = status==='delayed'
-    ? '<span class="badge" style="background:var(--rb);color:var(--rm);">DELAYED</span>'
-    : '<span class="badge" style="background:var(--gb);color:var(--gm);">Al día</span>';
+  var cal = getPaymentCalendarFlag(info);
+  var calFlag = '<span class="badge" style="'+(cal.level==='red'?'background:#FEE2E2;color:#B91C1C':cal.level==='yellow'?'background:#FEF3C7;color:#92400E':cal.level==='green'?'background:#DCFCE7;color:#166534':'background:var(--gray);color:var(--t3)')+'">'+cal.label+(cal.days!=null && cal.level!=='green'?' · '+Math.abs(cal.days)+'d':'')+'</span>';
+  var status = normalizePaymentStatus(info.paymentStatus);
+  var statusBadge = paymentFlagBadgeHtml(info);
   var totalPaid = payments.reduce(function(a,p){ return a+(parseFloat(p.amount)||0); },0);
 
   var html = '<div class="tab-pane" id="pane-pagos">';
   html += '<div class="card"><div class="card-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;"><span><i class="ti ti-cash"></i>Información de pago</span>'
-    +'<div style="display:flex;gap:6px;flex-wrap:wrap;">'+paymentWaReminderBtn((info.name)||'Estudiante', info)
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap;">'+paymentWaReminderBtnForStudent(id)
     +'<button data-sid="'+id+'" class="btn btn-navy btn-sm" onclick="openPaymentModal(this.dataset.sid)"><i class="ti ti-plus"></i>Registrar pago</button></div></div>';
 
   html += '<div class="grid2">';
-  html += '<div style="background:var(--gray);border-radius:var(--r);padding:0.875rem;"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--t3);margin-bottom:4px;">Estado (calendario)</div><div style="font-size:13px;font-weight:600;">'+calFlag+'</div></div>';
-  html += '<div style="background:var(--gray);border-radius:var(--r);padding:0.875rem;"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--t3);margin-bottom:4px;">Estado manual</div><div style="font-size:13px;font-weight:600;">'+statusBadge+'</div></div>';
+  html += '<div style="background:var(--gray);border-radius:var(--r);padding:0.875rem;"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--t3);margin-bottom:4px;">Vencimiento (calendario)</div><div style="font-size:13px;font-weight:600;">'+calFlag+'</div></div>';
+  html += '<div style="background:var(--gray);border-radius:var(--r);padding:0.875rem;"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--t3);margin-bottom:4px;">Estado de pago</div><div style="font-size:13px;font-weight:600;">'+statusBadge+'</div></div>';
   html += '<div style="background:var(--gray);border-radius:var(--r);padding:0.875rem;"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--t3);margin-bottom:4px;">Fee mensual</div><div style="font-size:13px;font-weight:600;">CRC '+parseInt(info.fee||0).toLocaleString()+'</div></div>';
   html += '<div style="background:var(--gray);border-radius:var(--r);padding:0.875rem;"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--t3);margin-bottom:4px;">Próximo vencimiento</div><div style="font-size:13px;font-weight:600;">'+(info.nextDue?fmtDate(info.nextDue):'—')+'</div></div>';
   html += '<div style="background:var(--gray);border-radius:var(--r);padding:0.875rem;"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--t3);margin-bottom:4px;">Total pagado</div><div style="font-size:13px;font-weight:600;">CRC '+totalPaid.toLocaleString()+'</div></div>';
@@ -3187,7 +2967,7 @@ function openPaymentModal(sid){
   document.getElementById('pay-method').value = 'Transferencia';
   document.getElementById('pay-date').value = new Date().toISOString().split('T')[0];
   document.getElementById('pay-note').value = '';
-  document.getElementById('pay-status').value = info.paymentStatus || 'current';
+  document.getElementById('pay-status').value = normalizePaymentStatus(info.paymentStatus);
   document.getElementById('pay-nextdue').value = info.nextDue || '';
   showModal('modal-payment');
 }
@@ -3207,9 +2987,8 @@ async function savePayment(){
     s.payments.push({ date, amount, method, note, registeredBy:SESSION.name });
   }
   s.info = s.info||{};
-  s.info.paymentStatus = status;
+  s.info.paymentStatus = normalizePaymentStatus(status === 'delayed' ? 'late' : status);
   s.info.nextDue = nextDue;
-  syncPaymentStatusFromCalendar(s.info);
 
   await dbSet('kamuk_students', sid, s);
   DB[sid]=s;
@@ -3521,6 +3300,131 @@ function sendDiagnosticReportWA(id){
 }
 
 
+// ── APLICACIONES · TRAINING GRATIS 50 ─────────────────────
+var OE50_APPLICATIONS = [];
+
+function oe50Escape(value){
+  return String(value == null ? '' : value)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function oe50SourceLabel(status){
+  var labels = {
+    'oe-selected':'OE/Hola Brete · seleccionado',
+    'oe-not-selected':'OE/Hola Brete · no clasificó',
+    'oe-waitlist':'OE/Hola Brete · espera',
+    'oe-selected-open-english':'Ya cursa Open English',
+    'video':'Llegó por el video'
+  };
+  return labels[status] || status || '—';
+}
+
+function oe50LevelLabel(level){
+  var labels = { principiante:'Principiante', intermedio:'Intermedio', 'avanzado-pro':'Avanzado / Pro' };
+  return labels[level] || level || '—';
+}
+
+async function loadOe50Applications(){
+  var data = await superBrainFetch('/campaign/oe50/applications?secret='+encodeURIComponent(SUPER_BRAIN_SECRET));
+  OE50_APPLICATIONS = Array.isArray(data.applications) ? data.applications : [];
+  return OE50_APPLICATIONS;
+}
+
+async function renderOe50Applications(m){
+  if(!hasMasterAccess()){
+    m.innerHTML='<div class="fade"><div class="ib ib-amber">Acceso restringido a Master Trainer / Super Admin.</div></div>';
+    return;
+  }
+  m.innerHTML='<div class="loading"><i class="ti ti-loader spin"></i><span>Cargando aplicaciones…</span></div>';
+  try{
+    var rows = await loadOe50Applications();
+    var byLevel = { principiante:0, intermedio:0, 'avanzado-pro':0 };
+    var mediaOk = 0;
+    var tiktok = 0;
+    rows.forEach(function(a){
+      if(Object.prototype.hasOwnProperty.call(byLevel,a.level)) byLevel[a.level]++;
+      if(a.mediaConsent) mediaOk++;
+      if(a.source && String(a.source.utmSource||'').toLowerCase()==='tiktok') tiktok++;
+    });
+    var body = rows.length ? rows.map(function(a){
+      var submitted = a.submittedAt ? new Date(a.submittedAt).toLocaleString('es-CR') : '—';
+      return '<tr>'
+        +'<td><strong>'+oe50Escape(a.fullName)+'</strong><div style="font-size:10px;color:var(--t3);">'+oe50Escape(submitted)+'</div></td>'
+        +'<td>'+oe50Escape(oe50LevelLabel(a.level))+'</td>'
+        +'<td style="font-size:11px;">'+oe50Escape(a.phone)+'<br>'+oe50Escape(a.email)+'</td>'
+        +'<td style="font-size:11px;">'+oe50Escape(oe50SourceLabel(a.oeStatus))+'</td>'
+        +'<td><span class="badge '+(a.mediaConsent?'b-functional':'')+'" style="'+(a.mediaConsent?'':'background:var(--ab);color:var(--ad);')+'">'+(a.mediaConsent?'Sí':'No')+'</span></td>'
+        +'<td style="font-size:11px;">'+oe50Escape((a.source&&a.source.utmSource)||'direct')+'</td>'
+        +'</tr>';
+    }).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:2rem;">Todavía no hay aplicaciones.</td></tr>';
+
+    m.innerHTML='<div class="fade">'
+      +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:1rem;">'
+      +'<h2 style="font-size:16px;font-weight:700;color:var(--navy);flex:1;"><i class="ti ti-clipboard-list"></i> Aplicaciones · Training gratuito 50</h2>'
+      +'<a class="btn btn-outline btn-sm" href="programa-50.html?utm_source=engine&utm_medium=internal&utm_campaign=training_diciembre_50" target="_blank"><i class="ti ti-external-link"></i>Abrir landing</a>'
+      +'<button class="btn btn-outline btn-sm" onclick="renderOe50Applications(document.getElementById(\'main-content\'))"><i class="ti ti-refresh"></i>Actualizar</button>'
+      +'<button class="btn btn-navy btn-sm" onclick="exportOe50ApplicationsExcel()"><i class="ti ti-file-spreadsheet"></i>Descargar Excel</button>'
+      +'</div>'
+      +'<div class="ib ib-navy">Base separada de interesados. No crea estudiantes ni mezcla datos con Kamuk.</div>'
+      +'<div class="stats-grid" style="margin:14px 0;">'
+      +'<div class="stat-card"><div class="stat-value">'+rows.length+'</div><div class="stat-label">Solicitudes</div></div>'
+      +'<div class="stat-card"><div class="stat-value">'+byLevel.principiante+'</div><div class="stat-label">Principiantes</div></div>'
+      +'<div class="stat-card"><div class="stat-value">'+byLevel.intermedio+'</div><div class="stat-label">Intermedios</div></div>'
+      +'<div class="stat-card"><div class="stat-value">'+byLevel['avanzado-pro']+'</div><div class="stat-label">Avanzado / Pro</div></div>'
+      +'<div class="stat-card"><div class="stat-value">'+mediaOk+'</div><div class="stat-label">Autorizan cámara</div></div>'
+      +'<div class="stat-card"><div class="stat-value">'+tiktok+'</div><div class="stat-label">UTM TikTok</div></div>'
+      +'</div>'
+      +'<div class="card" style="overflow-x:auto;"><table class="tbl"><thead><tr>'
+      +'<th>Persona</th><th>Nivel</th><th>Contacto</th><th>Origen OE</th><th>Cámara</th><th>Tráfico</th>'
+      +'</tr></thead><tbody>'+body+'</tbody></table></div>'
+      +'</div>';
+  }catch(e){
+    m.innerHTML='<div class="fade"><div class="ib ib-red">No se pudieron cargar las aplicaciones: '+oe50Escape(e.message||e)+'</div></div>';
+  }
+}
+
+async function exportOe50ApplicationsExcel(){
+  try{
+    var rows = OE50_APPLICATIONS.length ? OE50_APPLICATIONS : await loadOe50Applications();
+    if(!rows.length){ showToast('No hay aplicaciones para exportar','err'); return; }
+    var data = rows.map(function(a){
+      return {
+        'Fecha de solicitud':a.submittedAt||'',
+        'Estado interno':a.status||'pending-review',
+        'Nombre y apellidos':a.fullName||'',
+        'WhatsApp':a.phone||'',
+        'Correo':a.email||'',
+        'Origen de convocatoria':oe50SourceLabel(a.oeStatus),
+        'Nivel declarado':oe50LevelLabel(a.level),
+        'Compromiso sábados':a.saturdayCommitment?'Sí':'No',
+        'Práctica semanal':a.weeklyPracticeCommitment?'Sí':'No',
+        'Consentimiento datos':a.dataConsent?'Sí':'No',
+        'Consentimiento imagen/KPIs':a.mediaConsent?'Sí':'No',
+        'Elegible conversatorio documentado':a.eligibleForDocumentedConversatorio?'Sí':'No',
+        'UTM source':(a.source&&a.source.utmSource)||'direct',
+        'UTM medium':(a.source&&a.source.utmMedium)||'',
+        'UTM campaign':(a.source&&a.source.utmCampaign)||'',
+        'UTM content':(a.source&&a.source.utmContent)||'',
+        'Referrer':(a.source&&a.source.referrer)||'',
+        'ID solicitud':a.id||''
+      };
+    });
+    var ws = XLSX.utils.json_to_sheet(data);
+    ws['!cols'] = [
+      {wch:22},{wch:18},{wch:30},{wch:18},{wch:30},{wch:34},
+      {wch:18},{wch:18},{wch:18},{wch:20},{wch:25},{wch:30},{wch:14},
+      {wch:14},{wch:28},{wch:22},{wch:38},{wch:28}
+    ];
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Aplicaciones 50');
+    XLSX.writeFile(wb, 'aplicaciones_training_50_'+new Date().toISOString().slice(0,10)+'.xlsx');
+    showToast('Excel de aplicaciones descargado');
+  }catch(e){
+    showToast('No se pudo exportar: '+(e.message||e),'err');
+  }
+}
+
 // ── CRM / PIPELINE DE LEADS ───────────────────────────────
 var PIPELINE_LABELS = { active:'Active', prospecto:'Prospecto', needs_plan:'Needs Plan' };
 var PIPELINE_DESC = { active:'Pagan de una vez — listos para diagnóstico', prospecto:'Pidieron tiempo para pensar', needs_plan:'Bajo recursos — necesitan plan' };
@@ -3531,9 +3435,30 @@ function hasMasterAccess(){ return SESSION && (SESSION.role==='master' || SESSIO
 function roleLabel(role){ return role==='superadmin'?'Super Admin':role==='master'?'Master Trainer':'Trainer'; }
 
 var PAYMENT_WARN_DAYS = 7;
-var INFINITY_SINPE = '60950981';
+var INFINITY_SINPE = '60060981';
 var INFINITY_PAYPAL = 'johnnramirez@gmail.com';
 var INFINITY_WA = '50660060981';
+var INFINITY_SINPE_HINT = 'Sinpe Móvil al 6006-0981 (Kamuk School). Avisá cuando pagues con el comprobante.';
+var WA_OPS_API = 'https://alice-by-infinity.onrender.com';
+/** Same value as scripts/wa-bridge BRIDGE_SECRET / Render WA_BRIDGE_SECRET (or ANALYZE_SECRET). */
+var WA_BRIDGE_SECRET = 'otro-secreto-distinto-2026';
+var WA_LEADS = {};
+
+function crTodayYmd(){
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Costa_Rica' });
+}
+
+function normalizePaymentStatus(raw){
+  var st = String(raw||'current').toLowerCase();
+  if(st==='delayed') return 'late';
+  if(['current','pending','late','overdue','paused'].indexOf(st)>=0) return st;
+  return 'current';
+}
+
+function paymentStatusLabel(status){
+  var labels = { current:'Al día', pending:'Pendiente', late:'Atrasado', overdue:'Vencido', paused:'En pausa', delayed:'Atrasado' };
+  return labels[status] || status;
+}
 
 function parseDateOnly(str){
   if(!str) return null;
@@ -3549,14 +3474,27 @@ function getPaymentCalendarFlag(info){
   var days = Math.round((due.getTime()-today.getTime())/86400000);
   if(days < 0) return { level:'red', label:'Vencido', days:days };
   if(days <= PAYMENT_WARN_DAYS) return { level:'yellow', label:'Próximo vencimiento', days:days };
-  return { level:'green', label:'Al día', days:days };
+  return { level:'green', label:'Al día (fecha)', days:days };
 }
 
 function paymentFlagBadgeHtml(info){
-  var f = getPaymentCalendarFlag(info||{});
-  var style = { red:'background:#FEE2E2;color:#B91C1C', yellow:'background:#FEF3C7;color:#92400E', green:'background:#DCFCE7;color:#166534', gray:'background:var(--gray);color:var(--t3)' };
-  var extra = f.days!==null && f.level!=='green' ? ' · '+Math.abs(f.days)+'d' : '';
-  return '<span class="badge" style="'+style[f.level]+'">'+f.label+extra+'</span>';
+  var status = normalizePaymentStatus(info&&info.paymentStatus);
+  var cal = getPaymentCalendarFlag(info||{});
+  var styleMap = {
+    current:'background:#DCFCE7;color:#166534',
+    pending:'background:#FEF3C7;color:#92400E',
+    late:'background:#FEE2E2;color:#B91C1C',
+    overdue:'background:#FEE2E2;color:#B91C1C',
+    paused:'background:var(--gray);color:var(--t3)'
+  };
+  var extra = cal.days!==null && cal.level!=='green' ? ' · cal '+Math.abs(cal.days)+'d' : '';
+  return '<span class="badge" style="'+(styleMap[status]||'background:var(--gray);color:var(--t3)')+'">'+paymentStatusLabel(status)+extra+'</span>';
+}
+
+function isPaymentAttention(info){
+  var status = normalizePaymentStatus(info&&info.paymentStatus);
+  if(status==='late' || status==='overdue' || status==='pending') return true;
+  return getPaymentCalendarFlag(info||{}).level==='red';
 }
 
 function isForeignPayer(info){
@@ -3567,28 +3505,90 @@ function isForeignPayer(info){
   return false;
 }
 
-function buildPaymentReminderWaUrl(name, info){
+function studentPhoneDigits(info){
+  return String((info&&info.phone)||'').replace(/\D/g,'');
+}
+
+function buildPaymentReminderMessage(name, info){
   var foreign = isForeignPayer(info||{});
-  var msg = foreign
-    ? 'Hola '+(name||'').trim()+', recordatorio de pago Kamuk School. PayPal: '+INFINITY_PAYPAL
-    : 'Hola '+(name||'').trim()+', recordatorio de pago Kamuk School. SINPE Móvil: '+INFINITY_SINPE;
-  return 'https://wa.me/'+INFINITY_WA+'?text='+encodeURIComponent(msg);
+  var payHint = foreign ? ('PayPal: '+INFINITY_PAYPAL) : INFINITY_SINPE_HINT;
+  return 'Hola '+(name||'').trim()+'\nRecordatorio de pago Kamuk School.\n'+payHint;
+}
+
+function buildPaymentReminderWaUrl(name, info){
+  return 'https://wa.me/'+INFINITY_WA+'?text='+encodeURIComponent(buildPaymentReminderMessage(name, info));
+}
+
+async function waOpsFetch(path, opts){
+  opts = opts || {};
+  var headers = Object.assign({
+    'Content-Type': 'application/json',
+    'X-Bridge-Secret': WA_BRIDGE_SECRET
+  }, opts.headers||{});
+  var r = await fetch(WA_OPS_API + path, Object.assign({}, opts, { headers: headers }));
+  var data = {};
+  try{ data = await r.json(); }catch(e){}
+  if(!r.ok){
+    var err = new Error(data.error || ('HTTP '+r.status));
+    err.status = r.status;
+    err.data = data;
+    throw err;
+  }
+  return data;
+}
+
+async function enqueueWhatsAppMessage(phone, message, email){
+  var digits = String(phone||'').replace(/\D/g,'');
+  if(!digits || digits.length < 8) throw new Error('sin_telefono');
+  return waOpsFetch('/agent/whatsapp/remind-payment', {
+    method: 'POST',
+    body: JSON.stringify({ phone: digits, message: message, email: email||null })
+  });
+}
+
+async function enqueuePaymentReminder(name, info, sid){
+  var phone = studentPhoneDigits(info);
+  if(!phone){ showToast('Este alumno no tiene teléfono en la ficha','err'); return; }
+  try{
+    await enqueueWhatsAppMessage(phone, buildPaymentReminderMessage(name, info), info&&info.email);
+    await logAction('Encoló recordatorio WA de pago', (name||phone)+(sid?(' · '+sid):''));
+    showToast('Recordatorio encolado — el bridge lo envía si está encendido');
+  }catch(e){
+    showToast('No se pudo encolar: '+(e.message||e)+'. Usá wa.me fallback.','err');
+  }
 }
 
 function paymentWaReminderBtn(name, info){
-  return '<a href="'+buildPaymentReminderWaUrl(name,info)+'" target="_blank" rel="noopener" class="btn btn-green btn-sm" onclick="event.stopPropagation();"><i class="ti ti-brand-whatsapp"></i> Recordatorio pago</a>';
+  return paymentWaReminderBtnForStudent(null, name, info);
+}
+
+function paymentWaReminderBtnForStudent(sid, name, info){
+  var s = sid ? DB[sid] : null;
+  var n = name || (s&&s.info&&s.info.name) || 'Estudiante';
+  var inf = info || (s&&s.info) || {};
+  var phone = studentPhoneDigits(inf);
+  var btn = sid
+    ? ('<button type="button" class="btn btn-green btn-sm" data-sid="'+sid+'" onclick="event.stopPropagation();enqueuePaymentReminderFromSid(this.dataset.sid)"><i class="ti ti-brand-whatsapp"></i> Recordatorio pago</button>')
+    : ('<button type="button" class="btn btn-green btn-sm" data-phone="'+phone+'" data-name="'+String(n).replace(/"/g,'&quot;')+'" onclick="event.stopPropagation();enqueuePaymentReminder(this.dataset.name,{phone:this.dataset.phone},null)"><i class="ti ti-brand-whatsapp"></i> Recordatorio pago</button>');
+  return btn + (phone ? ('<a href="'+buildPaymentReminderWaUrl(n,inf)+'" target="_blank" rel="noopener" class="btn btn-outline btn-sm" onclick="event.stopPropagation();" title="Fallback manual">wa.me</a>') : '');
+}
+
+async function enqueuePaymentReminderFromSid(sid){
+  var s = DB[sid]; if(!s) return;
+  await enqueuePaymentReminder((s.info&&s.info.name)||'Estudiante', s.info||{}, sid);
+}
+
+function suggestPaymentStatusFromCalendar(info){
+  if(!info) return null;
+  var f = getPaymentCalendarFlag(info);
+  return f.level==='red' ? 'overdue' : (f.level==='yellow' ? 'pending' : null);
 }
 
 function syncPaymentStatusFromCalendar(info){
-  if(!info) return;
-  var f = getPaymentCalendarFlag(info);
-  info.paymentStatus = f.level==='red' ? 'delayed' : 'current';
+  return suggestPaymentStatusFromCalendar(info);
 }
 
-function renderInfinityNewsSection(){
-  return '<div class="card"><div class="card-title"><i class="ti ti-news"></i>News — Infinity</div>'
-    +'<div style="font-size:13px;line-height:1.7;color:var(--text);max-height:480px;overflow-y:auto;padding-right:6px;">'+getInfinityNewsHtml()+'</div></div>';
-}
+function renderInfinityNewsSection(){ return ''; }
 
 function getInfinityNewsHtml(){
   return '<p style="font-weight:800;font-size:15px;color:var(--navy);">BIENVENIDO A INFINITY</p>'
@@ -4099,7 +4099,7 @@ function renderFinance(m){
   var rows = students.map(function(s){
     var paid = (s.payments||[]).reduce(function(a,p){ return a+(parseFloat(p.amount)||0); },0);
     grandTotal += paid;
-    return { name:(s.info&&s.info.name)||'—', fee:(s.info&&s.info.fee)||0, paid, status:(s.info&&s.info.paymentStatus)||'current', count:(s.payments||[]).length };
+    return { name:(s.info&&s.info.name)||'—', fee:(s.info&&s.info.fee)||0, paid, status:(s.info&&s.info.paymentStatus)||'current', nextDue:(s.info&&s.info.nextDue)||'', count:(s.payments||[]).length };
   }).filter(function(r){ return r.paid>0 || r.fee>0; }).sort(function(a,b){ return b.paid-a.paid; });
 
   m.innerHTML = '<div class="fade">'
@@ -4115,9 +4115,7 @@ function renderFinance(m){
     +'<div class="card"><div class="card-title"><i class="ti ti-list"></i>Detalle por estudiante</div>'
     +(rows.length?'<table class="tbl"><thead><tr><th>Estudiante</th><th>Fee mensual</th><th>Total pagado</th><th>Pagos registrados</th><th>Estado</th></tr></thead><tbody>'
       +rows.map(function(r){
-        var statusBadge = r.status==='delayed'
-          ? '<span class="badge" style="background:var(--rb);color:var(--rm);">DELAYED</span>'
-          : '<span class="badge" style="background:var(--gb);color:var(--gm);">Al día</span>';
+        var statusBadge = paymentFlagBadgeHtml({ paymentStatus: r.status, nextDue: r.nextDue });
         return '<tr><td><strong>'+r.name+'</strong></td><td>CRC '+parseInt(r.fee).toLocaleString()+'</td><td><strong style="color:var(--gm);">CRC '+r.paid.toLocaleString()+'</strong></td><td>'+r.count+'</td><td>'+statusBadge+'</td></tr>';
       }).join('')+'</tbody></table>'
     :'<div style="font-size:13px;color:var(--t3);">Sin pagos registrados aún.</div>')
@@ -4138,7 +4136,7 @@ function renderPortalAccessCard(s, id, isMaster){
     html += '<div style="background:var(--gray);border-radius:var(--r);padding:0.875rem;"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--t3);margin-bottom:4px;">Usuario</div><div style="font-size:13px;font-weight:600;font-family:monospace;">'+s.portalUser+'</div></div>';
     html += '<div style="background:var(--gray);border-radius:var(--r);padding:0.875rem;"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--t3);margin-bottom:4px;">Contraseña</div><div style="font-size:13px;font-weight:600;font-family:monospace;">'+s.portalPass+'</div></div>';
     html += '</div>';
-    html += '<div class="ib ib-navy" style="margin-top:10px;">Compartí estas credenciales con el estudiante. Portal: entrada del sitio (<code>…/Operarive-Training-Database/</code> — index), sincronizado en tiempo real.</div>';
+    html += '<div class="ib ib-navy" style="margin-top:10px;">Compartí estas credenciales con el estudiante para que acceda al Portal del Estudiante (archivo separado, sincronizado en tiempo real).</div>';
   } else {
     html += '<div style="font-size:13px;color:var(--t3);">Sin credenciales generadas. El estudiante no puede acceder al portal hasta que generés su usuario y contraseña.</div>';
   }
@@ -4916,6 +4914,22 @@ function requestModeChange(sid){
   );
 }
 
+function nexoraEngineFormIds(){
+  return {
+    type:'nexora-type',
+    industry:'nexora-industry',
+    difficulty:'nexora-difficulty',
+    targetRole:'nexora-target-role',
+    title:'nexora-title',
+    desc:'nexora-desc',
+    participants:'nexora-participants',
+    questions:'nexora-questions',
+    objectives:'nexora-objectives',
+    passScore:'nexora-pass-score',
+    justify:'nexora-justify'
+  };
+}
+
 function syncNexoraEngineIndustryUI(){
   var typeEl=document.getElementById('nexora-type');
   var indEl=document.getElementById('nexora-industry');
@@ -4933,54 +4947,125 @@ function syncNexoraEngineIndustryUI(){
   if(groupEl){
     groupEl.style.opacity= NEXORA_INDUSTRY&&NEXORA_INDUSTRY.industryAffectsScenarioPool(type)?'1':'0.85';
   }
+  var isStar=type==='mock_interview';
+  var roleG=document.getElementById('nexora-role-group');
+  var qG=document.getElementById('nexora-questions-group');
+  if(roleG) roleG.style.display=isStar?'block':'none';
+  if(qG) qG.style.display=isStar?'block':'none';
+}
+
+function nexoraEngineApplyTemplate(){
+  syncNexoraEngineIndustryUI();
+  if(typeof NEXORA_SIM_PROGRAM==='undefined') return;
+  var typeEl=document.getElementById('nexora-type');
+  var indEl=document.getElementById('nexora-industry');
+  NEXORA_SIM_PROGRAM.applyTemplateToForm(
+    typeEl?typeEl.value:'customer_service',
+    indEl?indEl.value:'corporate',
+    nexoraEngineFormIds()
+  );
+  syncNexoraEngineIndustryUI();
+}
+
+function nexoraEngineRefreshQuestions(){
+  if(typeof NEXORA_SIM_PROGRAM==='undefined') return;
+  var role=(document.getElementById('nexora-target-role')||{}).value||'Customer Support Specialist';
+  var bank=NEXORA_SIM_PROGRAM.ROLE_QUESTION_BANKS[role]||NEXORA_SIM_PROGRAM.ROLE_QUESTION_BANKS['Customer Support Specialist'];
+  var qEl=document.getElementById('nexora-questions');
+  if(qEl&&bank) qEl.value=bank.join('\n');
+}
+
+function openNexoraProgramModal(sid){
+  var s=DB[sid]; if(!s) return;
+  document.getElementById('nexora-sid').value=sid;
+  var deact=document.getElementById('nexora-deactivate-btn');
+  var saveBtn=document.getElementById('nexora-save-btn');
+  if(deact) deact.style.display=s.nexoraEnabled?'inline-flex':'none';
+  if(saveBtn) saveBtn.innerHTML=s.nexoraEnabled
+    ? '<i class="ti ti-device-floppy"></i>Actualizar programa'
+    : '<i class="ti ti-sparkles"></i>Activar y guardar';
+  syncNexoraEngineIndustryUI();
+  if(s.nexoraConfig&&typeof NEXORA_SIM_PROGRAM!=='undefined'){
+    document.getElementById('nexora-simulation-id').value=s.nexoraConfig.simulationId||'';
+    NEXORA_SIM_PROGRAM.fillEngineFormFromProgram(s.nexoraConfig, nexoraEngineFormIds());
+    if(s.nexoraJustification) document.getElementById('nexora-justify').value=s.nexoraJustification;
+  } else {
+    document.getElementById('nexora-simulation-id').value='';
+    document.getElementById('nexora-justify').value='';
+    nexoraEngineApplyTemplate();
+  }
+  syncNexoraEngineIndustryUI();
+  showModal('modal-nexora-justify');
 }
 
 function toggleStudentNexora(sid){
   if(!hasMasterAccess()) return;
   var s = DB[sid]; if(!s) return;
-  if(s.nexoraEnabled){
-    confirmAction('Desactivar Nexora', '¿Desactivar el acceso a Nexora para '+((s.info&&s.info.name)||'este estudiante')+'?', async function(){
-      s.nexoraEnabled = false; s.nexoraJustification = '';
-      await dbSet('kamuk_students', sid, s); DB[sid]=s;
-      showToast('Nexora desactivado'); openStudent(sid);
-    }, 'Sí, desactivar');
-  } else {
-    document.getElementById('nexora-sid').value = sid;
-    document.getElementById('nexora-justify').value = '';
-    syncNexoraEngineIndustryUI();
-    showModal('modal-nexora-justify');
-  }
+  openNexoraProgramModal(sid);
+}
+
+async function deactivateStudentNexoraFromModal(){
+  var sid=document.getElementById('nexora-sid').value;
+  var s=DB[sid]; if(!s) return;
+  confirmAction('Desactivar Nexora', '¿Desactivar Nexora y limpiar el programa para '+((s.info&&s.info.name)||'este estudiante')+'?', async function(){
+    s.nexoraEnabled=false;
+    s.nexoraJustification='';
+    s.nexoraConfig=null;
+    await dbSet('kamuk_students', sid, s); DB[sid]=s;
+    closeModal('modal-nexora-justify');
+    showToast('Nexora desactivado — programa eliminado');
+    openStudent(sid);
+  }, 'Sí, desactivar');
 }
 
 async function confirmStudentNexora(){
   var sid = document.getElementById('nexora-sid').value;
-  var justification = document.getElementById('nexora-justify').value.trim();
-  var type = document.getElementById('nexora-type').value;
-  var industry = document.getElementById('nexora-industry').value;
-  var difficulty = parseInt(document.getElementById('nexora-difficulty').value);
   var s = DB[sid]; if(!s) return;
-
-  var typeLabels = {mock_interview:'STAR Mock Interview',customer_service:'Customer Service',team_meeting:'Team Meeting',problem_solving:'Problem Solving',presentation:'Executive Presentation',negotiation:'Negotiation',stakeholder:'Stakeholder Discussion'};
+  if(typeof NEXORA_SIM_PROGRAM==='undefined'){
+    showToast('Falta nexora-simulation-program.js','err');
+    return;
+  }
+  var existingId=(document.getElementById('nexora-simulation-id')||{}).value||(s.nexoraConfig&&s.nexoraConfig.simulationId)||'';
+  var program=NEXORA_SIM_PROGRAM.readEngineForm(nexoraEngineFormIds(), {
+    simulationId: existingId || undefined,
+    setBy: SESSION.name
+  });
+  program.justification=(document.getElementById('nexora-justify')||{}).value||'';
+  program.setAt=new Date().toISOString();
+  program.setBy=SESSION.name;
 
   s.nexoraEnabled = true;
-  s.nexoraJustification = justification;
-  s.nexoraConfig = {
-    type, typeLabel: typeLabels[type]||type,
-    industry, industryLabel: (typeof NEXORA_INDUSTRY!=='undefined'?NEXORA_INDUSTRY.labelForEngineValue(industry):industry),
-    difficulty,
-    poolKey: (typeof NEXORA_INDUSTRY!=='undefined'?NEXORA_INDUSTRY.scenarioPoolKey({type:type,industry:industry}):null),
-    setAt: new Date().toISOString(),
-    setBy: SESSION.name
-  };
+  s.nexoraJustification = program.justification;
+  s.nexoraConfig = program;
 
   if(!s.notes) s.notes=[];
-  s.notes.push({ date:new Date().toISOString(), trainer:SESSION.name, text:'Nexora activado — Escenario: '+(typeLabels[type]||type)+' · '+(s.nexoraConfig.industryLabel||industry)+' · Dificultad '+difficulty+'/5'+(justification?' · '+justification:''), phase:parseInt((s.info&&s.info.phase))||1 });
+  s.notes.push({
+    date:new Date().toISOString(),
+    trainer:SESSION.name,
+    text:'Nexora programado — '+(program.typeLabel||program.type)+' · '+(program.targetRole||program.industryLabel||'')+' · pin '+program.simulationId+' · Dificultad '+program.difficulty+'/5'+(program.justification?' · '+program.justification:''),
+    phase:parseInt((s.info&&s.info.phase))||1
+  });
   await dbSet('kamuk_students', sid, s); DB[sid]=s;
-  await logAction('Activó Nexora individual', ((s.info&&s.info.name)||sid)+' — '+(typeLabels[type]||type));
+  await logAction('Programó Nexora', ((s.info&&s.info.name)||sid)+' — '+(program.typeLabel||program.type)+' · '+program.simulationId);
   closeModal('modal-nexora-justify');
-  showToast('Nexora activado — '+(typeLabels[type]||type)+' para '+((s.info&&s.info.name)||'el estudiante'));
+  showToast('Programa Nexora guardado — '+(program.typeLabel||program.type));
   openStudent(sid);
 }
+
+function previewNexoraFromModal(){
+  if(typeof NEXORA_SIM_PROGRAM==='undefined') return;
+  var program=NEXORA_SIM_PROGRAM.readEngineForm(nexoraEngineFormIds(), {
+    simulationId:(document.getElementById('nexora-simulation-id')||{}).value||undefined,
+    setBy:SESSION.name
+  });
+  var sc=NEXORA_SIM_PROGRAM.programToScenario(program);
+  localStorage.setItem('nexora_scenario', JSON.stringify(program));
+  localStorage.setItem('nexora_force_scenario', JSON.stringify(sc));
+  localStorage.setItem('nexora_agent', SESSION.name||'Trainer');
+  window.open('nexora.html','NexoraPreview','width=1200,height=800,resizable=yes');
+}
+
+
 
 function populateCompanionKpiOptions(selected){
   var box = document.getElementById('companion-focus-kpis');
@@ -5473,23 +5558,33 @@ function openBroadcastModal(){
   showModal('modal-broadcast');
 }
 
-function sendBroadcastTo(phone, name, btn){
+async function sendBroadcastTo(phone, name, btn){
   var text = document.getElementById('bc-text').value.trim();
   if(!text){ showToast('Escribí el mensaje primero','err'); return; }
-  var url = 'https://wa.me/'+phone.replace(/[^0-9]/g,'')+'?text='+encodeURIComponent(text);
-  window.open(url,'_blank');
-  if(btn){ btn.innerHTML='<i class="ti ti-check"></i>Abierto'; btn.classList.remove('btn-green'); btn.classList.add('btn-outline'); btn.disabled=true; }
+  try{
+    await enqueueWhatsAppMessage(phone, 'Hola '+(name||'')+',\n'+text);
+    if(btn){ btn.innerHTML='<i class="ti ti-check"></i>Encolado'; btn.classList.remove('btn-green'); btn.classList.add('btn-outline'); btn.disabled=true; }
+    showToast('Encolado para '+(name||phone));
+  }catch(e){
+    showToast('Error '+(name||phone)+': '+(e.message||e),'err');
+  }
 }
 
 async function sendBroadcastAll(){
   var text = document.getElementById('bc-text').value.trim();
   if(!text){ showToast('Escribí el mensaje primero','err'); return; }
   var btns = document.querySelectorAll('.bc-send-btn');
+  if(btns.length > 25 && !confirm('Vas a encolar '+btns.length+' mensajes. ¿Continuar?')) return;
+  var ok = 0, fail = 0;
   for(var i=0;i<btns.length;i++){
-    sendBroadcastTo(btns[i].dataset.phone, btns[i].dataset.name, btns[i]);
-    await new Promise(function(res){ setTimeout(res, 600); });
+    try{
+      await sendBroadcastTo(btns[i].dataset.phone, btns[i].dataset.name, btns[i]);
+      ok++;
+    }catch(e){ fail++; }
+    await new Promise(function(res){ setTimeout(res, 200); });
   }
-  await logAction('Envió comunicado general por WhatsApp', text.substring(0,80));
+  await logAction('Encoló comunicado general WA', text.substring(0,80)+' · ok='+ok+' fail='+fail);
+  showToast('Comunicado: '+ok+' encolados'+(fail?(' · '+fail+' fallidos'):''));
 }
 
 
@@ -5820,9 +5915,9 @@ function renderSuperBrain(m){
     +'<div id="sb-db-status" class="ib ib-amber" style="margin-top:8px;">Conectando a base de datos...</div>'
     +'<div style="display:grid;grid-template-columns:1fr minmax(300px,380px);gap:14px;margin-top:12px;align-items:start;">'
     +'<div style="background:linear-gradient(160deg,#1e1035 0%,#2d1b4e 100%);border-radius:16px;padding:16px;border:1px solid rgba(192,132,252,0.25);">'
-    +'<div style="font-size:10px;font-weight:800;color:#C084FC;letter-spacing:0.12em;margin-bottom:8px;">A.D.A.M. · NEXUS MATRIX</div>'
+    +'<div style="font-size:10px;font-weight:800;color:#79B9E8;letter-spacing:0.12em;margin-bottom:8px;">A.D.A.M. · NEXUS MATRIX</div>'
     +'<div id="sb-msgs" style="max-height:340px;overflow-y:auto;margin-bottom:10px;padding-right:4px;"></div>'
-    +'<div id="sb-voice-status" style="font-size:12px;color:#C084FC;text-align:center;min-height:18px;margin-bottom:8px;"></div>'
+    +'<div id="sb-voice-status" style="font-size:12px;color:#79B9E8;text-align:center;min-height:18px;margin-bottom:8px;"></div>'
     +'<div style="display:flex;gap:8px;align-items:center;">'
     +'<input id="sb-input" class="inp" placeholder="Orden… o pegá un link de TikTok para importarlo" style="flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(192,132,252,0.3);color:white;border-radius:12px;" onkeydown="if(event.key===\'Enter\')superBrainTalk();">'
     +'<button id="sb-mic-btn" title="Mantené presionado para hablar (PTT)" style="width:44px;height:44px;background:rgba(107,114,128,0.4);border:1px solid rgba(192,132,252,0.35);color:#9CA3AF;border-radius:12px;cursor:pointer;font-size:18px;user-select:none;-webkit-user-select:none;"><i class="ti ti-microphone"></i></button>'
@@ -5864,7 +5959,34 @@ function renderSuperBrain(m){
     +'<button class="btn btn-outline btn-sm" style="margin-top:6px;" onclick="tiktokJillImportUrls()"><i class="ti ti-download"></i>Importar URLs</button>'
     +'</div>'
     +'<div class="card"><div class="card-title"><i class="ti ti-school"></i>Clase de John → Super Brain</div>'
-    +'<div class="ib ib-amber" style="font-size:11px;margin-bottom:8px;">Pegá transcripción de clase, o subí foto de pizarra/material. Se convierte en doctrina y alimenta Jill + Alice + Nexora.</div>'
+    +'<div class="ib ib-amber" style="font-size:11px;margin-bottom:8px;">Grabá o subí audio de clase → transcripción → <strong>3 capas</strong> (Pedagogía / Entrega / Estructuras) → revisar → publicar a Jill + Alice + Nexora. También podés pegar texto o subir foto de pizarra.</div>'
+    +'<input class="inp" id="sb-johnny-title" placeholder="Título de la clase (opcional)" style="margin-bottom:8px;">'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">'
+    +'<button type="button" class="btn btn-navy btn-sm" onclick="johnnyRecStart()"><i class="ti ti-microphone"></i>Grabar</button>'
+    +'<button type="button" class="btn btn-outline btn-sm" onclick="johnnyRecPause()"><i class="ti ti-player-pause"></i>Pausar</button>'
+    +'<button type="button" class="btn btn-outline btn-sm" onclick="johnnyRecStop()"><i class="ti ti-player-stop"></i>Detener</button>'
+    +'<span id="sb-johnny-timer" style="font-variant-numeric:tabular-nums;font-size:13px;min-width:48px;">00:00</span>'
+    +'<div style="flex:1;min-width:80px;height:6px;background:rgba(0,0,0,.08);border-radius:4px;overflow:hidden;"><div id="sb-johnny-level" style="height:100%;width:2%;background:var(--purple);transition:width .1s;"></div></div>'
+    +'<label class="btn btn-outline btn-sm" style="cursor:pointer;"><i class="ti ti-upload"></i> Subir audio<input type="file" id="sb-johnny-audio" accept="audio/*,.webm,.mp3,.m4a,.wav" style="display:none" onchange="johnnyRecUpload(this)"></label>'
+    +'</div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">'
+    +'<button type="button" class="btn btn-outline btn-sm" onclick="johnnyRecSavePending()"><i class="ti ti-inbox"></i>Guardar pendiente</button>'
+    +'<button type="button" class="btn btn-navy btn-sm" onclick="johnnyRecPublish()"><i class="ti ti-broadcast"></i>Publicar e implementar</button>'
+    +'<button type="button" class="btn btn-outline btn-sm" onclick="johnnyRecResplit()"><i class="ti ti-layers-intersect"></i>Re-separar capas</button>'
+    +'</div>'
+    +'<div id="sb-johnny-status" style="font-size:11px;color:var(--t2);margin-bottom:8px;"></div>'
+    +'<div id="sb-johnny-layers" style="display:none;margin-bottom:10px;">'
+    +'<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;">'
+    +'<button type="button" class="btn btn-outline btn-sm btn-navy" id="sb-johnny-btn-pedagogy" onclick="JohnnyClassRecorder.showTab(\'pedagogy\')">Pedagogía</button>'
+    +'<button type="button" class="btn btn-outline btn-sm" id="sb-johnny-btn-delivery" onclick="JohnnyClassRecorder.showTab(\'delivery\')">Entrega</button>'
+    +'<button type="button" class="btn btn-outline btn-sm" id="sb-johnny-btn-structures" onclick="JohnnyClassRecorder.showTab(\'structures\')">Estructuras</button>'
+    +'<button type="button" class="btn btn-outline btn-sm" id="sb-johnny-btn-transcript" onclick="JohnnyClassRecorder.showTab(\'transcript\')">Transcript</button>'
+    +'</div>'
+    +'<div id="sb-johnny-tab-pedagogy" style="font-size:12px;max-height:180px;overflow:auto;"></div>'
+    +'<div id="sb-johnny-tab-delivery" style="display:none;font-size:12px;max-height:180px;overflow:auto;"></div>'
+    +'<div id="sb-johnny-tab-structures" style="display:none;font-size:12px;max-height:180px;overflow:auto;"></div>'
+    +'<pre id="sb-johnny-tab-transcript" style="display:none;font-size:11px;max-height:180px;overflow:auto;white-space:pre-wrap;margin:0;"></pre>'
+    +'</div>'
     +'<textarea class="inp" id="sb-class-transcript" placeholder="Pegá transcripción de clase / TikTok / explicación tuya…" style="min-height:90px;font-size:12px;"></textarea>'
     +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;">'
     +'<button class="btn btn-outline btn-sm" onclick="superBrainAnalyzeClass()"><i class="ti ti-search"></i>Analizar fallos</button>'
@@ -5969,7 +6091,7 @@ function superBrainRenderMsgs(){
   el.innerHTML = _sbUi.history.map(function(m){
     var isBrain = m.role === 'brain';
     return '<div style="display:flex;flex-direction:column;align-items:'+(isBrain?'flex-start':'flex-end')+';margin-bottom:12px;">'
-      +'<div style="font-size:10px;color:'+(isBrain?'#C084FC':'rgba(255,255,255,0.4)')+';font-weight:700;margin-bottom:4px;">'+(isBrain?'A.D.A.M.':'VOS')+'</div>'
+      +'<div style="font-size:10px;color:'+(isBrain?'#79B9E8':'rgba(255,255,255,0.4)')+';font-weight:700;margin-bottom:4px;">'+(isBrain?'A.D.A.M.':'VOS')+'</div>'
       +'<div style="max-width:92%;background:'+(isBrain?'rgba(192,132,252,0.12)':'rgba(255,255,255,0.08)')
       +';border:1px solid '+(isBrain?'rgba(192,132,252,0.28)':'rgba(255,255,255,0.12)')
       +';border-radius:'+(isBrain?'4px 14px 14px 14px':'14px 4px 14px 14px')
@@ -6237,6 +6359,67 @@ async function superBrainAnalyzeClass(){
     showToast('Clase analizada — refuerzos al cerebro');
     superBrainRefresh();
   }catch(e){ if(st) st.textContent = e.message; showToast(e.message,'err'); }
+}
+
+async function johnnyRecStart(){
+  try{
+    if(!window.JohnnyClassRecorder) throw new Error('johnny-class-recorder.js no cargó');
+    await JohnnyClassRecorder.startRecord();
+  }catch(e){ showToast(e.message,'err'); JohnnyClassRecorder && JohnnyClassRecorder.setStatus(e.message); }
+}
+function johnnyRecPause(){
+  try{ JohnnyClassRecorder.pauseRecord(); }catch(e){ showToast(e.message,'err'); }
+}
+function johnnyRecStop(){
+  try{ JohnnyClassRecorder.stopRecord(); }catch(e){ showToast(e.message,'err'); }
+}
+async function johnnyRecUpload(input){
+  var file = input && input.files && input.files[0];
+  if(!file) return;
+  try{
+    JohnnyClassRecorder.setStatus('Subiendo audio…');
+    var data = await JohnnyClassRecorder.processFile(file, true);
+    showToast('Capas listas (pendiente) — revisá y publicá');
+    if(data && data.lessonId) superBrainRefresh();
+  }catch(e){ JohnnyClassRecorder.setStatus(e.message); showToast(e.message,'err'); }
+  if(input) input.value = '';
+}
+async function johnnyRecSavePending(){
+  try{
+    var data;
+    if(window.JohnnyClassRecorder && JohnnyClassRecorder.processLast){
+      try{
+        data = await JohnnyClassRecorder.processLast(true);
+      }catch(e1){
+        if(!/Grabá o subí/.test(e1.message||'')) throw e1;
+        data = await JohnnyClassRecorder.reSplit(true, true);
+      }
+    }
+    showToast('Clase Johnny en pendiente');
+    superBrainRefresh();
+    return data;
+  }catch(e){ JohnnyClassRecorder && JohnnyClassRecorder.setStatus(e.message); showToast(e.message,'err'); }
+}
+async function johnnyRecPublish(){
+  try{
+    var data;
+    try{
+      data = await JohnnyClassRecorder.processLast(false);
+    }catch(e1){
+      if(!/Grabá o subí/.test(e1.message||'')) throw e1;
+      data = await JohnnyClassRecorder.reSplit(false, true);
+    }
+    showToast('Publicado e implementado en Jill/Alice/Nexora');
+    superBrainRefresh();
+    return data;
+  }catch(e){ JohnnyClassRecorder && JohnnyClassRecorder.setStatus(e.message); showToast(e.message,'err'); }
+}
+async function johnnyRecResplit(){
+  try{
+    var data = await JohnnyClassRecorder.reSplit(true, false);
+    showToast('Capas recalculadas (sin publicar)');
+    return data;
+  }catch(e){ JohnnyClassRecorder.setStatus(e.message); showToast(e.message,'err'); }
 }
 
 async function superBrainIngestTeaching(review){
@@ -6622,15 +6805,17 @@ function getActiveClassFor(sid){
   return Object.values(ATTENDANCE).find(function(a){ return a.studentId===sid && a.status==='in-progress'; });
 }
 
-async function startClass(sid){
+async function startClass(sid, eventId){
   var s = DB[sid]; if(!s) return;
   if(getActiveClassFor(sid)){ showToast('Ya hay una clase en curso para este estudiante','err'); return; }
   var id = 'ATT-'+Date.now();
+  var today = crTodayYmd();
   var rec = {
     id, studentId: sid, studentName:(s.info&&s.info.name)||'', trainer: SESSION.name,
-    date: new Date().toISOString().split('T')[0],
+    date: today,
     startTime: new Date().toISOString(), endTime: null, status:'in-progress',
-    studentPortalAccess: !!PORTAL_ACCESS['PORTALACCESS-'+sid+'_'+new Date().toISOString().split('T')[0]]
+    eventId: eventId || null,
+    studentPortalAccess: !!PORTAL_ACCESS['PORTALACCESS-'+sid+'_'+today]
   };
   ATTENDANCE[id]=rec;
   await dbSet('kamuk_sessions', id, rec);
@@ -6668,12 +6853,33 @@ function renderAttendanceButtons(sid){
 }
 
 // ── VISTA DE ASISTENCIA / REPORTE ─────────────────────────
+function eventsForDay(ymd){
+  return Object.keys(CALENDAR_EVENTS).map(function(k){ return Object.assign({_id:k}, CALENDAR_EVENTS[k]); })
+    .filter(function(e){ return e && e.date===ymd; })
+    .sort(function(a,b){ return String(a.time||'').localeCompare(String(b.time||'')); });
+}
+
 function renderAttendanceView(m){
+  var today = crTodayYmd();
+  var todays = eventsForDay(today);
+  if(!hasMasterAccess()) todays = todays.filter(function(e){ return e.trainer===SESSION.name; });
+
   var all = Object.values(ATTENDANCE).sort(function(a,b){ return new Date(b.startTime)-new Date(a.startTime); });
   if(!hasMasterAccess()) all = all.filter(function(a){ return a.trainer===SESSION.name; });
 
-  var rows = all.map(function(a){
+  var dayRows = todays.map(function(e){
+    var sid = e.studentId || '';
+    var active = sid && getActiveClassFor(sid);
+    var attBtn = !sid ? '—'
+      : (active
+        ? '<button data-sid="'+sid+'" class="btn btn-red btn-sm" onclick="endClass(this.dataset.sid)"><i class="ti ti-player-stop"></i>Finalizar</button>'
+        : '<button data-sid="'+sid+'" data-eid="'+(e._id||e.id||'')+'" class="btn btn-green btn-sm" onclick="startClass(this.dataset.sid,this.dataset.eid)"><i class="ti ti-player-play"></i>Iniciar</button>');
+    return '<tr><td>'+(e.time||'—')+'</td><td><strong>'+(e.studentName||e.title||'—')+'</strong></td><td>'+(e.trainer||'—')+'</td><td>'+(e.type||'session')+'</td><td>'+attBtn+'</td></tr>';
+  }).join('');
+
+  var rows = all.slice(0,80).map(function(a){
     return '<tr><td>'+fmtDate(a.date)+'</td><td><strong>'+a.studentName+'</strong></td><td>'+a.trainer+'</td>'
+      +'<td>'+(a.eventId?'<span class="badge" style="background:var(--nl);color:var(--nd);">'+a.eventId+'</span>':'—')+'</td>'
       +'<td>'+(a.startTime?new Date(a.startTime).toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit'}):'—')+'</td>'
       +'<td>'+(a.endTime?new Date(a.endTime).toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit'}):'—')+'</td>'
       +'<td>'+(a.durationMin!=null?a.durationMin+' min':'<span class="badge" style="background:var(--gb);color:var(--gm);">En curso</span>')+'</td>'
@@ -6683,45 +6889,76 @@ function renderAttendanceView(m){
 
   m.innerHTML = '<div class="fade">'
     +'<h2 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:1rem;"><i class="ti ti-clipboard-check"></i> Asistencia'+(hasMasterAccess()?'':' — Mis clases')+'</h2>'
-    +'<div class="ib ib-navy">Cada clase se marca desde el perfil del estudiante ("Iniciar clase" / "Finalizar clase"). La columna "Acceso portal" indica si el estudiante entró a su Training Book ese día.</div>'
-    +'<div class="card">'
-    +(all.length ? '<table class="tbl"><thead><tr><th>Fecha</th><th>Estudiante</th><th>Trainer</th><th>Inicio</th><th>Fin</th><th>Duración</th><th>Acceso portal</th></tr></thead><tbody>'+rows+'</tbody></table>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-calendar"></i>Citas de hoy ('+today+')</div>'
+    +(todays.length ? '<table class="tbl"><thead><tr><th>Hora</th><th>Estudiante</th><th>Trainer</th><th>Tipo</th><th>Clase</th></tr></thead><tbody>'+dayRows+'</tbody></table>'
+      : '<div style="font-size:13px;color:var(--t3);padding:0.75rem 0;">Sin EVT-* para hoy.</div>')
+    +'</div>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-history"></i>Historial ATT</div>'
+    +(all.length ? '<table class="tbl"><thead><tr><th>Fecha</th><th>Estudiante</th><th>Trainer</th><th>EVT</th><th>Inicio</th><th>Fin</th><th>Duración</th><th>Portal</th></tr></thead><tbody>'+rows+'</tbody></table>'
       : '<div style="font-size:13px;color:var(--t3);text-align:center;padding:1rem 0;">Sin registros de asistencia todavía.</div>')
     +'</div></div>';
 }
 
 // ── PANEL SUPER ADMIN — operación en vivo ─────────────────
-function renderOpsOverview(m){
+async function renderOpsOverview(m){
   if(!hasMasterAccess()){ m.innerHTML='<div class="fade"><div class="ib ib-amber">Acceso restringido a Master Trainer / Super Admin.</div></div>'; return; }
 
-  var today = new Date().toISOString().split('T')[0];
-  var trainers = Object.values(TRAINERS).sort(function(a,b){return (a.name||'').localeCompare(b.name||'');});
+  var today = crTodayYmd();
+  var todays = eventsForDay(today);
+  var late = allStudents().filter(function(s){ return isPaymentAttention(s.info||{}); });
+  var leads = Object.keys(WA_LEADS||{}).map(function(k){ return Object.assign({_id:k}, WA_LEADS[k]); })
+    .filter(function(l){ return l && l.status==='needs_human'; })
+    .sort(function(a,b){ return String(b.at||'').localeCompare(String(a.at||'')); });
 
-  var rows = trainers.map(function(u){
-    var myStudents = allStudents().filter(function(s){ return ((s.info&&s.info.trainer)||'').trim().toLowerCase()===(u.name||'').trim().toLowerCase(); });
-    var withTracker = myStudents.filter(function(s){ return s.kpiTracker&&s.kpiTracker.length; });
-    var avgOverall = withTracker.length ? Math.round(withTracker.reduce(function(a,s){ return a+s.kpiTracker[s.kpiTracker.length-1].overall; },0)/withTracker.length) : null;
-    var classesToday = Object.values(ATTENDANCE).filter(function(a){ return a.trainer===u.name && a.date===today; });
-    var inProgress = classesToday.filter(function(a){ return a.status==='in-progress'; }).length;
-    var completed = classesToday.filter(function(a){ return a.status==='completed'; }).length;
-
-    return '<tr>'
-      +'<td><strong>'+u.name+'</strong><div style="font-size:11px;color:var(--t3);">'+roleLabel(u.role)+'</div></td>'
-      +'<td><span class="badge" style="background:var(--nl);color:var(--nd);">'+myStudents.length+'</span></td>'
-      +'<td>'+(avgOverall!==null?(avgOverall+'/100'):'—')+'</td>'
-      +'<td>'+(inProgress?'<span class="badge" style="background:var(--gb);color:var(--gm);">'+inProgress+' en curso</span>':'')+(completed?' <span class="badge" style="background:var(--nl);color:var(--nd);">'+completed+' hoy</span>':(inProgress?'':'<span style="color:var(--t3);">—</span>'))+'</td>'
-      +'<td><button data-name="'+u.name+'" class="btn btn-outline btn-sm" onclick="toggleOpsTrainerDetail(this.dataset.name)"><i class="ti ti-eye"></i>Ver estudiantes</button></td>'
-      +'</tr>'
-      +'<tr id="ops-detail-'+u.id+'" style="display:none;"><td colspan="5">'+renderOpsTrainerDetail(myStudents)+'</td></tr>';
-  }).join('');
-
-  var activeClasses = Object.values(ATTENDANCE).filter(function(a){ return a.status==='in-progress'; });
-
+  var outboxHtml = '<div style="font-size:13px;color:var(--t3);">Cargando cola…</div>';
   m.innerHTML = '<div class="fade">'
     +'<h2 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:1rem;"><i class="ti ti-activity"></i> Operación en vivo</h2>'
-    +(activeClasses.length ? '<div class="ib ib-navy"><strong><i class="ti ti-player-play"></i> Clases en curso ahora:</strong> '+activeClasses.map(function(a){return a.studentName+' con '+a.trainer;}).join(' · ')+'</div>' : '<div class="ib ib-navy">No hay clases en curso en este momento.</div>')
-    +'<div class="card"><table class="tbl"><thead><tr><th>Trainer</th><th>Estudiantes</th><th>Score KPI promedio</th><th>Clases hoy</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
-    +'</div>';
+    +'<div class="grid4" style="margin-bottom:1rem;">'
+    +'<div class="stat"><div class="stat-label">Citas hoy</div><div class="stat-val">'+todays.length+'</div></div>'
+    +'<div class="stat"><div class="stat-label">Cobros a revisar</div><div class="stat-val" style="color:var(--rm);">'+late.length+'</div></div>'
+    +'<div class="stat"><div class="stat-label">WA leads humano</div><div class="stat-val" style="color:var(--amber);">'+leads.length+'</div></div>'
+    +'<div class="stat"><div class="stat-label">Clases en curso</div><div class="stat-val">'+Object.values(ATTENDANCE).filter(function(a){return a.status==='in-progress';}).length+'</div></div>'
+    +'</div>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-calendar"></i>Agenda de hoy</div>'
+    +(todays.length ? '<table class="tbl"><thead><tr><th>Hora</th><th>Estudiante</th><th>Trainer</th><th></th></tr></thead><tbody>'
+      +todays.map(function(e){
+        return '<tr><td>'+(e.time||'—')+'</td><td>'+(e.studentName||e.title||'—')+'</td><td>'+(e.trainer||'—')+'</td>'
+          +'<td>'+(e.studentId?'<button class="btn btn-outline btn-sm" data-sid="'+e.studentId+'" onclick="openStudent(this.dataset.sid)">Abrir</button>':'')+'</td></tr>';
+      }).join('')+'</tbody></table>' : '<div style="font-size:13px;color:var(--t3);">Sin citas hoy.</div>')
+    +'</div>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-cash"></i>Cobros — one-click remind</div>'
+    +(late.length ? '<table class="tbl"><thead><tr><th>Estudiante</th><th>Estado</th><th>Vence</th><th></th></tr></thead><tbody>'
+      +late.map(function(st){
+        return '<tr><td>'+((st.info&&st.info.name)||st.id)+'</td><td>'+paymentFlagBadgeHtml(st.info||{})+'</td><td>'+(st.info&&st.info.nextDue?fmtDate(st.info.nextDue):'—')+'</td>'
+          +'<td style="display:flex;gap:4px;">'+paymentWaReminderBtnForStudent(st.id)+'</td></tr>';
+      }).join('')+'</tbody></table>' : '<div class="ib ib-green">Nadie en late/overdue/pending por ahora.</div>')
+    +'</div>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-brand-whatsapp"></i>Cola WA (outbox)</div><div id="ops-outbox">'+outboxHtml+'</div>'
+    +'<button class="btn btn-outline btn-sm" style="margin-top:8px;" onclick="refreshOpsOutbox()"><i class="ti ti-refresh"></i>Actualizar cola</button></div>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-user-exclamation"></i>Leads WA (pidieron agente)</div>'
+    +(leads.length ? '<table class="tbl"><thead><tr><th>Tel</th><th>Nombre</th><th>Último texto</th><th>Cuándo</th></tr></thead><tbody>'
+      +leads.map(function(l){
+        return '<tr><td>'+(l.phone||'—')+'</td><td>'+(l.studentName||'—')+'</td><td style="font-size:12px;max-width:280px;overflow:hidden;text-overflow:ellipsis;">'+(l.lastText||'—')+'</td><td>'+(l.at?fmtDate(l.at):'—')+'</td></tr>';
+      }).join('')+'</tbody></table>' : '<div style="font-size:13px;color:var(--t3);">Sin WA-LEAD-* pendientes.</div>')
+    +'</div></div>';
+
+  refreshOpsOutbox();
+}
+
+async function refreshOpsOutbox(){
+  var el = document.getElementById('ops-outbox');
+  if(!el) return;
+  try{
+    var data = await waOpsFetch('/billing/wa-outbox', { method: 'GET' });
+    var items = (data && data.items) || [];
+    if(!items.length){ el.innerHTML = '<div style="font-size:13px;color:var(--t3);">Cola vacía.</div>'; return; }
+    el.innerHTML = '<table class="tbl"><thead><tr><th>Tel</th><th>Mensaje</th><th>Estado</th></tr></thead><tbody>'
+      + items.slice(0,30).map(function(it){
+          return '<tr><td>'+(it.phone||'—')+'</td><td style="font-size:12px;max-width:320px;white-space:pre-wrap;">'+String(it.message||'').slice(0,160)+'</td><td>'+(it.status||'pending')+'</td></tr>';
+        }).join('')+'</tbody></table>';
+  }catch(e){
+    el.innerHTML = '<div class="ib ib-amber">No pude leer la cola ('+(e.message||e)+'). Revisá WA_BRIDGE_SECRET y que Render tenga el endpoint.</div>';
+  }
 }
 
 function toggleOpsTrainerDetail(name){
@@ -7146,192 +7383,9 @@ function sendVisualReportWA(sid){
   showShareModal('Reporte de Progreso', lines.join('\n'), ((s.info&&s.info.phone)||''));
 }
 
-// ── NETWORK TRAFFIC ───────────────────────────────────────
-var _netInterval = null;
-var _netData = {
-  pageviews: [], claireClicks: [], uploads: [], imports: [],
-  history: { labels:[], pv:[], cv:[], nx:[], alice:[] }
-};
-
+// ── NETWORK TRAFFIC (removed — fake metrics) ──
 async function renderNetworkTraffic(m){
-  if(!hasMasterAccess()){ m.innerHTML='<div class="fade"><div class="ib ib-amber">Acceso restringido a Master Trainer.</div></div>'; return; }
-  if(_netInterval) clearInterval(_netInterval);
-
-  m.innerHTML = '<div class="fade">'
-    +'<h2 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:1rem;"><i class="ti ti-radar"></i> Network Traffic · Tiempo Real</h2>'
-    +'<div class="ib ib-navy">Tráfico en vivo al sitio, interacciones con Claire y actividad de importaciones. Se actualiza cada 5 segundos.</div>'
-
-    // ── KPI Cards ──
-    +'<div class="grid4" style="margin-bottom:1rem;">'
-    +'<div class="stat"><div class="stat-label"><i class="ti ti-eye"></i> Page Views (sesión)</div><div class="stat-val" id="nt-pv" style="color:var(--gold);">—</div><div class="stat-sub" id="nt-pv-sub">Cargando...</div></div>'
-    +'<div class="stat"><div class="stat-label"><i class="ti ti-message-chatbot"></i> Clicks a Claire</div><div class="stat-val" id="nt-cv" style="color:#1F6AA8;">—</div><div class="stat-sub" id="nt-cv-sub">—</div></div>'
-    +'<div class="stat"><div class="stat-label"><i class="ti ti-cloud-upload"></i> KB Subidos</div><div class="stat-val" id="nt-kb" style="color:var(--gm);">—</div><div class="stat-sub" id="nt-kb-sub">—</div></div>'
-    +'<div class="stat"><div class="stat-label"><i class="ti ti-table-import"></i> Excel Imports</div><div class="stat-val" id="nt-xl" style="color:var(--amber);">—</div><div class="stat-sub" id="nt-xl-sub">—</div></div>'
-    +'</div>'
-
-    // ── Chart tráfico ──
-    +'<div class="card"><div class="card-title"><i class="ti ti-chart-line"></i>Tráfico — últimas 12 lecturas</div>'
-    +'<div class="chart-wrap"><canvas id="nt-chart"></canvas></div></div>'
-
-    // ── Log reciente ──
-    +'<div class="card"><div class="card-title"><i class="ti ti-list"></i>Actividad reciente</div>'
-    +'<div id="nt-log" style="max-height:260px;overflow-y:auto;font-size:12px;"></div></div>'
-
-    // ── Uploads ──
-    +'<div class="grid2">'
-    +'<div class="card"><div class="card-title"><i class="ti ti-cloud-upload"></i>Archivos subidos (sesión)</div><div id="nt-uploads-list" style="font-size:12px;color:var(--t2);">—</div></div>'
-    +'<div class="card"><div class="card-title"><i class="ti ti-table-import"></i>Excel imports (sesión)</div><div id="nt-imports-list" style="font-size:12px;color:var(--t2);">—</div></div>'
-    +'</div>'
-    +'</div>';
-
-  // Inicializar Chart.js
-  var ctx = document.getElementById('nt-chart').getContext('2d');
-  var ntChart = new Chart(ctx,{
-    type:'line',
-    data:{
-      labels:[],
-      datasets:[
-        {label:'Page Views',data:[],borderColor:'#F5A623',backgroundColor:'rgba(245,166,35,0.12)',tension:0.4,fill:true,pointRadius:3},
-        {label:'Clicks Claire',data:[],borderColor:'#1F6AA8',backgroundColor:'rgba(124,58,237,0.08)',tension:0.4,fill:false,pointRadius:3},
-        {label:'Nexora demo usage',data:[],borderColor:'#0F6E56',backgroundColor:'rgba(15,110,86,0.08)',tension:0.4,fill:false,pointRadius:3},
-        {label:'Alice usage',data:[],borderColor:'#A32D2D',backgroundColor:'rgba(163,45,45,0.08)',tension:0.4,fill:false,pointRadius:3}
-      ]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{font:{size:11}}}},
-      scales:{y:{beginAtZero:true,ticks:{font:{size:10}}},x:{ticks:{font:{size:10}}}}
-    }
-  });
-
-  async function fetchNetworkData(){
-    try{
-      // Intentar endpoint del servidor
-      var r = await fetch('https://alice-by-infinity.onrender.com/network-stats?secret='+encodeURIComponent(ANALYZE_SECRET||''));
-      if(r.ok){
-        var d = await r.json();
-        updateNetUI(d);
-        pushChartPoint(ntChart, d);
-        return;
-      }
-    }catch(e){}
-    // Fallback: audit log en memoria + solo filas TRACK (no toda kamuk_sessions)
-    try{
-      var rows = await dbQuery('kamuk_sessions?select=id,data&id=like.TRACK-*');
-      var ts = Date.now();
-      // Contar eventos de hoy desde audit log
-      var today = new Date().toDateString();
-      var todayRows = AUDIT_LOG.filter(function(e){ return new Date(e.ts).toDateString()===today; });
-      var claireRows = todayRows.filter(function(e){ return (e.action||'').toLowerCase().indexOf('claire')>=0; });
-      var uploadRows = todayRows.filter(function(e){ return (e.action||'').toLowerCase().indexOf('upload')>=0||(e.action||'').toLowerCase().indexOf('subió')>=0; });
-      var importRows = todayRows.filter(function(e){ return (e.action||'').toLowerCase().indexOf('import')>=0||e.action==='Excel import'; });
-
-      // Page views estimados: entradas de login de hoy
-      var loginRows = todayRows.filter(function(e){ return (e.action||'').indexOf('sesión')>=0; });
-
-      var nxDemo = 0, aliceDemo = 0;
-      rows.forEach(function(r){
-        if(!r.id || r.id.indexOf('TRACK-')!==0 || !r.data) return;
-        (r.data.events||[]).forEach(function(e){
-          var ev = String(e.event||'').toLowerCase();
-          if(ev.indexOf('nexora')>=0) nxDemo++;
-          if(ev.indexOf('alice')>=0 && ev.indexOf('claire')<0) aliceDemo++;
-        });
-      });
-
-      var d = {
-        pageviews: { today: loginRows.length * 4 + Math.floor(Math.random()*3), live: Math.floor(Math.random()*6)+1 },
-        claire: { total_opened: claireRows.length + (window._claireClickCount||0), last_click: claireRows.length?claireRows[claireRows.length-1].ts:null },
-        nexora_demo: { today: nxDemo, live: nxDemo },
-        alice_demo: { today: aliceDemo, live: aliceDemo },
-        uploads: { total_kb: uploadRows.reduce(function(a){ return a + Math.random()*200+50; },0)|0, count: uploadRows.length, items: uploadRows.slice(-5).map(function(e){ return {name:(e.details||'archivo'), kb:Math.floor(Math.random()*300+50), ts:e.ts}; }) },
-        imports: { count: importRows.length, items: importRows.slice(-5).map(function(e){ return {name:(e.details||'import.xlsx'), rows:Math.floor(Math.random()*50+5), ts:e.ts}; }) },
-        _fallback: true
-      };
-      updateNetUI(d);
-      pushChartPoint(ntChart, d);
-    }catch(err2){
-      document.getElementById('nt-pv').textContent='ERR';
-    }
-  }
-
-  function netMetricVal(block){
-    if(!block) return 0;
-    if(block.live!=null) return block.live;
-    if(block.today!=null) return block.today;
-    if(block.total_sessions!=null) return block.total_sessions;
-    if(block.total_opened!=null) return block.total_opened;
-    if(block.total!=null) return block.total;
-    return 0;
-  }
-
-  function pushChartPoint(chart, d){
-    var now = new Date().toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    if(_netData.history.labels.length>=12){
-      _netData.history.labels.shift();
-      _netData.history.pv.shift();
-      _netData.history.cv.shift();
-      _netData.history.nx.shift();
-      _netData.history.alice.shift();
-    }
-    _netData.history.labels.push(now);
-    _netData.history.pv.push(netMetricVal(d.pageviews));
-    _netData.history.cv.push(netMetricVal(d.claire));
-    _netData.history.nx.push(netMetricVal(d.nexora_demo || d.nexora));
-    _netData.history.alice.push(netMetricVal(d.alice_demo || d.alice));
-    chart.data.labels = _netData.history.labels.slice();
-    chart.data.datasets[0].data = _netData.history.pv.slice();
-    chart.data.datasets[1].data = _netData.history.cv.slice();
-    chart.data.datasets[2].data = _netData.history.nx.slice();
-    chart.data.datasets[3].data = _netData.history.alice.slice();
-    chart.update('none');
-  }
-
-  function updateNetUI(d){
-    // Page views
-    var pvEl=document.getElementById('nt-pv'); if(pvEl){ pvEl.textContent=(d.pageviews&&d.pageviews.today!=null)?d.pageviews.today:'—'; }
-    var pvSub=document.getElementById('nt-pv-sub'); if(pvSub){ pvSub.textContent='En vivo ahora: '+(d.pageviews?d.pageviews.live||0:'?')+(d._fallback?' (estimado)':''); }
-    // Claire
-    var cvEl=document.getElementById('nt-cv'); if(cvEl){ cvEl.textContent=(d.claire&&d.claire.total_opened!=null)?d.claire.total_opened:'—'; }
-    var cvSub=document.getElementById('nt-cv-sub'); if(cvSub){ cvSub.textContent=d.claire&&d.claire.last_click?('Último: '+new Date(d.claire.last_click).toLocaleTimeString('es-CR')):'Sin clicks hoy'; }
-    // KB
-    var kbEl=document.getElementById('nt-kb'); if(kbEl){ var kb=d.uploads?d.uploads.total_kb||0:0; kbEl.textContent=kb>=1024?(kb/1024).toFixed(1)+' MB':kb+' KB'; }
-    var kbSub=document.getElementById('nt-kb-sub'); if(kbSub){ kbSub.textContent=(d.uploads?d.uploads.count||0:0)+' archivos subidos'; }
-    // Excel imports
-    var xlEl=document.getElementById('nt-xl'); if(xlEl){ xlEl.textContent=(d.imports?d.imports.count||0:0); }
-    var xlSub=document.getElementById('nt-xl-sub'); if(xlSub){ xlSub.textContent=d.imports&&d.imports.count?'Última importación: '+(d.imports.items&&d.imports.items.length?new Date(d.imports.items[d.imports.items.length-1].ts).toLocaleTimeString('es-CR'):'—'):'Sin imports hoy'; }
-
-    // Log
-    var logEl=document.getElementById('nt-log');
-    if(logEl){
-      var entries = [];
-      if(d.claire&&d.claire.last_click) entries.push({ts:d.claire.last_click,msg:'<i class="ti ti-message-chatbot" style="color:#1F6AA8;"></i> Claire abierta por visitante'});
-      if(d.uploads&&d.uploads.items) d.uploads.items.forEach(function(u){ entries.push({ts:u.ts,msg:'<i class="ti ti-cloud-upload" style="color:var(--gm);"></i> Upload: '+u.name+' ('+u.kb+' KB)'}); });
-      if(d.imports&&d.imports.items) d.imports.items.forEach(function(i){ entries.push({ts:i.ts,msg:'<i class="ti ti-table-import" style="color:var(--amber);"></i> Excel import: '+i.name+' — '+i.rows+' filas'}); });
-      entries.sort(function(a,b){ return new Date(b.ts)-new Date(a.ts); });
-      if(!entries.length){ logEl.innerHTML='<div style="color:var(--t3);padding:8px;">Sin actividad registrada hoy.</div>'; }
-      else logEl.innerHTML = entries.map(function(e){ return '<div style="padding:6px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:flex-start;"><span style="white-space:nowrap;color:var(--t3);min-width:60px;">'+new Date(e.ts).toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit'})+'</span><span>'+e.msg+'</span></div>'; }).join('');
-    }
-    // Uploads list
-    var ul=document.getElementById('nt-uploads-list');
-    if(ul){ ul.innerHTML=d.uploads&&d.uploads.items&&d.uploads.items.length ? d.uploads.items.map(function(u){ return '<div style="padding:4px 0;border-bottom:1px solid var(--border);">'+u.name+' <span style="color:var(--t3);">'+u.kb+' KB · '+new Date(u.ts).toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit'})+'</span></div>'; }).join('') : '<span style="color:var(--t3);">Sin archivos.</span>'; }
-    // Imports list
-    var il=document.getElementById('nt-imports-list');
-    if(il){ il.innerHTML=d.imports&&d.imports.items&&d.imports.items.length ? d.imports.items.map(function(i){ return '<div style="padding:4px 0;border-bottom:1px solid var(--border);">'+i.name+' <span style="color:var(--t3);">'+i.rows+' filas · '+new Date(i.ts).toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit'})+'</span></div>'; }).join('') : '<span style="color:var(--t3);">Sin imports.</span>'; }
-  }
-
-  fetchNetworkData();
-  _netInterval = setInterval(fetchNetworkData, 15000);
-  // Limpiar intervalo si el usuario navega a otra sección
-  var origShowView = window._origShowView;
-  if(!origShowView){
-    window._origShowView = showView;
-    var _svRef = showView;
-    window.showView = function(v,b){
-      if(v!=='network' && _netInterval){ clearInterval(_netInterval); _netInterval=null; }
-      _svRef(v,b);
-    };
-  }
+  m.innerHTML = '<div class="fade"><div class="ib ib-amber">Network Traffic fue retirado (métricas no operativas).</div></div>';
 }
 
 // ── TOAST ─────────────────────────────────────────────────
@@ -7346,70 +7400,19 @@ function showToast(msg,type){
 <script>
 // ── DASHBOARD INTERNO ─────────────────────────────────────────
 async function renderDashboard_Admin(m){
-  m.innerHTML = '<div class="fade"><h2 style="font-size:16px;font-weight:700;margin-bottom:1rem;"><i class="ti ti-chart-dots" style="color:#1F6AA8;"></i> Dashboard interno</h2>'
-    + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:1rem;" id="dash-stats">'
-    + '<div class="card" style="text-align:center;"><div style="font-size:28px;font-weight:900;color:#1F6AA8;" id="dash-server-status">...</div><div style="font-size:11px;color:var(--t3);">Servidor</div></div>'
-    + '<div class="card" style="text-align:center;"><div style="font-size:28px;font-weight:900;color:#F5A623;" id="dash-eleven-remaining">...</div><div style="font-size:11px;color:var(--t3);">Créditos ElevenLabs</div></div>'
-    + '<div class="card" style="text-align:center;"><div style="font-size:28px;font-weight:900;color:#1B9BD1;" id="dash-claire-opened">...</div><div style="font-size:11px;color:var(--t3);">Claire abierta</div></div>'
-    + '<div class="card" style="text-align:center;"><div style="font-size:28px;font-weight:900;color:#5CB85C;" id="dash-conversions">...</div><div style="font-size:11px;color:var(--t3);">Conversiones Claire</div></div>'
-    + '<div class="card" style="text-align:center;"><div style="font-size:28px;font-weight:900;color:#1B9BD1;" id="dash-students">...</div><div style="font-size:11px;color:var(--t3);">Estudiantes activos</div></div>'
-    + '<div class="card" style="text-align:center;"><div style="font-size:28px;font-weight:900;color:#1F6AA8;" id="dash-alice">...</div><div style="font-size:11px;color:var(--t3);">Sesiones Alice</div></div>'
-    + '</div>'
-    + '<div class="card"><div class="card-title"><i class="ti ti-activity" style="color:#1F6AA8;"></i>Estado del sistema</div>'
-    + '<div id="dash-detail" style="font-size:13px;color:var(--t2);">Cargando...</div>'
-    + '</div>'
-    + '<div style="text-align:right;margin-top:8px;"><button class="btn btn-outline btn-sm" id="dash-refresh-btn"><i class="ti ti-refresh"></i>Actualizar</button></div>'
-    + '</div>';
-
-  document.getElementById('dash-refresh-btn').onclick = function(){ renderDashboard_Admin(document.getElementById('main-content')); };
-  try {
-    const r = await fetch('https://alice-by-infinity.onrender.com/dashboard?secret='+encodeURIComponent(ANALYZE_SECRET||''));
-    if(!r.ok){ document.getElementById('dash-detail').textContent='Error conectando al servidor.'; return; }
-    const d = await r.json();
-
-    // Server
-    const sEl = document.getElementById('dash-server-status');
-    if(sEl){ sEl.textContent='✓ Online'; sEl.style.color='#5CB85C'; }
-
-    // ElevenLabs
-    const eEl = document.getElementById('dash-eleven-remaining');
-    if(eEl && d.elevenlabs){
-      eEl.textContent = d.elevenlabs.remaining?.toLocaleString() || '?';
-      if(d.elevenlabs.remaining < 5000) eEl.style.color='#A32D2D';
-    }
-
-    // Claire
-    const cEl = document.getElementById('dash-claire-opened');
-    if(cEl) cEl.textContent = d.claire?.total_opened || 0;
-    const cvEl = document.getElementById('dash-conversions');
-    if(cvEl) cvEl.textContent = (d.claire?.total_conversions||0)+' ('+( d.claire?.conversion_rate||'0%')+')';
-
-    // Students & Alice
-    const stEl = document.getElementById('dash-students');
-    if(stEl) stEl.textContent = d.students?.total || 0;
-    const aEl = document.getElementById('dash-alice');
-    if(aEl) aEl.textContent = d.alice?.total_sessions || 0;
-
-    // Detail
-    const det = document.getElementById('dash-detail');
-    if(det) det.innerHTML = 
-      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">'
-      +'<div><strong>Servidor</strong><br>Uptime: '+( d.server?.uptime||'?')+'<br>Node: '+(d.server?.node||'?')+'</div>'
-      +'<div><strong>ElevenLabs</strong><br>Plan: '+(d.elevenlabs?.plan||'?')+'<br>Usados: '+(d.elevenlabs?.used?.toLocaleString()||'?')+' / '+(d.elevenlabs?.limit?.toLocaleString()||'?')+'</div>'
-      +'<div><strong>Claire</strong><br>Mensajes totales: '+(d.claire?.total_messages||0)+'<br>Tasa conversión: '+(d.claire?.conversion_rate||'0%')+'</div>'
-      +'<div><strong>Última actualización</strong><br>'+(d.timestamp?new Date(d.timestamp).toLocaleString('es-CR'):'?')+'</div>'
-      +'</div>';
-
-  } catch(e){
-    const det = document.getElementById('dash-detail');
-    if(det) det.textContent = 'Error: '+e.message;
-  }
+  m.innerHTML = '<div class="fade"><div class="ib ib-navy">Usá <strong>Overview</strong> y <strong>Operación en vivo</strong> para métricas reales de ops.</div></div>';
 }
-
 
 function previewNexora(s){
   if(!s.nexoraConfig){ showToast('Configura el escenario primero','err'); return; }
-  localStorage.setItem('nexora_scenario', JSON.stringify(s.nexoraConfig));
+  var cfg=s.nexoraConfig;
+  if(typeof NEXORA_SIM_PROGRAM!=='undefined'&&!cfg.simulationId){
+    cfg=NEXORA_SIM_PROGRAM.buildProgram(Object.assign({},cfg,{setBy:SESSION.name}));
+  }
+  localStorage.setItem('nexora_scenario', JSON.stringify(cfg));
+  if(typeof NEXORA_SIM_PROGRAM!=='undefined'){
+    localStorage.setItem('nexora_force_scenario', JSON.stringify(NEXORA_SIM_PROGRAM.programToScenario(cfg)));
+  }
   localStorage.setItem('nexora_agent', SESSION.name||'Trainer');
   window.open('nexora.html','NexoraPreview','width=1200,height=800,resizable=yes');
 }
@@ -7728,6 +7731,7 @@ runAIAnalysis = async function(){
 
 </script>
 <script src="https://studioinfinitycr.com/js/jill-f0-gate.js?v=20260814refresh"></script>
+<script src="https://studioinfinitycr.com/js/johnny-class-recorder.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/nexus-unified.js"></script>
 <script src="nexus-unified-ui.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/nexus-manual-calibration.js"></script>

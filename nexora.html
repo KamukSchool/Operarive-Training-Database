@@ -12,10 +12,11 @@
 <script defer src="https://studioinfinitycr.com/js/nexora-voice-lock.js?v=20260814refresh"></script>
 <script defer src="https://studioinfinitycr.com/nexora-characters.js"></script>
 <script defer src="js/tts-chunks.js?v=20260814refresh"></script>
-<script defer src="https://studioinfinitycr.com/js/nexora-industry-map.js"></script>
+<script defer src="js/nexora-industry-map.js"></script>
+<script defer src="js/nexora-simulation-program.js"></script>
 <!-- nexora-scenario-bank-data.js is ~3.8MB: loaded on demand by ensureNexoraScenarioBank(), never on the critical path -->
-<script defer src="https://studioinfinitycr.com/js/nexora-scenario-bank.js"></script>
-<script defer src="https://studioinfinitycr.com/js/nexora-scenario-rotate.js"></script>
+<script defer src="js/nexora-scenario-bank.js"></script>
+<script defer src="js/nexora-scenario-rotate.js"></script>
 <script defer src="https://studioinfinitycr.com/js/nexora-stream-voice.js?v=20260814refresh"></script>
 <script defer src="js/ptt-mic.js?v=20260814refresh"></script>
 <style>
@@ -213,7 +214,21 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--off);color:var(--
 .con-end{background:var(--red);color:#fff;border:none;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;flex-shrink:0;}
 .con-end:hover{background:#DC2626;}
 
-.con-body{flex:1;display:grid;grid-template-columns:246px minmax(0,1fr) 262px;gap:0;overflow:hidden;}
+.con-body{flex:1;display:grid;grid-template-columns:minmax(280px,340px) minmax(0,1fr) 262px;gap:0;overflow:hidden;}
+.vc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0;}
+.vc-tile{background:#111827;border:1px solid var(--con-line);border-radius:10px;padding:10px 10px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;min-height:118px;position:relative;}
+.vc-tile.active{border-color:#1F6AA8;box-shadow:0 0 0 1px rgba(31,106,168,0.45),0 0 18px rgba(31,106,168,0.18);}
+.vc-tile.you{background:#0f172a;}
+.vc-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(145deg,#312e81,#1e3a8a);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#E0E7FF;letter-spacing:0.04em;position:relative;}
+.vc-tile.you .vc-avatar{background:linear-gradient(145deg,#0f766e,#115e59);}
+.vc-speak{position:absolute;inset:auto 0 -2px 0;height:3px;border-radius:2px;background:transparent;}
+.vc-tile.active .vc-speak{background:linear-gradient(90deg,#79B9E8,#1F6AA8,#79B9E8);animation:vcPulse 1.1s ease-in-out infinite;}
+@keyframes vcPulse{0%,100%{opacity:.45}50%{opacity:1}}
+.vc-name{font-size:12px;font-weight:700;color:#E5E7EB;text-align:center;line-height:1.25;}
+.vc-role{font-size:10px;color:#94A3B8;text-align:center;line-height:1.3;}
+.vc-badge{position:absolute;top:6px;right:6px;font-size:9px;font-weight:800;letter-spacing:.04em;color:#79B9E8;text-transform:uppercase;}
+.vc-panel-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#64748B;margin:0 0 8px;}
+
 .con-col{display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 .con-col.left{border-right:1px solid var(--con-line);background:#121A2B;}
 .con-col.right{border-left:1px solid var(--con-line);background:#121A2B;}
@@ -437,36 +452,27 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--off);color:var(--
   </div>
 
   <div class="con-body">
-    <!-- LEFT: presence -->
+    <!-- LEFT: video-call panel (2–4 recruiters + candidate) -->
     <div class="con-col left" id="iv-participants">
-      <div class="con-sec">
-        <div class="con-sec-t">Interviewer</div>
-        <div class="con-person">
+      <div class="con-sec" style="border-bottom:none;flex:1;display:flex;flex-direction:column;">
+        <div class="vc-panel-label">Live panel</div>
+        <div class="vc-grid" id="iv-vc-grid"></div>
+        <div class="con-sec" style="border-bottom:none;margin-top:10px;padding:0;">
+          <div class="con-sec-t">Session</div>
+          <div class="con-kv"><span>Format</span><span id="iv-kv-format">STAR</span></div>
+          <div class="con-kv"><span>Answers given</span><span id="iv-kv-answers">0</span></div>
+          <div class="con-kv"><span>Talk time</span><span id="iv-kv-talk">0:00</span></div>
+          <div class="con-kv"><span>Speaking now</span><span id="iv-kv-speaker">—</span></div>
+        </div>
+        <!-- legacy single-person hooks kept for console sync -->
+        <div style="display:none;">
           <div class="con-mono" id="iv-them-mono">AM<div class="con-mono-dot"></div></div>
-          <div class="con-person-meta">
-            <div class="con-person-name" id="iv-them-name">Interviewer</div>
-            <div class="con-person-role" id="iv-them-role">Talent Acquisition</div>
-            <div class="con-person-org" id="iv-them-org"></div>
-          </div>
-        </div>
-        <div class="con-state" id="iv-them-state"><span class="con-bars"><span></span><span></span><span></span><span></span></span><span id="iv-them-state-tx">Connecting</span></div>
-      </div>
-      <div class="con-sec">
-        <div class="con-sec-t">Candidate</div>
-        <div class="con-person">
+          <div id="iv-them-name"></div><div id="iv-them-role"></div><div id="iv-them-org"></div>
+          <div id="iv-them-state"><span id="iv-them-state-tx"></span></div>
           <div class="con-mono you" id="iv-you-mono">YO<div class="con-mono-dot"></div></div>
-          <div class="con-person-meta">
-            <div class="con-person-name" id="iv-you-name">You</div>
-            <div class="con-person-role" id="iv-you-role">Candidate</div>
-          </div>
+          <div id="iv-you-name"></div><div id="iv-you-role"></div>
+          <div id="iv-you-state"><span id="iv-you-state-tx"></span></div>
         </div>
-        <div class="con-state" id="iv-you-state"><span id="iv-you-state-tx">Mic idle</span></div>
-      </div>
-      <div class="con-sec" style="border-bottom:none;">
-        <div class="con-sec-t">Session</div>
-        <div class="con-kv"><span>Format</span><span id="iv-kv-format">STAR</span></div>
-        <div class="con-kv"><span>Answers given</span><span id="iv-kv-answers">0</span></div>
-        <div class="con-kv"><span>Talk time</span><span id="iv-kv-talk">0:00</span></div>
       </div>
     </div>
 
@@ -942,23 +948,16 @@ function ensureNexoraScenarioBank(){
   return _nxBankLoad;
 }
 
-// Auto-assigned session used when no trainer config is present. The student never
-// picks a scenario, so the start button must always resolve to a real pool.
-var NEXORA_AUTO_CONFIG={
-  type:'customer_service',
-  industry:'corporate',
-  industryLabel:'Corporate/Business',
-  typeLabel:'Customer Service',
-  difficulty:5,
-  autoAssigned:true
-};
+// No silent auto-CS: without a trainer program the student must wait for assignment.
+// Trainer preview can still force a scenario via nexora_force_scenario.
+var NEXORA_AUTO_CONFIG=null;
 
 function loadNexoraEngineConfig(){
   try{
     var cfg=JSON.parse(localStorage.getItem('nexora_scenario')||'null');
     if(cfg&&cfg.type) return cfg;
   }catch(e){}
-  return Object.assign({},NEXORA_AUTO_CONFIG);
+  return null;
 }
 
 function invalidateNexoraLabIfConfigChanged(){
@@ -975,14 +974,28 @@ function pickScenarioFromConfig(nxConfig,prevId){
   try{
     var forced=JSON.parse(localStorage.getItem('nexora_force_scenario')||'null');
     if(forced&&forced.id&&forced.type){
+      // Keep force for the session start; clear after consume so refresh can re-pin from program.
       localStorage.removeItem('nexora_force_scenario');
-      return mergeEngineConfig(forced,nxConfig||{type:forced.type,industry:forced.industry||'Corporate',difficulty:forced.diff||5});
+      return mergeEngineConfig(forced,nxConfig||{type:forced.engineType||forced.type,industry:forced.industry||'Corporate',difficulty:forced.diff||5});
     }
   }catch(e){}
   if(!nxConfig) nxConfig=loadNexoraEngineConfig();
+  if(!nxConfig){
+    showToast('No hay simulación programada desde Engine');
+    return null;
+  }
+  // Pinned Engine program → exact scenario, never rotate.
+  if(typeof NEXORA_SIM_PROGRAM!=='undefined' && NEXORA_SIM_PROGRAM.isPinnedProgram(nxConfig)){
+    return NEXORA_SIM_PROGRAM.programToScenario(nxConfig);
+  }
+  // Legacy pool-only configs: upgrade to a pinned program for this session.
+  if(typeof NEXORA_SIM_PROGRAM!=='undefined'){
+    var upgraded=NEXORA_SIM_PROGRAM.buildProgram(Object.assign({},nxConfig));
+    try{ localStorage.setItem('nexora_scenario', JSON.stringify(upgraded)); }catch(e){}
+    return NEXORA_SIM_PROGRAM.programToScenario(upgraded);
+  }
   var pool=NEXORA_SCENARIO_BANK.getPool(nxConfig);
   if(!pool.length){
-    // Still downloading the bank is not an error — the caller retries once it lands.
     if(NEXORA_SCENARIO_BANK.isLoaded()) showToast('No scenarios for '+expectedScenarioPoolKey(nxConfig));
     return null;
   }
@@ -996,6 +1009,7 @@ function pickScenarioFromConfig(nxConfig,prevId){
 
 function refreshNexoraScenario(prevId){
   var nxConfig=loadNexoraEngineConfig();
+  // Pinned programs always re-resolve to the same Engine scenario (no rotation).
   _nx.scenario=pickScenarioFromConfig(nxConfig, prevId || (_nx.scenario && _nx.scenario.id) || null);
   applyScenarioToUI(_nx.scenario);
   return _nx.scenario;
@@ -1096,8 +1110,15 @@ function configureNexoraStartScreen(sc){
   var isInterview=!!(sc&&sc.type==='star_interview');
   var desc=document.getElementById('autoin-description');
   var btn=document.getElementById('autoin-start-btn');
+  if(!sc){
+    if(desc) desc.textContent='No hay simulación programada desde Engine. Pedí a tu trainer que asigne un escenario Nexora.';
+    if(btn){ btn.disabled=true; btn.innerHTML='<i class="ti ti-lock"></i>Waiting for trainer assignment'; }
+    renderAssignmentBrief(null);
+    return;
+  }
+  if(btn) btn.disabled=false;
   if(desc) desc.textContent=isInterview
-    ? 'Complete a serious, role-specific interview in English with a professional recruiter. Answer with evidence using Situation, Task, Action, and Result.'
+    ? 'Complete a serious, role-specific interview in English with a rotating recruiter panel. Answer with evidence using Situation, Task, Action, and Result.'
     : 'You will receive a call from a client. Search their phone number in the CRM, navigate tabs to find relevant info, and resolve their issue — all in English.';
   if(btn&&!btn._idleHtml) btn.innerHTML=isInterview
     ? '<i class="ti ti-briefcase"></i> Start Professional Interview'
@@ -1113,7 +1134,7 @@ function renderAssignmentBrief(sc){
   var isInterview=(sc.type==='star_interview');
   if(isInterview) _nxInterviewRole=resolveInterviewRoleKey(sc,cfg);
   var roleLabel=isInterview
-    ? (NEXORA_INTERVIEW_ROLES[_nxInterviewRole]||NEXORA_INTERVIEW_ROLES.customer_support).label
+    ? (sc.candidateRole||(NEXORA_INTERVIEW_ROLES[_nxInterviewRole]||NEXORA_INTERVIEW_ROLES.customer_support).label)
     : 'Support Agent';
   var set=function(id,val){ var el=document.getElementById(id); if(el) el.textContent=val; };
   set('assign-title', sc.company||sc.industry||cfg.industryLabel||'Assigned session');
@@ -1121,15 +1142,27 @@ function renderAssignmentBrief(sc){
   set('assign-format', isInterview
     ? ((sc.questionCount||6)+' behavioral questions · STAR evidence')
     : ((cfg.typeLabel||'Live customer call')+' · CRM resolution'));
-  var note=document.getElementById('assign-note');
-  if(note) note.textContent=cfg.autoAssigned
-    ? 'Auto-assigned session — your trainer can pin a specific scenario at any time.'
-    : 'Assigned by your trainer.';
+  set('assign-note', cfg.pinned||cfg.simulationId
+    ? 'Programmed by your trainer — Nexora will run this exact simulation.'
+    : (cfg.autoAssigned
+      ? 'Auto-assigned session — your trainer can pin a specific scenario at any time.'
+      : 'Assigned by your trainer.'));
   box.style.display='block';
 }
 
 function applyInterviewTarget(sc){
   if(!sc||sc.type!=='star_interview') return sc;
+  // Pinned Engine programs already carry the exact question plan and target role.
+  if(sc.pinned && Array.isArray(sc.starFocus) && sc.starFocus.length){
+    var copyPinned=Object.assign({},sc);
+    copyPinned.candidateRole=copyPinned.candidateRole||'Open Role';
+    copyPinned.title=copyPinned.title||(copyPinned.candidateRole+' — Professional STAR Interview');
+    copyPinned.questionCount=copyPinned.starFocus.length;
+    copyPinned.interviewer=copyPinned.interviewer||((copyPinned.participants&&copyPinned.participants[0]&&copyPinned.participants[0].name)||'Alex Morgan');
+    copyPinned.role=copyPinned.role||((copyPinned.participants&&copyPinned.participants[0]&&copyPinned.participants[0].role)||'Senior Talent Acquisition Partner');
+    copyPinned.company=copyPinned.company||'Regional Employer';
+    return copyPinned;
+  }
   var target=NEXORA_INTERVIEW_ROLES[resolveInterviewRoleKey(sc)]||NEXORA_INTERVIEW_ROLES.customer_support;
   var copy=Object.assign({},sc);
   copy.candidateRole=target.label;
@@ -1173,14 +1206,24 @@ function setNexoraStartBusy(busy, label){
 // Resolve the assigned scenario once the bank is available. The student never picks
 // one, so this runs in the background while the start screen is already on screen.
 function resolveAssignedScenario(){
+  var nxConfig=loadNexoraEngineConfig();
+  // Pinned Engine programs do not need the 3.8MB bank to start.
+  if(nxConfig && typeof NEXORA_SIM_PROGRAM!=='undefined' && NEXORA_SIM_PROGRAM.isPinnedProgram(nxConfig)){
+    try{
+      invalidateNexoraLabIfConfigChanged();
+      _nx.scenario=pickScenarioFromConfig(nxConfig,null);
+      applyScenarioToUI(_nx.scenario);
+    }catch(e){ _nx.scenario=null; applyScenarioToUI(null); }
+    return Promise.resolve(_nx.scenario);
+  }
   return ensureNexoraScenarioBank().then(function(){
     try{
-      var nxConfig=loadNexoraEngineConfig();
+      nxConfig=loadNexoraEngineConfig();
       invalidateNexoraLabIfConfigChanged();
       var prev=(_nx.scenario&&scenarioMatchesConfig(_nx.scenario,nxConfig))?_nx.scenario.id:null;
       _nx.scenario=pickScenarioFromConfig(nxConfig,prev);
       applyScenarioToUI(_nx.scenario);
-    }catch(e){ _nx.scenario=null; }
+    }catch(e){ _nx.scenario=null; applyScenarioToUI(null); }
     return _nx.scenario;
   });
 }
@@ -1406,8 +1449,10 @@ function resumeNexoraLab(){
 
 // ── AUTO-IN ────────────────────────────────────────────────────
 function nexoraAutoIn(){
-  // The bank may still be downloading. Wait for it rather than failing the start.
-  if(!NEXORA_SCENARIO_BANK.isLoaded()){
+  var nxConfig=loadNexoraEngineConfig();
+  var pinned=nxConfig && typeof NEXORA_SIM_PROGRAM!=='undefined' && NEXORA_SIM_PROGRAM.isPinnedProgram(nxConfig);
+  // Pinned Engine programs start immediately; legacy pool configs may still need the bank.
+  if(!pinned && typeof NEXORA_SCENARIO_BANK!=='undefined' && !NEXORA_SCENARIO_BANK.isLoaded()){
     setNexoraStartBusy(true,'Preparing session…');
     ensureNexoraScenarioBank().then(function(){
       setNexoraStartBusy(false);
@@ -1683,6 +1728,65 @@ function nxInitials(name){
 
 function nxSetText(id,val){ var el=document.getElementById(id); if(el) el.textContent=val; }
 
+function nexoraPanelists(sc){
+  var s=sc||_nx.scenario||{};
+  if(Array.isArray(s.participants)&&s.participants.length){
+    return s.participants.filter(function(p){ return p && p.name; }).slice(0,4);
+  }
+  if(Array.isArray(s.panelists)&&s.panelists.length){
+    return s.panelists.slice(0,4).map(function(line){
+      var parts=String(line).split(/\s+[—\-]\s+/);
+      return { name:(parts[0]||'Panelist').trim(), role:(parts[1]||'Interviewer').trim(), speaks:true };
+    });
+  }
+  return [{ name:s.interviewer||'Interviewer', role:s.role||'Recruiter', speaks:true }];
+}
+
+function nexoraActivePanelIndex(){
+  var panel=nexoraPanelists(_nx.scenario);
+  if(!panel.length) return 0;
+  var asks=0;
+  for(var i=0;i<_nx.history.length;i++){
+    if(_nx.history[i]&&_nx.history[i].role==='assistant') asks++;
+  }
+  // Rotate every core question / assistant opening among panelists
+  return asks % panel.length;
+}
+
+function nexoraRenderVideoGrid(sc, speakingSide){
+  var grid=document.getElementById('iv-vc-grid');
+  if(!grid) return;
+  var panel=nexoraPanelists(sc);
+  var activeIdx=nexoraActivePanelIndex();
+  var you=_nx.agent||'You';
+  var html='';
+  panel.forEach(function(p,i){
+    var active=speakingSide!=='you' && i===activeIdx;
+    html+='<div class="vc-tile'+(active?' active':'')+'" data-panel-idx="'+i+'">'
+      +(active?'<div class="vc-badge">Speaking</div>':'')
+      +'<div class="vc-avatar">'+nxInitials(p.name)+'<div class="vc-speak"></div></div>'
+      +'<div class="vc-name">'+p.name+'</div>'
+      +'<div class="vc-role">'+(p.role||'Panelist')+'</div>'
+      +'</div>';
+  });
+  var youActive=speakingSide==='you';
+  html+='<div class="vc-tile you'+(youActive?' active':'')+'">'
+    +(youActive?'<div class="vc-badge">You</div>':'')
+    +'<div class="vc-avatar">'+nxInitials(you)+'<div class="vc-speak"></div></div>'
+    +'<div class="vc-name">'+you+'</div>'
+    +'<div class="vc-role">'+((sc&&sc.candidateRole)||'Candidate')+'</div>'
+    +'</div>';
+  grid.innerHTML=html;
+  var speaker=panel[activeIdx];
+  nxSetText('iv-kv-speaker', youActive ? you : ((speaker&&speaker.name)||'—'));
+  if(speaker){
+    nxSetText('iv-them-name', speaker.name);
+    nxSetText('iv-them-role', speaker.role||'');
+    var mono=document.getElementById('iv-them-mono');
+    if(mono&&mono.firstChild) mono.firstChild.nodeValue=nxInitials(speaker.name);
+  }
+}
+
 function nexoraConsoleSetup(sc, mode){
   var isNeg=(mode==='negotiation');
   var isStar=(sc.type==='star_interview');
@@ -1698,27 +1802,23 @@ function nexoraConsoleSetup(sc, mode){
   nxSetText('iv-them-role', role);
   nxSetText('iv-them-org', isNeg?(sc.company||''):(sc.company||''));
   var mono=document.getElementById('iv-them-mono');
-  if(mono) mono.firstChild.nodeValue=nxInitials(them);
+  if(mono&&mono.firstChild) mono.firstChild.nodeValue=nxInitials(them);
 
   var you=_nx.agent||'You';
   nxSetText('iv-you-name', you);
   nxSetText('iv-you-role', isNeg?'Negotiator':(isStar?(sc.candidateRole||'Candidate'):'Candidate'));
   var youMono=document.getElementById('iv-you-mono');
-  if(youMono) youMono.firstChild.nodeValue=nxInitials(you);
+  if(youMono&&youMono.firstChild) youMono.firstChild.nodeValue=nxInitials(you);
 
-  // Labels + right column swap per mode. STAR coverage only applies to interviews.
   var thePanel=document.querySelector('#interview-screen .con-col.right');
   if(thePanel) thePanel.style.display=isNeg?'none':'flex';
-  var labels=document.querySelectorAll('#interview-screen .con-col.left .con-sec-t');
-  if(labels[0]) labels[0].textContent=isNeg?'Counterpart':'Interviewer';
-  if(labels[1]) labels[1].textContent=isNeg?'You':'Candidate';
   var qtag=document.querySelector('#interview-screen .con-qtag');
   if(qtag) qtag.textContent=isNeg?'CURRENT POSITION ON THE TABLE':'CURRENT QUESTION';
   var hint=document.getElementById('iv-qhint');
   if(hint) hint.textContent=isNeg
     ? 'State your position out loud in English. Anchor with a number, justify it, and ask for what you need.'
     : 'Answer out loud in English. Give the situation, your task, the actions you took, and the measurable result.';
-  nxSetText('iv-kv-format', isNeg?'Negotiation':(isStar?'STAR behavioral':'Structured interview'));
+  nxSetText('iv-kv-format', isNeg?'Negotiation':(isStar?'STAR panel interview':'Structured interview'));
 
   var total=nexoraConsoleTotal(sc);
   var steps=document.getElementById('iv-steps');
@@ -1728,6 +1828,7 @@ function nexoraConsoleSetup(sc, mode){
     steps.innerHTML=h;
   }
   _nxCon.mode=isNeg?'negotiation':'interview';
+  nexoraRenderVideoGrid(sc, 'them');
   nexoraConsoleSync(true);
   nexoraConsoleStart();
 }
@@ -1818,6 +1919,7 @@ function nexoraConsoleSync(force){
       }
     }
     nxSetText('iv-kv-answers', String(c.answers));
+    nexoraRenderVideoGrid(sc, null);
 
     // transcript
     var box=document.getElementById('iv-transcript');
@@ -1825,15 +1927,22 @@ function nexoraConsoleSync(force){
       if(!_nx.history.length){
         box.innerHTML='<div class="con-empty">The full exchange is recorded here as you speak.</div>';
       } else {
-        var themLabel=nxInitials(sc.interviewer||'Interviewer');
+        var panel=nexoraPanelists(sc);
         var html='';
+        var askIdx=0;
         for(var j=0;j<_nx.history.length;j++){
           var h=_nx.history[j]||{};
           var isYou=(h.role==='user');
           var txt=String(h.content||'').trim();
           if(!txt||/^START_/.test(txt)) continue;
+          var whoLabel='You';
+          if(!isYou){
+            var who=panel[askIdx % Math.max(panel.length,1)]||{name:sc.interviewer||'Interviewer'};
+            whoLabel=nxInitials(who.name);
+            askIdx++;
+          }
           html+='<div class="con-turn '+(isYou?'you':'them')+'">'
-            +'<div class="con-who">'+(isYou?'You':themLabel)+'</div>'
+            +'<div class="con-who">'+whoLabel+'</div>'
             +'<div class="con-said"></div></div>';
         }
         box.innerHTML=html;
@@ -1884,6 +1993,7 @@ function nexoraConsoleSync(force){
       youSt.classList.toggle('speaking',listening);
       nxSetText('iv-you-state-tx', listening?'Microphone open':'Mic idle');
     }
+    nexoraRenderVideoGrid(sc, listening?'you':(speaking?'them':null));
   }
   nxSetText('iv-kv-talk', Math.floor(_nx.talkSecs/60)+':'+String(_nx.talkSecs%60).padStart(2,'0'));
 }
@@ -2183,7 +2293,6 @@ function endStakeholder(){
 
 // ── STAR INTERVIEW DISPLAY ────────────────────────────────────
 function showStarInterviewDisplay(sc){
-  // Professional assessment console — future questions stay hidden.
   var screen = document.getElementById('interview-screen');
   screen.style.display = 'flex';
   nexoraConsoleSetup(sc);
@@ -2195,15 +2304,24 @@ function showStarInterviewDisplay(sc){
     if(el) el.textContent=Math.floor(total/60)+':'+String(total%60).padStart(2,'0');
   },1000);
 
-  var ivName = sc.interviewer || 'Interviewer';
+  var panel=nexoraPanelists(sc);
+  var lead=panel[0]||{name:sc.interviewer||'Interviewer',role:sc.role||'Recruiter'};
+  var ivName = lead.name;
   _nx.profile = applyNexoraIdentityFromName(_nx.profile, ivName);
 
   aliceEnterMode(sc,'iv-status-text',ivName,'START_STAR_INTERVIEW',{
-    interviewerName:sc.interviewer,role:sc.role,company:sc.company,
+    interviewerName:ivName,
+    role:lead.role||sc.role,
+    company:sc.company,
     candidateRole:sc.candidateRole||sc.title,
     starFocus:sc.starFocus||[],
-    questionCount:sc.questionCount||6,
-    interviewAnswerCount:0
+    questionCount:sc.questionCount||(sc.starFocus&&sc.starFocus.length)||6,
+    interviewAnswerCount:0,
+    panelists:panel.map(function(p){ return p.name+(p.role?' — '+p.role:''); }),
+    panel:panel,
+    activeSpeakerIndex:0,
+    passCriteria:sc.passCriteria||null,
+    objectives:sc.objectives||[]
   });
 }
 
@@ -2872,6 +2990,12 @@ function buildNexoraPayload(message, history, p, sc){
       starFocus:(sc&&sc.starFocus)||[],
       questionCount:(sc&&sc.questionCount)||0,
       interviewAnswerCount:(history||[]).filter(function(m){return m&&m.role==='user';}).length,
+      panel:nexoraPanelists(sc),
+      panelists:nexoraPanelists(sc).map(function(p){ return p.name+(p.role?' — '+p.role:''); }),
+      activeSpeakerIndex:nexoraActivePanelIndex(),
+      passCriteria:(sc&&sc.passCriteria)||null,
+      objectives:(sc&&sc.objectives)||[],
+      passScore:(sc&&sc.passScore)||null,
       crmActions:_nx.crmActions||[],
       onlineAccessLocked:!!(p.crmState&&p.crmState.onlineAccess&&p.crmState.onlineAccess.status==='Locked'),
       cardBlocked:!!(p.crmState&&p.crmState.cardAccess)
@@ -3345,9 +3469,20 @@ function renderInterviewQA(ev,talkTime){
   ]);
   if(ev.wins&&ev.wins.length) html+='<div class="qa-section"><div class="qa-section-title"><i class="ti ti-check"></i>Credible strengths</div>'+list(ev.wins,'var(--green)')+'</div>';
   if(ev.red_flags&&ev.red_flags.length) html+='<div class="qa-section"><div class="qa-section-title"><i class="ti ti-alert-triangle"></i>Failures / red flags</div>'+list(ev.red_flags,'var(--red)')+'</div>';
+  var fm=ev.failure_moment||null;
+  if(fm&&(fm.reason||fm.quote)){
+    html+='<div class="qa-section"><div class="qa-section-title"><i class="ti ti-player-skip-back"></i>Moment the interview was lost</div>'
+      +'<div class="qa-item"><strong style="min-width:105px;">When</strong><span>Q'+(fm.questionIndex!=null?fm.questionIndex:'—')+(fm.turn!=null?' · turn '+fm.turn:'')+'</span></div>'
+      +(fm.quote?'<div class="qa-item"><strong style="min-width:105px;">Quote</strong><span>'+nexoraEvalText(fm.quote)+'</span></div>':'')
+      +'<div class="qa-item"><strong style="min-width:105px;">Why</strong><span>'+nexoraEvalText(fm.reason||'')+'</span></div></div>';
+  }
+  var outcome=String((ev.outcome||leaning||'')).toUpperCase();
+  html+='<div class="qa-section"><div class="qa-section-title"><i class="ti ti-certificate"></i>Employment outcome</div>'
+    +'<div class="qa-item"><strong style="min-width:105px;">Result</strong><span>'+nexoraEvalText(outcome||'MAYBE')+'</span></div></div>';
   html+='<div class="qa-section"><div class="qa-section-title"><i class="ti ti-target"></i>Areas to improve</div>'+list(ev.improvements,'var(--orange)')+'</div>';
+  if(ev.coaching&&ev.coaching.length) html+='<div class="qa-section"><div class="qa-section-title"><i class="ti ti-school"></i>Coaching</div>'+list(ev.coaching,'var(--purple)')+'</div>';
   html+='<div class="qa-section"><div class="qa-section-title"><i class="ti ti-repeat"></i>Three practice fixes</div>'+list((ev.practice_fixes||[]).slice(0,3),'var(--purple)')+'</div>';
-  html+='<div style="display:flex;gap:10px;justify-content:center;padding-top:8px;"><button class="btn btn-navy" onclick="retrySameCustomer()"><i class="ti ti-refresh"></i>Retry Interview</button><button class="btn btn-green" onclick="nextCall()"><i class="ti ti-briefcase"></i>Choose Next Interview</button><button class="btn btn-outline" onclick="closeQA()"><i class="ti ti-x"></i>Exit</button></div>';
+  html+='<div style="display:flex;gap:10px;justify-content:center;padding-top:8px;flex-wrap:wrap;"><button class="btn btn-navy" onclick="retrySameCustomer()"><i class="ti ti-refresh"></i>Retry Interview</button><button class="btn btn-green" onclick="nextCall()"><i class="ti ti-briefcase"></i>Back to assigned session</button><button class="btn btn-outline" onclick="closeQA()"><i class="ti ti-x"></i>Exit</button></div>';
   document.getElementById('qa-body').innerHTML=html;
   savePracticeMinutes(ev.practice_minutes||Math.ceil(talkTime/60));
 }
@@ -3419,14 +3554,29 @@ function renderQA(ev,talkTime,isTransfer){
       +'</div>';
   }
 
+  var fmCs=ev.failure_moment||null;
+  if(fmCs&&(fmCs.reason||fmCs.quote)){
+    html+='<div class="qa-section"><div class="qa-section-title"><i class="ti ti-player-skip-back" style="color:var(--red);"></i>Moment the case was lost</div>'
+      +(fmCs.quote?'<div class="qa-item"><strong style="min-width:108px;">Quote</strong><span>'+fmCs.quote+'</span></div>':'')
+      +'<div class="qa-item"><strong style="min-width:108px;">Why</strong><span>'+(fmCs.reason||'')+'</span></div></div>';
+  }
+  if(ev.outcome){
+    html+='<div class="qa-section"><div class="qa-section-title"><i class="ti ti-flag"></i>Case outcome</div>'
+      +'<div class="qa-item"><strong style="min-width:108px;">Result</strong><span>'+String(ev.outcome).toUpperCase()+'</span></div></div>';
+  }
+  if(ev.coaching&&ev.coaching.length){
+    html+='<div class="qa-section"><div class="qa-section-title"><i class="ti ti-school"></i>Coaching</div>'
+      +ev.coaching.map(function(w){return '<div class="qa-item"><span style="color:var(--purple);flex-shrink:0;">→</span>'+w+'</div>';}).join('')+'</div>';
+  }
+
   // Verdict
-  html+='<div class="qa-section"><div class="qa-section-title"><i class="ti ti-robot" style="color:var(--purple);"></i>Alice feedback</div>'
+  html+='<div class="qa-section"><div class="qa-section-title"><i class="ti ti-robot" style="color:var(--purple);"></i>Supervisor feedback</div>'
     +'<div class="verdict-box">'+(ev.verdict||'Good effort!')+'</div></div>';
 
   // Actions
-  html+='<div style="display:flex;gap:10px;justify-content:center;padding-top:8px;">'
-    +'<button class="btn btn-navy" onclick="retrySameCustomer()"><i class="ti ti-refresh"></i>Retry Same Customer</button>'
-    +'<button class="btn btn-green" onclick="nextCall()"><i class="ti ti-phone-incoming"></i>Auto-In — Next Call</button>'
+  html+='<div style="display:flex;gap:10px;justify-content:center;padding-top:8px;flex-wrap:wrap;">'
+    +'<button class="btn btn-navy" onclick="retrySameCustomer()"><i class="ti ti-refresh"></i>Retry Same Case</button>'
+    +'<button class="btn btn-green" onclick="nextCall()"><i class="ti ti-phone-incoming"></i>Back to assigned session</button>'
     +'<button class="btn btn-outline" onclick="closeQA()"><i class="ti ti-x"></i>Exit</button>'
     +'</div>';
 

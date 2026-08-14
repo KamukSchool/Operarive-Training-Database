@@ -8,23 +8,17 @@
 | Supabase | infinity_* | kamuk_* (`lbspgbeqtcnjrbhiuucu`) |
 | IDs | `IS-` | `KAM-` |
 | Brand | púrpura | azul Kamuk |
-| **Portal estudiantes** | studioinfinitycr.com | **https://kamukschool.github.io/Operarive-Training-Database/** (`index.html`) |
+| Portal | studioinfinitycr.com | https://kamukschool.github.io/Operarive-Training-Database/Kamuk_Student_Portal.html |
 | Engine | studioinfinitycr.com | https://kamukschool.github.io/Operarive-Training-Database/Kamuk_Engine.html |
 
 ## Apps
 
 | Archivo | Uso |
 |---------|-----|
-| **`index.html`** | **Portal del estudiante** (entrada única / raíz del sitio) |
-| `Kamuk_Student_Portal.html` | Redirect → `index.html` (compatibilidad links viejos) |
-| `ops.html` | Hub ops: Engine + Nexora |
-| `Kamuk_Engine.html` | Engine trainers / master |
+| `index.html` | Hub GitHub Pages |
+| `Kamuk_Student_Portal.html` | Paridad Infinity Student Portal |
+| `Kamuk_Engine.html` | Paridad Infinity Nexus Engine |
 | `nexora.html` | Lab Nexora |
-
-## Acceso
-
-- Estudiantes: abren la **raíz** del sitio (index). No hace falta copiar `Kamuk_Student_Portal.html`.
-- Trainers / master: `Kamuk_Engine.html` o hub `ops.html`.
 
 ## Build
 

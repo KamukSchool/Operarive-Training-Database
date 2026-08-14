@@ -19,11 +19,12 @@
 <link rel="stylesheet" href="https://studioinfinitycr.com/css/daily-inspiration.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://studioinfinitycr.com/js/live-kpi-charts.js?v=20260814refresh"></script>
-<script src="js/live-kpi-charts.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/infinity-auth.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/nexora-profile.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/nexora-voice-lock.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/nexora-characters.js"></script>
+<script src="https://studioinfinitycr.com/js/nexora-industry-map.js"></script>
+<script src="https://studioinfinitycr.com/js/nexora-simulation-program.js"></script>
 <script src="https://studioinfinitycr.com/nexus-unified-portal.js"></script>
 <script src="https://studioinfinitycr.com/js/daily-inspiration.js"></script>
 <script src="https://studioinfinitycr.com/js/ai-profile.js"></script>
@@ -34,20 +35,16 @@
 <script src="https://studioinfinitycr.com/js/alice-reminders.js"></script>
 <script src="https://studioinfinitycr.com/js/b2b-alice-report.js"></script>
 <script src="https://studioinfinitycr.com/js/tutor-reply.js?v=20260814refresh"></script>
-<script src="js/tutor-reply.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/jill-learner-intent.js?v=20260814refresh"></script>
+<script src="https://studioinfinitycr.com/js/ai-board-directive.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/jill-canon-router.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/jill-canon-visual.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/jill-canon-drill.js?v=20260814refresh"></script>
-<script src="https://studioinfinitycr.com/js/ai-board-directive.js?v=20260814refresh"></script>
-<script src="js/ai-board-directive.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/jill-lesson-clip.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/jill-visual-stage.js?v=20260814refresh"></script>
-<script src="js/jill-visual-stage.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/claire-toeic-board.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/jill-calibration.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/jill-foundations.js?v=20260814refresh"></script>
-<script src="js/jill-foundations.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/trainer-drill-engine.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/jill-f0-gate.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/jill-structure-drill.js?v=20260814refresh"></script>
@@ -60,11 +57,10 @@
 <script src="https://studioinfinitycr.com/js/infinity-victory.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/jill-foundations-modules.js?v=20260814refresh"></script>
 <script src="games/_shared/infinity-arcade-run.js?v=20260814refresh"></script>
-<script src="js/jill-quiz.js?v=20260814refresh"></script>
-<script src="js/infinity-casino-floor.js?v=20260814refresh"></script>
-<script src="js/tts-chunks.js?v=20260814refresh"></script>
+<script src="https://studioinfinitycr.com/js/jill-quiz.js?v=20260814refresh"></script>
+<script src="https://studioinfinitycr.com/js/tts-chunks.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/nexora-stream-voice.js?v=20260814refresh"></script>
-<script src="js/ptt-mic.js?v=20260814refresh"></script>
+<script src="https://studioinfinitycr.com/js/ptt-mic.js?v=20260814refresh"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -73,7 +69,7 @@
   --amber:#D97706;--ab:#FAEEDA;--ad:#633806;
   --red:#791F1F;--rb:#FCEBEB;--rm:#A32D2D;
   --purple:#2B7EC1;--pb:#E8F4FC;--pm:#1F6AA8;
-  --gold:#D4891A;--gray:#F4F8FC;--border:#D0E2F0;
+  --gold:#F7941D;--gray:#F4F8FC;--border:#C5DDEF;
   --text:#1E2D3D;--t2:#4A6080;--t3:#8FA4B8;
   --r:8px;--rl:12px;
 }
@@ -83,7 +79,7 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .fade{animation:fadeIn 0.2s ease;}
 
-.topbar{background:var(--navy);padding:0 1.5rem;padding-top:env(safe-area-inset-top);padding-left:max(1rem,env(safe-area-inset-left));padding-right:max(1rem,env(safe-area-inset-right));display:flex;align-items:center;gap:12px;height:calc(54px + env(safe-area-inset-top));min-height:calc(54px + env(safe-area-inset-top));position:sticky;top:0;z-index:200;box-shadow:0 1px 8px rgba(15,58,92,0.12);}
+.topbar{background:var(--navy);padding:0 1.5rem;padding-top:env(safe-area-inset-top);padding-left:max(1rem,env(safe-area-inset-left));padding-right:max(1rem,env(safe-area-inset-right));display:flex;align-items:center;gap:12px;height:calc(54px + env(safe-area-inset-top));min-height:calc(54px + env(safe-area-inset-top));position:sticky;top:0;z-index:200;box-shadow:0 1px 8px rgba(30,20,60,0.12);}
 .tb-logo{height:36px;width:36px;object-fit:contain;border-radius:8px;image-rendering:auto;flex-shrink:0;}
 .tb-div{width:1px;height:26px;background:rgba(255,255,255,0.2);flex-shrink:0;}
 .tb-title{font-size:13px;font-weight:700;color:white;}
@@ -92,7 +88,7 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
 .tb-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.22);color:white;border-radius:8px;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;padding:0;font-family:inherit;transition:background 0.15s,border-color 0.15s;flex-shrink:0;-webkit-user-select:none;user-select:none;}
 .tb-btn:hover{background:rgba(255,255,255,0.16);border-color:rgba(255,255,255,0.35);}
 .tb-btn:disabled{opacity:0.45;cursor:default;}
-.tb-role{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;background:rgba(255,255,255,0.12);color:#FDECC8;border:1px solid rgba(255,255,255,0.22);}
+.tb-role{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;background:rgba(43,126,193,0.3);color:#FBBF24;border:1px solid rgba(245,166,35,0.35);}
 .tb-user{font-size:12px;color:rgba(255,255,255,0.8);font-weight:600;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
 .login-wrap{max-width:420px;margin:5rem auto;padding:1.5rem;padding-left:max(1.5rem,env(safe-area-inset-left));padding-right:max(1.5rem,env(safe-area-inset-right));padding-bottom:max(1.5rem,env(safe-area-inset-bottom));}
@@ -116,9 +112,9 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
 @keyframes alicePulse{0%,100%{opacity:1}50%{opacity:0.55}}
 #alice-mic-btn.ptt-active{background:rgba(255,92,92,0.35)!important;border-color:#FF5C5C!important;color:white!important;}
 #alice-mic-btn.ptt-busy{opacity:0.45;pointer-events:none;}
-#nav-alice.companion-nav{color:#E8F0F8;font-weight:700;}
-#nav-alice.companion-nav.active{background:linear-gradient(135deg,rgba(43,126,193,0.22),rgba(212,137,26,0.10))!important;color:#fff!important;box-shadow:inset 0 0 0 1px rgba(43,126,193,0.2);}
-#nav-alice.companion-nav i{color:#F0D9A8;}
+#nav-alice.companion-nav{color:#F5E6B8;font-weight:700;}
+#nav-alice.companion-nav.active{background:linear-gradient(135deg,rgba(43,126,193,0.18),rgba(245,166,35,0.12))!important;color:#fff!important;box-shadow:inset 0 0 0 1px rgba(43,126,193,0.22);}
+#nav-alice.companion-nav i{color:#E8D49A;}
 #jill-mic-btn.ptt-active{background:rgba(255,92,92,0.35)!important;border-color:#FF5C5C!important;color:white!important;}
 #jill-mic-btn.ptt-busy{opacity:0.45;pointer-events:none;}
 #alice-messages{-webkit-overflow-scrolling:touch;overscroll-behavior:contain;contain:layout style;}
@@ -134,7 +130,7 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
   #claire-lesson-shell.claire-stage-active #claire-messages{max-height:min(28vh,220px)!important;}
   #claire-stage-media{flex:1;min-height:160px;overflow:auto;border-radius:14px;border:1px solid rgba(192,132,252,0.35);background:rgba(15,10,40,0.85);}
   .claire-toeic-board{padding:14px 16px;color:#f5f3ff;font-size:13px;line-height:1.55;}
-  .claire-toeic-part{font-size:10px;letter-spacing:0.14em;font-weight:800;color:#C084FC;margin-bottom:10px;}
+  .claire-toeic-part{font-size:10px;letter-spacing:0.14em;font-weight:800;color:#79B9E8;margin-bottom:10px;}
   .claire-toeic-passage{background:rgba(255,255,255,0.06);border-left:3px solid rgba(192,132,252,0.55);padding:10px 12px;border-radius:0 10px 10px 0;margin-bottom:10px;color:#e9d5ff;}
   .claire-toeic-prompt{font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:8px;}
   .claire-toeic-stem{font-size:15px;font-weight:700;color:#fff;margin-bottom:12px;}
@@ -149,8 +145,8 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
   .jill-kaboom-opt:active{transform:translateY(2px)!important;box-shadow:0 2px 0 rgba(0,0,0,0.22)!important;}
   #jill-mini-kaboom{
     display:none;margin:0 0 12px;padding:12px;border-radius:16px;
-    background:linear-gradient(160deg,#0F3A5C,#1A5A8F,#2B7EC1);
-    border:1px solid rgba(43,126,193,0.35);box-shadow:0 4px 14px rgba(43,126,193,0.18);
+    background:linear-gradient(160deg,#0F3A5C,#4c1d95,#5b21b6);
+    border:1px solid rgba(167,139,250,0.45);box-shadow:0 6px 20px rgba(43,126,193,0.35);
   }
   #jill-mini-kaboom.active{display:block;}
   #jill-mini-kaboom-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
@@ -187,6 +183,10 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
   .ai-board-line{font-size:13px;line-height:1.45;padding:8px 12px;margin:0 0 8px;border-radius:10px;background:rgba(43,126,193,0.08);border:1px solid rgba(43,126,193,0.16);}
   .ai-board-line.is-good{background:rgba(15,110,86,0.1);border-color:rgba(15,110,86,0.25);color:#0F6E56;font-weight:600;}
   .ai-board-line.is-bad{background:rgba(163,45,45,0.08);border-color:rgba(163,45,45,0.22);color:#791F1F;font-weight:600;}
+  #alice-stage-caption{
+    display:block!important;font-size:12px;font-weight:600;color:#c4b5fd;
+    padding:4px 8px;min-height:18px;text-align:center;
+  }
   .jill-teach-split{display:flex!important;flex-direction:column!important;overflow:auto!important;}
   .jill-teach-svg-wrap{
     position:relative;flex:0 0 auto;min-height:160px;max-height:min(28vh,240px);
@@ -209,7 +209,7 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
   .jill-svg-hotspot{
     flex:1;min-height:44px;height:auto;margin:0;padding:8px 6px;border:0;border-radius:10px;
     background:rgba(255,255,255,0.88);cursor:pointer;pointer-events:auto;
-    box-shadow:inset 0 0 0 1px rgba(124,58,237,0.25);
+    box-shadow:inset 0 0 0 1px rgba(31,106,168,0.25);
     transition:box-shadow .25s ease, background .25s ease, transform .15s ease;
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
     color:#312e81;font-family:inherit;
@@ -219,7 +219,7 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
   .jill-svg-interact.is-clip-bound{display:none!important;}
   .jill-svg-hotspot.is-lit{
     background:rgba(167,139,250,0.75);
-    box-shadow:inset 0 0 0 2px #7c3aed, 0 0 14px rgba(124,58,237,0.45);
+    box-shadow:inset 0 0 0 2px #7c3aed, 0 0 14px rgba(31,106,168,0.45);
     transform:translateY(-2px);
     color:#0F3A5C;
   }
@@ -251,8 +251,8 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
     position:relative;width:100%;max-width:680px;padding:1.15rem 1.15rem 1rem;
     border-radius:22px;overflow:visible;
     background:
-      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(43,126,193,0.14), transparent 55%),
-      linear-gradient(165deg, #0a2740 0%, #1A5A8F 48%, #2B7EC1 100%);
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(196,181,253,0.22), transparent 55%),
+      linear-gradient(165deg, #2e1065 0%, #4c1d95 48%, #5b21b6 100%);
     border:1px solid rgba(216,180,254,0.28);
     box-shadow:
       0 20px 48px rgba(49,46,129,0.38),
@@ -264,14 +264,14 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
   .jill-ex-sheet{
     display:flex;flex-direction:column;gap:12px;flex:1 1 auto;min-height:0;
     overflow:auto;padding:2px 2px 4px;
-    scrollbar-width:thin;scrollbar-color:rgba(43,126,193,0.3) transparent;
+    scrollbar-width:thin;scrollbar-color:rgba(196,181,253,0.45) transparent;
   }
   .jill-ex-box{
-    background:linear-gradient(180deg,#FBFDFF 0%,#F0F6FA 100%);
+    background:linear-gradient(180deg,#FFFBFF 0%,#F7F2FF 100%);
     border:1px solid rgba(167,139,250,0.28);
     border-radius:14px;
     padding:14px 16px;color:#0F3A5C;
-    box-shadow:0 4px 12px rgba(15,58,92,0.08);
+    box-shadow:0 6px 18px rgba(49,46,129,0.1);
     font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
     font-size:clamp(14px,2vw,16px);line-height:1.55;
   }
@@ -280,7 +280,7 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
     grid-template-columns:minmax(0,1.15fr) auto minmax(0,1fr) auto;
     align-items:baseline;column-gap:10px;row-gap:2px;
     padding:5px 0;
-    border-bottom:1px solid rgba(124,58,237,0.08);
+    border-bottom:1px solid rgba(31,106,168,0.08);
   }
   .jill-ex-line:last-child{border-bottom:0;padding-bottom:0;}
   .jill-ex-line:first-child{padding-top:0;}
@@ -346,7 +346,7 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
   .jill-clip-slot{
     flex:1 1 100px;min-width:96px;max-width:150px;border:0;cursor:pointer;
     border-radius:16px;padding:11px 8px;text-align:center;
-    background:linear-gradient(180deg,#4A9FD4,#1F6AA8);
+    background:linear-gradient(180deg,#8b5cf6,#6d28d9);
     color:#fff;
     box-shadow:0 8px 18px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.18);
     transition:transform .15s ease, box-shadow .15s ease, filter .15s ease;
@@ -511,7 +511,7 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
   #alice-mic-btn,#alice-input,#jill-mic-btn,#jill-input{min-height:48px;}
 }
 
-.card{background:white;border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin-bottom:1rem;overflow:hidden;min-width:0;max-width:100%;box-shadow:0 2px 10px rgba(15,58,92,0.06);}
+.card{background:white;border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin-bottom:1rem;overflow:hidden;min-width:0;max-width:100%;}
 #tt-target,#tt-target span{max-width:100%;}
 #tt-target{overflow-wrap:anywhere;word-break:break-word;white-space:pre-wrap;}
 .card-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:1rem;display:flex;align-items:center;gap:8px;}
@@ -543,7 +543,7 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
 .chart-interactive:hover{transform:translateY(-2px);}
 .kpi-detail-panel{font-size:12px;line-height:1.5;padding:10px 12px;border-radius:10px;background:var(--gray,#f3f4f6);color:var(--text,#1a1a1a);margin-top:8px;min-height:2.4em;border:1px solid var(--border,rgba(0,0,0,.08));}
 .kpi-detail-flash{animation:kpiDetailPulse .5s ease;}
-@keyframes kpiDetailPulse{0%{background:rgba(43,126,193,.15)}100%{background:var(--gray,#f3f4f6)}}
+@keyframes kpiDetailPulse{0%{background:rgba(43,126,193,.12)}100%{background:var(--gray,#f3f4f6)}}
 .kpi-chart-hint{font-size:11px;color:var(--t3,#6b7280);margin:0 0 8px;}
 
 .portal-wrap{max-width:700px;margin:0 auto;padding:1.25rem;padding-left:96px;}
@@ -551,7 +551,7 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
 .portal-nav{position:fixed;top:0;left:0;bottom:0;width:80px;background:var(--navy);display:flex;flex-direction:column;align-items:center;padding-top:90px;gap:6px;z-index:60;}
 .portal-nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;color:rgba(255,255,255,0.55);font-size:10px;font-weight:600;padding:10px 4px;cursor:pointer;border-radius:10px;width:88%;text-align:center;transition:background 0.15s;}
 .portal-nav-item i{font-size:20px;}
-.portal-nav-item.active{background:rgba(43,126,193,0.12);color:var(--navy);}
+.portal-nav-item.active{background:rgba(245,166,35,0.18);color:#F5A623;}
 .portal-nav-item:hover{background:rgba(255,255,255,0.08);color:white;}
 .tab-pane{display:none;}
 .tab-pane.active{display:block;}
@@ -640,7 +640,7 @@ body.tt-fs-lock{overflow:hidden;position:fixed;width:100%;height:100%;height:100
 .tt-wrap .ib{margin-bottom:12px;background:rgba(237,233,254,.95)!important;color:#1A5A8F!important;border-left-color:#F5A623!important;font-size:13px!important;line-height:1.5!important;}
 .tt-lang-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
 .tt-lang-btn{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;border-radius:999px;padding:12px 16px;font-size:13px;font-weight:800;cursor:pointer;min-height:44px;-webkit-user-select:none;user-select:none;}
-.tt-lang-btn.is-on{background:linear-gradient(145deg,#D4891A,#E8C46A);color:#1a2a38;border-color:transparent;box-shadow:0 3px 10px rgba(212,137,26,.2);}
+.tt-lang-btn.is-on{background:linear-gradient(145deg,#F5A623,#FFD700);color:#1a1200;border-color:transparent;box-shadow:0 8px 18px rgba(245,166,35,.35);}
 .tt-scenario-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px;}
 .tt-scenario-row::-webkit-scrollbar{display:none;}
 .tt-scenario-btn{border:1px solid rgba(255,255,255,.28);background:rgba(0,0,0,.18);color:#E9D5FF;border-radius:12px;padding:10px 14px;font-size:12px;font-weight:800;cursor:pointer;flex:0 0 auto;min-height:44px;white-space:nowrap;-webkit-user-select:none;user-select:none;}
@@ -649,7 +649,7 @@ body.tt-fs-lock{overflow:hidden;position:fixed;width:100%;height:100%;height:100
 .tt-controls .btn{min-height:48px;flex:1 1 auto;}
 .tt-mode-toggle{display:flex;flex:1 1 100%;gap:0;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.28);width:100%;}
 .tt-mode-opt{border:none;background:rgba(0,0,0,.22);color:#E9D5FF;padding:12px 14px;font-size:13px;font-weight:800;cursor:pointer;min-height:48px;flex:1 1 50%;-webkit-user-select:none;user-select:none;}
-.tt-mode-opt.is-on{background:linear-gradient(145deg,#D4891A,#E8C46A);color:#1a2a38;}
+.tt-mode-opt.is-on{background:linear-gradient(145deg,#F5A623,#FFD700);color:#1a1200;}
 .tt-audio-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:100px;background:rgba(0,0,0,.28);border:2px dashed rgba(245,166,35,.45);border-radius:14px;padding:16px;margin-bottom:12px;color:#E9D5FF;text-align:center;}
 .tt-audio-panel strong{color:#FBBF24;font-size:14px;}
 .tt-audio-panel p{font-size:12px;margin:0;opacity:.9;line-height:1.45;}
@@ -681,9 +681,9 @@ body.tt-fs-lock{overflow:hidden;position:fixed;width:100%;height:100%;height:100
   .tt-mode-opt{padding:10px 8px;font-size:11px;}
   .tt-scenario-btn{padding:10px 10px;font-size:11px;}
 }
-.inf-arcade-stage{border-radius:18px;overflow:hidden;background:linear-gradient(165deg,#1A5A8F,#2B7EC1 48%,#0F3A5C);padding:18px 14px;border:1px solid rgba(212,137,26,.28);text-align:center;box-shadow:0 8px 22px rgba(15,58,92,.18);}
+.inf-arcade-stage{border-radius:18px;overflow:hidden;background:linear-gradient(165deg,#1A5A8F,#2B7EC1 48%,#0F3A5C);padding:18px 14px;border:1px solid rgba(245,166,35,.35);text-align:center;box-shadow:0 12px 28px rgba(59,14,140,.28);}
 .inf-arcade-stage .inf-arcade-kicker{font-size:11px;letter-spacing:.16em;font-weight:800;color:#FBBF24;margin-bottom:12px;}
-.inf-arcade-enter{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;max-width:420px;margin:0 auto;padding:16px 18px;border:none;border-radius:14px;cursor:pointer;font-weight:800;font-size:15px;color:#1a2a38;background:linear-gradient(135deg,#E8C46A,#D4891A);box-shadow:0 4px 14px rgba(212,137,26,.22);}
+.inf-arcade-enter{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;max-width:420px;margin:0 auto;padding:16px 18px;border:none;border-radius:14px;cursor:pointer;font-weight:900;font-size:15px;color:#1a1200;background:linear-gradient(135deg,#FFD700,#F5A623);box-shadow:0 8px 24px rgba(245,166,35,.35);}
 .inf-arcade-stage .inf-arcade-note{font-size:11px;color:#E9D5FF;margin-top:12px;line-height:1.45;opacity:.95;}
 .inf-arcade-lobby{position:fixed;inset:0;z-index:2390;display:none;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#1a0a3a 0%,#07061a 70%);padding:max(8px,env(safe-area-inset-top)) 10px max(10px,env(safe-area-inset-bottom));box-sizing:border-box;}
 .inf-arcade-lobby.is-open{display:flex;}
@@ -759,6 +759,7 @@ body.tt-fs-lock{overflow:hidden;position:fixed;width:100%;height:100%;height:100
 .inf-arcade-fs:fullscreen,.inf-arcade-fs:-webkit-full-screen{width:100%;height:100%;max-height:none;}
 .inf-arcade-fs.is-knight-mode:fullscreen .inf-arcade-fs-body,
 .inf-arcade-fs.is-knight-mode:-webkit-full-screen .inf-arcade-fs-body{height:100%;}
+.inf-hub-scroll{position:relative;z-index:2;flex:1;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding:16px 16px max(20px,env(safe-area-inset-bottom));}
 .inf-arcade-fs-modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;width:100%;}
 .inf-arcade-fs-mode-btn{text-align:left;border:1px solid rgba(196,181,253,.35);background:linear-gradient(145deg,rgba(255,255,255,.1),rgba(43,126,193,.28));color:#fff;border-radius:16px;padding:14px;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.2);}
 .inf-arcade-fs-mode-btn strong{display:block;font-size:14px;margin-bottom:4px;}
@@ -936,10 +937,20 @@ async function dbGetStudentRow(sid){
   return rows[0] || null;
 }
 async function dbFindStudentByPortalLogin(user, pass){
-  var rows = await dbQuery('kamuk_students?select=id,data&data->>portalUser=eq.'+encodeURIComponent(user)+'&limit=5');
+  var login = String(user || '').trim().toLowerCase();
+  var password = String(pass == null ? '' : pass);
+  var passwordTrim = password.trim();
+  if(!login || !passwordTrim) return null;
+  var rows = await dbQuery('kamuk_students?select=id,data&data->>portalUser=ilike.'+encodeURIComponent(login)+'&limit=5');
+  if(!rows.length){
+    // Fallback exact lowercase (older rows / filters)
+    rows = await dbQuery('kamuk_students?select=id,data&data->>portalUser=eq.'+encodeURIComponent(login)+'&limit=5');
+  }
   for(var i=0;i<rows.length;i++){
     var r = rows[i];
-    if(r.data && r.data.portalPass === pass){
+    if(!r.data) continue;
+    var stored = String(r.data.portalPass == null ? '' : r.data.portalPass);
+    if(stored === password || stored === passwordTrim){
       r.data.id = r.id;
       return r.data;
     }
@@ -1012,7 +1023,7 @@ function setLoginLoading(on){
 
 async function doLogin(){
   var user = document.getElementById('l-user').value.trim().toLowerCase();
-  var pass = document.getElementById('l-pass').value.trim();
+  var pass = String(document.getElementById('l-pass').value || '').trim();
   var err = document.getElementById('login-err');
   if(!user || !pass){ err.textContent='Ingresá tu usuario y contraseña.'; err.style.display='block'; return; }
 
@@ -1020,10 +1031,26 @@ async function doLogin(){
   setLoginLoading(true);
 
   try{
-    var student = await dbFindStudentByPortalLogin(user, pass);
+    // 1) Auth server first (source of truth) — avoids false "incorrecto" if Supabase filter fails in browser
+    var loginData = null;
+    try {
+      loginData = await infinityLogin(user, pass, 'student', { silent: true, product: 'kamuk' });
+    } catch(e) { loginData = null; }
+
+    var student = null;
+    if(loginData && loginData.studentId){
+      var row = await dbGetStudentRow(loginData.studentId);
+      if(row && row.data){
+        student = row.data;
+        student.id = row.id;
+      }
+    }
+    if(!student){
+      student = await dbFindStudentByPortalLogin(user, pass);
+    }
 
     if(!student){
-      err.textContent='Usuario o contraseña incorrectos.';
+      err.textContent='Usuario o contraseña incorrectos. Revisá mayúsculas/minúsculas y caracteres especiales (!).';
       err.style.display='block';
       setLoginLoading(false);
       return;
@@ -1036,15 +1063,14 @@ async function doLogin(){
     }
 
     // JWT is mandatory — without it Jill/Alice/Nexora all return 401 "sesión expirada"
-    var loginData = null;
     try {
-      loginData = await infinityLogin(user, pass, 'student', { silent: true, product: 'kamuk' });
+      if(!loginData) loginData = await infinityLogin(user, pass, 'student', { silent: true, product: 'kamuk' });
       if(!getAuthToken() && typeof infinityEnsureAuth === 'function'){
         await infinityEnsureAuth({ user: user, password: pass, role: 'student', product: 'kamuk', attempts: 3, force: true });
       }
     } catch(e) { /* handled below */ }
     if(!getAuthToken()){
-      err.textContent = 'No se pudo activar la voz con el servidor. Esperá unos segundos e intentá de nuevo.';
+      err.textContent = 'Credenciales OK, pero el servidor de voz no respondió. Esperá 10s e intentá de nuevo.';
       err.style.display = 'block';
       setLoginLoading(false);
       return;
@@ -1305,8 +1331,6 @@ function applyServerStudentFlags(d){
   else if(d.companionEnabled == null) CURRENT_STUDENT.companionEnabled = true;
   if(typeof d.aliceEnabled !== 'boolean' && d.aliceEnabled == null) CURRENT_STUDENT.aliceEnabled = true;
   if(typeof d.jillEnabled !== 'boolean' && d.jillEnabled == null) CURRENT_STUDENT.jillEnabled = false;
-  if(typeof d.arcadeFloorOptIn === 'boolean') CURRENT_STUDENT.arcadeFloorOptIn = d.arcadeFloorOptIn;
-  if(d.arcadeMeta && typeof d.arcadeMeta === 'object') CURRENT_STUDENT.arcadeMeta = d.arcadeMeta;
   window._currentStudent = CURRENT_STUDENT;
   window._portalStudent = CURRENT_STUDENT;
 }
@@ -1458,12 +1482,12 @@ function showPortal(s){
   var vocabCard = (typeof JillVocab !== 'undefined') ? JillVocab.renderRecursosCard(s) : '';
   var arcadeGate = studentGamesOn(s)
     ? '<div class="inf-arcade-stage" id="portal-arcade-stage">'
-      + '<div class="inf-arcade-kicker">COMPANION · PISO KAMUK</div>'
+      + '<div class="inf-arcade-kicker">PRACTICE HUB · LINK · IDEA · LINK</div>'
       + '<button type="button" class="inf-arcade-enter" onclick="openInfinityArcadeLobby()"><i class="ti ti-cards"></i> Abrir Companion Hub</button>'
-      + '<div class="inf-arcade-note">Knight, Thief, Raiders y Rapid — add-on de Companion. Ranking solo entre estudiantes Kamuk.</div>'
+      + '<div class="inf-arcade-note">Pantallas con personajes · Boss Call, STAR, Listen, Tone, Nemesis y más — gaming Infinity.</div>'
       + '<div id="portal-quiz-container" style="display:none;"></div>'
       + '</div>'
-    : '<div style="font-size:13px;color:var(--t3);">Activá Jill, Modo Libre, Alice o Companion para entrar al Hub.</div>';
+    : '<div style="font-size:13px;color:var(--t3);">Activá Jill, Modo Libre o Alice para entrar al Arcade.</div>';
   var recursosHtml = '<div class="card"><div class="card-title"><i class="ti ti-book"></i>Lectura — Jill + leer</div>'
     +'<div style="font-size:12px;color:var(--t2);line-height:1.65;margin-bottom:10px;">Después de practicar con Jill, leé <strong>5–10 min</strong> en voz baja o alta. Anotá palabras nuevas en tu cuaderno — entran a tu vocab activo.</div>'
     +'<div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">'
@@ -1488,8 +1512,8 @@ function showPortal(s){
     +'</div>'
 
     +'<div class="inf-skill" style="background:linear-gradient(165deg,#E8F4FC,#fff);">'
-    +'<h3><i class="ti ti-device-gamepad-2"></i> Companion Hub</h3>'
-    +'<p class="inf-skill-lead">Add-on de Companion. Knight, Thief, Raiders y Rapid — a pantalla completa.</p>'
+    +'<h3><i class="ti ti-cards"></i> Infinity Hub</h3>'
+    +'<p class="inf-skill-lead">Hub gaming con personajes: Boss Call, STAR Arena, Speed Listen y más — paleta Infinity, LINK · IDEA · LINK.</p>'
     + arcadeGate
     +'</div>';
 
@@ -1523,7 +1547,7 @@ function showPortal(s){
     +'<div class="tab-pane" id="tp-nexora"><div id="nexora-root">'
     +'<div style="background:linear-gradient(135deg,#0a0a0f,#1a1a28);border-radius:12px;padding:1.5rem;color:white;border:1px solid rgba(245,166,35,0.2);">'
     +'<div style="font-size:10px;letter-spacing:0.2em;color:#F5A623;margin-bottom:4px;font-weight:800;">STUDIO INFINITY CR</div>'
-    +'<div style="font-size:28px;font-weight:900;color:#C084FC;letter-spacing:0.05em;">NEXORA</div>'
+    +'<div style="font-size:28px;font-weight:900;color:#79B9E8;letter-spacing:0.05em;">NEXORA</div>'
     +'<div style="font-size:12px;color:rgba(255,255,255,0.88);margin-bottom:1rem;">Operational English Simulation Lab</div>'
     +'</div>'
     +'<div id="nexora-scenario-display" style="margin-top:1rem;"></div>'
@@ -2116,7 +2140,7 @@ function resolveRapidDrillTier(force){
   return 'foundations';
 }
 function rapidDrillLabel(tier){
-  return tier === 'advanced' ? 'Challenge drill (Alice)' : 'Rapid drill Kaboom';
+  return tier === 'advanced' ? 'Challenge drill (Alice)' : 'Rapid drill · Foundations';
 }
 function drillMountOpts(){
   var tab = window._activePortalTab || 'progreso';
@@ -2124,9 +2148,9 @@ function drillMountOpts(){
   if(tab === 'jill') tier = 'foundations';
   return { drillTier: tier, drillOwner: tab === 'alice' ? 'alice' : 'jill' };
 }
-/** Jill, Modo Libre, Alice o Companion — acceso al arcade (mismo patrón trainer). */
+/** Jill, Modo Libre, Alice o Alice+ — acceso a juegos (Rapid drill, quiz). */
 function studentGamesOn(s){
-  return studentJillTabOn(s) || studentAliceTabOn(s) || studentCompanionOn(s);
+  return studentJillTabOn(s) || studentAliceTabOn(s);
 }
 function portalQuizBundle(){
   if(typeof JillFoundations !== 'undefined' && CURRENT_STUDENT){
@@ -2136,23 +2160,21 @@ function portalQuizBundle(){
 }
 function portalOpenPracticeQuiz(){
   if(!studentGamesOn(CURRENT_STUDENT)){
-    showToast('Activá Jill, Modo Libre, Alice o Companion con tu trainer.','err');
+    showToast('Activá Jill, Modo Libre o Alice con tu trainer.','err');
     return;
   }
   switchPortalTab('recursos');
   setTimeout(function(){ openInfinityArcadeLobby(); }, 120);
 }
 
-/** Hub de juegos — Knight / Thief / Raiders / Rapid (Companion add-on). */
+/** Hub de juegos — agregá entradas aquí para que salgan en la máquina. */
 var INFINITY_ARCADE_GAMES = [
   { id: 'knight', title: "Knight's Quest", icon: 'ti-sword', btnClass: 'inf-arcade-btn-modes', run: 'knight' },
   { id: 'thief', title: 'Shadow Thief', icon: 'ti-mask', btnClass: 'inf-arcade-btn-modes', run: 'thief' },
-  { id: 'raiders', title: 'Tense Raiders', icon: 'ti-swords', btnClass: 'inf-arcade-btn-modes', run: 'raiders' },
   { id: 'rapid', title: 'Rapid Drill', icon: 'ti-flame', btnClass: 'inf-arcade-btn-rapid', run: 'rapid' }
 ];
 
 function ensureInfinityArcadeLobby(){
-  if(typeof openInfinityCasinoFloor === 'function') return;
   if(document.getElementById('inf-arcade-lobby')) return;
   var el = document.createElement('div');
   el.id = 'inf-arcade-lobby';
@@ -2161,7 +2183,7 @@ function ensureInfinityArcadeLobby(){
   el.setAttribute('aria-modal', 'true');
   el.innerHTML =
     '<div class="inf-arcade-lobby-bar">'
-    + '<div class="inf-arcade-lobby-label">KAMUK HUB</div>'
+    + '<div class="inf-arcade-lobby-label">INFINITY ARCADE</div>'
     + '<button type="button" onclick="closeInfinityArcadeLobby()"><i class="ti ti-x"></i> Cerrar</button>'
     + '</div>'
     + '<div id="portal-arcade-cabinet" style="width:100%;display:flex;justify-content:center;"></div>'
@@ -2171,30 +2193,27 @@ function ensureInfinityArcadeLobby(){
 
 function openInfinityArcadeLobby(){
   if(!studentGamesOn(CURRENT_STUDENT)){
-    showToast('Activá Jill, Modo Libre, Alice o Companion con tu trainer.','err');
+    showToast('Activá Jill, Modo Libre o Alice con tu trainer.','err');
     return;
   }
-  var old = document.getElementById('inf-arcade-lobby');
-  if(old) old.classList.remove('is-open');
-  document.body.classList.remove('inf-arcade-lobby-lock');
-  window._infArcadeLobbyOpen = false;
-  if(typeof openInfinityCasinoFloor === 'function'){
-    openInfinityCasinoFloor();
-    return;
-  }
-  showToast('Hub no cargó. Recargá el portal.','err');
+  ensureInfinityArcadeLobby();
+  var lobby = document.getElementById('inf-arcade-lobby');
+  if(lobby) lobby.classList.add('is-open');
+  document.body.classList.add('inf-arcade-lobby-lock');
+  window._infArcadeLobbyOpen = true;
+  renderInfinityArcadeCabinet('portal-arcade-cabinet');
 }
 
 function closeInfinityArcadeLobby(){
-  if(typeof closeInfinityCasinoFloor === 'function'){
-    closeInfinityCasinoFloor();
-    return;
-  }
   closeInfinityArcadeMonitor(true);
   var lobby = document.getElementById('inf-arcade-lobby');
   if(lobby) lobby.classList.remove('is-open');
   document.body.classList.remove('inf-arcade-lobby-lock');
   window._infArcadeLobbyOpen = false;
+  clearTimeout(window._infArcadeBootTimer);
+  clearTimeout(window._infArcadeIntroT1);
+  clearTimeout(window._infArcadeIntroT2);
+  clearTimeout(window._infArcadeIntroT3);
 }
 
 function layoutInfinityArcadeScreen(){
@@ -2309,8 +2328,30 @@ function playInfinityArcadeIntro(){
   }, 1650);
 }
 
-function renderInfinityArcadeCabinet(){
-  if(typeof openInfinityCasinoFloor === 'function') openInfinityCasinoFloor();
+function renderInfinityArcadeCabinet(containerId){
+  var c = document.getElementById(containerId || 'portal-arcade-cabinet');
+  if(!c) return;
+  if(!studentGamesOn(CURRENT_STUDENT)){
+    c.innerHTML = '<div style="font-size:13px;color:#c4b5fd;padding:12px;text-align:center;">Activá Jill, Modo Libre o Alice para el Arcade.</div>';
+    return;
+  }
+  var hint = document.getElementById('inf-arcade-tap-hint');
+  if(hint) hint.hidden = true;
+  c.innerHTML =
+    '<div class="inf-arcade-cabinet-wrap" id="inf-arcade-wrap" role="button" tabindex="0" aria-label="Abrir menú de juegos" onclick="zoomInfinityArcadeToMonitor()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();zoomInfinityArcadeToMonitor();}">'
+    + '<img class="inf-arcade-cabinet-img" src="https://studioinfinitycr.com/assets/infinity-arcade-cabinet.png" alt="Infinity Arcade" draggable="false">'
+    + '<div class="inf-arcade-marquee-glow" id="inf-arcade-marquee-glow" aria-hidden="true"></div>'
+    + '<div class="inf-arcade-hotspot inf-arcade-hotspot-marquee" id="inf-arcade-ring-marquee" aria-hidden="true"></div>'
+    + '<div class="inf-arcade-hotspot inf-arcade-hotspot-screen" id="inf-arcade-ring-screen" aria-hidden="true"></div>'
+    + '<div class="inf-arcade-screen" id="inf-arcade-screen" aria-live="polite">'
+    +   '<div class="inf-arcade-screen-inner" id="inf-arcade-screen-inner">'
+    +     '<div class="inf-arcade-boot">INSERT COIN…</div>'
+    +   '</div>'
+    + '</div>'
+    + '</div>';
+  var img = c.querySelector('.inf-arcade-cabinet-img');
+  bindInfinityArcadeScreenLayout(img);
+  playInfinityArcadeIntro();
 }
 
 function showInfinityArcadeHome(){
@@ -2343,11 +2384,11 @@ function ensureInfinityArcadeMonitor(){
     + '</div>'
     + '<div class="inf-arcade-monitor-frame">'
     +   '<div class="inf-arcade-monitor-panel">'
-    +     '<h2>LANGUAGE ARCADE</h2>'
+    +     '<h2>PERFORMANCE HUB</h2>'
     +     '<div class="inf-arcade-monitor-grid" id="inf-arcade-monitor-grid"></div>'
     +     '<div class="inf-arcade-monitor-extras">'
+    +       '<button type="button" onclick="launchInfinityCasinoGame(\'knight\')"><i class="ti ti-sword"></i> Knight\'s Quest</button>'
     +       '<button type="button" onclick="infinityArcadePickRapid()"><i class="ti ti-flame"></i> Rapid Drill</button>'
-    +       '<button type="button" onclick="infinityArcadePickChallenge()"><i class="ti ti-bolt"></i> Challenge Drill</button>'
     +     '</div>'
     +   '</div>'
     + '</div>';
@@ -2355,27 +2396,30 @@ function ensureInfinityArcadeMonitor(){
 }
 
 function zoomInfinityArcadeToMonitor(){
-  if(typeof openInfinityCasinoFloor === 'function') openInfinityCasinoFloor();
+  if(!studentGamesOn(CURRENT_STUDENT)) return;
+  var wrap = document.getElementById('inf-arcade-wrap');
+  if(wrap){
+    wrap.classList.remove('is-zooming');
+    void wrap.offsetWidth;
+    wrap.classList.add('is-zooming');
+  }
+  var hint = document.getElementById('inf-arcade-tap-hint');
+  if(hint) hint.hidden = true;
+  clearTimeout(window._infArcadeZoomT);
+  window._infArcadeZoomT = setTimeout(function(){
+    openInfinityArcadeMonitor();
+    if(wrap) wrap.classList.remove('is-zooming');
+  }, 400);
 }
 
 function openInfinityArcadeMonitor(){
-  if(typeof openInfinityCasinoFloor === 'function'){
-    openInfinityCasinoFloor();
-    return;
-  }
   ensureInfinityArcadeMonitor();
   var mon = document.getElementById('inf-arcade-monitor');
   var grid = document.getElementById('inf-arcade-monitor-grid');
-  var modes = (typeof ARCADE_MODES !== 'undefined' && ARCADE_MODES) ? ARCADE_MODES : {};
-  var keys = Object.keys(modes).filter(function(k){ return k !== 'challenge'; });
   if(grid){
-    grid.innerHTML = keys.map(function(key){
-      var m = modes[key];
-      return '<button type="button" onclick="infinityArcadeStartMode(\''+key+'\')">'
-        + (m.icon ? '<i class="ti '+m.icon+'"></i> ' : '')
-        + (m.title || key)
-        + '</button>';
-    }).join('');
+    grid.innerHTML =
+      '<button type="button" onclick="launchInfinityCasinoGame(\'knight\')"><i class="ti ti-sword"></i> Knight\'s Quest</button>'
+      + '<button type="button" onclick="infinityArcadePickRapid()"><i class="ti ti-flame"></i> Rapid Drill</button>';
   }
   if(mon){
     mon.classList.remove('is-enter');
@@ -2406,17 +2450,15 @@ function infinityArcadeRunGame(gameId){
   if(g.run === 'rapid') return infinityArcadePickRapid();
   if(g.run === 'knight') return launchInfinityCasinoGame('knight');
   if(g.run === 'thief') return launchInfinityCasinoGame('thief');
-  if(g.run === 'raiders') return launchInfinityCasinoGame('raiders');
   if(g.run === 'challenge') return infinityArcadePickRapid();
-  if(g.run === 'modes') return (typeof openInfinityCasinoFloor === 'function') ? openInfinityCasinoFloor() : openInfinityArcadeMonitor();
+  if(g.run === 'modes') return openInfinityCasinoFloor();
   if(g.run && String(g.run).indexOf('arcade:') === 0){
     return infinityArcadeStartMode(String(g.run).slice(7));
   }
 }
 
 function showInfinityArcadeModes(){
-  if(typeof openInfinityCasinoFloor === 'function') openInfinityCasinoFloor();
-  else openInfinityArcadeMonitor();
+  openInfinityArcadeMonitor();
 }
 
 function infinityArcadePickRapid(){
@@ -2425,9 +2467,8 @@ function infinityArcadePickRapid(){
     return;
   }
   closeInfinityArcadeMonitor(true);
-  if(typeof closeInfinityCasinoTitle === 'function') closeInfinityCasinoTitle();
   window._rapidDrillTier = 'foundations';
-  openInfinityArcadeFullscreen('Rapid Drill', 'Foundations · Piso Kamuk');
+  openInfinityArcadeFullscreen('Rapid Drill', 'Foundations · Piso');
   var fs = document.getElementById('inf-arcade-fs');
   if(fs) fs.classList.add('is-rapid-mode');
   var body = document.getElementById('inf-arcade-fs-body');
@@ -2447,8 +2488,9 @@ function infinityArcadePickChallenge(){
 
 function infinityArcadeStartMode(mode){
   closeInfinityArcadeMonitor(true);
+  if(typeof closeInfinityCasinoTitle === 'function') closeInfinityCasinoTitle();
   var m = (typeof ARCADE_MODES !== 'undefined' && ARCADE_MODES[mode]) ? ARCADE_MODES[mode] : null;
-  openInfinityArcadeFullscreen(m && m.title ? m.title : 'Language Arcade', 'Infinity Arcade');
+  openInfinityArcadeFullscreen(m && m.title ? m.title : 'Language Arcade', 'LINK · IDEA · LINK');
   startArcadeMode(mode, 'inf-arcade-fs-body');
 }
 
@@ -2461,7 +2503,7 @@ function ensureInfinityArcadeFullscreen(){
   el.setAttribute('aria-modal', 'true');
   el.innerHTML =
     '<div class="inf-arcade-fs-bar">'
-    + '<div class="inf-arcade-fs-title" id="inf-arcade-fs-title">KAMUK HUB<span id="inf-arcade-fs-sub">Companion</span></div>'
+    + '<div class="inf-arcade-fs-title" id="inf-arcade-fs-title">INFINITY ARCADE<span id="inf-arcade-fs-sub">Skill Tests</span></div>'
     + '<button type="button" class="inf-arcade-fs-close" onclick="closeInfinityArcadeFullscreen()"><i class="ti ti-x"></i> Cerrar</button>'
     + '</div>'
     + '<div class="inf-arcade-fs-body" id="inf-arcade-fs-body"></div>';
@@ -2474,8 +2516,8 @@ function openInfinityArcadeFullscreen(title, subtitle){
   var t = document.getElementById('inf-arcade-fs-title');
   var body = document.getElementById('inf-arcade-fs-body');
   if(t){
-    t.innerHTML = String(title || 'KAMUK HUB')
-      + '<span id="inf-arcade-fs-sub">'+String(subtitle || 'Companion')+'</span>';
+    t.innerHTML = String(title || 'INFINITY ARCADE')
+      + '<span id="inf-arcade-fs-sub">'+String(subtitle || 'Skill Tests')+'</span>';
   }
   if(body){
     body.classList.remove('is-knight-fit');
@@ -2534,27 +2576,38 @@ function closeInfinityArcadeFullscreen(){
   }
   if(typeof openInfinityCasinoFloor === 'function'){
     openInfinityCasinoFloor();
+  } else if(window._infArcadeLobbyOpen){
+    openInfinityArcadeMonitor();
+  } else {
+    openInfinityArcadeLobby();
   }
 }
 
 function infinityArcadeFsShowModes(){
+  if(typeof openInfinityCasinoFloor === 'function'){
+    closeInfinityArcadeFullscreen();
+    return;
+  }
   ensureInfinityArcadeFullscreen();
   openInfinityArcadeFullscreen('Language Arcade', 'Elegí un modo');
   var body = document.getElementById('inf-arcade-fs-body');
   if(!body) return;
+  ensureArcadePressureStyles();
   var modes = (typeof ARCADE_MODES !== 'undefined' && ARCADE_MODES) ? ARCADE_MODES : {};
   body.innerHTML =
-    '<div class="inf-arcade-fs-modes">'
+    arcadeHudHtml(CURRENT_STUDENT || {})
+    + '<div class="inf-arcade-fs-modes">'
     + Object.keys(modes).filter(function(k){ return k !== 'challenge'; }).map(function(key){
         var m = modes[key];
         return '<button type="button" class="inf-arcade-fs-mode-btn" onclick="infinityArcadeStartMode(\''+key+'\')">'
           + '<strong>'+(m.icon ? '<i class="ti '+m.icon+'"></i> ' : '')+(m.title || key)+'</strong>'
+          + '<span style="display:block;font-weight:800;margin:4px 0;opacity:.9;">'+(m.stars || '')+'</span>'
           + '<span>'+(m.desc || '')+'</span>'
           + '</button>';
       }).join('')
     + '</div>'
     + '<div style="margin-top:14px;text-align:center;">'
-    + '<button type="button" class="inf-arcade-fs-close" style="margin-right:8px;" onclick="infinityArcadeStartMode(\'challenge\')">⚡ Challenge Drill</button>'
+    + '<button type="button" class="inf-arcade-fs-close" style="margin-right:8px;" onclick="infinityArcadeStartMode(\'challenge\')">⚡ Challenge · ★★ Pressure</button>'
     + '<button type="button" class="inf-arcade-fs-close" onclick="closeInfinityArcadeFullscreen()">← Menú máquina</button>'
     + '</div>';
 }
@@ -2562,7 +2615,7 @@ function infinityArcadeFsShowModes(){
 function renderPortalGamesButtons(variant){
   if(!studentGamesOn(CURRENT_STUDENT)) return '';
   var s = CURRENT_STUDENT;
-  var accent = variant === 'alice' ? '#C084FC' : '#e9d5ff';
+  var accent = variant === 'alice' ? '#79B9E8' : '#e9d5ff';
   var border = variant === 'alice' ? 'rgba(192,132,252,0.45)' : 'rgba(167,139,250,0.45)';
   // Challenge drill + Language Arcade: only in Recursos (Infinity Arcade cabinet).
   var html = '';
@@ -2826,7 +2879,7 @@ function resolvePortalAreaAverages(last){
 
 function initPortalLiveCharts(s){
   if(typeof LiveKpiCharts==='undefined'||!s) return;
-  if(typeof LiveKpiCharts.setTheme==='function') LiveKpiCharts.setTheme('kamuk');
+  if(typeof LiveKpiCharts.setTheme==='function') LiveKpiCharts.setTheme('infinity');
   if(!window._portalKpiDetailBound && typeof LiveKpiCharts.bindPortalDetail==='function'){
     LiveKpiCharts.bindPortalDetail('portal-kpi-detail');
     window._portalKpiDetailBound=true;
@@ -2979,14 +3032,72 @@ function startPersonaTypingTest(personaKey, containerId){
 
 // ── INFINITY LANGUAGE ARCADE (reemplaza quiz estático) ─────
 var ARCADE_MODES = {
-  challenge: { title:'Challenge Drill', icon:'ti-bolt', desc:'Presión arcade: linkers + estructura + fallos. No es Kaboom.', category:'mixed', color:'#F59E0B' },
-  verb: { title:'Verb Hunt', icon:'ti-target-arrow', desc:'Descubrí verbos clave como word reveal.', category:'verb', color:'#0f766e' },
-  structure: { title:'Structure Creator', icon:'ti-blocks', desc:'Ordená bloques para formar la oración.', category:'structure', color:'#5b21b6' },
-  preposition: { title:'Preposition Challenge', icon:'ti-map-pin', desc:'in / on / at / by / to / for en contexto.', category:'preposition', color:'#b45309' },
-  linker: { title:'Linker Quest', icon:'ti-route', desc:'Elegí el conector lógico correcto.', category:'linker', color:'#6d28d9' },
-  phrasal: { title:'Phrasal Master', icon:'ti-puzzle', desc:'Phrasal verbs útiles para trabajo real.', category:'phrasal', color:'#1d4ed8' },
-  frenzy: { title:'Frenzy Mode', icon:'ti-flame', desc:'Mezcla todo y prioriza tus fallos.', category:'mixed', color:'#be123c' }
+  verb: { title:'Verb Hunt', icon:'ti-target-arrow', desc:'Word reveal de verbos operacionales.', category:'verb', color:'#0f766e', difficulty:1, stars:'★ Easy' },
+  structure: { title:'Structure Creator', icon:'ti-blocks', desc:'Armá oraciones reales de trabajo.', category:'structure', color:'#5b21b6', difficulty:1, stars:'★ Easy' },
+  preposition: { title:'Preposition Challenge', icon:'ti-map-pin', desc:'in / on / at / by / to / for bajo contexto.', category:'preposition', color:'#b45309', difficulty:1, stars:'★ Easy' },
+  linker: { title:'Linker Quest', icon:'ti-route', desc:'Conectores lógicos de entrevista y meetings.', category:'linker', color:'#6d28d9', difficulty:2, stars:'★★ Pressure' },
+  phrasal: { title:'Phrasal Master', icon:'ti-puzzle', desc:'Phrasals de call / follow-up / pressure.', category:'phrasal', color:'#1d4ed8', difficulty:2, stars:'★★ Pressure' },
+  challenge: { title:'Challenge Drill', icon:'ti-bolt', desc:'Presión arcade: linkers + estructura + fallos.', category:'mixed', color:'#F59E0B', difficulty:2, stars:'★★ Pressure' },
+  frenzy: { title:'Frenzy Mode', icon:'ti-flame', desc:'Todo mezclado + timer + tus fallos primero.', category:'mixed', color:'#be123c', difficulty:3, stars:'★★★ Frenzy' }
 };
+
+/** New hub games — NEVER Game Boy / arcade-hh (even if modern JS fails to load) */
+var INFINITY_MODERN_MODES = {
+  bosscall:1, star:1, listen:1, tone:1, nemesis:1, snake:1,
+  phrasalswap:1, dailyboss:1, linkerflight:1, tenserdrop:1
+};
+function arcadeModeIsModern(mode){
+  if (typeof window.arcadeIsModernMode === 'function') {
+    try { if (window.arcadeIsModernMode(mode)) return true; } catch(e) {}
+  }
+  return !!(mode && INFINITY_MODERN_MODES[mode]);
+}
+function arcadeModernFinishFallback(containerId){
+  var st = window._arcadeState; if(!st) return;
+  arcadeClearQuestionTimer();
+  var correct = st.correct || 0;
+  var total = (st.quiz && st.quiz.length) || 1;
+  var score = Math.round((correct / total) * 100);
+  var reward = arcadeApplyRoundMeta(st, score);
+  st._lastReward = reward;
+  var c = document.getElementById(containerId); if(!c) return;
+  var menuAction = (containerId === 'inf-arcade-fs-body')
+    ? 'closeInfinityArcadeFullscreen()'
+    : "openInfinityCasinoFloor()";
+  c.innerHTML = '<div style="max-width:520px;margin:0 auto;border-radius:22px;overflow:hidden;border:2px solid rgba(245,166,35,.4);background:#0B0618;color:#F8F5FF;font-family:system-ui,sans-serif">'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(43,126,193,.5);border-bottom:1px solid rgba(245,166,35,.3)">'
+    + '<strong style="color:#F5A623;letter-spacing:.06em">'+(arcadeEsc(st.modeTitle)||'MISSION')+'</strong>'
+    + '<button type="button" onclick="'+menuAction+'" style="border:1px solid #F5A623;background:#1a0a3a;color:#F5A623;border-radius:10px;padding:7px 10px;font-weight:800;cursor:pointer">HUB</button></div>'
+    + '<div style="padding:22px 16px;text-align:center;background:linear-gradient(180deg,#1A5A8F,#2B7EC1 55%,#0B0618)">'
+    + '<div style="font-size:28px;font-weight:900;color:#F5A623;margin-bottom:8px">MISSION CLEAR</div>'
+    + '<div style="font-weight:800;margin-bottom:10px">'+correct+'/'+total+' · '+score+'%</div>'
+    + '<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px">'
+    + '<span style="padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.35);font-size:11px;font-weight:800">BEST '+(st.bestStreak||0)+'</span>'
+    + '<span style="padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.35);font-size:11px;font-weight:800">+'+(reward.xpGain||0)+' XP</span>'
+    + '<span style="padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.35);font-size:11px;font-weight:800">+'+(reward.coinGain||0)+' COINS</span>'
+    + '</div>'
+    + '<div style="font-size:12px;opacity:.85;margin-bottom:14px">LINK · IDEA · LINK</div>'
+    + '<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">'
+    + '<button type="button" onclick="startArcadeMode(\''+st.mode+'\',\''+containerId+'\')" style="padding:10px 16px;border:none;border-radius:12px;background:linear-gradient(135deg,#FFD700,#F5A623);color:#1a1200;font-weight:900;cursor:pointer">RETRY</button>'
+    + '<button type="button" onclick="'+menuAction+'" style="padding:10px 16px;border:1px solid rgba(255,255,255,.25);border-radius:12px;background:rgba(255,255,255,.1);color:#fff;font-weight:900;cursor:pointer">HUB</button>'
+    + '</div></div></div>';
+  try { saveArcadeResult(st, score); } catch(e) {}
+}
+function arcadeModernShellFallback(st, q, body){
+  var menuAction = (st.containerId === 'inf-arcade-fs-body')
+    ? 'closeInfinityArcadeFullscreen()'
+    : "openInfinityCasinoFloor()";
+  return '<div style="max-width:520px;margin:0 auto;border-radius:22px;overflow:hidden;border:2px solid rgba(245,166,35,.35);background:#0B0618;color:#F8F5FF;font-family:system-ui,sans-serif">'
+    + '<div style="display:flex;justify-content:space-between;gap:10px;padding:12px 14px;background:rgba(43,126,193,.45);border-bottom:1px solid rgba(245,166,35,.25)">'
+    + '<strong style="color:#F5A623">'+(arcadeEsc(st.modeTitle)||'GAME')+'</strong>'
+    + '<button type="button" onclick="'+menuAction+'" style="border:1px solid #F5A623;background:#1a0a3a;color:#F5A623;border-radius:10px;padding:7px 10px;font-weight:800;cursor:pointer">HUB</button></div>'
+    + '<div style="position:relative;padding:14px;background:linear-gradient(180deg,#1A5A8F,#2B7EC1 60%,#0B0618)">'
+    + '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">'
+    + '<span style="font-size:11px;font-weight:800;padding:6px 10px;border-radius:999px;background:rgba(11,6,24,.65)">'+(st.idx+1)+'/'+(st.quiz&&st.quiz.length||1)+'</span>'
+    + '<span style="font-size:11px;font-weight:800;padding:6px 10px;border-radius:999px;background:rgba(11,6,24,.65)">STREAK '+st.streak+'</span></div>'
+    + body
+    + '<div id="'+st.containerId+'-result"></div></div></div>';
+}
 
 var ARCADE_BANK = {
   verb: [
@@ -2997,7 +3108,15 @@ var ARCADE_BANK = {
     { id:'verb-make-past', kpi:'k2', prompt:'Past of MAKE', clue:'Complete: We ___ a decision.', answer:'made', explain:'MAKE en pasado es MADE.' },
     { id:'verb-take-pp', kpi:'k3', prompt:'Past participle of TAKE', clue:'Complete: They have ___ the test.', answer:'taken', explain:'TAKE → TOOK → TAKEN.' },
     { id:'verb-work-ing', kpi:'k2', prompt:'-ING form of WORK', clue:'Complete: I am ___ now.', answer:'working', explain:'Presente continuo: am/is/are + verbo-ing.' },
-    { id:'verb-study-past', kpi:'k2', prompt:'Past of STUDY', clue:'Complete: He ___ last night.', answer:'studied', explain:'Study cambia Y por IED: studied.' }
+    { id:'verb-study-past', kpi:'k2', prompt:'Past of STUDY', clue:'Complete: He ___ last night.', answer:'studied', explain:'Study cambia Y por IED: studied.' },
+    { id:'verb-ops-raise', kpi:'k2', prompt:'Past of RAISE (a concern)', clue:'In the meeting I ___ a concern about the deadline.', answer:'raised', explain:'RAISE → RAISED. Raise a concern = plantear una preocupación.' },
+    { id:'verb-ops-lead', kpi:'k2', prompt:'Past of LEAD (a call)', clue:'She ___ the client call yesterday.', answer:'led', explain:'LEAD → LED (no leaded).' },
+    { id:'verb-ops-deal-pp', kpi:'k3', prompt:'Past participle of DEAL', clue:'I have ___ with angry clients before.', answer:'dealt', explain:'DEAL → DEALT → DEALT.' },
+    { id:'verb-ops-hold-pp', kpi:'k3', prompt:'Past participle of HOLD', clue:'We have ___ three interviews today.', answer:'held', explain:'HOLD → HELD → HELD.' },
+    { id:'verb-ops-bring', kpi:'k2', prompt:'Past of BRING', clue:'He ___ the report to the board.', answer:'brought', explain:'BRING → BROUGHT.' },
+    { id:'verb-ops-choose-pp', kpi:'k3', prompt:'Past participle of CHOOSE', clue:'They have ___ the final candidate.', answer:'chosen', explain:'CHOOSE → CHOSE → CHOSEN.' },
+    { id:'verb-ops-speak-pp', kpi:'k3', prompt:'Past participle of SPEAK', clue:'I have ___ with the hiring manager.', answer:'spoken', explain:'SPEAK → SPOKE → SPOKEN.' },
+    { id:'verb-ops-write-pp', kpi:'k3', prompt:'Past participle of WRITE', clue:'She has ___ the follow-up email.', answer:'written', explain:'WRITE → WROTE → WRITTEN.' }
   ],
   structure: [
     { id:'str-neg-monday', kpi:'k3', prompt:'Armá la oración negativa.', clue:'She / Mondays / work', blocks:['she',"doesn't",'work','on Mondays'], answer:['she',"doesn't",'work','on Mondays'], explain:"She + doesn't + verbo base + complemento." },
@@ -3005,7 +3124,13 @@ var ARCADE_BANK = {
     { id:'str-present-perfect', kpi:'k3', prompt:'Armá la oración en presente perfecto.', clue:'I / the report / finished', blocks:['I','have','finished','the report'], answer:['I','have','finished','the report'], explain:'Sujeto + have + participio + complemento.' },
     { id:'str-progressive', kpi:'k3', prompt:'Armá la oración en presente continuo.', clue:'she / working / now', blocks:['she','is','working','now'], answer:['she','is','working','now'], explain:'Sujeto + to be + verbo-ing.' },
     { id:'str-because', kpi:'k9', prompt:'Armá una respuesta con razón.', clue:'I like my job + because…', blocks:['I','like my job','because','I learn','every day'], answer:['I','like my job','because','I learn','every day'], explain:'Idea + because + razón concreta.' },
-    { id:'str-question-gym', kpi:'k3', prompt:'Armá la pregunta correcta.', clue:'does / he / go / to the gym', blocks:['does','he','go','to the gym'], answer:['does','he','go','to the gym'], explain:'Does + he + verbo base + complemento.' }
+    { id:'str-question-gym', kpi:'k3', prompt:'Armá la pregunta correcta.', clue:'does / he / go / to the gym', blocks:['does','he','go','to the gym'], answer:['does','he','go','to the gym'], explain:'Does + he + verbo base + complemento.' },
+    { id:'str-ops-star-s', kpi:'k20', prompt:'Armá el Situation (STAR).', clue:'Last quarter / sales / dropped', blocks:['Last quarter','our sales','dropped','unexpectedly'], answer:['Last quarter','our sales','dropped','unexpectedly'], explain:'S = contexto concreto + qué pasó.' },
+    { id:'str-ops-star-a', kpi:'k20', prompt:'Armá la Action (STAR).', clue:'I / the client / called / same day', blocks:['I','called','the client','the same day'], answer:['I','called','the client','the same day'], explain:'A = qué HICISTE vos (verbo de acción).' },
+    { id:'str-ops-pressure', kpi:'k14', prompt:'Armá una respuesta bajo presión.', clue:'I need / one minute / to check', blocks:['I need','one minute','to check','the numbers'], answer:['I need','one minute','to check','the numbers'], explain:'Comprá tiempo sin trabarte.' },
+    { id:'str-ops-cs-recover', kpi:'k15', prompt:'Armá recovery de customer service.', clue:'I understand / frustrat / let me fix', blocks:['I understand','your frustration','and','I will fix this'], answer:['I understand','your frustration','and','I will fix this'], explain:'Validate + ownership + next step.' },
+    { id:'str-ops-meeting', kpi:'k10', prompt:'Armá un update de meeting.', clue:'As of today / we / on track', blocks:['As of today','we are','on track','for Friday'], answer:['As of today','we are','on track','for Friday'], explain:'Status claro + fecha.' },
+    { id:'str-ops-because-result', kpi:'k9', prompt:'Armá causa → resultado.', clue:'Because we prepared / we / passed', blocks:['Because we prepared','we','passed','the interview'], answer:['Because we prepared','we','passed','the interview'], explain:'Because + acción → resultado.' }
   ],
   preposition: [
     { id:'prep-city', kpi:'k4', prompt:'I live ___ San José.', options:['in','on','at','by'], answer:0, explain:'IN + ciudad o país.' },
@@ -3013,7 +3138,13 @@ var ARCADE_BANK = {
     { id:'prep-hour', kpi:'k4', prompt:'The meeting starts ___ 5 pm.', options:['in','on','at','for'], answer:2, explain:'AT + hora.' },
     { id:'prep-transport', kpi:'k4', prompt:'I usually go ___ bus.', options:['in','on','at','by'], answer:3, explain:'BY + medio de transporte.' },
     { id:'prep-days', kpi:'k4', prompt:'We train ___ Mondays.', options:['in','on','at','to'], answer:1, explain:'ON + días.' },
-    { id:'prep-purpose', kpi:'k4', prompt:'This is ___ my TOEIC preparation.', options:['in','on','for','by'], answer:2, explain:'FOR expresa propósito.' }
+    { id:'prep-purpose', kpi:'k4', prompt:'This is ___ my TOEIC preparation.', options:['in','on','for','by'], answer:2, explain:'FOR expresa propósito.' },
+    { id:'prep-ops-deadline', kpi:'k4', prompt:'We need the proposal ___ Friday EOD.', options:['by','in','on','at'], answer:0, explain:'BY + deadline = no más tarde de.' },
+    { id:'prep-ops-responsible', kpi:'k4', prompt:'I am responsible ___ the onboarding flow.', options:['for','of','in','at'], answer:0, explain:'Responsible FOR.' },
+    { id:'prep-ops-focus', kpi:'k4', prompt:'Let us focus ___ the client objection.', options:['on','in','at','to'], answer:0, explain:'Focus ON.' },
+    { id:'prep-ops-depend', kpi:'k4', prompt:'The offer depends ___ budget approval.', options:['on','of','in','at'], answer:0, explain:'Depend ON.' },
+    { id:'prep-ops-good-at', kpi:'k4', prompt:'She is good ___ handling pressure.', options:['at','in','on','for'], answer:0, explain:'Good AT + -ing.' },
+    { id:'prep-ops-aware', kpi:'k4', prompt:'Are you aware ___ the new SLA?', options:['of','on','in','at'], answer:0, explain:'Aware OF.' }
   ],
   linker: [
     { id:'link-contrast-apply', kpi:'k8', prompt:'I wanted to apply, ___ I lacked experience.', options:['because','however','therefore','on top of that'], answer:1, explain:'Hay contraste entre querer aplicar y faltar experiencia.' },
@@ -3021,7 +3152,13 @@ var ARCADE_BANK = {
     { id:'link-result-prepared', kpi:'k8', prompt:'She prepared well; ___, she passed the interview.', options:['however','as a result','although','besides'], answer:1, explain:'As a result conecta causa con resultado.' },
     { id:'link-addition', kpi:'k10', prompt:'I improved my grammar. ___, I speak faster now.', options:['However','On top of that','Although','Despite'], answer:1, explain:'On top of that agrega otra idea.' },
     { id:'link-sequence', kpi:'k8', prompt:'First, we reviewed the brief. ___, we called the client.', options:['Then','Because','Despite','Although'], answer:0, explain:'Then ordena una secuencia.' },
-    { id:'link-nevertheless', kpi:'k8', prompt:'The plan failed; ___, we learned what to fix.', options:['nevertheless','therefore','because','first'], answer:0, explain:'Nevertheless marca contraste: aun así.' }
+    { id:'link-nevertheless', kpi:'k8', prompt:'The plan failed; ___, we learned what to fix.', options:['nevertheless','therefore','because','first'], answer:0, explain:'Nevertheless marca contraste: aun así.' },
+    { id:'link-ops-however-offer', kpi:'k8', prompt:'The salary was low; ___, the growth path was strong.', options:['however','because','first','despite of'], answer:0, explain:'However = contraste entre dos hechos.' },
+    { id:'link-ops-therefore-hire', kpi:'k8', prompt:'The candidate closed three deals; ___, we hired her.', options:['although','therefore','despite','whereas'], answer:1, explain:'Therefore = resultado lógico.' },
+    { id:'link-ops-on-top', kpi:'k10', prompt:'I improved fluency. ___, I handle objections better.', options:['On top of that','Although','Despite','Because'], answer:0, explain:'On top of that = suma de logro.' },
+    { id:'link-ops-even-though', kpi:'k8', prompt:'___ the call was hostile, I stayed calm.', options:['Even though','Therefore','As a result','First'], answer:0, explain:'Even though = contraste con subordinada.' },
+    { id:'link-ops-in-addition', kpi:'k10', prompt:'We fixed the bug. ___, we added monitoring.', options:['In addition','However','Although','Because'], answer:0, explain:'In addition = otra mejora.' },
+    { id:'link-ops-as-a-result-cs', kpi:'k8', prompt:'We missed the SLA; ___, the client escalated.', options:['as a result','although','despite','besides'], answer:0, explain:'As a result conecta falla → consecuencia.' }
   ],
   phrasal: [
     { id:'phr-figure-out', kpi:'k12', prompt:'We need to ___ the problem before Friday.', options:['figure out','turn down','look after','give up'], answer:0, explain:'Figure out = resolver / entender.' },
@@ -3029,7 +3166,13 @@ var ARCADE_BANK = {
     { id:'phr-follow-up', kpi:'k21', prompt:'I will ___ with the client after the call.', options:['follow up','give in','take off','run out'], answer:0, explain:'Follow up = dar seguimiento.' },
     { id:'phr-look-for', kpi:'k12', prompt:'I am ___ a better job opportunity.', options:['looking for','turning down','setting up','checking out'], answer:0, explain:'Look for = buscar.' },
     { id:'phr-turn-down', kpi:'k12', prompt:'She had to ___ the offer because of the schedule.', options:['turn down','look up','set up','come across'], answer:0, explain:'Turn down = rechazar.' },
-    { id:'phr-run-out', kpi:'k13', prompt:'We ___ time during the interview.', options:['ran out of','looked for','set up','turned down'], answer:0, explain:'Run out of = quedarse sin algo.' }
+    { id:'phr-run-out', kpi:'k13', prompt:'We ___ time during the interview.', options:['ran out of','looked for','set up','turned down'], answer:0, explain:'Run out of = quedarse sin algo.' },
+    { id:'phr-ops-bring-up', kpi:'k12', prompt:'Can I ___ the budget issue in the standup?', options:['bring up','give up','turn off','look after'], answer:0, explain:'Bring up = mencionar un tema.' },
+    { id:'phr-ops-point-out', kpi:'k12', prompt:'She ___ that the numbers did not match.', options:['pointed out','ran out','set up','looked for'], answer:0, explain:'Point out = señalar un hecho.' },
+    { id:'phr-ops-carry-on', kpi:'k14', prompt:'The line cut; please ___ with your answer.', options:['carry on','give in','turn down','check out'], answer:0, explain:'Carry on = continuar.' },
+    { id:'phr-ops-get-across', kpi:'k12', prompt:'I need to ___ my value clearly in the interview.', options:['get across','run out','look after','set off'], answer:0, explain:'Get across = comunicar / hacer entender.' },
+    { id:'phr-ops-sort-out', kpi:'k15', prompt:'Let me ___ the billing error today.', options:['sort out','give up','turn down','come across'], answer:0, explain:'Sort out = resolver un problema.' },
+    { id:'phr-ops-put-off', kpi:'k12', prompt:'We cannot ___ the launch again.', options:['put off','look for','set up','follow up'], answer:0, explain:'Put off = posponer.' }
   ]
 };
 
@@ -3095,7 +3238,9 @@ function arcadeStructureMatch(answerArr, builtArr){
 }
 
 function ensureArcadePressureStyles(){
-  if(document.getElementById('language-arcade-hh-styles-v3')) return;
+  if(document.getElementById('language-arcade-hh-styles-v4')) return;
+  var stale3 = document.getElementById('language-arcade-hh-styles-v3');
+  if(stale3) stale3.remove();
   var stale2 = document.getElementById('language-arcade-hh-styles-v2');
   if(stale2) stale2.remove();
   var stale = document.getElementById('language-arcade-hh-styles');
@@ -3110,7 +3255,7 @@ function ensureArcadePressureStyles(){
     document.head.appendChild(link);
   }
   var st = document.createElement('style');
-  st.id = 'language-arcade-hh-styles-v3';
+  st.id = 'language-arcade-hh-styles-v4';
   st.textContent = ''
     + '@keyframes arcadeScanSweep{0%{transform:translateX(-130%);opacity:.15}40%{opacity:.9}100%{transform:translateX(130%);opacity:.15}}'
     + '@keyframes arcadeFocusPulse{0%,100%{transform:scale(1);opacity:.55}50%{transform:scale(.86);opacity:1}}'
@@ -3178,7 +3323,31 @@ function ensureArcadePressureStyles(){
     + '.arcade-hh-result.ok{background:rgba(16,185,129,.25);}'
     + '.arcade-hh-result.bad{background:rgba(245,158,11,.25);}'
     + '.arcade-hh-result .msg{font-size:9px;color:#fff;margin:6px 0;line-height:1.5;}'
-    + '.arcade-hh-result .explain{font-family:ui-monospace,monospace;font-size:11px;color:rgba(255,255,255,.85);line-height:1.45;margin-bottom:10px;}';
+    
+    + '@keyframes arcadeHitPop{0%{transform:scale(.92);opacity:.4}60%{transform:scale(1.06);opacity:1}100%{transform:scale(1);opacity:1}}'
+    + '@keyframes arcadeMissShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}'
+    + '@keyframes arcadeComboPop{0%{transform:scale(.5) translateY(8px);opacity:0}40%{transform:scale(1.15) translateY(0);opacity:1}100%{transform:scale(1);opacity:1}}'
+    + '@keyframes arcadeConfetti{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(48px) rotate(220deg);opacity:0}}'
+    + '@keyframes arcadeTimerDrain{from{width:100%}to{width:0%}}'
+    + '@keyframes arcadePrizeBurst{0%{transform:scale(.6);opacity:0}50%{transform:scale(1.08);opacity:1}100%{transform:scale(1);opacity:1}}'
+    + '@keyframes arcadeHudPulse{0%,100%{box-shadow:0 0 0 0 rgba(251,191,36,.0)}50%{box-shadow:0 0 0 4px rgba(251,191,36,.25)}}'
+    + '.arcade-hh-screen.is-hit{animation:arcadeHitPop .35s ease}'
+    + '.arcade-hh-screen.is-miss{animation:arcadeMissShake .4s ease}'
+    + '.arcade-combo-chip{display:inline-block;margin:0 auto 10px;padding:8px 12px;border-radius:999px;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#111;font-family:"Press Start 2P",monospace;font-size:8px;box-shadow:3px 3px 0 #000;animation:arcadeComboPop .35s cubic-bezier(.2,.8,.2,1)}'
+    + '.arcade-combo-chip.broken{background:linear-gradient(135deg,#fb7185,#e11d48);color:#fff}'
+    + '.arcade-confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:4}'
+    + '.arcade-confetti i{position:absolute;top:18%;width:7px;height:7px;border-radius:1px;animation:arcadeConfetti .7s ease-out forwards}'
+    + '.arcade-q-timer{height:6px;border-radius:99px;background:rgba(0,0,0,.45);overflow:hidden;margin:0 0 10px;border:1px solid rgba(255,255,255,.2)}'
+    + '.arcade-q-timer i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#22d3ee,#fbbf24,#f472b6);transform-origin:left center}'
+    + '.arcade-q-timer i.is-run{animation-name:arcadeTimerDrain;animation-timing-function:linear;animation-fill-mode:forwards}'
+    + '.arcade-hud{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 0 12px}'
+    + '.arcade-hud span{font-family:"Press Start 2P",monospace;font-size:7px;padding:8px 10px;border-radius:999px;background:#111;color:#fde68a;border:2px solid #fbbf24;box-shadow:2px 2px 0 #000;animation:arcadeHudPulse 2.4s ease-in-out infinite}'
+    + '.arcade-prize-card{margin:12px 0;padding:14px;border:3px solid #fbbf24;border-radius:8px;background:linear-gradient(160deg,#0F3A5C,#0f172a);box-shadow:4px 4px 0 #000;animation:arcadePrizeBurst .45s ease}'
+    + '.arcade-prize-card .prize-title{font-family:"Press Start 2P",monospace;font-size:9px;color:#fbbf24;margin-bottom:8px;line-height:1.5}'
+    + '.arcade-prize-card .prize-sub{font-family:ui-monospace,monospace;font-size:12px;color:#e2e8f0;line-height:1.45}'
+    + '.arcade-diff{font-size:10px;font-weight:900;letter-spacing:.04em;opacity:.9;margin-top:6px}'
+
++ '.arcade-hh-result .explain{font-family:ui-monospace,monospace;font-size:11px;color:rgba(255,255,255,.85);line-height:1.45;margin-bottom:10px;}';
   document.head.appendChild(st);
 }
 
@@ -3321,9 +3490,11 @@ function submitQuiz(containerId){
   if(window._arcadeState) finishArcadeRound(containerId || window._arcadeState.containerId);
 }
 
+
 function arcadeCrToday(){
   return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Costa_Rica' });
 }
+
 function arcadeDefaultMeta(){
   return {
     dayStreak: 0,
@@ -3336,15 +3507,18 @@ function arcadeDefaultMeta(){
     playedToday: false
   };
 }
+
 function arcadeLoadLocalMeta(sid){
   try{
     var raw = localStorage.getItem('inf-arcade-meta-'+(sid || 'guest'));
     return raw ? Object.assign(arcadeDefaultMeta(), JSON.parse(raw)) : arcadeDefaultMeta();
   }catch(e){ return arcadeDefaultMeta(); }
 }
+
 function arcadeSaveLocalMeta(sid, meta){
   try{ localStorage.setItem('inf-arcade-meta-'+(sid || 'guest'), JSON.stringify(meta || arcadeDefaultMeta())); }catch(e){}
 }
+
 function arcadeGetMeta(s){
   s = s || CURRENT_STUDENT || {};
   var base = arcadeDefaultMeta();
@@ -3352,6 +3526,7 @@ function arcadeGetMeta(s){
   var fromLocal = arcadeLoadLocalMeta(s.id || s.portalUser || 'guest');
   var meta = Object.assign(base, fromLocal, fromStudent || {});
   if(!Array.isArray(meta.trophies)) meta.trophies = [];
+  // day streak integrity
   var today = arcadeCrToday();
   if(meta.lastPlayDate && meta.lastPlayDate !== today){
     var last = new Date(meta.lastPlayDate + 'T12:00:00');
@@ -3364,6 +3539,7 @@ function arcadeGetMeta(s){
   }
   return meta;
 }
+
 function arcadePersistMeta(s, meta){
   s = s || CURRENT_STUDENT;
   if(!s) {
@@ -3375,10 +3551,6 @@ function arcadePersistMeta(s, meta){
   return meta;
 }
 
-function arcadeFloorKamukId(s){
-  var id = String((s && s.id) || '');
-  return id.indexOf('KAM-') === 0 ? id : '';
-}
 function arcadeFloorFirstName(s){
   var n = String((s && s.info && s.info.name) || (s && s.name) || '').trim().split(/\s+/)[0];
   return n || 'Alguien';
@@ -3393,10 +3565,9 @@ function arcadeFloorCacheEmpty(me){
 }
 async function arcadeFloorUnpublish(){
   var s = CURRENT_STUDENT;
-  var kid = arcadeFloorKamukId(s);
-  if(!kid || typeof dbSet !== 'function') return;
-  await dbSet('kamuk_sessions', 'ARCADE-FLOOR-'+kid, {
-    id: kid,
+  if(!s || !s.id || typeof dbSet !== 'function') return;
+  await dbSet('kamuk_sessions', 'ARCADE-FLOOR-'+s.id, {
+    id: s.id,
     name: arcadeFloorFirstName(s),
     optIn: false,
     games: {},
@@ -3405,8 +3576,7 @@ async function arcadeFloorUnpublish(){
 }
 async function arcadeFloorPublish(patch){
   var s = CURRENT_STUDENT;
-  var kid = arcadeFloorKamukId(s);
-  if(!kid || !arcadeFloorIsOn(s) || typeof dbSet !== 'function') return;
+  if(!s || !s.id || !arcadeFloorIsOn(s) || typeof dbSet !== 'function') return;
   var meta = (typeof InfinityArcadeRun !== 'undefined' && InfinityArcadeRun.loadMeta) ? InfinityArcadeRun.loadMeta() : {};
   var games = {};
   ['knight','thief','raiders','rapid'].forEach(function(g){
@@ -3422,8 +3592,8 @@ async function arcadeFloorPublish(patch){
       streak: patch.streak||0
     };
   }
-  await dbSet('kamuk_sessions', 'ARCADE-FLOOR-'+kid, {
-    id: kid,
+  await dbSet('kamuk_sessions', 'ARCADE-FLOOR-'+s.id, {
+    id: s.id,
     name: arcadeFloorFirstName(s),
     optIn: true,
     games: games,
@@ -3432,7 +3602,7 @@ async function arcadeFloorPublish(patch){
 }
 async function arcadeFloorLoad(){
   var s = CURRENT_STUDENT;
-  var me = arcadeFloorKamukId(s);
+  var me = (s && s.id) || '';
   if(!arcadeFloorIsOn(s)){
     window._arcadeFloorCache = arcadeFloorCacheEmpty(me);
     if(typeof InfinityArcadeRun !== 'undefined'){
@@ -3447,10 +3617,8 @@ async function arcadeFloorLoad(){
   (rows||[]).forEach(function(r){
     var d = r && r.data;
     if(!d || d.optIn === false) return;
-    var sid = String(d.id || String(r.id||'').replace(/^ARCADE-FLOOR-/, ''));
-    if(sid.indexOf('KAM-') !== 0) return;
     board.push({
-      id: sid,
+      id: d.id || String(r.id||'').replace(/^ARCADE-FLOOR-/, ''),
       name: d.name || 'Alguien',
       games: d.games || {}
     });
@@ -3472,21 +3640,20 @@ function arcadeFloorPushToFrames(){
 }
 async function arcadeFloorSetOptIn(on){
   var s = CURRENT_STUDENT;
-  var kid = arcadeFloorKamukId(s);
   on = !!on;
   try{ localStorage.setItem('inf-arcade-floor-on', on ? '1' : '0'); }catch(e){}
   if(s){
     s.arcadeFloorOptIn = on;
-    if(kid && typeof dbSet === 'function') dbSet('kamuk_students', kid, s).catch(function(){});
+    if(s.id && typeof dbSet === 'function') dbSet('kamuk_students', s.id, s).catch(function(){});
   }
   if(typeof InfinityArcadeRun !== 'undefined' && InfinityArcadeRun.setFloorOn){
     InfinityArcadeRun.setFloorOn(on);
   }
   if(!on){
     await arcadeFloorUnpublish();
-    window._arcadeFloorCache = arcadeFloorCacheEmpty(kid);
+    window._arcadeFloorCache = arcadeFloorCacheEmpty(s && s.id);
     if(typeof InfinityArcadeRun !== 'undefined' && InfinityArcadeRun.setFloorBoard){
-      InfinityArcadeRun.setFloorBoard([], kid);
+      InfinityArcadeRun.setFloorBoard([], s && s.id);
     }
     arcadeFloorPushToFrames();
     return window._arcadeFloorCache;
@@ -3508,6 +3675,7 @@ window.addEventListener('message', function(ev){
     if(typeof window.onInfinityArcadeFinish === 'function') window.onInfinityArcadeFinish(d);
   }
 });
+
 function arcadeHudHtml(s){
   var meta = arcadeGetMeta(s);
   return '<div class="arcade-hud">'
@@ -3518,21 +3686,152 @@ function arcadeHudHtml(s){
     + '</div>';
 }
 
+function arcadeBurstConfetti(screenEl){
+  if(!screenEl) return;
+  var layer = document.createElement('div');
+  layer.className = 'arcade-confetti';
+  var colors = ['#fbbf24','#22d3ee','#f472b6','#a78bfa','#4ade80','#fb7185'];
+  for(var i=0;i<9;i++){
+    var d = document.createElement('i');
+    d.style.left = (8 + Math.random()*84) + '%';
+    d.style.background = colors[i % colors.length];
+    d.style.animationDelay = (Math.random()*0.12) + 's';
+    layer.appendChild(d);
+  }
+  screenEl.appendChild(layer);
+  setTimeout(function(){ if(layer.parentNode) layer.parentNode.removeChild(layer); }, 800);
+}
+
+function arcadePlayFx(correct, streak){
+  var st = window._arcadeState; if(!st) return;
+  var screen = document.querySelector('#'+CSS.escape(st.containerId)+' .arcade-hh-screen');
+  if(!screen) screen = document.querySelector('.arcade-hh-screen');
+  if(!screen) return;
+  screen.classList.remove('is-hit','is-miss');
+  void screen.offsetWidth;
+  screen.classList.add(correct ? 'is-hit' : 'is-miss');
+  if(correct) arcadeBurstConfetti(screen);
+  var chip = document.getElementById(st.containerId + '-combo');
+  if(chip){
+    if(correct && streak > 1){
+      chip.className = 'arcade-combo-chip';
+      chip.textContent = 'COMBO x'+streak;
+      chip.style.display = 'inline-block';
+    } else if(!correct){
+      chip.className = 'arcade-combo-chip broken';
+      chip.textContent = 'STREAK BROKEN';
+      chip.style.display = 'inline-block';
+    } else {
+      chip.className = 'arcade-combo-chip';
+      chip.textContent = 'NICE +1';
+      chip.style.display = 'inline-block';
+    }
+  }
+}
+
+function arcadeClearQuestionTimer(){
+  if(window._arcadeQTimer){
+    clearTimeout(window._arcadeQTimer);
+    window._arcadeQTimer = null;
+  }
+}
+
+function arcadeArmQuestionTimer(st){
+  arcadeClearQuestionTimer();
+  if(!(st.mode === 'frenzy' || st.mode === 'challenge')) return;
+  var meta = arcadeGetMeta(CURRENT_STUDENT);
+  var base = st.mode === 'frenzy' ? 14000 : 18000;
+  // scale faster with day streak / xp
+  var cut = Math.min(5000, (meta.dayStreak * 400) + Math.floor((meta.lifetimeXp || 0) / 40));
+  var ms = Math.max(7000, base - cut);
+  var bar = document.getElementById(st.containerId + '-qtimer-bar');
+  if(bar){
+    bar.style.animationDuration = (ms/1000)+'s';
+    bar.classList.remove('is-run');
+    void bar.offsetWidth;
+    bar.classList.add('is-run');
+  }
+  window._arcadeQTimer = setTimeout(function(){
+    var cur = window._arcadeState;
+    if(!cur || cur.answered) return;
+    arcadeFinishQuestion(false, '(time out)');
+  }, ms);
+}
+
+function arcadeComputePrizes(st, score, metaBefore, metaAfter){
+  var prizes = [];
+  var firstToday = !metaBefore.playedToday;
+  if(firstToday) prizes.push({ id:'daily-login', icon:'🎁', title:'DAILY LOGIN', coins:15, xp:10 });
+  if(score === 100) prizes.push({ id:'clean-sweep', icon:'💎', title:'CLEAN SWEEP', coins:40, xp:35 });
+  else if(score >= 90) prizes.push({ id:'gold-run', icon:'🥇', title:'GOLD RUN', coins:25, xp:25 });
+  if(st.bestStreak >= 5) prizes.push({ id:'combo-king', icon:'⚡', title:'COMBO KING', coins:20, xp:15 });
+  if(st.mode === 'frenzy' && score >= 80) prizes.push({ id:'frenzy-survivor', icon:'🔥', title:'FRENZY SURVIVOR', coins:30, xp:20 });
+  if(metaAfter.dayStreak === 3) prizes.push({ id:'on-fire', icon:'🌶️', title:'ON FIRE', coins:20, xp:20 });
+  if(metaAfter.dayStreak === 7) prizes.push({ id:'week-warrior', icon:'🛡️', title:'WEEK WARRIOR', coins:50, xp:40 });
+  if(metaAfter.dayStreak === 14) prizes.push({ id:'immortal', icon:'👑', title:'IMMORTAL', coins:100, xp:80 });
+  // rotate: max 2 prizes, prefer rarest last
+  var unique = [];
+  var seen = {};
+  prizes.forEach(function(p){
+    if(seen[p.id]) return;
+    // skip trophy already owned except daily
+    if(p.id !== 'daily-login' && (metaBefore.trophies || []).indexOf(p.id) >= 0 && p.id !== 'gold-run' && p.id !== 'combo-king') return;
+    seen[p.id] = true;
+    unique.push(p);
+  });
+  return unique.slice(-2);
+}
+
+function arcadeApplyRoundMeta(st, score){
+  var s = CURRENT_STUDENT || {};
+  var before = arcadeGetMeta(s);
+  var meta = Object.assign({}, before);
+  var today = arcadeCrToday();
+  if(meta.lastPlayDate === today){
+    // already played today — keep streak
+  } else if(meta.lastPlayDate){
+    var last = new Date(meta.lastPlayDate + 'T12:00:00');
+    var now = new Date(today + 'T12:00:00');
+    var diff = Math.round((now - last) / 86400000);
+    meta.dayStreak = (diff === 1) ? (meta.dayStreak || 0) + 1 : 1;
+  } else {
+    meta.dayStreak = 1;
+  }
+  meta.lastPlayDate = today;
+  meta.playedToday = true;
+  meta.lifetimeBestStreak = Math.max(meta.lifetimeBestStreak || 0, st.bestStreak || 0, meta.dayStreak || 0);
+  var baseXp = 8 + score;
+  var streakBonus = Math.min(40, (st.bestStreak || 0) * 4);
+  var modeBonus = st.mode === 'frenzy' ? 20 : (st.mode === 'challenge' ? 14 : 6);
+  var xpGain = baseXp + streakBonus + modeBonus;
+  var prizes = arcadeComputePrizes(st, score, before, meta);
+  var coinGain = Math.round(score / 5) + (st.bestStreak >= 3 ? 5 : 0);
+  prizes.forEach(function(p){
+    coinGain += p.coins || 0;
+    xpGain += p.xp || 0;
+    if(p.id !== 'daily-login' && meta.trophies.indexOf(p.id) < 0) meta.trophies.push(p.id);
+    meta.lastPrizeId = p.id;
+  });
+  meta.coins = (meta.coins || 0) + coinGain;
+  meta.lifetimeXp = (meta.lifetimeXp || 0) + xpGain;
+  if(meta.trophies.length > 40) meta.trophies = meta.trophies.slice(-40);
+  arcadePersistMeta(s, meta);
+  return { meta: meta, prizes: prizes, xpGain: xpGain, coinGain: coinGain };
+}
+
+
 function renderArcadeMenuHtml(containerId){
   var s = CURRENT_STUDENT || {};
-  var weak = arcadeWeakCategories(s);
-  var last = (s.quizzes || []).slice().reverse().find(function(q){ return q.mode === 'language-arcade'; });
-  return '<div class="ib ib-navy" style="margin-bottom:10px;"><strong>Infinity Language Arcade</strong> — 6 modos de práctica. No afecta KPI oficial, pero sí alimenta refuerzos para Jill/Alice.</div>'
-    + (weak.length ? '<div class="ib ib-amber" style="margin-bottom:10px;">Frenzy priorizará: '+weak.map(arcadeCategoryLabel).join(' · ')+'</div>' : '')
-    + (last ? '<div style="font-size:12px;color:var(--t2);margin-bottom:10px;">Última ronda: '+arcadeEsc(last.arcadeMode || 'Arcade')+' · '+last.correct+'/'+last.total+' · '+last.score+'%</div>' : '')
+  ensureArcadePressureStyles();
+  return arcadeHudHtml(s)
+    + '<div class="ib ib-navy" style="margin-bottom:10px;"><strong>Performance Hub</strong> — solo Rapid Drill y Knight\'s Quest.</div>'
     + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;">'
-    + Object.keys(ARCADE_MODES).map(function(key){
-      var m = ARCADE_MODES[key];
-      return '<button type="button" onclick="startArcadeMode(\''+key+'\',\''+containerId+'\')" style="text-align:left;border:1px solid rgba(43,126,193,0.18);background:linear-gradient(135deg,rgba(255,255,255,0.98),rgba(248,248,255,0.95));border-radius:16px;padding:14px;cursor:pointer;box-shadow:0 8px 22px rgba(43,126,193,0.08);">'
-        + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;color:'+m.color+';font-weight:900;"><i class="ti '+m.icon+'" style="font-size:20px;"></i>'+m.title+'</div>'
-        + '<div style="font-size:12px;color:var(--t2);line-height:1.45;">'+m.desc+'</div>'
-        + '</button>';
-    }).join('')
+    + '<button type="button" onclick="launchInfinityCasinoGame(\'knight\')" style="text-align:left;border:1px solid rgba(232,197,71,0.35);background:linear-gradient(135deg,#1a1208,#0B0618);border-radius:16px;padding:14px;cursor:pointer;color:#fff;">'
+    + '<div style="font-weight:900;color:#E8C547;margin-bottom:6px;">Knight\'s Quest</div>'
+    + '<div style="font-size:12px;opacity:.8;line-height:1.45;">Caballero teutónico · linkers bajo fuego</div></button>'
+    + '<button type="button" onclick="infinityArcadePickRapid()" style="text-align:left;border:1px solid rgba(251,113,133,0.35);background:linear-gradient(135deg,#1a0a12,#0B0618);border-radius:16px;padding:14px;cursor:pointer;color:#fff;">'
+    + '<div style="font-weight:900;color:#FDA4AF;margin-bottom:6px;">Rapid Drill</div>'
+    + '<div style="font-size:12px;opacity:.8;line-height:1.45;">Foundations · Piso</div></button>'
     + '</div>';
 }
 
@@ -3553,7 +3852,12 @@ function startArcadeMode(mode, containerId){
   if(!c) return;
   var m = ARCADE_MODES[mode] || ARCADE_MODES.frenzy;
   var s = CURRENT_STUDENT || {};
+  var meta = arcadeGetMeta(s);
   var qCount = mode === 'challenge' ? 10 : (mode === 'frenzy' ? 8 : 6);
+  if(mode === 'challenge' || mode === 'frenzy'){
+    var bump = Math.min(4, Math.floor((meta.dayStreak || 0) / 3) + Math.floor((meta.lifetimeXp || 0) / 200));
+    qCount += bump;
+  }
   var quiz = pickArcadeQuestions(mode, s, qCount, false);
   window._currentQuiz = quiz;
   window._arcadeState = {
@@ -3595,10 +3899,21 @@ function renderArcadeRound(st){
   st.attemptsLeft = 6;
   st.selectedBlocks = [];
   st.answered = false;
+  arcadeClearQuestionTimer();
+  // Re-assert modern shell right before paint (beats any late Game Boy patches)
+  if (typeof window.infinityEnsureModernArcade === 'function') window.infinityEnsureModernArcade();
   c.innerHTML = arcadeRoundShell(st, q, arcadeQuestionBody(st, q));
+  arcadeArmQuestionTimer(st);
 }
 
 function arcadeRoundShell(st, q, body){
+  // Modern games NEVER use Game Boy chrome
+  if (st && arcadeModeIsModern(st.mode)) {
+    if (typeof window.infinityModernRoundShell === 'function') {
+      return window.infinityModernRoundShell(st, q, body);
+    }
+    return arcadeModernShellFallback(st, q, body);
+  }
   var menuAction = (st.containerId === 'inf-arcade-fs-body')
     ? 'closeInfinityArcadeFullscreen()'
     : 'renderArcadeMenu(\''+st.containerId+'\')';
@@ -3609,6 +3924,10 @@ function arcadeRoundShell(st, q, body){
     + '<div class="arcade-hh-eyebrow">YOUR CLUB PRESENTS</div>'
     + '<div class="arcade-hh-title">'+arcadeEsc(st.modeTitle)+'</div>'
     + '<div class="arcade-hh-meta"><span>'+arcadeEsc(arcadeCategoryLabel(q.category))+' · '+(st.idx+1)+'/'+st.quiz.length+' · STREAK '+st.streak+'</span></div>'
+    + '<div id="'+st.containerId+'-combo" class="arcade-combo-chip" style="display:none;"></div>'
+    + ((st.mode === 'frenzy' || st.mode === 'challenge')
+      ? '<div class="arcade-q-timer" aria-hidden="true"><i id="'+st.containerId+'-qtimer-bar"></i></div>'
+      : '')
     + arcadePressureHtml(st, q)
     + body
     + '<div id="'+st.containerId+'-result"></div>'
@@ -3638,6 +3957,11 @@ function arcadePressureHtml(st, q){
 }
 
 function arcadeQuestionBody(st, q){
+  if (st && arcadeModeIsModern(st.mode)
+      && typeof window.infinityModernQuestionBody === 'function') {
+    var modernBody = window.infinityModernQuestionBody(st, q);
+    if (modernBody != null) return modernBody;
+  }
   if(q.category === 'verb') return arcadeVerbBody(st, q);
   if(q.category === 'structure') return arcadeStructureBody(st, q);
   return arcadeChoiceBody(st, q);
@@ -3773,13 +4097,23 @@ function arcadeFinishQuestion(correct, response){
   var st = window._arcadeState; if(!st) return;
   if(st.answered) return;
   st.answered = true;
+  arcadeClearQuestionTimer();
   var q = st.quiz[st.idx];
   var answerText = q.category === 'structure' ? (q.answer || []).join(' ') : (q.category === 'verb' ? q.answer : ((q.options || [])[q.answer] || ''));
   if(correct){ st.correct++; st.streak++; st.bestStreak = Math.max(st.bestStreak, st.streak); }
   else st.streak = 0;
+  arcadePlayFx(!!correct, st.streak);
   st.results.push({ kpi:q.kpi || 'k10', category:q.category, correct:!!correct, prompt:q.prompt || q.clue || '', answer:answerText, response:response || '' });
   var box = document.getElementById(st.containerId + '-result');
   if(!box) return;
+  if (arcadeModeIsModern(st.mode)) {
+    box.innerHTML = '<div style="margin-top:12px;border-radius:14px;padding:12px;border:1px solid '+(correct?'rgba(34,197,94,.4)':'rgba(239,68,68,.35)')+';background:'+(correct?'rgba(34,197,94,.15)':'rgba(239,68,68,.12)')+'">'
+      + '<div style="font-weight:900;margin-bottom:4px">'+(correct?'Impacto limpio':'Fallaste — rearmá')+'</div>'
+      + '<div style="font-size:13px;opacity:.9;margin-bottom:10px">'+arcadeEsc(q.explain || answerText || '')+'</div>'
+      + '<button type="button" onclick="arcadeNextQuestion()" style="padding:10px 16px;border:none;border-radius:12px;background:linear-gradient(135deg,#FFD700,#F5A623);color:#1a1200;font-weight:900;cursor:pointer">'+(st.idx+1<st.quiz.length?'SIGUIENTE':'RESULTADO')+'</button>'
+      + '</div>';
+    return;
+  }
   box.innerHTML = '<div class="arcade-hh-result '+(correct?'ok':'bad')+'">'
     + '<div style="font-size:18px;margin-bottom:4px;">'+(correct?'✓':'×')+'</div>'
     + '<div class="msg">'+(correct?'CORRECTO':'CORRECTA: '+arcadeEsc(answerText))+'</div>'
@@ -3797,11 +4131,24 @@ function arcadeNextQuestion(){
 
 async function finishArcadeRound(containerId){
   var st = window._arcadeState; if(!st) return;
+  // Modern modes: NEVER Game Boy — even if external modern JS failed to load
+  if (arcadeModeIsModern(st.mode)) {
+    if (st.mode === 'tenserdrop' && typeof window.infinityTenseDropFinish === 'function') {
+      return window.infinityTenseDropFinish(containerId);
+    }
+    if (typeof window.infinityModernFinishRound === 'function') {
+      return window.infinityModernFinishRound(containerId);
+    }
+    return arcadeModernFinishFallback(containerId);
+  }
+  arcadeClearQuestionTimer();
   var correct = st.correct;
   var total = st.quiz.length || 1;
   var score = Math.round((correct / total) * 100);
   var failedCats = {};
   st.results.forEach(function(r){ if(!r.correct) failedCats[r.category] = (failedCats[r.category] || 0) + 1; });
+  var reward = arcadeApplyRoundMeta(st, score);
+  st._lastReward = reward;
   try {
     await saveArcadeResult(st, score);
   } catch(e) {
@@ -3814,13 +4161,23 @@ async function finishArcadeRound(containerId){
   var menuAction = (containerId === 'inf-arcade-fs-body')
     ? 'closeInfinityArcadeFullscreen()'
     : 'renderArcadeMenu(\''+containerId+'\')';
+  var prizeHtml = (reward.prizes && reward.prizes.length)
+    ? reward.prizes.map(function(p){
+        return '<div class="arcade-prize-card">'
+          + '<div class="prize-title">'+(p.icon||'🏅')+' '+arcadeEsc(p.title)+'</div>'
+          + '<div class="prize-sub">+'+(p.coins||0)+' coins · +'+(p.xp||0)+' XP · CLAIMED</div>'
+          + '</div>';
+      }).join('')
+    : '<div class="arcade-prize-card"><div class="prize-title">KEEP GRINDING</div><div class="prize-sub">Subí score o racha para desbloquear premios.</div></div>';
   c.innerHTML = '<div class="arcade-hh">'
     + '<div class="arcade-hh-brand"><strong>INFINITY ARCADE</strong>'
-    + '<button type="button" onclick="'+menuAction+'">MENU</button></div>'
+    + '<button type="button" onclick="'+menuAction+'">LOBBY</button></div>'
     + '<div class="arcade-hh-bezel"><div class="arcade-hh-screen"><div class="arcade-hh-content" style="text-align:center;">'
     + '<div class="arcade-hh-eyebrow">ROUND CLEAR</div>'
     + '<div class="arcade-hh-title">'+medal+' '+correct+'/'+total+'</div>'
     + '<div class="arcade-hh-meta"><span>'+score+'% · BEST STREAK '+st.bestStreak+'</span></div>'
+    + '<div class="arcade-hh-meta"><span>+'+reward.xpGain+' XP · +'+reward.coinGain+' COINS · DAY '+reward.meta.dayStreak+'</span></div>'
+    + prizeHtml
     + '<div class="arcade-game-card" style="margin-bottom:12px;">'
     + '<div class="arcade-game-clue">'+(score>=80?'Buen control. Subí el nivel con Frenzy Mode.':'Detectamos refuerzos. Jill/Alice pueden usar estos fallos.')+'</div>'
     + (Object.keys(failedCats).length
@@ -3829,7 +4186,7 @@ async function finishArcadeRound(containerId){
     + '</div>'
     + '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">'
     + '<button type="button" class="arcade-pix-btn" onclick="startArcadeMode(\''+st.mode+'\',\''+containerId+'\')">RETRY</button>'
-    + '<button type="button" class="arcade-pix-btn secondary" onclick="'+menuAction+'">MENU</button>'
+    + '<button type="button" class="arcade-pix-btn secondary" onclick="'+menuAction+'">LOBBY</button>'
     + '<button type="button" class="arcade-pix-btn" onclick="startArcadeMode(\'frenzy\',\''+containerId+'\')">FRENZY</button>'
     + '</div>'
     + '</div></div></div>'
@@ -3848,6 +4205,8 @@ async function saveArcadeResult(st, score){
     if(!r.correct) s.arcadeWeakCategories[r.category] = (s.arcadeWeakCategories[r.category] || 0) + 1;
     else if(s.arcadeWeakCategories[r.category]) s.arcadeWeakCategories[r.category] = Math.max(0, s.arcadeWeakCategories[r.category] - 1);
   });
+  if(st._lastReward && st._lastReward.meta) s.arcadeMeta = st._lastReward.meta;
+  else if(!s.arcadeMeta) s.arcadeMeta = arcadeGetMeta(s);
   s.quizzes.push({
     date:new Date().toISOString(),
     mode:'language-arcade',
@@ -3855,6 +4214,8 @@ async function saveArcadeResult(st, score){
     correct:st.correct,
     total:st.quiz.length,
     score:score,
+    bestStreak:st.bestStreak || 0,
+    prizes:(st._lastReward && st._lastReward.prizes) ? st._lastReward.prizes.map(function(p){ return p.id; }) : [],
     kpiResults:kpiResults,
     categories:st.results.map(function(r){ return r.category; }),
     kpis:st.results.map(function(r){ return r.kpi; })
@@ -3886,6 +4247,8 @@ var _claireState = {
 var _claireTTSQueue = [];
 var _claireTTSBusy = false;
 var _claireSpeakGen = 0;
+var _claireTtsWatchdog = null;
+var _claireReplyGuard = (typeof ttsMakeRepeatGuard === 'function') ? ttsMakeRepeatGuard() : null;
 
 function claireEscapeHtml(s){
   return String(s || '').replace(/[&<>"']/g, function(c){
@@ -3899,10 +4262,10 @@ function claireTheme(){
     cardShadow: '0 8px 32px rgba(43,126,193,0.35)',
     cardBorder: 'rgba(192,132,252,0.2)',
     studioLabel: '#F5A623',
-    title: '#C084FC',
+    title: '#79B9E8',
     titleShadow: 'rgba(192,132,252,0.45)',
-    accent: '#C084FC',
-    accentLight: '#C084FC',
+    accent: '#79B9E8',
+    accentLight: '#79B9E8',
     rgb: '192,132,252',
     btnGrad: 'linear-gradient(135deg,#2B7EC1,#1F6AA8)',
     btnShadow: '0 4px 16px rgba(192,132,252,0.4)',
@@ -4012,7 +4375,7 @@ function renderClaireStart(){
     +'<strong>Claire TOEIC</strong> — práctica directa. Entrás, respondés un ejercicio y recibís corrección inmediata. Sin entrevista previa.'
     +'</div>'
     +'<div style="display:flex;gap:8px;justify-content:center;margin-bottom:12px;flex-wrap:wrap;">'
-    +'<button type="button" style="flex:1;min-width:120px;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:700;cursor:default;background:rgba(192,132,252,0.25);border:2px solid #C084FC;color:#C084FC;">Modo TOEIC</button>'
+    +'<button type="button" style="flex:1;min-width:120px;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:700;cursor:default;background:rgba(192,132,252,0.25);border:2px solid #79B9E8;color:#79B9E8;">Modo TOEIC</button>'
     +'</div>'
     +'<button style="display:inline-flex;align-items:center;gap:8px;background:'+th.btnGrad+';border:none;color:white;font-weight:800;font-size:15px;padding:14px 32px;border-radius:14px;cursor:pointer;box-shadow:'+th.btnShadow+';width:100%;justify-content:center;" onclick="startClaireSession()"><i class="ti ti-player-play"></i> Iniciar sesión</button>'
     +'</div>';
@@ -4069,8 +4432,10 @@ function claireCleanTtsText(text){
 function claireSpeak(text){
   var clean = claireCleanTtsText(text);
   if(!clean || clean.length < 3) return;
+  if(typeof ttsIsRepeat === 'function' && ttsIsRepeat(_claireReplyGuard, clean)) return;
+  if(typeof ttsMarkSpoken === 'function') ttsMarkSpoken(_claireReplyGuard, clean);
   if(typeof unlockTtsAudio === 'function') unlockTtsAudio();
-  claireStopSpeech(false);
+  claireStopSpeech();
   var chunks = (typeof ttsSpeakLines === 'function') ? ttsSpeakLines(clean, 900) : [clean];
   chunks.forEach(function(chunk){
     if(chunk && chunk.trim().length >= 3) _claireTTSQueue.push(chunk.trim());
@@ -4080,13 +4445,48 @@ function claireSpeak(text){
 
 function claireStopSpeech(bumpGen){
   if(bumpGen !== false) _claireSpeakGen++;
-  if(_claireState.audio){
-    try{ _claireState.audio.pause(); }catch(e){}
-    _claireState.audio = null;
-  }
+  clearTimeout(_claireTtsWatchdog);
+  if(typeof ttsStopAudio === 'function') ttsStopAudio(_claireState.audio);
+  else if(_claireState.audio){ try{ _claireState.audio.pause(); }catch(e){} }
+  _claireState.audio = null;
+  try{ if(window.speechSynthesis) window.speechSynthesis.cancel(); }catch(e2){}
   _claireTTSQueue = [];
   _claireTTSBusy = false;
   _claireState.speaking = false;
+}
+
+function clairePlayBrowserTts(text, onEnded, onError){
+  if(!window.speechSynthesis || !text){ if(onError) onError(); return false; }
+  try{ window.speechSynthesis.cancel(); }catch(e){}
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = 0.94;
+  var voices = speechSynthesis.getVoices() || [];
+  var v = voices.find(function(vo){ return vo.lang === 'en-US'; })
+    || voices.find(function(vo){ return (vo.lang || '').indexOf('en') === 0; });
+  if(v) u.voice = v;
+  u.onend = function(){ if(onEnded) onEnded(); };
+  u.onerror = function(){ if(onError) onError(); };
+  speechSynthesis.speak(u);
+  return true;
+}
+
+function claireArmTtsWatchdog(line, onStallDone, onStallStart){
+  if(typeof armTtsPlaybackWatchdog !== 'function') return;
+  armTtsPlaybackWatchdog({
+    textLen: String(line || '').length,
+    clearTimer: function(){ clearTimeout(_claireTtsWatchdog); },
+    setTimer: function(fn, delay){ clearTimeout(_claireTtsWatchdog); _claireTtsWatchdog = setTimeout(fn, delay); },
+    getBusy: function(){ return _claireTTSBusy; },
+    setBusy: function(v){ _claireTTSBusy = !!v; },
+    getAudio: function(){ return _claireState.audio; },
+    setAudio: function(a){ _claireState.audio = a; },
+    onFetchStall: function(){
+      if(onStallStart) onStallStart();
+      return clairePlayBrowserTts(line, onStallDone, onStallDone);
+    },
+    onAdvance: onStallDone
+  });
 }
 
 function claireTTSFlush(){
@@ -4095,8 +4495,22 @@ function claireTTSFlush(){
   _claireState.speaking = true;
   var gen = _claireSpeakGen;
   var text = _claireTTSQueue.shift();
+  var finished = false;
+  var fallbackStarted = false;
   var statusEl = document.getElementById('claire-status');
   if(statusEl && !statusEl.textContent) statusEl.textContent = 'Claire habla…';
+  function finishClaireLine(){
+    if(finished) return;
+    finished = true;
+    clearTimeout(_claireTtsWatchdog);
+    if(_claireState.audio) _claireState.audio = null;
+    _claireTTSBusy = false;
+    _claireState.speaking = _claireTTSQueue.length > 0;
+    var st = document.getElementById('claire-status');
+    if(st && st.textContent === 'Claire habla…') st.textContent = '';
+    claireTTSFlush();
+  }
+  claireArmTtsWatchdog(text, finishClaireLine, function(){ fallbackStarted = true; });
   infinityFetch('/claire-tts', {
     method:'POST',
     headers:authHeaders(),
@@ -4104,35 +4518,31 @@ function claireTTSFlush(){
   })
   .then(function(r){ return r.ok ? r.blob() : null; })
   .then(function(blob){
-    if(gen !== _claireSpeakGen || !blob){
-      _claireTTSBusy = false;
-      _claireState.speaking = _claireTTSQueue.length > 0;
-      if(gen === _claireSpeakGen) claireTTSFlush();
+    if(gen !== _claireSpeakGen || fallbackStarted || finished) return;
+    if(!blob){
+      fallbackStarted = true;
+      if(clairePlayBrowserTts(text, finishClaireLine, finishClaireLine)) return;
+      finishClaireLine();
       return;
     }
     var audio = new Audio(URL.createObjectURL(blob));
     _claireState.audio = audio;
-    audio.onended = audio.onerror = function(){
-      if(_claireState.audio === audio) _claireState.audio = null;
-      _claireTTSBusy = false;
-      _claireState.speaking = _claireTTSQueue.length > 0;
-      var st = document.getElementById('claire-status');
-      if(st && st.textContent === 'Claire habla…') st.textContent = '';
-      claireTTSFlush();
-    };
+    audio.onended = audio.onerror = finishClaireLine;
     audio.play().catch(function(){
-      _claireTTSBusy = false;
-      _claireState.speaking = _claireTTSQueue.length > 0;
       var st = document.getElementById('claire-status');
       if(st) st.textContent = 'Tocá enviar o micrófono para activar voz.';
-      claireTTSFlush();
+      fallbackStarted = true;
+      if(clairePlayBrowserTts(text, finishClaireLine, finishClaireLine)) return;
+      finishClaireLine();
     });
   })
   .catch(function(){
-    _claireTTSBusy = false;
-    _claireState.speaking = _claireTTSQueue.length > 0;
+    if(gen !== _claireSpeakGen || fallbackStarted || finished) return;
     var st = document.getElementById('claire-status');
     if(st) st.textContent = 'Voz Claire no disponible — reintentá en unos segundos.';
+    fallbackStarted = true;
+    if(clairePlayBrowserTts(text, finishClaireLine, finishClaireLine)) return;
+    finishClaireLine();
   });
 }
 
@@ -4212,6 +4622,7 @@ async function startClaireSession(){
     return;
   }
   if(typeof unlockTtsAudio === 'function') await unlockTtsAudio();
+  if(typeof ttsResetRepeatGuard === 'function') ttsResetRepeatGuard(_claireReplyGuard);
   claireStopSpeech();
   _claireState.sessionActive = true;
   _claireState.sessionId = 'portal-claire-' + (s.id || Date.now());
@@ -4252,6 +4663,7 @@ async function sendClairePortalMessage(micText){
   var text = (micText || (inp ? inp.value : '') || '').trim();
   if(!text) return;
   if(inp) inp.value = '';
+  if(typeof ttsResetRepeatGuard === 'function') ttsResetRepeatGuard(_claireReplyGuard);
   claireStopSpeech();
   _claireState.sending = true;
   _claireState.history.push({ role:'user', content:text });
@@ -4350,6 +4762,7 @@ function aliceCancelSpeech(){
   _aliceTtsPrefetch = {};
   _aliceTtsRetry = {};
   _aliceLastSpokenKey = '';
+  if(typeof ttsResetRepeatGuard === 'function') ttsResetRepeatGuard(_aliceReplyGuard);
   // Keep _aliceLastSpokenText for echo detection after interrupt
   try{ if(window.speechSynthesis) window.speechSynthesis.cancel(); }catch(e){}
   if(typeof NexoraStreamVoice !== 'undefined') NexoraStreamVoice.cancelTurn();
@@ -4656,10 +5069,10 @@ function aliceTheme(){
     cardShadow: '0 8px 32px rgba(43,126,193,0.35)',
     cardBorder: 'rgba(192,132,252,0.2)',
     studioLabel: '#F5A623',
-    title: '#C084FC',
+    title: '#79B9E8',
     titleShadow: 'rgba(192,132,252,0.45)',
-    accent: '#C084FC',
-    accentLight: '#C084FC',
+    accent: '#79B9E8',
+    accentLight: '#79B9E8',
     rgb: '192,132,252',
     btnGrad: 'linear-gradient(135deg,#2B7EC1,#1F6AA8)',
     btnShadow: '0 4px 16px rgba(192,132,252,0.4)',
@@ -4684,7 +5097,7 @@ function renderAlice(){
       +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">'
       +'<div>'
       +'<div style="font-size:10px;letter-spacing:0.2em;color:#c4b5fd;font-weight:700;">STUDIO INFINITY CR</div>'
-      +'<div style="font-size:26px;font-weight:900;color:#e9d5ff;letter-spacing:0.04em;">RAPID DRILL · KABOOM</div>'
+      +'<div style="font-size:26px;font-weight:900;color:#e9d5ff;letter-spacing:0.04em;">RAPID DRILL · PISO</div>'
       +'<div style="font-size:11px;color:rgba(255,255,255,0.82);">Foundations bajo presión — no es Infinity Arcade</div>'
       +'</div>'
       +'<button type="button" onclick="portalCloseRapidDrill(true)" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#e9d5ff;font-size:11px;padding:6px 12px;border-radius:8px;cursor:pointer;">← Alice</button>'
@@ -4773,7 +5186,7 @@ function renderAliceStart(){
   if(companionOnly) mode = 'companion';
   var modePicker = (companionOn && aliceTutorOn)
     ? '<div style="display:flex;gap:8px;justify-content:center;margin-bottom:12px;flex-wrap:wrap;">'
-      +'<button type="button" onclick="_aliceState.sessionType=\'practice\';renderAlice()" style="flex:1;min-width:120px;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;'+(mode==='practice'?'background:rgba(192,132,252,0.25);border:2px solid #C084FC;color:#C084FC;':'background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);')+'">Modo Tutor</button>'
+      +'<button type="button" onclick="_aliceState.sessionType=\'practice\';renderAlice()" style="flex:1;min-width:120px;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;'+(mode==='practice'?'background:rgba(192,132,252,0.25);border:2px solid #79B9E8;color:#79B9E8;':'background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);')+'">Modo Tutor</button>'
       +'<button type="button" onclick="_aliceState.sessionType=\'companion\';renderAlice()" style="flex:1;min-width:120px;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;'+(mode==='companion'?'background:linear-gradient(135deg,rgba(255,215,0,0.35),rgba(234,179,8,0.25));border:2px solid #FFD700;color:#FFEB3B;box-shadow:0 0 16px rgba(255,215,0,0.35);':'background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);')+'">Modo Libre</button>'
       +'</div>'
     : '';
@@ -5091,6 +5504,8 @@ function aliceFormatMessageHtml(m){
   var tipColor = th.accent;
   var clean = clientPart
     .replace(/\[\[CTYPE:[^\]]*\]\]/gi, '')
+    .replace(/\[\[\s*BOARD\s*:[^\]]*\]\]/gi, '')
+    .replace(/\[\[\s*BOARD_DESIGN\s*:[^\]]*\]\]/gi, '')
     .replace(/GOOD: ([^\n]*)/g,'<em style="color:#86EFAC;font-size:11px;display:block;margin-top:6px;font-weight:700;font-style:normal;">✓ $1</em>')
     .replace(/TIP: ([^\n]*)/g,'<em style="color:'+tipColor+';font-size:11px;display:block;margin-top:6px;font-weight:600;font-style:normal;">💡 $1</em>');
   var roleLabel = (_aliceState.sessionType==='companion' && isAlice) ? 'COMPANION' : (isAlice ? 'ALICE' : 'VOS');
@@ -5125,7 +5540,6 @@ async function sendAliceMessage(micText){
   var text = (micText || (input ? input.value : '') || '').trim();
   if(!text) return;
   _aliceSending = true;
-  _aliceSendLockAt = Date.now();
   var micBtn = document.getElementById('alice-mic-btn');
   if(micBtn) micBtn.classList.add('ptt-busy');
   var statusEl = document.getElementById('alice-status');
@@ -5133,7 +5547,7 @@ async function sendAliceMessage(micText){
   var unwatchAlice = voiceSendWatchdog(function(){ return _aliceSending; }, function(){
     aliceUnlockMicAndSend(false);
     if(statusEl) statusEl.textContent = 'Tardó demasiado — intentá de nuevo o escribí tu respuesta.';
-  }, 28000);
+  }, 38000);
   aliceCancelSpeech();
   if(typeof PttMic !== 'undefined') PttMic.stop(document.getElementById('alice-mic-btn'));
   aliceStopMic();
@@ -5175,13 +5589,15 @@ async function sendAliceMessage(micText){
     aliceRenderHistoryMessages();
     if(statusEl) statusEl.textContent = '';
     aliceQueueFullReply(forcedAlice);
+    if(micBtn) micBtn.classList.remove('ptt-busy');
     unwatchAlice();
-    aliceUnlockMicAndSend(false);
+    _aliceSending = false;
     return;
   }
 
   var fullText = '';
   var alicePrefetchState = {};
+  var aliceTurnSpoke = false;
   var ctrl = new AbortController();
   var tid = setTimeout(function(){ ctrl.abort(); }, 55000);
 
@@ -5238,11 +5654,18 @@ async function sendAliceMessage(micText){
       : 'I did not get that — could you try again?';
     _aliceState.history[streamIdx] = { role:'assistant', content: spokenAlice };
     aliceQueueFullReply(spokenAlice);
+    aliceTurnSpoke = true;
     aliceRenderHistoryMessages();
     saveAliceRuntimeStorage();
     if(statusEl) statusEl.textContent = '';
 
   } catch(e){
+    // The reply may already be playing; a render or save error must not make
+    // Alice speak a second, different answer on top of it.
+    if(aliceTurnSpoke){
+      if(statusEl) statusEl.textContent = '';
+      return;
+    }
     if(typeof NexoraStreamVoice !== 'undefined') NexoraStreamVoice.cancelTurn();
     try {
       var fbCatch = await alicePostFallbackReply(text, _aliceState.history.slice(0, streamIdx).slice(-10));
@@ -5279,7 +5702,21 @@ function openNexoraLab(){
     return;
   }
   var nxConfig = window._nexoraConfig;
-  if(nxConfig) localStorage.setItem('nexora_scenario', JSON.stringify(nxConfig));
+  if(!nxConfig || !nxConfig.type){
+    showToast('No hay simulación programada. Pedí a tu trainer que asigne un escenario en Engine.','err');
+    return;
+  }
+  // Upgrade legacy pool-only configs into a pinned program when the helper is available.
+  if(typeof NEXORA_SIM_PROGRAM!=='undefined' && !nxConfig.simulationId){
+    nxConfig=NEXORA_SIM_PROGRAM.buildProgram(Object.assign({},nxConfig));
+  }
+  localStorage.setItem('nexora_scenario', JSON.stringify(nxConfig));
+  if(typeof NEXORA_SIM_PROGRAM!=='undefined'){
+    localStorage.setItem('nexora_force_scenario', JSON.stringify(NEXORA_SIM_PROGRAM.programToScenario(nxConfig)));
+  } else if(nxConfig.simulationId || nxConfig.pinned){
+    // Lab will resolve from the program itself.
+    try{ localStorage.removeItem('nexora_force_scenario'); }catch(e){}
+  }
   localStorage.setItem('nexora_agent', nexoraAgentName(student));
   localStorage.setItem('nexora_student_id', (student&&student.id)||'');
   if(student && student.nexoraSessions && student.nexoraSessions.length){
@@ -5424,7 +5861,6 @@ var _aliceSpeakEnabled = false;
 var _aliceLastSpokenKey = '';
 var _aliceLastSpokenAt = 0;
 var _aliceLastSpokenText = '';
-var _aliceSendLockAt = 0;
 
 /** Collapse STT echo/repeats so Alice does not scold the student for her own voice. */
 function aliceNormalizeMicTranscript(raw){
@@ -5437,20 +5873,18 @@ function aliceNormalizeMicTranscript(raw){
   text = text.replace(/\s+/g, ' ').trim();
   var last = String(_aliceLastSpokenText || '').replace(/\s+/g, ' ').trim().toLowerCase();
   var now = text.toLowerCase();
-  // Companion: shorter echo window so real student turns are not wiped as "Alice echo"
-  var echoWin = (_aliceState && _aliceState.sessionType === 'companion') ? 4500 : 9000;
-  var recent = (Date.now() - (_aliceLastSpokenAt || 0)) < echoWin;
+  var recent = (Date.now() - (_aliceLastSpokenAt || 0)) < 12000;
   if(recent && last && now){
     if(now === last) return '';
-    // Only drop near-identical echoes (avoid killing short student answers)
-    if(last.indexOf(now) >= 0 && now.length >= 12) return '';
-    if(now.indexOf(last) >= 0 && last.length >= 18 && now.length < last.length * 1.2) return '';
+    if(last.indexOf(now) >= 0 && now.length >= 4) return '';
+    if(now.indexOf(last) >= 0 && last.length >= 12 && now.length < last.length * 1.35) return '';
+    // Heavy overlap with last Alice line → treat as echo
     var a = now.split(/\s+/).filter(Boolean);
     var b = last.split(/\s+/).filter(Boolean);
-    if(a.length >= 4 && b.length >= 4){
+    if(a.length >= 2 && b.length >= 2){
       var hit = 0;
       a.forEach(function(w){ if(b.indexOf(w) >= 0) hit++; });
-      if(hit / a.length >= 0.92) return '';
+      if(hit / a.length >= 0.85) return '';
     }
   }
   return text;
@@ -5554,34 +5988,19 @@ function aliceSpeak(text){
 function bindAlicePttMic(){
   var btn = document.getElementById('alice-mic-btn');
   if(!btn || typeof PttMic === 'undefined') return;
-  // Always fresh bind — old DOM/stuck PTT left the mic dead for students like Jimena
-  if(typeof PttMic.destroy === 'function') PttMic.destroy(btn);
-  else if(btn._pttBound){ try { PttMic.reset(btn); } catch(e0) {} btn._pttBound = false; }
+  if(btn._pttBound) return;
   var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   PttMic.bind({
     btn: btn,
     // Accent selector affects TTS only — STT must stay English or Chrome mangles speech
     lang: 'en-US',
-    settleMs: isMobile ? 120 : 180,
-    maxHoldMs: 45000,
+    settleMs: 280,
     canStart: function(){
-      if(!_aliceState.sessionActive){
-        var st0 = document.getElementById('alice-status');
-        if(st0) st0.textContent = 'Tocá “Iniciar sesión” primero, después el micrófono.';
-        return false;
-      }
+      if(!_aliceState.sessionActive) return false;
       if(_aliceSending){
-        // Auto-recover zombie send lock (mic looked “stuck”)
-        if(!_aliceSendLockAt) _aliceSendLockAt = Date.now();
-        if(Date.now() - _aliceSendLockAt > 12000){
-          aliceUnlockMicAndSend(false);
-        } else {
-          var st = document.getElementById('alice-status');
-          if(st) st.textContent = 'Esperá a que Alice termine de responder…';
-          return false;
-        }
-      } else {
-        _aliceSendLockAt = 0;
+        var st = document.getElementById('alice-status');
+        if(st) st.textContent = 'Esperá a que Alice termine de responder…';
+        return false;
       }
       return true;
     },
@@ -5589,8 +6008,7 @@ function bindAlicePttMic(){
       if(typeof unlockTtsAudio === 'function') unlockTtsAudio();
       aliceInterruptSpeaking();
       aliceStopMic();
-      btn.classList.remove('ptt-busy','ptt-active');
-      btn.style.pointerEvents = '';
+      btn.classList.remove('ptt-busy');
     },
     normalizeTranscript: function(raw){
       var cleaned = aliceNormalizeMicTranscript(raw);
@@ -5606,20 +6024,14 @@ function bindAlicePttMic(){
       var th = aliceTheme();
       if(b){
         b.classList.toggle('ptt-active', !!listening);
-        if(listening){ b.style.background='rgba(255,92,92,0.3)'; b.style.borderColor='#FF5C5C'; b.style.color='white'; b.style.pointerEvents=''; }
+        if(listening){ b.style.background='rgba(255,92,92,0.3)'; b.style.borderColor='#FF5C5C'; b.style.color='white'; }
         else { b.style.background='rgba('+th.rgb+',0.12)'; b.style.borderColor='rgba('+th.rgb+',0.35)'; b.style.color=th.accent; }
       }
       if(statusEl) statusEl.textContent = listening ? '🎤 Escuchando… soltá el botón cuando termines' : '';
     },
     onSend: function(text){ if(text) sendAliceMessage(text); },
-    onEmpty: function(){
-      var st = document.getElementById('alice-status');
-      if(st) st.textContent = 'No te escuché bien — mantené el mic un poco más y hablá cerca del teléfono.';
-      btn.classList.remove('ptt-busy','ptt-active');
-    },
     onError: function(code){
       btn.classList.remove('ptt-active','ptt-busy');
-      btn.style.pointerEvents = '';
       var st = document.getElementById('alice-status');
       if(!st) return;
       if(code === 'not-allowed' || code === 'service-not-allowed'){
@@ -5628,7 +6040,7 @@ function bindAlicePttMic(){
         st.textContent = 'No se encontró micrófono (o está ocupado) — revisá el dispositivo o escribí tu respuesta.';
       } else if(code === 'no-sr' || code === 'start-failed'){
         st.textContent = isMobile
-          ? 'Voz no disponible en este navegador — usá Chrome y escribí si hace falta.'
+          ? 'Voz no disponible en este navegador — escribí tu respuesta abajo.'
           : 'Usá Chrome o Edge para voz, o escribí tu respuesta.';
       } else {
         st.textContent = 'Micrófono interrumpido — mantené presionado de nuevo o escribí tu respuesta.';
@@ -5844,6 +6256,7 @@ function aliceInstantOpening(student, returning, sessionType){
 
 function aliceTtsMainLine(text){
   // Speak the FULL reply — never drop the second half or ALICE tip line
+  // Keep [[BOARD…]] for visual stage; stripped later in aliceSpeak
   return String(text || '')
     .replace(/^💬\s*/, '')
     .replace(/▋/g, '')
@@ -5966,13 +6379,28 @@ if(typeof document !== 'undefined'){
   document.addEventListener('webkitfullscreenchange', aliceSyncFullscreenBtn);
 }
 
+var _aliceReplyGuard = (typeof ttsMakeRepeatGuard === 'function') ? ttsMakeRepeatGuard() : null;
+
+/** Drop the line already in the air before a new reply takes over the queue. */
+function aliceStopCurrentLine(){
+  _aliceSpeakGen++;
+  if(typeof ttsStopAudio === 'function') ttsStopAudio(window._aliceAudio);
+  window._aliceAudio = null;
+  clearTimeout(_aliceTtsWatchdog);
+  _aliceTTSQueue = [];
+  _aliceTTSBusy = false;
+}
+
 function aliceQueueFullReply(text){
   if(!text || !_aliceSpeakEnabled) return;
-  if(typeof unlockTtsAudio === 'function') unlockTtsAudio();
   var main = aliceTtsMainLine(text);
   if(!main || main.length < 3) return;
-  // Clear stale queue so a new full reply is never mixed with a half-played one
-  _aliceTTSQueue = [];
+  // Every turn path funnels through here, so the repeat guard belongs here.
+  // While it lived in aliceSpeak() the stream and fallback paths both spoke.
+  if(typeof ttsIsRepeat === 'function' && ttsIsRepeat(_aliceReplyGuard, main)) return;
+  if(typeof ttsMarkSpoken === 'function') ttsMarkSpoken(_aliceReplyGuard, main);
+  if(typeof unlockTtsAudio === 'function') unlockTtsAudio();
+  aliceStopCurrentLine();
   ttsSpeakLines(main, 1200).forEach(function(line){
     if(line && line.length >= 3) aliceQueueSpeak(line);
   });
@@ -6112,39 +6540,15 @@ function aliceUnlockMicAndSend(clearStatus){
   _aliceSending = false;
   _aliceSpeakEnabled = true;
   var btn = document.getElementById('alice-mic-btn');
-  if(btn){ btn.classList.remove('ptt-busy','ptt-active'); btn.style.pointerEvents = ''; }
+  if(btn){ btn.classList.remove('ptt-busy','ptt-active'); }
   if(typeof PttMic !== 'undefined'){
-    if(btn){
-      if(typeof PttMic.destroy === 'function') PttMic.destroy(btn);
-      else PttMic.reset(btn);
-    } else if(typeof PttMic.resetAll === 'function') PttMic.resetAll();
+    if(btn) PttMic.reset(btn);
+    else PttMic.resetAll();
   }
   aliceStopMic();
-  try { bindAlicePttMic(); } catch(eRebind) {}
   if(clearStatus !== false){
     var st = document.getElementById('alice-status');
     if(st && (st.textContent.indexOf('Escuchando') >= 0 || st.textContent.indexOf('pensando') >= 0 || st.textContent.indexOf('conecta') >= 0)) st.textContent = '';
-  }
-}
-
-function jillUnlockMicAndSend(clearStatus){
-  _jillSending = false;
-  _jillSpeakEnabled = true;
-  var btn = document.getElementById('jill-mic-btn');
-  if(btn){ btn.classList.remove('ptt-busy','ptt-active'); btn.style.pointerEvents = ''; }
-  if(typeof PttMic !== 'undefined'){
-    if(btn){
-      if(typeof PttMic.destroy === 'function') PttMic.destroy(btn);
-      else PttMic.reset(btn);
-    }
-  }
-  jillStopMic();
-  try { bindJillPttMic(); } catch(eRebind) {}
-  if(clearStatus !== false){
-    var st = document.getElementById('jill-status');
-    if(st && (st.textContent.indexOf('Escuchando') >= 0 || st.textContent.indexOf('responde') >= 0 || st.textContent.indexOf('Jill') >= 0)){
-      if(st.textContent.indexOf('Esperá') >= 0 || st.textContent.indexOf('responde') >= 0) st.textContent = '';
-    }
   }
 }
 
@@ -6396,7 +6800,7 @@ function nexoraShowCRM(restoring){
     // Input
     +'<div style="padding:8px;border-top:1px solid rgba(255,255,255,0.08);display:flex;gap:6px;">'
     +'<input id="nx-input" placeholder="Respond to the client..." style="flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:white;border-radius:10px;padding:7px 12px;font-size:12px;font-family:inherit;" disabled>'
-    +'<button id="nx-mic-btn" title="Mantené presionado para hablar (PTT)" style="width:34px;height:34px;background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.3);color:#C084FC;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;user-select:none;-webkit-user-select:none;" disabled><i class="ti ti-microphone"></i></button>'
+    +'<button id="nx-mic-btn" title="Mantené presionado para hablar (PTT)" style="width:34px;height:34px;background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.3);color:#79B9E8;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;user-select:none;-webkit-user-select:none;" disabled><i class="ti ti-microphone"></i></button>'
     +'<button onclick="sendNexoraMsg()" style="width:34px;height:34px;background:var(--purple);border:none;color:white;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;" disabled id="nx-send-btn"><i class="ti ti-send"></i></button>'
     +'</div>'
     // Call buttons
@@ -6478,6 +6882,7 @@ async function nexoraAnswerCall(){
 
   var clientStatus = document.getElementById('nx-alice-status');
   if(clientStatus) clientStatus.textContent = '';
+  if(typeof ttsResetRepeatGuard === 'function') ttsResetRepeatGuard(_nexoraReplyGuard);
 
   var student = window._currentStudent || window._portalStudent || {};
   var accountContext = nexoraBuildAccountContext(p);
@@ -6600,6 +7005,7 @@ function nexoraSendToAlice(text){
   }
   _nxSending = true;
   if(typeof unlockTtsAudio === 'function') unlockTtsAudio();
+  if(typeof ttsResetRepeatGuard === 'function') ttsResetRepeatGuard(_nexoraReplyGuard);
   nexoraHardCancelSpeech();
   var p = _nxState.profile;
   var sc = _nxState.scenario;
@@ -6871,7 +7277,7 @@ function bindNexoraPttMic(){
     onUi: function(listening){
       if(listening){ btn.style.background='rgba(239,68,68,0.3)'; btn.style.borderColor='#EF4444'; btn.style.color='white'; }
       else {
-        btn.style.background='rgba(192,132,252,0.1)'; btn.style.borderColor='rgba(192,132,252,0.3)'; btn.style.color='#C084FC';
+        btn.style.background='rgba(192,132,252,0.1)'; btn.style.borderColor='rgba(192,132,252,0.3)'; btn.style.color='#79B9E8';
         clearTimeout(_nxResumeTimer);
         _nxResumeTimer = setTimeout(function(){
           _nxResumeTimer = null;
@@ -6892,7 +7298,7 @@ function bindNexoraPttMic(){
 function stopNexoraMic(){
   _nxState.micListening = false;
   var btn = document.getElementById('nx-mic-btn');
-  if(btn){ btn.style.background='rgba(192,132,252,0.1)'; btn.style.borderColor='rgba(192,132,252,0.3)'; btn.style.color='#C084FC'; }
+  if(btn){ btn.style.background='rgba(192,132,252,0.1)'; btn.style.borderColor='rgba(192,132,252,0.3)'; btn.style.color='#79B9E8'; }
 }
 
 // ── ADD MSG ────────────────────────────────────────────────────
@@ -6922,6 +7328,7 @@ var _nxPlayingChunk = null;
 var _nexoraTtsPrefetch = {};
 var _nxTtsWatchdog = null;
 var _nxTtsRetry = {};
+var _nexoraReplyGuard = (typeof ttsMakeRepeatGuard === 'function') ? ttsMakeRepeatGuard() : null;
 
 function nexoraPlayBrowserTts(text, onEnded, onError){
   if(!window.speechSynthesis || !text){ if(onError) onError(); return false; }
@@ -6939,7 +7346,8 @@ function nexoraPlayBrowserTts(text, onEnded, onError){
   return true;
 }
 
-function nexoraArmTtsWatchdog(textLen){
+function nexoraArmTtsWatchdog(line, onStallDone, onStallStart){
+  var textLen = String(line || '').length || (Number(line) || 0);
   if(typeof armTtsPlaybackWatchdog === 'function'){
     armTtsPlaybackWatchdog({
       textLen: textLen,
@@ -6949,7 +7357,15 @@ function nexoraArmTtsWatchdog(textLen){
       setBusy: function(v){ _nxTTSBusy = !!v; },
       getAudio: function(){ return window._nxAudio; },
       setAudio: function(a){ window._nxAudio = a; },
-      onAdvance: function(){ _nxPlayingChunk = null; if(typeof _nxTTSFlushPortal === 'function') _nxTTSFlushPortal(); }
+      onFetchStall: function(){
+        if(typeof line !== 'string' || line.length < 3) return false;
+        if(onStallStart) onStallStart();
+        return nexoraPlayBrowserTts(line, onStallDone, onStallDone);
+      },
+      onAdvance: function(){
+        if(onStallDone) onStallDone();
+        else { _nxPlayingChunk = null; if(typeof _nxTTSFlushPortal === 'function') _nxTTSFlushPortal(); }
+      }
     });
     return;
   }
@@ -7001,7 +7417,11 @@ function nexoraPauseSpeech(){
 function nexoraHardCancelSpeech(){
   clearTimeout(_nxResumeTimer);
   _nxSpeakGen++;
-  if(window._nxAudio){ try{ window._nxAudio.pause(); }catch(e){} window._nxAudio = null; }
+  clearTimeout(_nxTtsWatchdog);
+  if(typeof ttsStopAudio === 'function') ttsStopAudio(window._nxAudio);
+  else if(window._nxAudio){ try{ window._nxAudio.pause(); }catch(e){} }
+  window._nxAudio = null;
+  try{ if(window.speechSynthesis) window.speechSynthesis.cancel(); }catch(e2){}
   _nxTTSQueue = [];
   _nxTTSBusy = false;
   _nxPlayingChunk = null;
@@ -7018,13 +7438,17 @@ function nexoraCancelSpeech(){ nexoraHardCancelSpeech(); }
 
 function nexoraSpeak(text){
   if(!text || !nexoraReplyTtsReady(text)) return;
+  var full = prepareTtsLine(text);
+  if(typeof ttsIsRepeat === 'function' && ttsIsRepeat(_nexoraReplyGuard, full)) return;
+  if(typeof ttsMarkSpoken === 'function') ttsMarkSpoken(_nexoraReplyGuard, full);
   if(typeof unlockTtsAudio === 'function') unlockTtsAudio();
   nexoraHardCancelSpeech();
-  ttsSpeakLines(text, 900).forEach(function(chunk){ nexoraQueueSpeak(chunk); });
+  ttsSpeakLines(full, 900).forEach(function(chunk){ nexoraQueueSpeak(chunk); });
 }
 
 function nexoraQueueSpeak(text){
   if(!text || text.trim().length < 2) return;
+  if(_nxTTSQueue.indexOf(text) !== -1 || _nxPlayingChunk === text) return;
   _nxTTSQueue.push(text);
   _nxTTSFlushPortal();
 }
@@ -7036,7 +7460,6 @@ function _nxTTSFlushPortal(){
   var chunk = _nxTTSQueue.shift();
   _nxPlayingChunk = chunk;
   var clean = prepareTtsLine(chunk);
-  nexoraArmTtsWatchdog(clean.length);
   if(!clean || !nexoraReplyTtsReady(clean)){
     _nxPlayingChunk = null;
     clearTimeout(_nxTtsWatchdog);
@@ -7049,26 +7472,31 @@ function _nxTTSFlushPortal(){
     _nxTTSBusy=false;
     return;
   }
+  var finished = false;
+  var fallbackStarted = false;
 
   function finishNexoraLine(){
+    if(finished) return;
+    finished = true;
     window._nxAudio = null;
     clearTimeout(_nxTtsWatchdog);
     _nxPlayingChunk = null;
     _nxTTSBusy = false;
     _nxTTSFlushPortal();
   }
+  nexoraArmTtsWatchdog(clean, finishNexoraLine, function(){ fallbackStarted = true; });
 
   function playBlob(b){
+    if(fallbackStarted || finished) return;
     if(gen !== _nxSpeakGen){
-      _nxTTSQueue.unshift(chunk);
-      _nxPlayingChunk = chunk;
       _nxTTSBusy = false;
+      _nxPlayingChunk = null;
       clearTimeout(_nxTtsWatchdog);
-      setTimeout(_nxTTSFlushPortal, 40);
       return;
     }
     if(!b){
       delete _nxTtsRetry[clean];
+      fallbackStarted = true;
       if(nexoraPlayBrowserTts(clean, finishNexoraLine, finishNexoraLine)) return;
       finishNexoraLine();
       return;
@@ -7080,6 +7508,7 @@ function _nxTTSFlushPortal(){
       onError: function(){
         window._nxAudio = null;
         clearTimeout(_nxTtsWatchdog);
+        fallbackStarted = true;
         if(nexoraPlayBrowserTts(clean, finishNexoraLine, function(){
           _nxTtsRetry[clean] = (_nxTtsRetry[clean] || 0) + 1;
           if(_nxTtsRetry[clean] < 2) _nxTTSQueue.unshift(chunk);
@@ -7105,13 +7534,10 @@ function _nxTTSFlushPortal(){
   .then(function(r){return r.ok?r.blob():null;})
   .then(playBlob)
   .catch(function(){
-    clearTimeout(_nxTtsWatchdog);
-    _nxTtsRetry[clean] = (_nxTtsRetry[clean] || 0) + 1;
-    if(_nxTtsRetry[clean] < 3) _nxTTSQueue.unshift(chunk);
-    else delete _nxTtsRetry[clean];
-    _nxPlayingChunk = chunk;
-    _nxTTSBusy=false;
-    setTimeout(_nxTTSFlushPortal, 40);
+    if(gen !== _nxSpeakGen || fallbackStarted || finished) return;
+    fallbackStarted = true;
+    if(nexoraPlayBrowserTts(clean, finishNexoraLine, finishNexoraLine)) return;
+    finishNexoraLine();
   });
 }
 
@@ -7131,14 +7557,8 @@ document.addEventListener('visibilitychange', function(){
     }
     jillPauseAudio();
     if(window._nxAudio) try{ window._nxAudio.pause(); }catch(e){}
-    if(typeof PttMic !== 'undefined'){
-      if(typeof PttMic.destroyAll === 'function') PttMic.destroyAll();
-      else PttMic.resetAll();
-    }
+    if(typeof PttMic !== 'undefined') PttMic.resetAll();
     aliceStopMic();
-    jillStopMic();
-    _aliceSending = false;
-    _jillSending = false;
   } else {
     if(window._activePortalTab === 'alice' && _aliceState.sessionActive){
       _aliceSpeakEnabled = true;
@@ -7154,7 +7574,7 @@ document.addEventListener('visibilitychange', function(){
     if(window._activePortalTab === 'nexora' && _nxState.active) resumeNexoraRuntime();
     if(window._activePortalTab === 'jill'){
       _jillSpeakEnabled = true;
-      jillUnlockMicAndSend(false);
+      _jillSending = false;
       try { bindJillPttMic(); } catch(e) {}
     }
   }
@@ -7207,8 +7627,27 @@ var _jillStreamCtrl = null;
 var _jillTtsPrefetch = {};
 var _jillTtsRetry = {};
 var _jillTtsWatchdog = null;
+var _jillReplyGuard = (typeof ttsMakeRepeatGuard === 'function') ? ttsMakeRepeatGuard() : null;
 
-function jillArmTtsWatchdog(textLen){
+function jillPlayBrowserTts(text, lang, onEnded, onError){
+  if(!window.speechSynthesis || !text){ if(onError) onError(); return false; }
+  try{ window.speechSynthesis.cancel(); }catch(e){}
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = jillNormalizeTtsLang(lang);
+  u.rate = 0.94;
+  var voices = speechSynthesis.getVoices() || [];
+  var prefix = u.lang.slice(0, 2).toLowerCase();
+  var v = voices.find(function(vo){ return String(vo.lang || '').toLowerCase() === u.lang.toLowerCase(); })
+    || voices.find(function(vo){ return String(vo.lang || '').toLowerCase().indexOf(prefix) === 0; });
+  if(v) u.voice = v;
+  u.onend = function(){ if(onEnded) onEnded(); };
+  u.onerror = function(){ if(onError) onError(); };
+  speechSynthesis.speak(u);
+  return true;
+}
+
+function jillArmTtsWatchdog(line, lang, onStallDone, onStallStart){
+  var textLen = String(line || '').length || (Number(line) || 0);
   if(typeof armTtsPlaybackWatchdog === 'function'){
     armTtsPlaybackWatchdog({
       textLen: textLen,
@@ -7218,7 +7657,15 @@ function jillArmTtsWatchdog(textLen){
       setBusy: function(v){ _jillTTSBusy = !!v; },
       getAudio: function(){ return _jillState.audio; },
       setAudio: function(a){ _jillState.audio = a; },
-      onAdvance: function(){ _jillState.speaking = _jillTTSQueue.length > 0; _jillTTSFlush(); }
+      onFetchStall: function(){
+        if(typeof line !== 'string' || line.length < 3) return false;
+        if(onStallStart) onStallStart();
+        return jillPlayBrowserTts(line, lang, onStallDone, onStallDone);
+      },
+      onAdvance: function(){
+        if(onStallDone) onStallDone();
+        else { _jillState.speaking = _jillTTSQueue.length > 0; _jillTTSFlush(); }
+      }
     });
     return;
   }
@@ -7311,6 +7758,7 @@ function jillActivateVisualStage(text, contentType){
   var userAsk = jillLastUserTopic();
   var locked = _jillState && _jillState.canonTrackId ? _jillState.canonTrackId : null;
 
+  // AI may choose / design the board for THIS explanation (overrides prior sticky when BOARD tag present).
   var ai = (typeof AiBoardDirective !== 'undefined')
     ? AiBoardDirective.parse(text, 'jill')
     : { trackId: null, design: null, hadDirective: false, clean: text };
@@ -7331,6 +7779,7 @@ function jillActivateVisualStage(text, contentType){
     }
   }
 
+  // AI design-only board (no SVG track). When both track+design, SVG wins.
   if (ai.design && ai.design.title && !(ai.trackId && typeof AiBoardDirective !== 'undefined' && AiBoardDirective.isValidForTutor(ai.trackId, 'jill'))) {
     var shownDesign = JillVisualStage.show(ai.clean || text, 'whiteboard', bundle, {
       userTopic: userAsk || '',
@@ -7371,6 +7820,7 @@ function jillSpeakTurn(text, contentType){
   var sameBoardOpen = typeof JillVisualStage !== 'undefined'
     && JillVisualStage.isActive && JillVisualStage.isActive()
     && JillVisualStage.getTrackId && JillVisualStage.getTrackId() === locked;
+  // Open/update board when AI picks BOARD, teach CTYPE, student asked, or same board already open
   if (aiHasBoard || (locked && (asked || sameBoardOpen || whiteboard))) {
     try { jillActivateVisualStage(text, whiteboard || aiHasBoard ? 'whiteboard' : ct); } catch(eVis) {}
   } else if (!locked && typeof JillVisualStage !== 'undefined' && JillVisualStage.isActive && JillVisualStage.isActive()) {
@@ -7567,14 +8017,17 @@ function _jillTTSFlush(){
   var text = typeof item === 'string' ? item : item.text;
   var lang = jillNormalizeTtsLang(typeof item === 'string' ? jillDetectTtsLang(text) : (item.lang || 'es-CR'));
   var clean = jillCleanTtsText(text);
-  jillArmTtsWatchdog(clean.length);
   if(clean.length < 3){ _jillTTSBusy=false; clearTimeout(_jillTtsWatchdog); _jillState.speaking=_jillTTSQueue.length>0; _jillTTSFlush(); return; }
 
   var nextItem = _jillTTSQueue[0];
   var nextLang = nextItem ? jillNormalizeTtsLang(typeof nextItem === 'string' ? jillDetectTtsLang(nextItem) : nextItem.lang) : null;
   var langPause = (nextLang && nextLang !== lang) ? 40 : 0;
+  var finished = false;
+  var fallbackStarted = false;
 
   function finishJillLine(){
+    if(finished) return;
+    finished = true;
     clearTimeout(_jillTtsWatchdog);
     _jillState.audio = null;
     _jillTTSBusy = false;
@@ -7582,8 +8035,10 @@ function _jillTTSFlush(){
     if(langPause) setTimeout(_jillTTSFlush, langPause);
     else _jillTTSFlush();
   }
+  jillArmTtsWatchdog(clean, lang, finishJillLine, function(){ fallbackStarted = true; });
 
   function playBlob(b){
+    if(fallbackStarted || finished) return;
     if(!_jillSpeakEnabled || gen !== _jillSpeakGen){
       _jillTTSBusy=false;
       clearTimeout(_jillTtsWatchdog);
@@ -7592,10 +8047,8 @@ function _jillTTSFlush(){
       return;
     }
     if(!b){
-      var rk0 = jillTtsCacheKey(clean, lang);
-      _jillTtsRetry[rk0] = (_jillTtsRetry[rk0] || 0) + 1;
-      if(_jillTtsRetry[rk0] < 5) _jillTTSQueue.unshift({ text: text, lang: lang });
-      else delete _jillTtsRetry[rk0];
+      fallbackStarted = true;
+      if(jillPlayBrowserTts(clean, lang, finishJillLine, finishJillLine)) return;
       finishJillLine();
       return;
     }
@@ -7613,10 +8066,8 @@ function _jillTTSFlush(){
       onError: function(){
         if(gen !== _jillSpeakGen) return;
         _jillState.audio = null;
-        var rk = jillTtsCacheKey(clean, lang);
-        _jillTtsRetry[rk] = (_jillTtsRetry[rk] || 0) + 1;
-        if(_jillTtsRetry[rk] < 5) _jillTTSQueue.unshift({ text: text, lang: lang });
-        else delete _jillTtsRetry[rk];
+        fallbackStarted = true;
+        if(jillPlayBrowserTts(clean, lang, finishJillLine, finishJillLine)) return;
         finishJillLine();
       }
     });
@@ -7648,6 +8099,8 @@ function _jillTTSFlush(){
         delete _jillTtsPrefetch[cacheKey];
         jillFetchTtsBlob(clean, lang).then(playBlob).catch(function(){
           if(waitGen !== _jillSpeakGen){ _jillTTSBusy=false; clearTimeout(_jillTtsWatchdog); return; }
+          fallbackStarted = true;
+          if(jillPlayBrowserTts(clean, lang, finishJillLine, finishJillLine)) return;
           finishJillLine();
         });
       }
@@ -7658,14 +8111,9 @@ function _jillTTSFlush(){
   .then(playBlob)
   .catch(function(){
     if(gen !== _jillSpeakGen){ _jillTTSBusy=false; clearTimeout(_jillTtsWatchdog); return; }
-    var rk = jillTtsCacheKey(clean, lang);
-    _jillTtsRetry[rk] = (_jillTtsRetry[rk] || 0) + 1;
-    if(_jillTtsRetry[rk] < 3) _jillTTSQueue.unshift({ text: text, lang: lang });
-    else delete _jillTtsRetry[rk];
-    _jillTTSBusy=false;
-    clearTimeout(_jillTtsWatchdog);
-    _jillState.speaking=_jillTTSQueue.length>0;
-    setTimeout(_jillTTSFlush, 40);
+    fallbackStarted = true;
+    if(jillPlayBrowserTts(clean, lang, finishJillLine, finishJillLine)) return;
+    finishJillLine();
   });
 }
 
@@ -7681,7 +8129,8 @@ function alicePrunePrefetchCache(){
   keys.slice(0, keys.length - 14).forEach(function(k){ delete _aliceTtsPrefetch[k]; });
 }
 
-function aliceArmTtsWatchdog(textLen){
+function aliceArmTtsWatchdog(line, onStallDone, onStallStart){
+  var textLen = (line && line.length) ? line.length : (Number(line) || 0);
   if(typeof armTtsPlaybackWatchdog === 'function'){
     armTtsPlaybackWatchdog({
       textLen: textLen,
@@ -7691,6 +8140,13 @@ function aliceArmTtsWatchdog(textLen){
       setBusy: function(v){ _aliceTTSBusy = !!v; },
       getAudio: function(){ return window._aliceAudio; },
       setAudio: function(a){ window._aliceAudio = a; },
+      // A hung ElevenLabs call must not read as Alice going mute.
+      onFetchStall: function(){
+        if(typeof line !== 'string' || line.length < 3) return false;
+        if(typeof onStallStart === 'function') onStallStart();
+        var done = (typeof onStallDone === 'function') ? onStallDone : function(){ _aliceTTSFlush(); };
+        return alicePlayBrowserTts(line, done, done);
+      },
       onAdvance: function(){ _aliceTTSFlush(); }
     });
     return;
@@ -7735,18 +8191,23 @@ function _aliceTTSFlush(){
   var gen = _aliceSpeakGen;
   var text = _aliceTTSQueue.shift();
   var clean = aliceCleanTtsText(text);
-  aliceArmTtsWatchdog(clean.length);
   if(clean.length < 3){ _aliceTTSBusy=false; clearTimeout(_aliceTtsWatchdog); _aliceState.speaking=_aliceTTSQueue.length>0; _aliceTTSFlush(); return; }
+  var finished = false;
+  var fallbackStarted = false;
 
   function finishAliceLine(){
+    if(finished) return;
+    finished = true;
     window._aliceAudio = null;
     clearTimeout(_aliceTtsWatchdog);
     _aliceTTSBusy = false;
     _aliceState.speaking = _aliceTTSQueue.length > 0;
     _aliceTTSFlush();
   }
+  aliceArmTtsWatchdog(clean, function(){ finishAliceLine(); }, function(){ fallbackStarted = true; });
 
   function playBlob(b){
+    if(fallbackStarted || finished) return;
     if(!_aliceSpeakEnabled || gen !== _aliceSpeakGen){ _aliceTTSBusy=false; clearTimeout(_aliceTtsWatchdog); _aliceState.speaking=_aliceTTSQueue.length>0; _aliceTTSFlush(); return; }
     if(!b){
       _aliceTtsRetry[clean] = (_aliceTtsRetry[clean] || 0) + 1;
@@ -7757,6 +8218,7 @@ function _aliceTTSFlush(){
       }
       delete _aliceTtsRetry[clean];
       // ElevenLabs down / 401 / empty — still speak (browser) so Companion never goes mute
+      fallbackStarted = true;
       if(alicePlayBrowserTts(clean, finishAliceLine, finishAliceLine)) return;
       finishAliceLine();
       return;
@@ -7775,6 +8237,7 @@ function _aliceTTSFlush(){
           return;
         }
         delete _aliceTtsRetry[clean];
+        fallbackStarted = true;
         if(alicePlayBrowserTts(clean, finishAliceLine, finishAliceLine)) return;
         finishAliceLine();
       }
@@ -7796,6 +8259,7 @@ function _aliceTTSFlush(){
         clearInterval(waitPrefetch);
         delete _aliceTtsPrefetch[clean];
         aliceFetchTtsBlob(clean).then(playBlob).catch(function(){
+          fallbackStarted = true;
           if(alicePlayBrowserTts(clean, finishAliceLine, finishAliceLine)) return;
           finishAliceLine();
         });
@@ -7821,6 +8285,7 @@ function _aliceTTSFlush(){
       return;
     }
     delete _aliceTtsRetry[clean];
+    fallbackStarted = true;
     if(alicePlayBrowserTts(clean, finishAliceLine, finishAliceLine)) return;
     _aliceTTSBusy=false;
     _aliceState.speaking=_aliceTTSQueue.length>0;
@@ -7832,7 +8297,8 @@ function aliceQueueSpeak(text){
   if(!text || text.trim().length < 2 || !_aliceSpeakEnabled) return;
   var line = aliceCleanTtsText(text);
   if(line.length < 3) return;
-  if(_aliceTTSQueue.length && _aliceTTSQueue[_aliceTTSQueue.length - 1] === line) return;
+  // Comparing only against the tail let a line repeat when another slipped between.
+  if(_aliceTTSQueue.indexOf(line) !== -1) return;
   _aliceTTSQueue.push(line);
   _aliceTTSFlush();
 }
@@ -7858,7 +8324,9 @@ var _jillState = {
 if(typeof window !== 'undefined') window._jillState = _jillState;
 
 function jillStopAudio(){
-  if(_jillState.audio){ _jillState.audio.pause(); _jillState.audio = null; }
+  if(typeof ttsStopAudio === 'function') ttsStopAudio(_jillState.audio);
+  else if(_jillState.audio){ try{ _jillState.audio.pause(); }catch(e){} }
+  _jillState.audio = null;
   try{ if(window.speechSynthesis) window.speechSynthesis.cancel(); }catch(e){}
   _jillState.speaking = false;
 }
@@ -7896,8 +8364,8 @@ function scrollJillMessages(){
 function bindJillPttMic(){
   var btn = document.getElementById('jill-mic-btn');
   if(!btn || typeof PttMic === 'undefined') return;
-  if(typeof PttMic.destroy === 'function') PttMic.destroy(btn);
-  else { btn._pttBound = false; }
+  if(btn._pttBound) return;
+  btn._pttBound = true;
   var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   PttMic.bind({
     btn: btn,
@@ -7908,8 +8376,6 @@ function bindJillPttMic(){
       }
       return 'es-CR';
     },
-    settleMs: isMobile ? 120 : 180,
-    maxHoldMs: 45000,
     normalizeTranscript: function(raw){
       if(typeof JillLearnerIntent === 'undefined' || !JillLearnerIntent.normalizeUtterance) return raw;
       var n = JillLearnerIntent.normalizeUtterance(raw, { fromMic: true });
@@ -7921,16 +8387,9 @@ function bindJillPttMic(){
     },
     canStart: function(){
       if(_jillSending){
-        if(!_jillSendLockAt) _jillSendLockAt = Date.now();
-        if(Date.now() - _jillSendLockAt > 12000){
-          jillUnlockMicAndSend(false);
-        } else {
-          var st = document.getElementById('jill-status');
-          if(st) st.textContent = 'Esperá a que Jill termine de responder…';
-          return false;
-        }
-      } else {
-        _jillSendLockAt = 0;
+        var st = document.getElementById('jill-status');
+        if(st && !st.textContent) st.textContent = 'Esperá a que Jill termine de responder…';
+        return false;
       }
       return true;
     },
@@ -7939,15 +8398,14 @@ function bindJillPttMic(){
       // NO auto-fullscreen aquí: pausa/corta el TTS a mitad de explicación.
       jillInterruptSpeaking();
       jillStopMic();
-      btn.classList.remove('ptt-busy','ptt-active');
-      btn.style.pointerEvents = '';
+      btn.classList.remove('ptt-busy');
     },
     onUi: function(listening){
       var b = document.getElementById('jill-mic-btn');
       var statusEl = document.getElementById('jill-status');
       if(b){
         b.classList.toggle('ptt-active', !!listening);
-        if(listening){ b.style.background='rgba(255,92,92,0.3)'; b.style.borderColor='#FF5C5C'; b.style.color='white'; b.style.pointerEvents=''; }
+        if(listening){ b.style.background='rgba(255,92,92,0.3)'; b.style.borderColor='#FF5C5C'; b.style.color='white'; }
         else { b.style.background='rgba(61,220,151,0.15)'; b.style.borderColor='rgba(61,220,151,0.4)'; b.style.color='#86EFAC'; }
       }
       if(statusEl){
@@ -7958,19 +8416,13 @@ function bindJillPttMic(){
       }
     },
     onSend: function(text){ if(text) sendJillMsg(text, { fromMic: true }); },
-    onEmpty: function(){
-      var st = document.getElementById('jill-status');
-      if(st) st.textContent = 'No te escuché bien — mantené el mic un poco más y hablá cerca del teléfono.';
-      btn.classList.remove('ptt-busy','ptt-active');
-    },
     onError: function(code){
       btn.classList.remove('ptt-active','ptt-busy');
-      btn.style.pointerEvents = '';
       var st = document.getElementById('jill-status');
       if(!st) return;
       if(code === 'no-sr' || code === 'start-failed'){
         st.textContent = isMobile
-          ? 'Voz no disponible en este navegador — usá Chrome y escribí si hace falta.'
+          ? 'Voz no disponible en este navegador — escribí tu respuesta abajo.'
           : 'Usá Chrome o Edge para voz, o escribí tu respuesta.';
       } else {
         st.textContent = 'Micrófono interrumpido — mantené presionado de nuevo o escribí tu respuesta.';
@@ -7989,7 +8441,6 @@ function jillStopAll(){
 
 var _jillMicText = '';
 var _jillSending = false;
-var _jillSendLockAt = 0;
 
 function jillGetContext(s){
   if(typeof JillFoundations !== 'undefined'){
@@ -8267,7 +8718,7 @@ function renderJill(){
       +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">'
       +'<div>'
       +'<div style="font-size:10px;letter-spacing:0.2em;color:#c4b5fd;font-weight:700;">STUDIO INFINITY CR</div>'
-      +'<div style="font-size:26px;font-weight:900;color:#e9d5ff;letter-spacing:0.04em;">RAPID DRILL · KABOOM</div>'
+      +'<div style="font-size:26px;font-weight:900;color:#e9d5ff;letter-spacing:0.04em;">RAPID DRILL · PISO</div>'
       +'<div style="font-size:11px;color:rgba(255,255,255,0.82);">Foundations bajo presión — no es Infinity Arcade</div>'
       +'</div>'
       +'<button type="button" onclick="jillCloseKaboomQuiz(true)" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#e9d5ff;font-size:11px;padding:6px 12px;border-radius:8px;cursor:pointer;">← Jill</button>'
@@ -8352,7 +8803,7 @@ function maybeShowJillOnboarding(){
     +'<div style="font-size:20px;font-weight:900;color:#e9d5ff;margin-bottom:14px;">Elegí tu modo</div>'
     +'<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">'
     +'<div style="background:rgba(61,220,151,0.12);border:1px solid rgba(61,220,151,0.35);border-radius:12px;padding:12px;"><strong style="color:#86EFAC;">Modo Tutor</strong><div style="font-size:12px;color:rgba(255,255,255,0.82);margin-top:4px;line-height:1.5;">Foundations guiado: estructura MSI, tiempos, gerundio, negaciones, preguntas — clase + práctica hasta que lo implementés.</div></div>'
-    +'<div style="background:rgba(124,58,237,0.15);border:1px solid rgba(167,139,250,0.4);border-radius:12px;padding:12px;"><strong style="color:#c4b5fd;">Modo Libre</strong><div style="font-size:12px;color:rgba(255,255,255,0.82);margin-top:4px;line-height:1.5;">Companion Foundations: charla + dudas. Corrige en vivo, explica y confirma — no es Alice (linkers/STAR).</div></div>'
+    +'<div style="background:rgba(31,106,168,0.15);border:1px solid rgba(167,139,250,0.4);border-radius:12px;padding:12px;"><strong style="color:#c4b5fd;">Modo Libre</strong><div style="font-size:12px;color:rgba(255,255,255,0.82);margin-top:4px;line-height:1.5;">Companion Foundations: charla + dudas. Corrige en vivo, explica y confirma — no es Alice (linkers/STAR).</div></div>'
     +'<div style="background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.35);border-radius:12px;padding:12px;"><strong style="color:#fde68a;">Alice</strong><div style="font-size:12px;color:rgba(255,255,255,0.82);margin-top:4px;line-height:1.5;">Intermedio/avanzado: conversación, linkers, transiciones, STAR — para quien entiende pero necesita hablar.</div></div>'
     +'</div>'
     +'<button type="button" id="jill-onboard-dismiss" style="width:100%;background:linear-gradient(135deg,#5b21b6,#7c3aed);border:none;color:white;font-weight:800;font-size:15px;padding:14px;border-radius:12px;cursor:pointer;">Entendido — empezar</button>'
@@ -8379,7 +8830,7 @@ function renderJillStart(){
   var modePicker = (jillOn && proOn)
     ? '<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">'
       +'<button type="button" onclick="_jillState.sessionType=\'tutor\';renderJill()" style="flex:1;min-width:120px;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;'+(mode==='tutor'?'background:linear-gradient(135deg,rgba(61,220,151,0.35),rgba(16,185,129,0.25));border:2px solid #3DDC97;color:#ecfdf5;':'background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);')+'">Modo Tutor</button>'
-      +'<button type="button" onclick="_jillState.sessionType=\'companion\';renderJill()" style="flex:1;min-width:120px;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;'+(mode==='companion'?'background:linear-gradient(135deg,rgba(124,58,237,0.35),rgba(43,126,193,0.25));border:2px solid #A78BFA;color:#f5f3ff;':'background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);')+'">Modo Libre</button>'
+      +'<button type="button" onclick="_jillState.sessionType=\'companion\';renderJill()" style="flex:1;min-width:120px;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;'+(mode==='companion'?'background:linear-gradient(135deg,rgba(31,106,168,0.35),rgba(43,126,193,0.25));border:2px solid #79B9E8;color:#f5f3ff;':'background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);')+'">Modo Libre</button>'
       +'</div>'
     : '';
   var tutorDrillBtn = (studentGamesOn(s) && (jillOn || proOn))
@@ -8478,7 +8929,11 @@ function jillFormatMessageHtml(m){
     ? 'background:rgba(255,255,255,0.95);border:1px solid rgba(61,220,151,0.35);border-left:4px solid #3DDC97;color:#111827;'
     : 'background:rgba(61,220,151,0.18);border:1px solid rgba(61,220,151,0.35);color:#ecfdf5;';
   var align = isJill ? 'align-items:flex-start' : 'align-items:flex-end';
-  var formatted = String(m.content)
+  var fmtSrc = String(m.content || '');
+  if (typeof AiBoardDirective !== 'undefined' && AiBoardDirective.strip) fmtSrc = AiBoardDirective.strip(fmtSrc);
+  else fmtSrc = fmtSrc.replace(/\[\[\s*BOARD\s*:[^\]]*\]\]/gi, '').replace(/\[\[\s*BOARD_DESIGN\s*:[^\]]*\]\]/gi, '');
+  var formatted = fmtSrc
+    .replace(/\[\[CTYPE:[^\]]*\]\]/gi, '')
     .replace(/\n/g,'<br>')
     .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
   return '<div style="display:flex;flex-direction:column;'+align+';">'
@@ -8780,17 +9235,14 @@ async function sendJillMsg(micText, sendOpts){
   }
   var text = rawText;
   _jillSending = true;
-  _jillSendLockAt = Date.now();
   if(typeof unlockTtsAudio === 'function') unlockTtsAudio();
   // No forzar fullscreen al enviar: corta la voz. Solo botón FS o mic lo pide.
   var micBtn = document.getElementById('jill-mic-btn');
   if(micBtn) micBtn.classList.add('ptt-busy');
   var statusEl = document.getElementById('jill-status');
   if(statusEl) statusEl.textContent = isCompanion ? 'Jill Modo Libre responde…' : 'Jill responde…';
-  var unwatchJill = voiceSendWatchdog(function(){ return _jillSending; }, function(){
-    jillUnlockMicAndSend(false);
-    if(statusEl) statusEl.textContent = 'Tardó demasiado — intentá de nuevo o escribí tu respuesta.';
-  }, 28000);
+  var unwatchJill = voiceSendWatchdog(function(){ return _jillSending; }, function(){ _jillSending = false; });
+  if(typeof ttsResetRepeatGuard === 'function') ttsResetRepeatGuard(_jillReplyGuard);
   jillCancelSpeech();
   if(typeof PttMic !== 'undefined') PttMic.stop(document.getElementById('jill-mic-btn'));
   jillStopMic();
@@ -8861,8 +9313,9 @@ async function sendJillMsg(micText, sendOpts){
     jillSpeakTurn(drillEval.forcedReply, 'text');
     jillRenderHistoryMessages();
     if(statusEl) statusEl.textContent = '';
+    if(micBtn) micBtn.classList.remove('ptt-busy');
     unwatchJill();
-    jillUnlockMicAndSend(false);
+    _jillSending = false;
     return;
   }
 
@@ -8975,8 +9428,9 @@ async function sendJillMsg(micText, sendOpts){
   } finally {
     clearTimeout(tid);
     if(_jillStreamCtrl === ctrl) _jillStreamCtrl = null;
+    if(micBtn) micBtn.classList.remove('ptt-busy');
     unwatchJill();
-    jillUnlockMicAndSend(false);
+    _jillSending = false;
   }
 }
 
@@ -8985,6 +9439,9 @@ function jillSpeak(text){
   if(typeof unlockTtsAudio === 'function') unlockTtsAudio();
   if(typeof AiBoardDirective !== 'undefined' && AiBoardDirective.strip) text = AiBoardDirective.strip(text);
   text = String(text || '').replace(/\[\[CTYPE:[^\]]*\]\]/gi, '').trim();
+  if(typeof ttsIsRepeat === 'function' && ttsIsRepeat(_jillReplyGuard, text)) return;
+  if(typeof ttsMarkSpoken === 'function') ttsMarkSpoken(_jillReplyGuard, text);
+  jillCancelSpeech();
   if(typeof JillVisualStage !== 'undefined' && JillVisualStage.isActive()){
     JillVisualStage.updateCaption(text);
   }
@@ -9060,6 +9517,9 @@ if(document.readyState === 'loading'){
   </div>
 </div>
 
-<script src="js/infinity-casino-floor.js?v=20260814refresh"></script>
+<script src="https://studioinfinitycr.com/js/infinity-arcade-lil-games.js?v=20260814refresh"></script>
+<script src="https://studioinfinitycr.com/js/infinity-casino-floor.js?v=20260814refresh"></script>
+<script src="https://studioinfinitycr.com/js/infinity-modern-games.js?v=20260814refresh"></script>
+<script src="https://studioinfinitycr.com/js/infinity-tense-drop.js?v=20260814refresh"></script>
 </body>
 </html>
