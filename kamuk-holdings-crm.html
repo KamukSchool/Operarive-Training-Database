@@ -24,6 +24,9 @@
     <div class="topbar-sub" id="topbar-sub">Corporate Banking Desk</div>
   </div>
   <div class="topbar-right">
+    <span class="metric-chip">Week <strong id="metric-weekly">0</strong></span>
+    <span class="metric-chip">Resolve <strong id="metric-rate">0%</strong></span>
+    <span class="metric-chip">Rank <strong id="metric-rank">—</strong></span>
     <span class="score-badge sc-a">Apex <strong id="sc-a">0</strong></span>
     <span class="score-badge sc-v">Vanguard <strong id="sc-v">0</strong></span>
     <span class="session-timer" id="sess">00:00</span>
@@ -36,7 +39,7 @@
 <div class="queue">
   <div class="queue-hdr">
     <span id="queue-title">Case queue</span>
-    <button class="mini-btn" id="shuffle-btn">Shuffle</button>
+    <button class="mini-btn" id="shuffle-btn">Refresh</button>
   </div>
   <div class="queue-filters" id="queue-filters">
     <button class="filter-btn on" data-filter="All">All</button>
@@ -284,6 +287,7 @@
           <div style="font-size:11.5px;color:var(--text2);margin-bottom:3px;">To: <strong id="compose-to">—</strong></div>
           <input class="inp compose-subject" id="compose-subject" type="text" placeholder="Subject">
           <textarea id="compose-txt" rows="5" placeholder="Write your email in professional English. Acknowledge, state the action taken and confirm the next step."></textarea>
+          <div id="compose-coach" style="font-size:10.5px;line-height:1.5;color:var(--text2);margin-top:6px;">Type your own email. Include a natural opening, one connector, one precise case term, the action taken and a timed next step. Paste and drag/drop are disabled.</div>
           <div style="display:flex;gap:5px;margin-top:6px;"><button class="act accent" id="compose-send">Send</button><button class="act" id="compose-cancel">Cancel</button></div>
         </div>
       </div>

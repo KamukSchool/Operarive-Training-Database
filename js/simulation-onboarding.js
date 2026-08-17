@@ -59,6 +59,19 @@
     ]
   };
 
+  var HOME_CASES = [
+    { id: 'hc1', title: 'Duplicate restaurant charge', line: '“I paid once, but you charged me twice. Remove it today.”', facts: '$180 twice · four minutes apart · same merchant', connectors: ['because', 'however'], family: ['authorize', 'authorization', 'unauthorized'], phrasal: 'look into', vocab: ['duplicate charge', 'merchant', 'dispute', 'timeline'] },
+    { id: 'hc2', title: 'Card declined at hotel check-in', line: '“Everyone is watching me. Fix my card now.”', facts: 'Miami hotel · no travel notice · geographic fraud rule', connectors: ['because', 'therefore'], family: ['verify', 'verification', 'unverified'], phrasal: 'sort out', vocab: ['decline', 'travel notice', 'limit', 'available'] },
+    { id: 'hc3', title: 'Subscription charged after cancellation', line: '“I cancelled four months ago. Block this company.”', facts: '$49 monthly · four charges · cancellation email available', connectors: ['although', 'in addition'], family: ['cancel', 'cancellation', 'cancelled'], phrasal: 'follow up', vocab: ['recurring payment', 'merchant block', 'evidence', 'chargeback'] },
+    { id: 'hc4', title: 'Six unauthorized ATM withdrawals', line: '“The card is in my hand. Is my money gone?”', facts: 'Six withdrawals · $3,000 total · another city', connectors: ['because', 'however'], family: ['authorize', 'authorization', 'unauthorized'], phrasal: 'look into', vocab: ['provisional credit', 'block', 'replacement card', 'investigation'] },
+    { id: 'hc5', title: 'Hotel service not provided', line: '“The hotel says the bank must solve it.”', facts: '$1,200 · no room provided · merchant refuses refund', connectors: ['although', 'therefore'], family: ['resolve', 'resolution', 'unresolved'], phrasal: 'sort out', vocab: ['service not rendered', 'booking confirmation', 'evidence', 'merchant response'] },
+    { id: 'hc6', title: 'Client demands an instant refund', line: '“Another bank refunds in 24 hours. Are you worse?”', facts: 'Valid fraud claim · provisional credit takes two business days', connectors: ['however', 'in addition'], family: ['comply', 'compliance', 'non-compliant'], phrasal: 'follow up', vocab: ['provisional credit', 'confirmation', 'case number', 'business day'] },
+    { id: 'hc7', title: 'Dispute reported after 90 days', line: '“It is still theft. Are you doing nothing?”', facts: 'Unauthorized charge · 90 days old · reporting limit is 60 days', connectors: ['because', 'although'], family: ['eligible', 'eligibility', 'ineligible'], phrasal: 'look into', vocab: ['reporting window', 'statement date', 'alternative', 'internal report'] },
+    { id: 'hc8', title: 'Client demands a guarantee', line: '“Promise me I am going to win the dispute.”', facts: 'Claim filed correctly · evidence attached · network decides', connectors: ['however', 'therefore'], family: ['decide', 'decision', 'undecided'], phrasal: 'follow up', vocab: ['outcome', 'network', 'evidence', 'deadline'] },
+    { id: 'hc9', title: 'Merchant already issued a refund', line: '“Keep the claim open anyway, just in case.”', facts: '$620 refund posted · open dispute could create double credit', connectors: ['because', 'in addition'], family: ['resolve', 'resolution', 'unresolved'], phrasal: 'sort out', vocab: ['refund', 'double credit', 'withdraw', 'reopen'] },
+    { id: 'hc10', title: 'Flight leaves in 12 hours', line: '“A physical card in five days is useless.”', facts: 'Fraud block · flight at 6 a.m. · virtual card available', connectors: ['therefore', 'however'], family: ['activate', 'activation', 'inactive'], phrasal: 'sort out', vocab: ['virtual card', 'travel notice', 'cash access', 'limitation'] }
+  ];
+
   var MOCK_TASKS = [
     { target: 'client-rivera', prompt: 'A client named Marta Rivera is calling. Click her name in the case queue.', tip: 'Look at the left side of the mock desk.', panel: 'overview' },
     { target: 'tab-services', prompt: 'Where can you see all products owned by this client? Click the correct CRM tab.', tip: 'Products are grouped under Services.', panel: 'services' },
@@ -86,10 +99,12 @@
   }
 
   function readState(product, studentId) {
-    var base = { done: [], step: 'welcome', game: {}, mockIndex: 0 };
+    var base = { done: [], step: 'welcome', game: {}, mockIndex: 0, homeAnswers: {} };
     try {
       var parsed = JSON.parse(localStorage.getItem(stateKey(product, studentId)) || 'null');
-      return parsed && Array.isArray(parsed.done) ? parsed : base;
+      if (!parsed || !Array.isArray(parsed.done)) return base;
+      parsed.homeAnswers = parsed.homeAnswers && typeof parsed.homeAnswers === 'object' ? parsed.homeAnswers : {};
+      return parsed;
     } catch (error) {
       return base;
     }
@@ -122,6 +137,7 @@
       '.ob-product{border:1px solid #e2e8f0;border-radius:11px;padding:12px}.ob-product b{display:block;font-size:13px;color:#102033}.ob-product small{display:block;color:' + accent + ';font-weight:800;margin:3px 0}.ob-product p{margin:0;font-size:12px;line-height:1.5;color:#64748b}',
       '.ob-q{border:1px solid #e2e8f0;border-radius:12px;padding:13px 14px;margin-bottom:10px}.ob-q h5{margin:0 0 9px;font-size:13px;color:#102033;line-height:1.5}.ob-opt{display:flex;gap:9px;border:1px solid #d8e0e8;border-radius:9px;padding:9px 11px;margin-bottom:6px;cursor:pointer;font-size:12px;line-height:1.5;color:#334155}.ob-opt input{margin-top:2px}.ob-q.right .picked{border-color:#15803d;background:#f0fdf4}.ob-q.wrong .picked{border-color:#b42318;background:#fef2f2}.ob-q.wrong .key{border-color:#15803d;background:#f0fdf4}.ob-why{display:none;font-size:12px;color:#475569;margin-top:7px}.ob-q.right .ob-why,.ob-q.wrong .ob-why{display:block}',
       '.ob-foot{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}.ob-btn{border:0;border-radius:9px;padding:11px 17px;background:' + accent + ';color:#fff;font:800 13px Inter,Arial,sans-serif;cursor:pointer}.ob-btn:disabled{opacity:.45}.ob-msg{font-size:12px;font-weight:700;color:#64748b}.ob-msg.ok{color:#15803d}.ob-msg.err{color:#b42318}.ob-cert{display:flex;gap:10px;align-items:center;background:#f0fdf4;border-radius:10px;padding:12px;color:#14532d;margin-bottom:13px}.ob-cert i{font-size:24px}.ob-cert b{font-size:13px}.ob-cert span{display:block;font-size:11px}',
+      '.ob-home-head{margin-top:18px;padding-top:16px;border-top:1px solid #e2e8f0}.ob-home-head h4{margin:0 0 5px;color:#102033}.ob-home-head p{margin:0;font-size:12px;line-height:1.55;color:#64748b}.ob-home-progress{margin:10px 0;font-size:11px;font-weight:800;color:' + accent + '}.ob-home-case{border:1px solid #e2e8f0;border-radius:11px;margin:9px 0;overflow:hidden}.ob-home-top{padding:11px 12px;background:#f8fafc;cursor:pointer;display:flex;gap:9px;align-items:center}.ob-home-top b{font-size:12px;color:#102033}.ob-home-top span{margin-left:auto;font-size:10px;color:#64748b}.ob-home-body{display:none;padding:12px}.ob-home-case.open .ob-home-body{display:block}.ob-home-line{border-left:3px solid ' + accent + ';padding:8px 10px;background:#f8fafc;font-size:12px;color:#334155;margin:8px 0}.ob-home-rules{font-size:11px;line-height:1.55;color:#475569;margin:8px 0}.ob-home-chips{display:flex;gap:5px;flex-wrap:wrap;margin:7px 0}.ob-home-chip{background:#eef2ff;color:#3730a3;border-radius:20px;padding:3px 7px;font-size:9px;font-weight:800}.ob-home-answer{width:100%;box-sizing:border-box;min-height:150px;border:1px solid #cbd5e1;border-radius:9px;padding:11px;font:12px/1.6 Inter,Arial,sans-serif;resize:vertical}.ob-home-answer:focus{outline:2px solid rgba(43,126,193,.18);border-color:' + accent + '}.ob-home-status{font-size:10px;font-weight:700;color:#64748b;margin-top:6px}.ob-home-status.ok{color:#15803d}.ob-no-paste{font-size:10px;color:#b45309;margin-top:5px}',
       '.gm{border:1px solid #cbd5e1;border-radius:13px;overflow:hidden;background:#f8fafc}.gm-guide{display:flex;gap:12px;align-items:flex-start;background:#fff8cc;border-bottom:1px solid #f0cf50;padding:13px 15px}.gm-guide .gm-n{width:28px;height:28px;border-radius:50%;background:#eab308;color:#422006;display:grid;place-items:center;font-weight:900;flex:0 0 auto}.gm-guide b{display:block;font-size:13px;color:#422006}.gm-guide p{margin:3px 0 0;font-size:12px;line-height:1.5;color:#713f12}.gm-shell{display:grid;grid-template-columns:190px 1fr;min-height:410px}.gm-side{background:#1e1b4b;color:#fff;padding:12px}.gm-brand{font-size:11px;font-weight:900;margin-bottom:13px}.gm-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;opacity:.55;margin:9px 0 5px}.gm-client{padding:9px;border-radius:8px;font-size:11px;cursor:pointer;margin-bottom:5px}.gm-client b{display:block}.gm-client span{font-size:9px;opacity:.7}.gm-main{min-width:0}.gm-top{padding:11px 13px;background:#fff;border-bottom:1px solid #e2e8f0}.gm-top b{font-size:13px;color:#102033}.gm-top span{display:block;font-size:10px;color:#64748b}.gm-tabs{display:flex;gap:2px;padding:7px 8px;background:#fff;border-bottom:1px solid #e2e8f0;overflow-x:auto}.gm-tab{white-space:nowrap;border:0;background:transparent;border-radius:6px;padding:7px 8px;font:700 9px Inter,Arial,sans-serif;color:#64748b;cursor:pointer}.gm-view{padding:13px}.gm-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.gm-metric,.gm-product,.gm-row,.gm-contact{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:9px}.gm-metric small,.gm-product small{display:block;font-size:8px;color:#64748b;text-transform:uppercase}.gm-metric b{font-size:14px;color:#102033}.gm-product{margin-bottom:7px;cursor:pointer}.gm-product b{display:block;font-size:11px;color:#102033}.gm-product span{font-size:9px;color:#64748b}.gm-row,.gm-contact{display:flex;justify-content:space-between;gap:8px;margin-bottom:6px;font-size:10px;color:#334155;cursor:pointer}.gm-red{color:#b42318;font-weight:800}.gm-green{color:#15803d;font-weight:800}.gm-note{width:100%;box-sizing:border-box;min-height:74px;border:1px solid #cbd5e1;border-radius:8px;padding:9px;font:11px Inter,Arial,sans-serif}.gm-save{margin-top:7px;border:0;border-radius:7px;padding:8px 11px;background:#475569;color:#fff;font:800 10px Inter,Arial,sans-serif;cursor:pointer}.gm-target{position:relative;z-index:1;outline:4px solid #facc15!important;background:#fef9c3!important;color:#422006!important;animation:gmPulse 1s infinite alternate}.gm-target:after{content:\"CLICK HERE\";position:absolute;z-index:3;right:2px;top:-16px;background:#eab308;color:#422006;border-radius:4px;padding:2px 5px;font:900 7px Inter,Arial,sans-serif}.gm-wrong{animation:gmShake .25s}.gm-complete{text-align:center;padding:70px 20px}.gm-complete i{font-size:44px;color:#15803d}.gm-complete h4{margin:8px 0 3px;color:#14532d}.gm-complete p{font-size:12px;color:#64748b}',
       '.ob-locked{text-align:center;padding:35px 15px;color:#64748b}.ob-locked i{font-size:34px;color:#cbd5e1}.ob-locked p{font-size:13px;line-height:1.6}',
       '@keyframes gmPulse{to{outline-color:#eab308;box-shadow:0 0 14px #facc15}}@keyframes gmShake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}',
@@ -137,8 +153,13 @@
     var accessRoot = config.accessRoot || null;
     var launchUrl = String(config.launchUrl || (product === 'kamuk' ? 'kamuk-holdings-crm.html' : 'infinity-holdings-crm.html'));
     var studentId = String(config.studentId || '').trim();
+    var apiBase = String(config.apiBase || (typeof INFINITY_API !== 'undefined' ? INFINITY_API : 'https://alice-by-infinity.onrender.com')).replace(/\/$/, '');
+    var crmBase = product === 'kamuk' ? '/kamuk-holdings/crm' : '/infinity-holdings/crm';
     var state = readState(product, studentId);
     var quizPicks = {};
+    var nestingCompletedAt = null;
+    var syncTimer = null;
+    var syncing = false;
     styles(accent);
 
     function unlocked(id) {
@@ -146,7 +167,83 @@
       return index === 0 || state.done.indexOf(STEPS[index - 1].id) >= 0;
     }
 
-    function save() { writeState(product, studentId, state); }
+    function authToken() {
+      return (typeof getAuthToken === 'function' && getAuthToken())
+        || localStorage.getItem('infinity_auth_token')
+        || sessionStorage.getItem('infinity_auth_token')
+        || '';
+    }
+
+    function trainingPayload() {
+      return { done: state.done.slice(), homeAnswers: state.homeAnswers || {} };
+    }
+
+    function localNestingReady() {
+      var required = ['welcome', 'service', 'practice', 'products', 'quiz', 'mock'];
+      if (required.some(function (step) { return state.done.indexOf(step) < 0; })) return false;
+      return HOME_CASES.every(function (item) {
+        return homeAnswerStatus(item, (state.homeAnswers && state.homeAnswers[item.id]) || '').ready;
+      });
+    }
+
+    function deskUnlocked() {
+      return Boolean(nestingCompletedAt) || localNestingReady();
+    }
+
+    async function api(path, options) {
+      options = options || {};
+      var token = authToken();
+      var response = await fetch(apiBase + path, {
+        method: options.method || 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: 'Bearer ' + token } : {})
+        },
+        body: options.body ? JSON.stringify(options.body) : undefined
+      });
+      var data = await response.json().catch(function () { return {}; });
+      if (!response.ok) throw new Error(data.error || ('HTTP ' + response.status));
+      return data;
+    }
+
+    async function pullProgress() {
+      if (!studentId || !authToken()) return;
+      try {
+        var data = await api(crmBase + '/training/progress');
+        if (Array.isArray(data.done) && data.done.length) {
+          data.done.forEach(function (step) {
+            if (state.done.indexOf(step) < 0) state.done.push(step);
+          });
+        }
+        if (data.homeStatus && state.homeAnswers) {
+          /* keep local typed answers; server validates on push */
+        }
+        nestingCompletedAt = data.nestingCompletedAt || nestingCompletedAt;
+        writeState(product, studentId, state);
+      } catch (error) { /* offline training book still works locally */ }
+    }
+
+    async function pushProgress() {
+      if (!studentId || !authToken() || syncing) return;
+      syncing = true;
+      try {
+        var data = await api(crmBase + '/training/progress', { method: 'POST', body: trainingPayload() });
+        nestingCompletedAt = data.nestingCompletedAt || nestingCompletedAt;
+        return data;
+      } finally {
+        syncing = false;
+      }
+    }
+
+    function scheduleSync() {
+      if (syncTimer) clearTimeout(syncTimer);
+      syncTimer = setTimeout(function () { pushProgress().catch(function () {}); }, 500);
+    }
+
+    function save() {
+      writeState(product, studentId, state);
+      scheduleSync();
+    }
     function complete(id) { if (state.done.indexOf(id) < 0) state.done.push(id); save(); }
     function go(id) { state.step = id; save(); render(); }
 
@@ -278,10 +375,49 @@
 
     function nestingPanel() {
       if (!unlocked('nesting')) return '<div class="ob-panel"><div class="ob-locked"><i class="ti ti-lock"></i><p>Nesting unlocks only after the foundation certification and the guided CRM tour.</p></div></div>';
-      return panelShell('Nesting — take live cases', 'Foundation completed. Your Training Book session opens the desk directly: no extra user, no code.',
-        '<div class="ob-cert"><i class="ti ti-circle-check"></i><div><b>Foundation complete</b><span>Service basics + product map + CRM navigation</span></div></div>'
-        + '<div class="ob-foot"><button class="ob-btn" id="ob-launch"><i class="ti ti-building-bank"></i> Open the Holdings desk</button><span class="ob-msg">Opens in a new tab with your Training Book session.</span></div>'
-        + '<div class="ob-card"><i class="ti ti-arrow-right"></i><b>Next: Cards, disputes and chargebacks</b><p>Detailed product lesson → quick certification → guided product tasks → nesting cases.</p></div>');
+      var completed = HOME_CASES.filter(function (item) {
+        return homeAnswerStatus(item, state.homeAnswers[item.id] || '').ready;
+      }).length;
+      var ready = deskUnlocked();
+      return panelShell('Nesting — take live cases', 'Complete all 10 home cases after certification. Your Training Book session opens the desk automatically — no PIN.',
+        '<div class="ob-cert"><i class="ti ti-circle-check"></i><div><b>' + (ready ? 'Nesting unlocked' : 'Finish the 10 home cases') + '</b><span>' + (ready ? 'Portal session certified for the weekly case floor' : completed + '/10 structured responses ready') + '</span></div></div>'
+        + '<div class="ob-foot"><button class="ob-btn" id="ob-launch"' + (ready ? '' : ' disabled') + '><i class="ti ti-building-bank"></i> Open the Holdings desk</button><span class="ob-msg">' + (ready ? 'Opens in a new tab with your Training Book session.' : 'Desk stays locked until certification, guided CRM and all 10 home cases are complete.') + '</span></div>'
+        + '<div class="ob-home-head"><h4>Home practice · 10 written cases</h4><p>Write your own 80–180 word response. Use the facts naturally: do not write a vocabulary list. There are no model answers on the student screen.</p></div>'
+        + '<div class="ob-home-progress">' + completed + '/10 responses meet the language structure</div>'
+        + HOME_CASES.map(function (item, index) {
+          var answer = state.homeAnswers[item.id] || '';
+          var status = homeAnswerStatus(item, answer);
+          return '<div class="ob-home-case" data-home-case="' + item.id + '"><div class="ob-home-top"><b>' + (index + 1) + ' · ' + esc(item.title) + '</b><span>' + (status.ready ? 'Ready ✓' : status.words + ' words') + '</span></div>'
+            + '<div class="ob-home-body"><div class="ob-home-rules"><strong>Case facts:</strong> ' + esc(item.facts) + '</div><div class="ob-home-line">' + esc(item.line) + '</div>'
+            + '<div class="ob-home-rules"><strong>Required:</strong> acknowledge impact → ask one open and one closed question → explain the evidence → take/route an action → give a timed next step.</div>'
+            + '<div class="ob-home-chips">'
+            + item.connectors.map(function (word) { return '<span class="ob-home-chip">connector: ' + esc(word) + '</span>'; }).join('')
+            + '<span class="ob-home-chip">prefix/suffix family: ' + esc(item.family.join(' / ')) + '</span>'
+            + '<span class="ob-home-chip">phrasal: ' + esc(item.phrasal) + '</span>'
+            + item.vocab.map(function (word) { return '<span class="ob-home-chip">' + esc(word) + '</span>'; }).join('')
+            + '</div><textarea class="ob-home-answer" data-home-answer="' + item.id + '" autocomplete="off" spellcheck="true" placeholder="Type your response here. Pasting and dropping text are disabled.">' + esc(answer) + '</textarea>'
+            + '<div class="ob-no-paste"><i class="ti ti-keyboard"></i> Type only: paste and drag/drop are disabled.</div>'
+            + '<div class="ob-home-status' + (status.ready ? ' ok' : '') + '">' + esc(status.message) + '</div></div></div>';
+        }).join(''));
+    }
+
+    function homeAnswerStatus(item, answer) {
+      var text = String(answer || '').trim();
+      var lower = text.toLowerCase();
+      var words = text ? text.split(/\s+/).filter(Boolean).length : 0;
+      var connectorCount = item.connectors.filter(function (word) { return lower.indexOf(word.toLowerCase()) >= 0; }).length;
+      var familyUsed = item.family.some(function (word) { return lower.indexOf(word.toLowerCase()) >= 0; });
+      var phrasalUsed = lower.indexOf(item.phrasal.toLowerCase()) >= 0;
+      var vocabCount = item.vocab.filter(function (word) { return lower.indexOf(word.toLowerCase()) >= 0; }).length;
+      var ready = words >= 80 && words <= 180 && connectorCount >= 2 && familyUsed && phrasalUsed && vocabCount >= 2;
+      var missing = [];
+      if (words < 80) missing.push((80 - words) + ' more words');
+      if (words > 180) missing.push('shorten to 180 words');
+      if (connectorCount < 2) missing.push('both connectors');
+      if (!familyUsed) missing.push('one word-family form');
+      if (!phrasalUsed) missing.push('the phrasal verb');
+      if (vocabCount < 2) missing.push('two case terms');
+      return { ready: ready, words: words, message: ready ? 'Structure complete · ' + words + ' words · now read it aloud and make it sound natural.' : 'Still needed: ' + missing.join(' · ') };
     }
 
     function panel() {
@@ -358,7 +494,24 @@
       }
       if (event.target.closest('#ob-submit')) { gradeQuiz(); return; }
       if (event.target.closest('#ob-launch')) {
-        window.open(launchUrl + (launchUrl.indexOf('?') >= 0 ? '&' : '?') + 'product=' + encodeURIComponent(product), '_blank', 'noopener');
+        if (!deskUnlocked()) return;
+        pushProgress().then(function (data) {
+          if (data && data.nestingCompletedAt) nestingCompletedAt = data.nestingCompletedAt;
+          if (!deskUnlocked()) {
+            render();
+            return;
+          }
+          window.open(launchUrl + (launchUrl.indexOf('?') >= 0 ? '&' : '?') + 'product=' + encodeURIComponent(product), '_blank', 'noopener');
+        }).catch(function () {
+          if (localNestingReady()) {
+            window.open(launchUrl + (launchUrl.indexOf('?') >= 0 ? '&' : '?') + 'product=' + encodeURIComponent(product), '_blank', 'noopener');
+          }
+        });
+        return;
+      }
+      var homeTop = event.target.closest('.ob-home-top');
+      if (homeTop) {
+        homeTop.parentElement.classList.toggle('open');
         return;
       }
       var crmControl = event.target.closest('[data-gm]');
@@ -391,7 +544,45 @@
       if (option) quizPicks[Number(option.closest('.ob-q').dataset.q)] = Number(option.dataset.pick);
     });
 
+    root.addEventListener('input', function (event) {
+      var field = event.target.closest('.ob-home-answer');
+      if (!field) return;
+      state.homeAnswers[field.dataset.homeAnswer] = field.value;
+      save();
+      var item = HOME_CASES.find(function (entry) { return entry.id === field.dataset.homeAnswer; });
+      var status = homeAnswerStatus(item, field.value);
+      var statusEl = field.parentElement.querySelector('.ob-home-status');
+      statusEl.className = 'ob-home-status' + (status.ready ? ' ok' : '');
+      statusEl.textContent = status.message;
+      field.closest('.ob-home-case').querySelector('.ob-home-top span').textContent = status.ready ? 'Ready ✓' : status.words + ' words';
+      var completed = HOME_CASES.filter(function (entry) {
+        return homeAnswerStatus(entry, state.homeAnswers[entry.id] || '').ready;
+      }).length;
+      var progress = root.querySelector('.ob-home-progress');
+      if (progress) progress.textContent = completed + '/10 responses meet the language structure';
+      var launch = root.querySelector('#ob-launch');
+      if (launch) launch.disabled = !deskUnlocked();
+    });
+
+    function blockImportedText(event) {
+      var field = event.target.closest('.ob-home-answer');
+      if (!field) return;
+      event.preventDefault();
+      var statusEl = field.parentElement.querySelector('.ob-home-status');
+      statusEl.className = 'ob-home-status';
+      statusEl.textContent = 'Paste is disabled. Build the answer by typing it in your own words.';
+    }
+    root.addEventListener('paste', blockImportedText);
+    root.addEventListener('drop', blockImportedText);
+    root.addEventListener('beforeinput', function (event) {
+      if (event.inputType === 'insertFromPaste' || event.inputType === 'insertFromDrop') blockImportedText(event);
+    });
+
     render();
+    pullProgress().finally(function () {
+      if (localNestingReady()) scheduleSync();
+      render();
+    });
   }
 
   window.SimulationOnboarding = { mount: mount, quiz: QUIZ, mockTasks: MOCK_TASKS };

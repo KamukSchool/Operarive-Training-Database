@@ -6,9 +6,11 @@
   const CHART_COLORS = ['#155694', '#33610e', '#a06216', '#4a3f9c', '#932727', '#2d7d8f'];
 
   const state = {
-    auth: null, employee: null, pack: null, cases: [], filter: 'All', queue: [],
+    auth: null, employee: null, pack: null, cases: [], pool: [], filter: 'All', queue: [],
     selected: null, active: null, profile: null, acceptedAt: null, caseTimer: null,
     sessionSec: 0, actions: [], notes: [], risk: {}, metrics: { started: 0, resolved: 0, qaAverage: null, points: 0 },
+    leaderboard: null, weekKey: null,
+    pendingSyncs: [],
     pendingDanger: null, pendingEvidence: null, pendingDisposition: null, editTarget: null, preview: false,
     identityVerified: false, verificationSource: null, revealedCards: {}, cardEvents: [], sitePath: '/', siteHistory: [],
     simulation: new URLSearchParams(location.search).get('simulation') === '1',
@@ -50,7 +52,12 @@
     const text = await response.text();
     let data = {};
     try { data = text ? JSON.parse(text) : {}; } catch (_) { data = { error: text || 'Invalid server response' }; }
-    if (!response.ok) throw new Error(data.error || `Request failed (${response.status})`);
+    if (!response.ok) {
+      const error = new Error(data.error || `Request failed (${response.status})`);
+      error.code = data.code || '';
+      error.status = response.status;
+      throw error;
+    }
     return data;
   }
 
@@ -101,17 +108,71 @@
   }
   /* ─────────────── QUEUE + CASE BRIEF ─────────────── */
 
+  function queueKey(kase) {
+    return String(kase?.workItemId || kase?.id || '');
+  }
+
+  function mergePoolItem(item) {
+    const caseId = item?.caseId || item?.id;
+    const detail = state.pack?.cases?.find((entry) => entry.id === caseId) || {};
+    return {
+      ...detail,
+      ...item,
+      id: caseId,
+      caseId,
+      workItemId: item?.workItemId || (item?.caseId ? item.id : null),
+      touchNumber: Number(item?.touchNumber) || 1,
+      history: Array.isArray(item?.history) ? item.history : []
+    };
+  }
+
+  async function loadPool() {
+    if (state.preview) {
+      state.pool = state.cases.slice();
+    } else {
+      const data = await api(crmPath('/pool'));
+      state.weekKey = data.weekKey || state.weekKey;
+      const followUps = Array.isArray(data.followUps) ? data.followUps : [];
+      const fresh = Array.isArray(data.fresh) ? data.fresh : [];
+      const ordered = followUps.concat(fresh);
+      state.pool = ordered.map(mergePoolItem);
+    }
+    buildQueue(state.filter, { selectFirst: true });
+    if (!state.queue.length && !state.active) {
+      state.selected = null;
+      $('view1').style.display = 'flex';
+      $('view2').style.display = 'none';
+      $('v1-title').textContent = 'No unassigned cases available';
+      $('v1-desc').textContent = 'Refresh the pool when another case becomes available.';
+      $('v1-transcript').innerHTML = '';
+    }
+  }
+
+  async function loadLeaderboard() {
+    if (state.preview) return;
+    const data = await api(crmPath('/leaderboard'));
+    state.leaderboard = data.me || null;
+    state.weekKey = data.weekKey || state.weekKey;
+    updateMetrics();
+  }
+
   function buildQueue(filter) {
+    const options = arguments[1] || {};
     if (state.active) {
       renderQueue();
       return toast(`Finish or disposition ${state.active.id} before returning to the queue.`, true);
     }
     state.filter = filter;
     document.querySelectorAll('.filter-btn').forEach((b) => b.classList.toggle('on', b.dataset.filter === filter));
-    const pool = filter === 'All' ? state.cases : state.cases.filter((c) => c.sector === filter);
-    state.queue = (pool.length ? pool : state.cases).slice().sort(() => Math.random() - 0.5);
+    const source = state.preview ? state.cases : state.pool;
+    const pool = filter === 'All' ? source : source.filter((c) => c.sector === filter);
+    state.queue = (state.preview && !pool.length && filter !== 'All' ? source : pool).slice();
+    if (state.preview) state.queue.sort(() => Math.random() - 0.5);
+    else state.queue.sort((a, b) => (Number(b.touchNumber) > 1) - (Number(a.touchNumber) > 1));
     renderQueue();
-    if (state.queue[0]) selectCase(state.queue[0].id);
+    if (state.queue[0] && (options.selectFirst || !state.queue.some((item) => queueKey(item) === state.selected))) {
+      selectCase(queueKey(state.queue[0]));
+    }
   }
 
   function renderQueue() {
@@ -123,9 +184,10 @@
     document.querySelector('.queue').classList.toggle('case-locked', !!state.active);
     $('queue-list').innerHTML = visibleCases.map((c) => {
       const wait = `${pad(Math.floor(Math.random() * 40 + 2))}:${pad(Math.floor(Math.random() * 59))}`;
-      return `<div class="qi${state.active?.id === c.id || state.selected === c.id ? ' active' : ''}${state.active ? ' locked' : ''}" data-case="${esc(c.id)}">
+      const followUp = Number(c.touchNumber) > 1 ? `<span class="follow-up-chip">Follow-up T${esc(c.touchNumber)}</span>` : '';
+      return `<div class="qi${queueKey(state.active) === queueKey(c) || state.selected === queueKey(c) ? ' active' : ''}${state.active ? ' locked' : ''}" data-case="${esc(queueKey(c))}">
         <div class="qi-top"><span class="qi-name"><span class="dot ${dotClass[c.priority] || 'dot-g'}"></span>${esc(c.client.name.split(' ').slice(-1)[0])}</span><span class="qi-time${c.priority === 'P1' ? ' hot' : ''}">${wait}</span></div>
-        <div class="qi-desc">${esc(c.title.length > 34 ? c.title.slice(0, 34) + '…' : c.title)}</div>
+        <div class="qi-desc">${esc(c.title.length > 34 ? c.title.slice(0, 34) + '…' : c.title)} ${followUp}</div>
         ${state.active ? '<div class="qi-lock"><i class="ti ti-lock"></i> Work in progress</div>' : ''}
       </div>`;
     }).join('');
@@ -133,12 +195,12 @@
 
   function selectCase(id) {
     if (state.active) {
-      if (id !== state.active.id) toast(`Case ${state.active.id} is locked. Apply an action and disposition it before opening another case.`, true);
+      if (id !== queueKey(state.active)) toast(`Case ${state.active.id} is locked. Apply an action and disposition it before opening another case.`, true);
       return;
     }
-    const c = state.cases.find((x) => x.id === id);
+    const c = state.queue.find((x) => queueKey(x) === id) || state.cases.find((x) => x.id === id);
     if (!c) return;
-    state.selected = id;
+    state.selected = queueKey(c);
     document.querySelectorAll('.qi').forEach((q) => q.classList.toggle('active', q.dataset.case === id));
     const typeCls = /aml|fraud|complian/i.test(c.type) ? 'bdg-aml' : /vip/i.test(c.sector) ? 'bdg-vip' : 'bdg-c';
     $('v1-type').textContent = c.type; $('v1-type').className = 'bdg ' + typeCls;
@@ -151,7 +213,15 @@
     $('v1-client').textContent = `${c.client.name} · ${c.client.company}`;
     $('v1-focus').textContent = c.focus;
     $('v1-desc').textContent = c.brief;
-    $('v1-transcript').innerHTML = `<div class="turn"><div class="turn-role cl">Client</div><div class="turn-text">${esc(c.clientStatement)}</div></div>
+    const history = (c.history || []).flatMap((touch) => {
+      const heading = `<div class="turn prior"><div class="turn-role ex">T${esc(touch.touchNumber || '?')}</div><div class="turn-text"><strong>${esc(touch.disposition || 'Prior interaction')}</strong>${touch.completedAt ? ` · ${esc(new Date(touch.completedAt).toLocaleString('en-US'))}` : ''}${touch.studentName ? ` · ${esc(touch.studentName)}` : ''}</div></div>`;
+      const notes = (touch.notes || []).map((note) => `<div class="turn prior"><div class="turn-role ex">Note</div><div class="turn-text">${esc(note.text || note.detail || '')}</div></div>`);
+      const emails = (touch.emails || []).map((email) => `<div class="turn prior"><div class="turn-role ex">Email</div><div class="turn-text">${esc(email.subject || '')}${email.body ? ` — ${esc(email.body)}` : ''}</div></div>`);
+      const actions = (touch.actions || []).map((action) => `<div class="turn prior"><div class="turn-role ex">Action</div><div class="turn-text">${esc(action.label || action.key || '')}${action.detail ? ` — ${esc(action.detail)}` : ''}</div></div>`);
+      return [heading, ...notes, ...emails, ...actions];
+    }).join('');
+    $('v1-transcript').innerHTML = `${history ? `<div class="prior-trail"><div class="tr-lbl">PRIOR INTERACTION TRAIL</div>${history}</div>` : ''}
+      <div class="turn"><div class="turn-role cl">Client</div><div class="turn-text">${esc(c.clientStatement)}</div></div>
       <div class="turn"><div class="turn-role ex">Desk</div><div class="turn-text">Case routed to the Corporate Banking Desk. Priority ${esc(c.priority)} · SLA ${esc(c.slaMinutes)} minutes.</div></div>`;
     $('view1').style.display = 'flex';
     $('view2').style.display = 'none';
@@ -211,10 +281,11 @@
 
   function enterActiveCase(c, options = {}) {
     state.active = c;
-    state.selected = c.id;
+    state.selected = queueKey(c);
     state.profile = buildProfile(c);
     state.actions = [];
     state.notes = [];
+    state.pendingSyncs = [];
     state.identityVerified = false;
     state.verificationSource = null;
     state.revealedCards = {};
@@ -244,15 +315,19 @@
   }
 
   async function acceptCase() {
-    const c = state.cases.find((x) => x.id === state.selected);
+    let c = state.queue.find((x) => queueKey(x) === state.selected)
+      || state.cases.find((x) => x.id === state.selected);
     if (!c) return;
     $('accept-btn').disabled = true;
     try {
       if (!state.preview) {
-        const response = await api(crmPath('/case/start'), { method: 'POST', body: { caseId: c.id } });
+        const response = c.workItemId
+          ? await api(crmPath('/case/claim'), { method: 'POST', body: { workItemId: c.workItemId } })
+          : await api(crmPath('/case/start'), { method: 'POST', body: { caseId: c.id } });
         state.metrics = response.metrics || state.metrics;
+        c = mergePoolItem({ ...c, ...(response.assignment || {}), acceptedAt: response.acceptedAt });
       }
-      enterActiveCase(c);
+      enterActiveCase(c, { acceptedAt: c.acceptedAt });
       addLog('ti-user-check', 'pro', `Case accepted — ${c.id}`, `${state.employee.name} · ${state.employee.id}`);
       toast('Case accepted. Your supervisor can now see this assignment.');
     } catch (error) {
@@ -267,7 +342,12 @@
     const data = await api(crmPath('/case/state'));
     if (data.metrics) state.metrics = data.metrics;
     if (!data.active?.caseId) return;
-    const c = state.cases.find((x) => x.id === data.active.caseId);
+    const c = mergePoolItem({
+      ...(state.cases.find((x) => x.id === data.active.caseId) || {}),
+      caseId: data.active.caseId,
+      workItemId: data.active.workItemId,
+      touchNumber: data.active.touchNumber
+    });
     if (!c) return;
     state.selected = c.id;
     enterActiveCase(c, { events: data.events || [], acceptedAt: data.active.acceptedAt });
@@ -503,6 +583,11 @@
     $('compose-lbl').textContent = email ? 'Reply' : 'New email';
     $('compose-subject').value = email ? (/^Re:/i.test(email.subject) ? email.subject : `Re: ${email.subject}`) : `Case update — ${state.active.id}`;
     $('compose-txt').value = '';
+    $('compose-txt').placeholder = 'Write your email in professional English. Acknowledge, state the action taken and confirm the next step.';
+    if ($('compose-coach')) {
+      $('compose-coach').style.color = 'var(--text2)';
+      $('compose-coach').textContent = 'Type your own email. Include a natural opening, one connector, one precise case term, the action taken and a timed next step. Paste and drag/drop are disabled.';
+    }
     $('compose-box').classList.add('open');
     $('compose-txt').focus();
   }
@@ -736,9 +821,18 @@
     updateActionCount();
     toast(`${label} recorded.`);
     if (!state.preview && state.active) {
-      api(crmPath('/case/event'), { method: 'POST', body: { caseId: state.active.id, type: key === 'email-client' ? 'email-client' : 'action', payload: event } })
-        .catch(() => toast('Action stored locally; the desk will retry the sync.', true));
+      trackSync(api(crmPath('/case/event'), { method: 'POST', body: { caseId: state.active.id, type: key === 'email-client' ? 'email-client' : 'action', payload: event } })
+        .catch(() => toast('Action stored locally; the desk will retry the sync.', true)));
     }
+  }
+
+  function trackSync(promise) {
+    state.pendingSyncs.push(promise);
+    promise.finally(() => {
+      const index = state.pendingSyncs.indexOf(promise);
+      if (index >= 0) state.pendingSyncs.splice(index, 1);
+    });
+    return promise;
   }
 
   function addLog(icon, tone, who, detail) {
@@ -773,8 +867,15 @@
   function sendEmail() {
     const text = $('compose-txt').value.trim();
     const subject = $('compose-subject').value.trim();
+    const lower = text.toLowerCase();
+    const connectors = ['because', 'therefore', 'however', 'although', 'in addition', 'as a result', 'while'];
+    const naturalOpenings = ['dear ', 'hello ', 'hi '];
+    const timedStep = /\b(today|tomorrow|within|by\s+\d|by\s+(monday|tuesday|wednesday|thursday|friday)|business day|a\.m\.|p\.m\.)\b/i;
     if (!subject) return toast('Add an email subject.', true);
-    if (text.length < 40) return toast('Write at least 40 characters of professional content.', true);
+    if (text.split(/\s+/).filter(Boolean).length < 45) return toast('Write at least 45 words in your own professional English.', true);
+    if (!naturalOpenings.some((opening) => lower.startsWith(opening))) return toast('Start with a natural greeting: Dear, Hello or Hi + client name.', true);
+    if (!connectors.some((connector) => lower.includes(connector))) return toast('Use at least one connector naturally: because, however, therefore, although or in addition.', true);
+    if (!timedStep.test(text)) return toast('Include a timed next step: today, tomorrow, within X days or by a specific time.', true);
     const now = new Date();
     state.profile.emails.unshift({
       id: `LOCAL-${Date.now()}`, direction: 'outbound', from: `${state.employee.id.toLowerCase()}@kamukholdings.com`,
@@ -795,7 +896,7 @@
     localStorage.setItem(`kamuk-crm-notes-${state.active.id}`, JSON.stringify(state.notes));
     renderContacts();
     if (!state.preview) {
-      api(crmPath('/case/event'), { method: 'POST', body: { caseId: state.active.id, type: 'note', payload: note } }).catch(() => {});
+      trackSync(api(crmPath('/case/event'), { method: 'POST', body: { caseId: state.active.id, type: 'note', payload: note } }).catch(() => {}));
     }
     return note;
   }
@@ -1068,12 +1169,23 @@
   function sendSitePage() {
     if (!state.active) return toast('Accept a case before sending website information.', true);
     const page = sitePage(state.sitePath);
-    const firstName = String(state.active.client.name || '').split(' ')[0];
     showTab('emails');
     startCompose();
     $('compose-subject').value = `Kamuk Holdings — ${page.label}`;
-    $('compose-txt').value = `Dear ${firstName},\n\nAs discussed, here is the page I walked you through: ${SITE_ORIGIN}${page.path}\n\n${page.title}. ${page.lead}\n\nIf anything is unclear when you open it, reply to this email and I will call you back.\n\nKind regards,\n${state.employee.name} · ${state.employee.id}\nCorporate Banking Desk`;
-    toast('Website information drafted. Review the wording and send it.');
+    $('compose-txt').value = '';
+    $('compose-txt').placeholder = `Type the email yourself. Include this page: ${SITE_ORIGIN}${page.path}`;
+    toast('Website page selected. Write the email in your own words.');
+  }
+
+  function blockImportedEmailText(event) {
+    if (!event.target.closest('#compose-subject, #compose-txt')) return;
+    event.preventDefault();
+    const coach = $('compose-coach');
+    if (coach) {
+      coach.style.color = 'var(--danger)';
+      coach.textContent = 'Paste is disabled. Type the email in your own words so the language practice can be evaluated.';
+    }
+    toast('Paste is disabled in client emails.', true);
   }
 
   /* ─────────────── CASE DISPOSITIONS ─────────────── */
@@ -1091,7 +1203,8 @@
       label: 'Returned to the queue',
       help: 'Use this when the case is not yours to work: wrong desk, wrong language, or you have a conflict of interest.',
       tip: 'Say who should take it and what the next executive should read first.',
-      mode: 'queue'
+      mode: 'queue',
+      next: 'Returned to the shared queue for reassignment to the correct executive.'
     },
     aa: {
       title: 'Flag AA — awaiting client action',
@@ -1145,16 +1258,7 @@
     recordAction(`disposition-${key}`, conf.label, detail);
     close('disp-modal');
     state.pendingDisposition = null;
-    if (conf.mode === 'queue') return releaseCase();
     await submitResolution({ disposition: conf.ref ? `${conf.label} (${reference})` : conf.label, summary: detail, nextStep: conf.next });
-  }
-
-  function releaseCase() {
-    if (state.caseTimer) clearInterval(state.caseTimer);
-    state.active = null;
-    state.acceptedAt = null;
-    buildQueue(state.filter);
-    toast('Case returned to the queue with your documentation attached.');
   }
 
   /* ─────────────── RESOLUTION + ALICE ─────────────── */
@@ -1172,15 +1276,26 @@
       if (state.preview) {
         evaluation = localEvaluation(payload);
       } else {
+        if (state.pendingSyncs.length) await Promise.all(state.pendingSyncs.slice());
         const response = await api(crmPath('/case/resolve'), { method: 'POST', body: payload });
         evaluation = response.evaluation; metrics = response.metrics || metrics;
       }
       state.metrics = metrics;
       close('res-modal');
-      showVerdict(evaluation, durationSec);
+      const completedCase = state.active;
+      showVerdict(evaluation, durationSec, completedCase);
       updateMetrics();
       if (state.caseTimer) clearInterval(state.caseTimer);
-      document.querySelector(`.qi[data-case="${state.active.id}"]`)?.classList.add('resolved');
+      state.caseTimer = null;
+      state.active = null;
+      state.acceptedAt = null;
+      state.actions = [];
+      state.notes = [];
+      state.selected = null;
+      if (state.preview) buildQueue(state.filter, { selectFirst: true });
+      else {
+        await Promise.all([loadPool(), loadLeaderboard().catch(() => {})]);
+      }
     } catch (error) {
       toast(error.message, true);
     } finally {
@@ -1224,6 +1339,7 @@
     return {
       verdict: score >= 85 ? 'Excellent' : score >= 70 ? 'Meets standard' : score >= 55 ? 'Needs coaching' : 'Below standard',
       score,
+      casePoints: Math.round(score / 10),
       strengths: [
         has('acknowledge') ? 'You opened with ownership instead of a generic apology.' : 'You moved quickly into the case data.',
         payload.resolution.nextStep.length > 20 ? 'Your next step is concrete and time-bound.' : 'Your disposition is clearly stated.'
@@ -1238,29 +1354,41 @@
         documentation: Math.min(95, 45 + Math.round(payload.resolution.summary.length / 6))
       },
       points: Math.round(score / 10),
+      pointsAwarded: score >= 70 ? Math.round(score / 10) : 0,
       preview: true
     };
   }
 
-  function showVerdict(evaluation, durationSec) {
+  function showVerdict(evaluation, durationSec, completedCase) {
     const dims = evaluation.dimensions || {};
+    const points = Number(evaluation.casePoints != null ? evaluation.casePoints : evaluation.points) || 0;
+    const pending = Boolean(evaluation.pendingEvaluation);
+    const awarded = Number(evaluation.pointsAwarded) || 0;
+    const errors = Array.isArray(evaluation.errors) ? evaluation.errors : [];
+    const tone = pending ? 'warning' : points >= 7 ? 'success' : 'danger';
     $('verdict-body').innerHTML = `
-      <div class="verdict-score"><strong style="color:var(--${evaluation.score >= 70 ? 'success' : evaluation.score >= 55 ? 'warning' : 'danger'});">${evaluation.score}</strong>
+      <div class="verdict-score"><strong style="color:var(--${tone});">${pending ? '—' : points}</strong>
         <div><div style="font-size:13.5px;font-weight:700;">${esc(evaluation.verdict)}</div>
-        <div style="font-size:11.5px;color:var(--text3);">${esc(state.active.id)} · ${clock(durationSec)} handling time · ${state.actions.length} actions${evaluation.preview ? ' · preview scoring' : ''}</div></div></div>
+        <div style="font-size:11.5px;color:var(--text3);">${esc(completedCase?.id || '')} · ${clock(durationSec)} handling time · Alice score out of 10${evaluation.preview ? ' · preview scoring' : ''}</div></div></div>
+      <div class="modal-section" style="margin-top:12px;"><div class="modal-section-title">Errors &amp; evidence</div>
+        ${errors.length ? `<ul class="verdict-list">${errors.map((error) => `<li><strong>${esc(error.label || error.code || 'Error')}</strong>${error.evidence ? ` — ${esc(error.evidence)}` : ''}</li>`).join('')}</ul>` : '<p class="empty-state">No errors recorded.</p>'}</div>
       <div class="modal-section" style="margin-top:12px;"><div class="modal-section-title">Dimensions</div>
         ${Object.keys(dims).map((k) => `<div class="dim-row"><span>${esc(k.replace(/^./, (m) => m.toUpperCase()))}</span><div class="dim-bar"><i style="width:${Math.max(0, Math.min(100, dims[k]))}%"></i></div><b>${dims[k]}</b></div>`).join('')}</div>
       <div class="modal-section"><div class="modal-section-title">Strengths</div><ul class="verdict-list">${(evaluation.strengths || []).map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div>
       <div class="modal-section"><div class="modal-section-title">Improvements</div><ul class="verdict-list">${(evaluation.improvements || []).map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div>
       <div style="background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:var(--radius);padding:8px 10px;font-size:11.5px;color:var(--accent);font-weight:600;">
-        +${evaluation.points || 0} points for team ${esc(state.employee.team)} · sent to your supervisor</div>`;
+        ${pending ? 'Competition points pending Alice evaluation.' : awarded > 0 ? `+${awarded} competition points awarded (score ≥7).` : `No competition points awarded (score ${points}/10; requires ≥7).`} · Team ${esc(state.employee.team)}</div>`;
     open('verdict-modal');
   }
 
   function updateMetrics() {
     const m = state.metrics || {};
+    const me = state.leaderboard || {};
     const team = state.employee.team === 'Vanguard' ? 'sc-v' : 'sc-a';
-    $(team === 'sc-v' ? 'sc-v' : 'sc-a').textContent = m.teamPoints != null ? m.teamPoints : (m.points || 0);
+    $(team === 'sc-v' ? 'sc-v' : 'sc-a').textContent = me.weeklyPoints != null ? me.weeklyPoints : (m.weeklyPoints != null ? m.weeklyPoints : (m.points || 0));
+    if ($('metric-weekly')) $('metric-weekly').textContent = me.weeklyPoints != null ? me.weeklyPoints : (m.weeklyPoints || 0);
+    if ($('metric-rate')) $('metric-rate').textContent = `${me.resolutionRate != null ? me.resolutionRate : (m.resolutionRate || 0)}%`;
+    if ($('metric-rank')) $('metric-rank').textContent = me.rank ? `#${me.rank}` : '—';
   }
 
   /* ─────────────── UI PLUMBING ─────────────── */
@@ -1288,7 +1416,18 @@
       const btn = e.target.closest('[data-filter]');
       if (btn) buildQueue(btn.dataset.filter);
     });
-    $('shuffle-btn').addEventListener('click', () => buildQueue(state.filter));
+    $('shuffle-btn').addEventListener('click', async () => {
+      if (state.preview) return buildQueue(state.filter);
+      $('shuffle-btn').disabled = true;
+      try {
+        await loadPool();
+        toast('Case pool refreshed.');
+      } catch (error) {
+        toast(error.message, true);
+      } finally {
+        $('shuffle-btn').disabled = false;
+      }
+    });
     $('queue-list').addEventListener('click', (e) => {
       const item = e.target.closest('[data-case]');
       if (item) selectCase(item.dataset.case);
@@ -1369,6 +1508,11 @@
     $('email-compose').addEventListener('click', () => startCompose());
     $('compose-send').addEventListener('click', sendEmail);
     $('compose-cancel').addEventListener('click', () => $('compose-box').classList.remove('open'));
+    $('compose-box').addEventListener('paste', blockImportedEmailText);
+    $('compose-box').addEventListener('drop', blockImportedEmailText);
+    $('compose-box').addEventListener('beforeinput', (event) => {
+      if (event.inputType === 'insertFromPaste' || event.inputType === 'insertFromDrop') blockImportedEmailText(event);
+    });
     $('note-add').addEventListener('click', () => { $('note-form').style.display = 'block'; $('note-txt').focus(); });
     $('note-save').addEventListener('click', saveNote);
     $('note-cancel').addEventListener('click', () => { $('note-form').style.display = 'none'; $('note-txt').value = ''; });
@@ -1380,7 +1524,7 @@
     $('bill-invoice').addEventListener('click', generateInvoice);
     $('bill-remind').addEventListener('click', sendReminder);
     $('bill-export').addEventListener('click', () => toast('Billing report exported.'));
-    $('verdict-next').addEventListener('click', () => { close('verdict-modal'); state.active = null; buildQueue(state.filter); });
+    $('verdict-next').addEventListener('click', () => close('verdict-modal'));
     document.addEventListener('click', (e) => {
       const closer = e.target.closest('[data-close]');
       if (closer) return close(closer.dataset.close);
@@ -1427,13 +1571,17 @@
   async function heartbeat() {
     if (state.preview) return;
     try {
-      await api(crmPath('/presence'), {
+      const presence = await api(crmPath('/presence'), {
         method: 'POST',
         body: {
           status: state.active ? 'working' : 'online', caseId: state.active ? state.active.id : null,
           acceptedAt: state.acceptedAt ? state.acceptedAt.toISOString() : null, actionCount: state.actions.length
         }
       });
+      if (presence.metrics) {
+        state.metrics = presence.metrics;
+        updateMetrics();
+      }
     } catch (_) { /* the desk keeps working offline */ }
   }
 
@@ -1474,7 +1622,8 @@
       $('st-id').textContent = state.employee.id;
       $('st-team').textContent = state.employee.team;
       updateMetrics();
-      buildQueue('All');
+      await loadPool();
+      if (!state.preview) await loadLeaderboard();
       $('gate').classList.add('hidden');
       $('app').classList.remove('hidden');
       if (!state.preview) {
@@ -1482,7 +1631,9 @@
         setInterval(heartbeat, 20000);
       }
     } catch (error) {
-      $('gate-msg').textContent = error.message;
+      $('gate-msg').textContent = error.code === 'NESTING_REQUIRED'
+        ? 'Finish the Nesting section in your Training Book before entering the Case Floor.'
+        : error.message;
       document.querySelector('.gate .spin').style.display = 'none';
     }
   }
