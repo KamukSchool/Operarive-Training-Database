@@ -1365,7 +1365,7 @@
     const pending = Boolean(evaluation.pendingEvaluation);
     const awarded = Number(evaluation.pointsAwarded) || 0;
     const errors = Array.isArray(evaluation.errors) ? evaluation.errors : [];
-    const tone = pending ? 'warning' : points >= 7 ? 'success' : 'danger';
+    const tone = pending ? 'warning' : points >= 8 ? 'success' : 'danger';
     $('verdict-body').innerHTML = `
       <div class="verdict-score"><strong style="color:var(--${tone});">${pending ? '—' : points}</strong>
         <div><div style="font-size:13.5px;font-weight:700;">${esc(evaluation.verdict)}</div>
@@ -1377,7 +1377,7 @@
       <div class="modal-section"><div class="modal-section-title">Strengths</div><ul class="verdict-list">${(evaluation.strengths || []).map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div>
       <div class="modal-section"><div class="modal-section-title">Improvements</div><ul class="verdict-list">${(evaluation.improvements || []).map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div>
       <div style="background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:var(--radius);padding:8px 10px;font-size:11.5px;color:var(--accent);font-weight:600;">
-        ${pending ? 'Competition points pending Alice evaluation.' : awarded > 0 ? `+${awarded} competition points awarded (score ≥7).` : `No competition points awarded (score ${points}/10; requires ≥7).`} · Team ${esc(state.employee.team)}</div>`;
+        ${pending ? 'Competition points pending Alice evaluation.' : awarded > 0 ? `+${awarded} competition points awarded (score ≥8 · meta de bono de producción).` : `No competition points awarded (score ${points}/10; bono de producción requiere ≥8).`} · Team ${esc(state.employee.team)}</div>`;
     open('verdict-modal');
   }
 

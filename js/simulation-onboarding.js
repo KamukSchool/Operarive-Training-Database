@@ -57,17 +57,18 @@
   ];
 
   var HOME_CASES = [
-    { id: 'hc1', title: 'Duplicate restaurant charge', line: '“I paid once, but you charged me twice. Remove it today.”', facts: '$180 twice · four minutes apart · same merchant', connectors: ['because', 'however'], family: ['authorize', 'authorization', 'unauthorized'], phrasal: 'look into', vocab: ['duplicate charge', 'merchant', 'dispute', 'timeline'] },
-    { id: 'hc2', title: 'Card declined at hotel check-in', line: '“Everyone is watching me. Fix my card now.”', facts: 'Miami hotel · no travel notice · geographic fraud rule', connectors: ['because', 'therefore'], family: ['verify', 'verification', 'unverified'], phrasal: 'sort out', vocab: ['decline', 'travel notice', 'limit', 'available'] },
-    { id: 'hc3', title: 'Subscription charged after cancellation', line: '“I cancelled four months ago. Block this company.”', facts: '$49 monthly · four charges · cancellation email available', connectors: ['although', 'in addition'], family: ['cancel', 'cancellation', 'cancelled'], phrasal: 'follow up', vocab: ['recurring payment', 'merchant block', 'evidence', 'chargeback'] },
-    { id: 'hc4', title: 'Six unauthorized ATM withdrawals', line: '“The card is in my hand. Is my money gone?”', facts: 'Six withdrawals · $3,000 total · another city', connectors: ['because', 'however'], family: ['authorize', 'authorization', 'unauthorized'], phrasal: 'look into', vocab: ['provisional credit', 'block', 'replacement card', 'investigation'] },
-    { id: 'hc5', title: 'Hotel service not provided', line: '“The hotel says the bank must solve it.”', facts: '$1,200 · no room provided · merchant refuses refund', connectors: ['although', 'therefore'], family: ['resolve', 'resolution', 'unresolved'], phrasal: 'sort out', vocab: ['service not rendered', 'booking confirmation', 'evidence', 'merchant response'] },
-    { id: 'hc6', title: 'Client demands an instant refund', line: '“Another bank refunds in 24 hours. Are you worse?”', facts: 'Valid fraud claim · provisional credit takes two business days', connectors: ['however', 'in addition'], family: ['comply', 'compliance', 'non-compliant'], phrasal: 'follow up', vocab: ['provisional credit', 'confirmation', 'case number', 'business day'] },
-    { id: 'hc7', title: 'Dispute reported after 90 days', line: '“It is still theft. Are you doing nothing?”', facts: 'Unauthorized charge · 90 days old · reporting limit is 60 days', connectors: ['because', 'although'], family: ['eligible', 'eligibility', 'ineligible'], phrasal: 'look into', vocab: ['reporting window', 'statement date', 'alternative', 'internal report'] },
-    { id: 'hc8', title: 'Client demands a guarantee', line: '“Promise me I am going to win the dispute.”', facts: 'Claim filed correctly · evidence attached · network decides', connectors: ['however', 'therefore'], family: ['decide', 'decision', 'undecided'], phrasal: 'follow up', vocab: ['outcome', 'network', 'evidence', 'deadline'] },
-    { id: 'hc9', title: 'Merchant already issued a refund', line: '“Keep the claim open anyway, just in case.”', facts: '$620 refund posted · open dispute could create double credit', connectors: ['because', 'in addition'], family: ['resolve', 'resolution', 'unresolved'], phrasal: 'sort out', vocab: ['refund', 'double credit', 'withdraw', 'reopen'] },
-    { id: 'hc10', title: 'Flight leaves in 12 hours', line: '“A physical card in five days is useless.”', facts: 'Fraud block · flight at 6 a.m. · virtual card available', connectors: ['therefore', 'however'], family: ['activate', 'activation', 'inactive'], phrasal: 'sort out', vocab: ['virtual card', 'travel notice', 'cash access', 'limitation'] }
+    { id: 'hc1', title: 'PIN request with a broken identity trail', line: '“Just text me the PIN. The last agent already said my ID was fine.”', facts: 'Client wants the PIN by SMS from a taxi. Mother’s maiden name matches. Date of birth on file is 12 Mar 1984; client said 12 Mar 1985. Previous note says “ID OK” with no data points. Card is Active. Policy: never send, read or email a PIN; last 6 only after full identity on a recorded line.', connectors: ['because', 'however'], family: ['verify', 'verification', 'unverified'], phrasal: 'look into', vocab: ['identity verification', 'PIN', 'last 6', 'recorded line'], disposition: ['awaiting action', 'aa'], resolution: ['never send', 'date of birth', 'recorded line', 'identity'], forbidden: ['text the pin', 'sms the pin', 'email the pin', 'here is your pin'], why: ['policy', 'mismatch', 'because'] },
+    { id: 'hc2', title: 'Hotel decline with two possible blocks', line: '“Everyone is watching me at check-in. Fix the card now.”', facts: 'Lisbon hotel decline. Available balance $8,400. No travel notice on file. Assistant filed a travel notice for Paris, not Lisbon. A $500 hotel MCC block remains from a prior dispute. Identity is not fully re-verified on this call. Policy: do not lift every control blindly; confirm which rule fired, then act.', connectors: ['because', 'therefore'], family: ['authorize', 'authorization', 'unauthorized'], phrasal: 'sort out', vocab: ['travel notice', 'decline', 'merchant category', 'available'], disposition: ['pending system', 'psa'], resolution: ['travel notice', 'lisbon', 'hotel', 'verify'], forbidden: ['lift every block', 'remove all restrictions', 'guarantee it will work'], why: ['because', 'two', 'policy'] },
+    { id: 'hc3', title: 'Deposit versus balance, not a duplicate', line: '“You charged me twice. File the dispute today.”', facts: 'Two postings of $2,150, one day apart, same merchant. Descriptors: DEPOSIT then BALANCE. Client did not attach the booking confirmation. Policy: a deposit plus remaining balance is not a duplicate. Chargeback needs evidence. Billing inquiry is allowed.', connectors: ['although', 'in addition'], family: ['cancel', 'cancellation', 'cancelled'], phrasal: 'follow up', vocab: ['duplicate charge', 'merchant', 'chargeback', 'evidence'], disposition: ['awaiting action', 'aa'], resolution: ['not a duplicate', 'deposit', 'booking confirmation', 'billing'], forbidden: ['open the chargeback now', 'file fraud', 'instant refund'], why: ['although', 'descriptor', 'policy'] },
+    { id: 'hc4', title: 'ATM withdrawals with PIN present', line: '“The card is in my hand. Is my money gone? Refund me now.”', facts: 'Six ATM withdrawals in another city, $3,000 total. Chip-and-PIN was used. Card is physically with the client. Spouse is an authorized user. No police report. Policy: PIN-present ATM is not automatic unauthorized fraud; block and replace; provisional credit needs investigation, not an instant refund.', connectors: ['because', 'however'], family: ['authorize', 'authorization', 'unauthorized'], phrasal: 'look into', vocab: ['provisional credit', 'replacement card', 'investigation', 'PIN'], disposition: ['awaiting action', 'aa'], resolution: ['block', 'replacement card', 'investigation', 'provisional credit'], forbidden: ['instant refund', 'accuse the spouse', 'the money is gone'], why: ['because', 'pin', 'policy'] },
+    { id: 'hc5', title: 'Hotel overbooked, merchant first', line: '“The hotel says the bank must solve it. Put the $1,200 back.”', facts: '$1,200 posting. Room not provided (overbooking). Client has a booking confirmation. Chat screenshot from a front-desk account: “we cannot help, call your bank.” Not an official refund-desk letter. Policy: service-not-rendered usually needs merchant contact first (10 business days) unless written refusal exists. Screenshot may be enough if documented.', connectors: ['although', 'therefore'], family: ['resolve', 'resolution', 'unresolved'], phrasal: 'sort out', vocab: ['service not rendered', 'booking confirmation', 'merchant response', 'evidence'], disposition: ['pending system', 'psa'], resolution: ['service not rendered', 'screenshot', 'document', 'merchant'], forbidden: ['pay from bank funds', 'close without evidence', 'instant refund'], why: ['although', 'policy', 'therefore'] },
+    { id: 'hc6', title: 'Broken same-day refund promise', line: '“Another bank refunds in 24 hours. Your colleague promised today.”', facts: 'Valid card-not-present fraud $890. Client is Standard, not VIP. Previous agent wrote “you will have it today.” Internal chat says VIP may get same-day goodwill — supervisor authority only. Policy: provisional credit in two business days after a case number; final decision 45–90 days. Do not match an invalid promise yourself.', connectors: ['however', 'in addition'], family: ['comply', 'compliance', 'non-compliant'], phrasal: 'follow up', vocab: ['provisional credit', 'case number', 'business day', 'goodwill'], disposition: ['awaiting action', 'aa'], resolution: ['provisional credit', 'case number', 'supervisor', 'two business days'], forbidden: ['instant refund', 'same-day refund', 'i will refund today'], why: ['however', 'policy', 'standard'] },
+    { id: 'hc7', title: 'Late dispute after the network window', line: '“It is still theft. Are you doing nothing because I was in hospital?”', facts: 'Charge 20 May. Statement date 31 May. Client reports 18 August — past the 60-day network window from the statement date. Client says hospital stay, no documents on file. Policy: network dispute is ineligible; hardship exception needs medical evidence and supervisor. Alternative: internal report and monitoring, not a chargeback.', connectors: ['because', 'although'], family: ['eligible', 'eligibility', 'ineligible'], phrasal: 'look into', vocab: ['reporting window', 'statement date', 'internal report', 'chargeback'], disposition: ['awaiting action', 'aa'], resolution: ['ineligible', 'reporting window', 'internal report', 'hospital'], forbidden: ['file the chargeback', 'network will reverse', 'ignore the window'], why: ['because', 'although', 'statement'] },
+    { id: 'hc8', title: 'Client wants a guaranteed win', line: '“Promise me I am going to win. Sales said we always win these.”', facts: 'Dispute filed correctly with evidence. Representment pending. Network decision in 12 business days. A sales manager emailed “we always win these.” Policy: never guarantee a network outcome. Explain the process, the deadline, and the follow-up without echoing sales.', connectors: ['however', 'therefore'], family: ['decide', 'decision', 'undecided'], phrasal: 'follow up', vocab: ['network', 'evidence', 'deadline', 'outcome'], disposition: ['pending system', 'psa'], resolution: ['cannot guarantee', 'network', 'deadline', 'follow up'], forbidden: ['you will win', 'i guarantee', 'we always win'], why: ['however', 'policy', 'network'] },
+    { id: 'hc9', title: 'Merchant refund already posted', line: '“Keep the claim open anyway, just in case.”', facts: '$620 merchant refund posted yesterday. An open dispute is still live. Keeping both can create a double credit. Policy: withdraw the dispute, confirm the refund, and explain that the claim can be reopened within 10 days if the refund reverses.', connectors: ['because', 'in addition'], family: ['resolve', 'resolution', 'unresolved'], phrasal: 'sort out', vocab: ['refund', 'double credit', 'withdraw', 'reopen'], disposition: ['resolved', 'resolved with client'], resolution: ['withdraw', 'double credit', 'reopen', 'refund'], forbidden: ['keep both open', 'leave the dispute open', 'just in case keep'], why: ['because', 'double', 'policy'] },
+    { id: 'hc10', title: 'Flight in 12 hours and a WhatsApp wire', line: '“A physical card in five days is useless. Wire $4,200 to this travel agency now.”', facts: 'Fraud block on the physical card. Flight at 6:00 a.m. Client wants a wire to a WhatsApp “travel agency” to pay the airline. Virtual card can be activated. Airport ATM cash is limited while the replacement is in transit. Policy: do not wire to an unverified third party; activate the virtual card; set a travel notice; explain the cash limitation.', connectors: ['therefore', 'however'], family: ['activate', 'activation', 'inactive'], phrasal: 'sort out', vocab: ['virtual card', 'travel notice', 'cash access', 'wire'], disposition: ['resolved', 'resolved with client'], resolution: ['virtual card', 'travel notice', 'do not wire', 'whatsapp'], forbidden: ['send the wire', 'wire the money', 'pay the whatsapp'], why: ['therefore', 'unverified', 'policy'] }
   ];
+  var METHOD_PHRASES = ['even when', 'even though', 'what happens is that', 'in other words', 'which means', 'as well as', 'the thing is that', 'on the other hand', 'according to', 'instead of', 'however', 'despite that', 'not only', 'such as', 'unless', 'by now', 'so far'];
 
   var MOCK_TASKS = [
     { target: 'client-rivera', prompt: 'A client named Marta Rivera is calling. Click her name in the case queue.', tip: 'Look at the left side of the mock desk.', panel: 'overview' },
@@ -157,6 +158,7 @@
       '.ob-q{border:1px solid #e2e8f0;border-radius:12px;padding:13px 14px;margin-bottom:10px}.ob-q h5{margin:0 0 9px;font-size:13px;color:#102033;line-height:1.5}.ob-why{display:none;font-size:12px;color:#475569;margin-top:7px}.ob-q.right .ob-why,.ob-q.wrong .ob-why{display:block}',
       '.ob-foot{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}.ob-btn{border:0;border-radius:9px;padding:11px 17px;background:' + accent + ';color:#fff;font:800 13px Inter,Arial,sans-serif;cursor:pointer}.ob-btn:disabled{opacity:.45}.ob-msg{font-size:12px;font-weight:700;color:#64748b}.ob-msg.ok{color:#15803d}.ob-msg.err{color:#b42318}.ob-cert{display:flex;gap:10px;align-items:center;background:#f0fdf4;border-radius:10px;padding:12px;color:#14532d;margin-bottom:13px}.ob-cert i{font-size:24px}.ob-cert b{font-size:13px}.ob-cert span{display:block;font-size:11px}',
       '.ob-home-head{margin-top:18px;padding-top:16px;border-top:1px solid #e2e8f0}.ob-home-head h4{margin:0 0 5px;color:#102033}.ob-home-head p{margin:0;font-size:12px;line-height:1.55;color:#64748b}.ob-home-progress{margin:10px 0;font-size:11px;font-weight:800;color:' + accent + '}.ob-home-case{border:1px solid #e2e8f0;border-radius:11px;margin:9px 0;overflow:hidden}.ob-home-top{padding:11px 12px;background:#f8fafc;cursor:pointer;display:flex;gap:9px;align-items:center}.ob-home-top b{font-size:12px;color:#102033}.ob-home-top span{margin-left:auto;font-size:10px;color:#64748b}.ob-home-body{display:none;padding:12px}.ob-home-case.open .ob-home-body{display:block}.ob-home-line{border-left:3px solid ' + accent + ';padding:8px 10px;background:#f8fafc;font-size:12px;color:#334155;margin:8px 0}.ob-home-rules{font-size:11px;line-height:1.55;color:#475569;margin:8px 0}.ob-home-chips{display:flex;gap:5px;flex-wrap:wrap;margin:7px 0}.ob-home-chip{background:#eef2ff;color:#3730a3;border-radius:20px;padding:3px 7px;font-size:9px;font-weight:800}.ob-home-answer{width:100%;box-sizing:border-box;min-height:150px;border:1px solid #cbd5e1;border-radius:9px;padding:11px;font:12px/1.6 Inter,Arial,sans-serif;resize:vertical}.ob-home-status{font-size:10px;font-weight:700;color:#64748b;margin-top:6px}.ob-home-status.ok{color:#15803d}.ob-no-paste{font-size:10px;color:#b45309;margin-top:5px}',
+      '.ob-rules{background:#fff7ed;border:1px solid #fdba74;border-radius:14px;padding:18px 20px;box-shadow:0 10px 28px rgba(154,52,18,.12)}.ob-rules h4{margin:0 0 8px;font-size:16px;color:#9a3412}.ob-rules p{margin:0 0 10px;font-size:13px;line-height:1.6;color:#7c2d12}.ob-rules ul{margin:0 0 14px;padding-left:18px}.ob-rules li{font-size:13px;line-height:1.55;color:#7c2d12;margin:6px 0}.ob-rules-actions{display:flex;gap:8px;flex-wrap:wrap}.ob-btn-ghost{border:1px solid #d8e0e8;background:#fff;color:#334155}',
       '.gm{border:1px solid #cbd5e1;border-radius:13px;overflow:hidden;background:#f8fafc}.gm-guide{display:flex;gap:12px;align-items:flex-start;background:#fff8cc;border-bottom:1px solid #f0cf50;padding:13px 15px}.gm-guide .gm-n{width:28px;height:28px;border-radius:50%;background:#eab308;color:#422006;display:grid;place-items:center;font-weight:900;flex:0 0 auto}.gm-guide b{display:block;font-size:13px;color:#422006}.gm-guide p{margin:3px 0 0;font-size:12px;line-height:1.5;color:#713f12}.gm-shell{display:grid;grid-template-columns:190px 1fr;min-height:410px}.gm-side{background:#1e1b4b;color:#fff;padding:12px}.gm-brand{font-size:11px;font-weight:900;margin-bottom:13px}.gm-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;opacity:.55;margin:9px 0 5px}.gm-client{padding:9px;border-radius:8px;font-size:11px;cursor:pointer;margin-bottom:5px}.gm-client b{display:block}.gm-client span{font-size:9px;opacity:.7}.gm-main{min-width:0}.gm-top{padding:11px 13px;background:#fff;border-bottom:1px solid #e2e8f0}.gm-top b{font-size:13px;color:#102033}.gm-top span{display:block;font-size:10px;color:#64748b}.gm-tabs{display:flex;gap:2px;padding:7px 8px;background:#fff;border-bottom:1px solid #e2e8f0;overflow-x:auto}.gm-tab{white-space:nowrap;border:0;background:transparent;border-radius:6px;padding:7px 8px;font:700 9px Inter,Arial,sans-serif;color:#64748b;cursor:pointer}.gm-view{padding:13px}.gm-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.gm-metric,.gm-product,.gm-row,.gm-contact{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:9px}.gm-metric small,.gm-product small{display:block;font-size:8px;color:#64748b;text-transform:uppercase}.gm-metric b{font-size:14px;color:#102033}.gm-product{margin-bottom:7px;cursor:pointer}.gm-product b{display:block;font-size:11px;color:#102033}.gm-product span{font-size:9px;color:#64748b}.gm-row,.gm-contact{display:flex;justify-content:space-between;gap:8px;margin-bottom:6px;font-size:10px;color:#334155;cursor:pointer}.gm-red{color:#b42318;font-weight:800}.gm-green{color:#15803d;font-weight:800}.gm-note{width:100%;box-sizing:border-box;min-height:74px;border:1px solid #cbd5e1;border-radius:8px;padding:9px;font:11px Inter,Arial,sans-serif}.gm-save{margin-top:7px;border:0;border-radius:7px;padding:8px 11px;background:#475569;color:#fff;font:800 10px Inter,Arial,sans-serif;cursor:pointer}.gm-target{position:relative;z-index:1;outline:4px solid #facc15!important;background:#fef9c3!important;color:#422006!important;animation:gmPulse 1s infinite alternate}.gm-target:after{content:"CLICK HERE";position:absolute;z-index:3;right:2px;top:-16px;background:#eab308;color:#422006;border-radius:4px;padding:2px 5px;font:900 7px Inter,Arial,sans-serif}.gm-wrong{animation:gmShake .25s}.gm-complete{text-align:center;padding:70px 20px}.gm-complete i{font-size:44px;color:#15803d}',
       '.ob-locked{text-align:center;padding:35px 15px;color:#64748b}.ob-locked i{font-size:34px;color:#cbd5e1}',
       '@keyframes gmPulse{to{outline-color:#eab308;box-shadow:0 0 14px #facc15}}@keyframes gmShake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}',
@@ -179,6 +181,7 @@
     var syncTimer = null;
     var syncing = false;
     var matchPick = {};
+    var rulesAck = false;
     styles(accent);
 
     function unlocked(id) {
@@ -270,6 +273,7 @@
         var data = await api(crmBase + '/training/progress');
         nestingCompletedAt = data.nestingCompletedAt || nestingCompletedAt;
         if (data.crmEnabled) crmEnabled = true;
+        if (data.casesRulesAccepted) rulesAck = true;
       } catch (error) { /* offline book still works */ }
     }
 
@@ -280,6 +284,7 @@
         var data = await api(crmBase + '/training/progress', { method: 'POST', body: trainingPayload() });
         nestingCompletedAt = data.nestingCompletedAt || nestingCompletedAt;
         if (data.crmEnabled) crmEnabled = true;
+        if (data.casesRulesAccepted) rulesAck = true;
         return data;
       } finally { syncing = false; }
     }
@@ -291,7 +296,11 @@
 
     function save() { writeState(product, studentId, state); scheduleSync(); }
     function complete(id) { if (state.done.indexOf(id) < 0) state.done.push(id); save(); }
-    function go(id) { state.step = id; save(); render(); }
+    function go(id) {
+      state.step = id;
+      save();
+      render();
+    }
 
     function pathMeter() {
       var doneCount = REQUIRED_DONE.filter(moduleReady).length;
@@ -511,25 +520,31 @@
 
     function nestingPanel() {
       if (!courseReady() && !crmEnabled) return '<div class="ob-panel"><div class="ob-locked"><i class="ti ti-lock"></i><p>Nesting unlocks after the 60-minute path, certification and guided CRM.</p></div></div>';
+      if (!rulesAck) {
+        return panelShell('Nesting — 10 casos del queue', 0, 'Advertencia. Debés aceptar las reglas para participar. Este aviso aparece una vez por asignación semanal.',
+          '<div class="ob-rules"><h4>Warning</h4>'
+          + '<p>Se te asignaron <strong>10 casos</strong> del queue. Debés trabajarlos <strong>TODOS</strong> y obtener un score combinado igual o mayor a <strong>8/10</strong> para ganar el <strong>bono de producción</strong>. Se puede si lo hacés bien: sin AI, sin traductor, sin ayuda externa y sin copiar.</p>'
+          + '<ul>'
+          + '<li>Se examinarán: inglés profesional y estructura; linkers, connectors, phrasals, prefixes y suffixes; explicación; documentación; estructura del correo; claridad del mensaje; tiempo en tarea.</li>'
+          + '<li>Pausa de más de 30 min = delay. <strong>3 delays el mismo día CR</strong> = penalización por delay.</li>'
+          + '<li>Respuestas escuetas o sin sentido = fallo. Traductor o IA = pierden / no elegibles al premio.</li>'
+          + '</ul><div class="ob-rules-actions"><button class="ob-btn" id="ob-rules-ack">Aceptar y participar</button><button class="ob-btn ob-btn-ghost" id="ob-rules-cancel">Cancelar</button></div></div>');
+      }
       var completed = HOME_CASES.filter(function (item) { return homeAnswerStatus(item, state.homeAnswers[item.id] || '').ready; }).length;
       var ready = deskUnlocked();
       return panelShell('Nesting — 10 written cases, untimed', 0, 'No time limit. Complete all 10 structured responses. Open the Holdings desk to work the cases in the CRM.',
         '<div class="ob-cert"><i class="ti ti-circle-check"></i><div><b>' + (ready ? 'Holdings desk ready' : 'Write all 10 cases') + '</b><span>' + (ready ? 'Open the CRM to document the 10 nesting cases' : completed + '/10 structured responses ready') + '</span></div></div>'
-        + '<div class="ob-foot"><button class="ob-btn" id="ob-launch"' + (ready ? '' : ' disabled') + '><i class="ti ti-building-bank"></i> Open the Holdings desk</button><span class="ob-msg">' + (ready ? 'Opens in a new tab with your Training Book session.' : 'Desk stays locked until all 10 cases meet the language structure.') + '</span></div>'
-        + '<div class="ob-home-head"><h4>Home practice · 10 written cases</h4><p>Write your own 80–180 word response. Use the facts naturally. There are no model answers on the student screen.</p></div>'
-        + '<div class="ob-home-progress">' + completed + '/10 responses meet the language structure</div>'
+        + '<div class="ob-foot"><button class="ob-btn" id="ob-launch"' + (ready ? '' : ' disabled') + '><i class="ti ti-building-bank"></i> Open the Holdings desk</button><span class="ob-msg">' + (ready ? 'Opens in a new tab with your Training Book session.' : 'Desk stays locked until all 10 cases meet the rubric.') + '</span></div>'
+        + (product === 'kamuk' ? '<div class="ob-home-rules"><strong>Premio:</strong> 8/10+ esta semana gana bono de producción. Tres pausas de más de 30 minutos el mismo día CR descuentan. Patrones de IA/traductor no son elegibles al premio.</div>' : '')
+        + '<div class="ob-home-head"><h4>Home practice · 10 written cases</h4><p>Write 100–200 words in your own English. Use the glossary in Recursos (método linkers, phrasals, prefixes/suffixes). Name the disposition and explain why.</p></div>'
+        + '<div class="ob-home-progress">' + completed + '/10 responses meet the rubric</div>'
         + HOME_CASES.map(function (item, index) {
           var answer = state.homeAnswers[item.id] || '';
           var status = homeAnswerStatus(item, answer);
           return '<div class="ob-home-case" data-home-case="' + item.id + '"><div class="ob-home-top"><b>' + (index + 1) + ' · ' + esc(item.title) + '</b><span>' + (status.ready ? 'Ready ✓' : status.words + ' words') + '</span></div>'
             + '<div class="ob-home-body"><div class="ob-home-rules"><strong>Case facts:</strong> ' + esc(item.facts) + '</div><div class="ob-home-line">' + esc(item.line) + '</div>'
-            + '<div class="ob-home-rules"><strong>Required:</strong> acknowledge impact → ask one open and one closed question → explain the evidence → take/route an action → give a timed next step.</div>'
-            + '<div class="ob-home-chips">'
-            + item.connectors.map(function (word) { return '<span class="ob-home-chip">connector: ' + esc(word) + '</span>'; }).join('')
-            + '<span class="ob-home-chip">prefix/suffix family: ' + esc(item.family.join(' / ')) + '</span>'
-            + '<span class="ob-home-chip">phrasal: ' + esc(item.phrasal) + '</span>'
-            + item.vocab.map(function (word) { return '<span class="ob-home-chip">' + esc(word) + '</span>'; }).join('')
-            + '</div><textarea class="ob-home-answer" data-home-answer="' + item.id + '" autocomplete="off" spellcheck="true" placeholder="Type your response here. Pasting and dropping text are disabled.">' + esc(answer) + '</textarea>'
+            + '<div class="ob-home-rules"><strong>Required:</strong> acknowledge impact → one open and one closed question → explain why (policy) → safe action/disposition → timed next step. Use método linkers from Recursos.</div>'
+            + '<textarea class="ob-home-answer" data-home-answer="' + item.id + '" autocomplete="off" spellcheck="true" placeholder="Type your response here. Pasting and dropping text are disabled.">' + esc(answer) + '</textarea>'
             + '<div class="ob-no-paste"><i class="ti ti-keyboard"></i> Type only: paste and drag/drop are disabled.</div>'
             + '<div class="ob-home-status' + (status.ready ? ' ok' : '') + '">' + esc(status.message) + '</div></div></div>';
         }).join(''));
@@ -539,19 +554,33 @@
       var text = String(answer || '').trim();
       var lower = text.toLowerCase();
       var words = text ? text.split(/\s+/).filter(Boolean).length : 0;
+      var sentences = text.split(/[.!?]+/).filter(function (part) { return part.trim(); });
       var connectorCount = item.connectors.filter(function (word) { return lower.indexOf(word.toLowerCase()) >= 0; }).length;
+      var methodHits = METHOD_PHRASES.filter(function (word) { return lower.indexOf(word) >= 0; }).length;
       var familyUsed = item.family.some(function (word) { return lower.indexOf(word.toLowerCase()) >= 0; });
       var phrasalUsed = lower.indexOf(item.phrasal.toLowerCase()) >= 0;
       var vocabCount = item.vocab.filter(function (word) { return lower.indexOf(word.toLowerCase()) >= 0; }).length;
-      var ready = words >= 80 && words <= 180 && connectorCount >= 2 && familyUsed && phrasalUsed && vocabCount >= 2;
+      var resolutionHits = (item.resolution || []).filter(function (word) { return lower.indexOf(word.toLowerCase()) >= 0; }).length;
+      var forbiddenHit = (item.forbidden || []).some(function (word) { return lower.indexOf(word.toLowerCase()) >= 0; });
+      var whyHits = (item.why || []).filter(function (word) { return lower.indexOf(word.toLowerCase()) >= 0; }).length;
+      var dispositionHit = (item.disposition || []).some(function (word) { return lower.indexOf(word.toLowerCase()) >= 0; });
+      var hasOpen = /\b(what|why|how|could you (explain|describe|walk)|can you (tell|explain|describe))\b/i.test(text);
+      var hasClosed = /\b(did you|do you|have you|is this|are you|was the|can you confirm|could you confirm)\b/i.test(text);
+      var timed = /\b(today|tomorrow|within|business day|a\.m\.|p\.m\.|\d{1,2}:\d{2})\b/i.test(text);
+      var owner = /\b(i will|i am|i own|owner|operations|supervisor|follow up|follow-up|next agent)\b/i.test(text);
+      var ready = words >= 100 && words <= 200 && sentences.length >= 4 && connectorCount >= 2 && methodHits >= 1 && familyUsed && phrasalUsed && vocabCount >= 2 && resolutionHits >= 2 && dispositionHit && !forbiddenHit && whyHits >= 2 && hasOpen && hasClosed && timed && owner;
       var missing = [];
-      if (words < 80) missing.push((80 - words) + ' more words');
-      if (words > 180) missing.push('shorten to 180 words');
-      if (connectorCount < 2) missing.push('both connectors');
-      if (!familyUsed) missing.push('one word-family form');
+      if (words < 100) missing.push('substance (100–200 words)');
+      if (words > 200) missing.push('shorten to 200 words');
+      if (connectorCount < 2 || methodHits < 1) missing.push('connectors + método linker');
+      if (!familyUsed) missing.push('a prefix/suffix family form');
       if (!phrasalUsed) missing.push('the phrasal verb');
       if (vocabCount < 2) missing.push('two case terms');
-      return { ready: ready, words: words, message: ready ? 'Structure complete · ' + words + ' words.' : 'Still needed: ' + missing.join(' · ') };
+      if (resolutionHits < 2 || !dispositionHit || forbiddenHit) missing.push('a correct disposition and safe resolution');
+      if (whyHits < 2) missing.push('a policy explanation');
+      if (!hasOpen || !hasClosed) missing.push('one open and one closed question');
+      if (!timed || !owner) missing.push('owner + timed next step');
+      return { ready: ready, words: words, message: ready ? 'Rubric complete · ' + words + ' words.' : 'Still needed: ' + missing.join(' · ') };
     }
 
     function panel() {
@@ -652,6 +681,23 @@
         render();
         return;
       }
+      if (event.target.closest('#ob-rules-ack')) {
+        rulesAck = true;
+        if (studentId && authToken()) {
+          api(crmBase + '/training/progress', { method: 'POST', body: Object.assign(trainingPayload(), { acceptCasesRules: true }) })
+            .then(function (data) {
+              if (data && data.casesRulesAccepted) rulesAck = true;
+              if (data && data.nestingCompletedAt) nestingCompletedAt = data.nestingCompletedAt;
+              render();
+            })
+            .catch(function () { render(); });
+        } else render();
+        return;
+      }
+      if (event.target.closest('#ob-rules-cancel')) {
+        go(state.done.indexOf('mock') >= 0 ? 'mock' : 'welcome');
+        return;
+      }
       if (event.target.closest('#ob-launch')) {
         if (!deskUnlocked()) return;
         pushProgress().then(function (data) {
@@ -734,6 +780,9 @@
       if (localNestingReady()) scheduleSync();
       render();
     });
+    setInterval(function () {
+      if (state.step === 'nesting' && rulesAck) scheduleSync();
+    }, 45000);
   }
 
   window.SimulationOnboarding = { mount: mount, quiz: CERT_BANK, mockTasks: MOCK_TASKS };

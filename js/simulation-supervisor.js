@@ -232,7 +232,7 @@
         + [['Conectados', summary.connected], ['Trabajando', summary.working], ['Sin asignar', summary.unassigned], ['Pool fresco', summary.freshPool], ['Follow-up', summary.followUpPool], ['AI pendientes', summary.pendingEvaluations]].map(function (metric) {
           return '<div class="sim-sup-metric"><span>' + metric[0] + '</span><strong>' + (Number(metric[1]) || 0) + '</strong></div>';
         }).join('') + '</div>'
-        + (winner ? '<div class="sim-sup-winner"><div><span>Ganador semanal actual</span><strong>' + esc(winner.name || winner.studentId) + '</strong></div><b>' + (Number(winner.weeklyPoints) || 0) + ' pts</b></div>' : '')
+        + (winner ? '<div class="sim-sup-winner"><div><span>Ganador semanal · bono de producción si 8/10</span><strong>' + esc(winner.name || winner.studentId) + '</strong></div><b>' + (Number(winner.weeklyPoints) || 0) + ' pts</b></div>' : '')
         + '<div class="sim-sup-grid"><section class="sim-sup-card"><h3>Propiedad en vivo</h3>' + renderLive(data.live) + '</section>'
         + '<section class="sim-sup-card"><h3>Leaderboard semanal</h3>' + renderLeaderboard(data.leaderboard) + '</section></div>'
         + '<div class="sim-sup-grid"><section class="sim-sup-card"><h3>Resolve rates</h3>' + renderRates(data.resolveRates) + '</section>'

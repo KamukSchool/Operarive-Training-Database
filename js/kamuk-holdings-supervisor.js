@@ -148,7 +148,9 @@
     $('pendingMetric').textContent = summary.pendingEvaluations || 0;
     const winner = state.data.winner;
     $('winnerName').textContent = winner ? winner.name || winner.studentId : 'No winner yet';
-    $('winnerPoints').textContent = `${winner ? Number(winner.weeklyPoints) || 0 : 0} POINTS`;
+    $('winnerPoints').textContent = winner
+      ? `${Number(winner.weeklyPoints) || 0} POINTS · bono de producción requiere 8/10`
+      : 'Sin ganador de bono de producción (requiere 8/10)';
     renderFloor();
     renderTouches();
     renderLeaderboard();
