@@ -1973,7 +1973,8 @@ async function createStudent(){
     id, code,
     info:{ name:fname+' '+lname, email:document.getElementById('ns-email').value, phone:document.getElementById('ns-phone').value, program:document.getElementById('ns-program').value, fee:document.getElementById('ns-fee').value, trainer:SESSION.name, start:new Date().toISOString().split('T')[0], phase:'1', level:'Emerging', score:0, current_score:0, obs:document.getElementById('ns-obs').value },
     skills:{}, kpis:{ phase1:{IG:'',ST:'',RA:'',PS:'',R:''}, phase2:{}, phase3:{}, phase4:{} },
-    calibrations:[], notes:[], compliance:{ scheduled:32, attended:0 }, path_custom:''
+    calibrations:[], notes:[], compliance:{ scheduled:32, attended:0 }, path_custom:'',
+    simulationEnabled:true, kamukHoldings:{ enabled:true }
   };
   await dbSet('kamuk_students',id,student);
   DB[id]=student;
@@ -3270,7 +3271,8 @@ async function saveDiagnostic(){
     typingTests: window._diagTypingResult ? [window._diagTypingResult] : [],
     payments:[], compliance:{ scheduled:32, attended:0 }, path_custom:'',
     track:{ current:'jill', admission:'standard', graduated:{ jill:false, alice:false, nexora:false }, checklist:{ jill:{ bundlesMin:2, sessionsMin:8, macroMin:12 }, alice:{ sessionsMin:6, macroMin:15 }, nexora:{ simsMin:4, macroMin:18 } } },
-    weeklyPulse:[], nemesisQuizzes:[], nemesisState:{ domain:[], reinforcement:[] }, jillProgress:{ activeBundle:null, completedBundles:[] }, kpiTracker:[], kpiDerived:null
+    weeklyPulse:[], nemesisQuizzes:[], nemesisState:{ domain:[], reinforcement:[] }, jillProgress:{ activeBundle:null, completedBundles:[] }, kpiTracker:[], kpiDerived:null,
+    simulationEnabled:true, kamukHoldings:{ enabled:true }
   };
   if(typeof NexusUnified!=='undefined') NexusUnified.ensureStudentFields(student);
   await dbSet('kamuk_students',id,student);

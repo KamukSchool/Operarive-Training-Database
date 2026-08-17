@@ -183,6 +183,16 @@
     }).join(''), 'No hay touches recientes.');
   }
 
+  function renderTraining(rows) {
+    return table(['Estudiante', 'Módulos', 'Certificación', 'Casos', 'Nesting'], (rows || []).map(function (row) {
+      return '<tr><td><strong>' + esc(row.name || row.studentId) + '</strong><br><span style="color:var(--t3)">' + esc(row.studentId) + '</span></td>'
+        + '<td>' + (Number(row.modulesDone) || 0) + '/' + (Number(row.modulesTotal) || 8) + (row.courseComplete ? ' · curso listo' : '') + '</td>'
+        + '<td><span class="sim-chip ' + (row.quizPassed ? 'ok' : 'warn') + '">' + (row.quizPassed ? (row.quizScore || 0) + '%' : ((row.quizScore || 0) + '% · ' + (row.quizAttempts || 0) + ' intentos')) + '</span></td>'
+        + '<td>' + (Number(row.homeReady) || 0) + '/' + (Number(row.homeTotal) || 10) + '</td>'
+        + '<td>' + (row.nestingCompletedAt ? '<span class="sim-chip ok">Listo</span><br>' + fmtDate(row.nestingCompletedAt) : '<span class="sim-chip off">Pendiente</span>') + '</td></tr>';
+    }), 'Todavía no hay progreso de e-learning.');
+  }
+
   async function submitCoaching(form, product) {
     var input = form.querySelector('[name="note"]');
     var button = form.querySelector('button');
@@ -226,7 +236,8 @@
         + '<div class="sim-sup-grid"><section class="sim-sup-card"><h3>Propiedad en vivo</h3>' + renderLive(data.live) + '</section>'
         + '<section class="sim-sup-card"><h3>Leaderboard semanal</h3>' + renderLeaderboard(data.leaderboard) + '</section></div>'
         + '<div class="sim-sup-grid"><section class="sim-sup-card"><h3>Resolve rates</h3>' + renderRates(data.resolveRates) + '</section>'
-        + '<section class="sim-sup-card"><h3>Touches recientes y deducciones</h3>' + renderTouches(data.recentTouches) + '</section></div>';
+        + '<section class="sim-sup-card"><h3>Touches recientes y deducciones</h3>' + renderTouches(data.recentTouches) + '</section></div>'
+        + '<section class="sim-sup-card"><h3>E-learning 60 min · progreso del curso</h3>' + renderTraining(data.training) + '</section>';
       root.querySelector('#sim-sup-refresh').addEventListener('click', function () { render(root, config); });
       root.querySelectorAll('.sim-coach').forEach(function (form) {
         form.addEventListener('submit', function (event) {

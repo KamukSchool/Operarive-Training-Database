@@ -2,62 +2,59 @@
   'use strict';
 
   var PROGRAM = {
-    label: 'Foundation 01 · New hire orientation',
+    label: 'Foundation 01 · 60-minute learning path',
     title: 'Welcome to Kamuk Holdings',
-    intro: 'First learn who we are and how we serve. Then learn our products, certify your understanding, and practise inside a safe guided CRM before nesting.'
+    intro: 'Complete this corporate e-learning path, pass the certification, practise in the guided CRM, then write the 10 nesting cases. Time shown is a guide, not a countdown.'
   };
 
   var STEPS = [
-    { id: 'welcome', label: 'Welcome', icon: 'building-bank' },
-    { id: 'service', label: 'Service', icon: 'heart-handshake' },
-    { id: 'practice', label: 'Practice', icon: 'puzzle' },
-    { id: 'products', label: 'Products', icon: 'briefcase' },
-    { id: 'quiz', label: 'Certification', icon: 'certificate' },
-    { id: 'mock', label: 'Guided CRM', icon: 'device-desktop' },
-    { id: 'nesting', label: 'Nesting', icon: 'headset' }
+    { id: 'welcome', label: 'Welcome', icon: 'building-bank', mins: 5 },
+    { id: 'service', label: 'Service', icon: 'heart-handshake', mins: 8 },
+    { id: 'comms', label: 'Call control', icon: 'phone', mins: 8 },
+    { id: 'products', label: 'Products', icon: 'briefcase', mins: 10 },
+    { id: 'compliance', label: 'Compliance', icon: 'shield-check', mins: 10 },
+    { id: 'resolution', label: 'Resolution', icon: 'clipboard-check', mins: 8 },
+    { id: 'quiz', label: 'Certification', icon: 'certificate', mins: 4 },
+    { id: 'mock', label: 'Guided CRM', icon: 'device-desktop', mins: 7 },
+    { id: 'nesting', label: 'Nesting', icon: 'headset', mins: 0 }
   ];
 
-  var QUIZ = {
-    pass: 5,
-    questions: [
-      {
-        q: 'What is our role when a client contacts the desk?',
-        options: ['Understand the impact, investigate, act safely and set a clear next step.', 'Apologize until the client calms down.', 'Transfer every difficult request to a supervisor.'],
-        answer: 0,
-        why: 'Service is ownership plus action. An apology without investigation or a next step does not solve anything.'
-      },
-      {
-        q: 'Which response demonstrates empathy rather than sympathy?',
-        options: ['"You have called three times and still cannot pay your suppliers. I understand why this is urgent."', '"I feel so sorry for you; that is terrible."', '"Do not worry, everything will be fine."'],
-        answer: 0,
-        why: 'Empathy names the client’s specific impact. Sympathy expresses your feelings and can sound distant or patronizing.'
-      },
-      {
-        q: 'What is the purpose of rapport?',
-        options: ['Create enough trust for the client to share facts and work with you.', 'Make the client like you before you discuss the problem.', 'Have a long friendly conversation before opening the account.'],
-        answer: 0,
-        why: 'Rapport is professional trust, not friendship or small talk.'
-      },
-      {
-        q: 'The client says: "This is the third time I call." What is the strongest opening?',
-        options: ['"You have had to repeat this three times. I will review the previous contacts first so you do not start again."', '"I am very sorry, but I just received your call."', '"Can you explain everything from the beginning?"'],
-        answer: 0,
-        why: 'Use the history already available and remove effort from the client.'
-      },
-      {
-        q: 'Which product is designed for daily business money movement?',
-        options: ['Operating Account', 'Obsidian Corporate Card', 'Expansion Financing'],
-        answer: 0,
-        why: 'The Operating Account supports deposits, supplier payments, payroll and transfers.'
-      },
-      {
-        q: 'What should you do before promising a solution?',
-        options: ['Open the client profile and verify the evidence in the CRM.', 'Use your memory of a similar case.', 'Ask the client which solution they prefer and promise that one.'],
-        answer: 0,
-        why: 'The CRM is the source of truth. Promise only what the evidence and your authority support.'
-      }
-    ]
+  var COURSE_MINS = STEPS.reduce(function (sum, step) { return sum + (step.mins || 0); }, 0);
+  var REQUIRED_DONE = ['welcome', 'service', 'comms', 'products', 'compliance', 'resolution', 'quiz', 'mock'];
+  var CHECK_KEYS = {
+    welcome: ['welcome-mcq'],
+    service: ['service-scenario', 'service-match'],
+    comms: ['comms-seq'],
+    products: ['products-match'],
+    compliance: ['compliance-tf', 'compliance-multi'],
+    resolution: ['resolution-email']
   };
+
+  var CHECK_ANSWERS = {
+    'welcome-mcq': 0,
+    'service-scenario': 1,
+    'service-match': { empathy: 'impact', sympathy: 'emotion', rapport: 'trust' },
+    'comms-seq': ['acknowledge', 'investigate', 'act', 'next'],
+    'products-match': { payroll: 'operating', hotel: 'obsidian', expansion: 'loan' },
+    'compliance-tf': false,
+    'compliance-multi': ['last6', 'never-pin'],
+    'resolution-email': 0
+  };
+
+  var CERT_BANK = [
+    { id: 'q1', q: 'What is our role when a client contacts the desk?', options: ['Understand the impact, investigate, act safely and set a clear next step.', 'Apologize until the client calms down.', 'Transfer every difficult request to a supervisor.'], answer: 0, why: 'Service is ownership plus action.' },
+    { id: 'q2', q: 'Which response demonstrates empathy rather than sympathy?', options: ['"You have called three times and still cannot pay your suppliers. I understand why this is urgent."', '"I feel so sorry for you; that is terrible."', '"Do not worry, everything will be fine."'], answer: 0, why: 'Empathy names the client’s specific impact.' },
+    { id: 'q3', q: 'What is the purpose of rapport?', options: ['Create enough trust for the client to share facts and work with you.', 'Make the client like you before you discuss the problem.', 'Have a long friendly conversation before opening the account.'], answer: 0, why: 'Rapport is professional trust, not small talk.' },
+    { id: 'q4', q: 'The client says: "This is the third time I call." What is the strongest opening?', options: ['"You have had to repeat this three times. I will review the previous contacts first so you do not start again."', '"I am very sorry, but I just received your call."', '"Can you explain everything from the beginning?"'], answer: 0, why: 'Use the history already in the CRM.' },
+    { id: 'q5', q: 'Which product is designed for daily business money movement?', options: ['Operating Account', 'Obsidian Corporate Card', 'Expansion Financing'], answer: 0, why: 'The Operating Account supports deposits, payroll and transfers.' },
+    { id: 'q6', q: 'What should you do before promising a solution?', options: ['Open the client profile and verify the evidence in the CRM.', 'Use your memory of a similar case.', 'Ask the client which solution they prefer and promise that one.'], answer: 0, why: 'The CRM is the source of truth.' },
+    { id: 'q7', q: 'A client asks you to read the full card number. What do you do?', options: ['Read the full number because the client owns the card.', 'Refuse. You may confirm last 6 digits only after identity verification.', 'Send the PIN by email if they confirm the address.'], answer: 1, why: 'Never disclose the full PAN or the PIN.' },
+    { id: 'q8', q: 'When do you escalate instead of closing the case yourself?', options: ['When the action is outside your authority, high-risk or needs another desk.', 'Whenever the client raises their voice.', 'Only after you have already promised a refund.'], answer: 0, why: 'Escalate with a named owner and a timed next step.' },
+    { id: 'q9', q: 'Which internal note is audit-ready?', options: ['"Client angry. Will see."', '"Helped the client."', '"Reviewed statement: duplicate $180 at 14:02 and 14:06. Opened dispute. Callback today 4:30 p.m."'], answer: 2, why: 'Notes need evidence, action and a timed next step.' },
+    { id: 'q10', q: 'A client demands an instant refund that policy does not allow. What is correct?', options: ['Explain the policy, the safe option you can take, and the timed next step.', 'Promise the refund to keep the client calm.', 'Close the case without documenting the conversation.'], answer: 0, why: 'Do not over-promise. Offer the safe path you own.' },
+    { id: 'q11', q: 'Where do you confirm whether a supplier payment actually left the account?', options: ['The client’s memory of last week.', 'Statements / transaction history in the CRM.', 'A public search of the merchant.'], answer: 1, why: 'Evidence lives in Statements.' },
+    { id: 'q12', q: 'What must a client email include?', options: ['A natural opening, the action taken, an owner and a timed next step.', 'A list of vocabulary words from training.', 'The hidden rubric and the case answer key.'], answer: 0, why: 'Emails are professional updates, not word lists.' }
+  ];
 
   var HOME_CASES = [
     { id: 'hc1', title: 'Duplicate restaurant charge', line: '“I paid once, but you charged me twice. Remove it today.”', facts: '$180 twice · four minutes apart · same merchant', connectors: ['because', 'however'], family: ['authorize', 'authorization', 'unauthorized'], phrasal: 'look into', vocab: ['duplicate charge', 'merchant', 'dispute', 'timeline'] },
@@ -93,17 +90,35 @@
     });
   }
 
+  function sameAnswer(expected, actual) {
+    if (Array.isArray(expected)) {
+      var right = Array.isArray(actual) ? actual : [];
+      return expected.length === right.length && expected.every(function (item, i) { return String(item) === String(right[i]); });
+    }
+    if (expected && typeof expected === 'object') {
+      var keys = Object.keys(expected);
+      var value = actual && typeof actual === 'object' ? actual : {};
+      return keys.length === Object.keys(value).length && keys.every(function (key) { return String(expected[key]) === String(value[key]); });
+    }
+    return expected === actual;
+  }
+
   function stateKey(product, studentId) {
-    var sid = String(studentId || '').trim();
-    return 'simulationOnboarding:' + product + ':' + (sid || 'guest') + ':foundation-v2';
+    return 'simulationOnboarding:' + product + ':' + (String(studentId || '').trim() || 'guest') + ':foundation-v3';
   }
 
   function readState(product, studentId) {
-    var base = { done: [], step: 'welcome', game: {}, mockIndex: 0, homeAnswers: {} };
+    var base = { done: [], step: 'welcome', checks: {}, quizAnswers: {}, quizOrder: [], quizAttempts: 0, quizScore: null, mockIndex: 0, homeAnswers: {}, match: {}, seq: {}, multi: {} };
     try {
       var parsed = JSON.parse(localStorage.getItem(stateKey(product, studentId)) || 'null');
       if (!parsed || !Array.isArray(parsed.done)) return base;
+      parsed.checks = parsed.checks && typeof parsed.checks === 'object' ? parsed.checks : {};
+      parsed.quizAnswers = parsed.quizAnswers && typeof parsed.quizAnswers === 'object' ? parsed.quizAnswers : {};
+      parsed.quizOrder = Array.isArray(parsed.quizOrder) ? parsed.quizOrder : [];
       parsed.homeAnswers = parsed.homeAnswers && typeof parsed.homeAnswers === 'object' ? parsed.homeAnswers : {};
+      parsed.match = parsed.match && typeof parsed.match === 'object' ? parsed.match : {};
+      parsed.seq = parsed.seq && typeof parsed.seq === 'object' ? parsed.seq : {};
+      parsed.multi = parsed.multi && typeof parsed.multi === 'object' ? parsed.multi : {};
       return parsed;
     } catch (error) {
       return base;
@@ -126,22 +141,26 @@
       '.ob{max-width:920px;margin:0 auto 18px;font-family:Inter,Arial,sans-serif;}',
       '.ob-head{background:linear-gradient(135deg,' + accent + ',#0f172a);border-radius:16px;padding:20px 22px;color:#fff;box-shadow:0 10px 32px rgba(15,23,42,.16);}',
       '.ob-head small{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.75}.ob-head h2{margin:5px 0 6px;font-size:22px}.ob-head p{margin:0;font-size:13px;line-height:1.6;opacity:.9}',
-      '.ob-rail{display:flex;gap:6px;margin:12px 0;overflow-x:auto}.ob-step{min-width:84px;flex:1;background:#fff;border:1px solid #dce3ea;border-radius:11px;padding:10px 6px;text-align:center;cursor:pointer}.ob-step.locked{opacity:.45;cursor:not-allowed}.ob-step.on{border-color:' + accent + ';box-shadow:0 4px 14px rgba(15,23,42,.09)}.ob-step i{font-size:18px;color:' + accent + '}.ob-step.done i{color:#15803d}.ob-step span{display:block;margin-top:3px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#475569}',
+      '.ob-path{display:flex;justify-content:space-between;gap:10px;margin-top:12px;font-size:11px;opacity:.9}.ob-path b{font-size:16px}',
+      '.ob-bar{height:7px;background:rgba(255,255,255,.18);border-radius:99px;margin-top:10px;overflow:hidden}.ob-bar i{display:block;height:100%;background:#fff}',
+      '.ob-rail{display:flex;gap:6px;margin:12px 0;overflow-x:auto}.ob-step{min-width:78px;flex:1;background:#fff;border:1px solid #dce3ea;border-radius:11px;padding:9px 5px;text-align:center;cursor:pointer}.ob-step.locked{opacity:.45;cursor:not-allowed}.ob-step.on{border-color:' + accent + ';box-shadow:0 4px 14px rgba(15,23,42,.09)}.ob-step i{font-size:17px;color:' + accent + '}.ob-step.done i{color:#15803d}.ob-step span{display:block;margin-top:3px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#475569}.ob-step em{display:block;font-style:normal;font-size:8px;color:#94a3b8}',
       '.ob-panel{background:#fff;border:1px solid #dce3ea;border-radius:14px;padding:20px}.ob-panel h3{margin:0 0 4px;font-size:18px;color:#102033}.ob-lead{margin:0 0 16px;font-size:13px;color:#64748b;line-height:1.6}',
-      '.ob-video{display:flex;gap:13px;align-items:center;background:#0f172a;border-radius:12px;padding:14px 16px;color:#fff;margin-bottom:16px}.ob-video i{font-size:30px}.ob-video b{display:block;font-size:13px}.ob-video span{font-size:11px;opacity:.7}',
+      '.ob-mins{display:inline-block;background:#eef6fc;color:' + accent + ';border-radius:99px;padding:3px 8px;font-size:10px;font-weight:800;margin-bottom:10px}',
       '.ob-b{margin-bottom:16px}.ob-b h4{margin:0 0 6px;font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:' + accent + '}.ob-b p,.ob-b li{font-size:13px;line-height:1.65;color:#334155}.ob-b p{margin:0}.ob-b ul{margin:0;padding-left:17px}',
       '.ob-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.ob-card{border:1px solid #e2e8f0;border-radius:11px;padding:12px}.ob-card i{font-size:20px;color:' + accent + '}.ob-card b{display:block;margin:5px 0 3px;font-size:13px;color:#102033}.ob-card p{font-size:12px;line-height:1.55;color:#64748b;margin:0}',
       '.ob-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ob-compare>div{border-radius:10px;padding:12px}.ob-empathy{background:#f0fdf4;color:#166534}.ob-sympathy{background:#fff7ed;color:#9a3412}.ob-compare b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}.ob-compare p{margin:0;font-size:12.5px;line-height:1.6}',
-      '.ob-game{border:1px solid #e2e8f0;border-radius:12px;padding:14px;margin-bottom:11px}.ob-game h5{margin:0 0 5px;font-size:13px;color:#102033}.ob-game>p{margin:0 0 10px;font-size:12px;color:#64748b}.ob-choice{display:block;width:100%;text-align:left;border:1px solid #d8e0e8;background:#fff;border-radius:9px;padding:9px 11px;margin:6px 0;font:600 12px/1.5 Inter,Arial,sans-serif;color:#334155;cursor:pointer}.ob-choice:hover{border-color:' + accent + '}.ob-choice.right{border-color:#15803d;background:#f0fdf4;color:#14532d}.ob-choice.wrong{border-color:#b42318;background:#fef2f2;color:#7f1d1d}.ob-feedback{font-size:12px;line-height:1.5;color:#475569;margin-top:8px;min-height:18px}',
-      '.ob-process{display:flex;gap:7px;align-items:stretch;margin:12px 0 18px;overflow-x:auto}.ob-process div{min-width:105px;flex:1;background:#f8fafc;border-radius:10px;padding:10px;text-align:center}.ob-process b{display:block;font-size:11px;color:#102033}.ob-process span{font-size:10px;color:#64748b}.ob-arrow{align-self:center;color:#94a3b8}',
+      '.ob-check{border:1px solid #e2e8f0;border-radius:12px;padding:14px;margin:12px 0}.ob-check h5{margin:0 0 8px;font-size:13px;color:#102033}.ob-choice,.ob-opt{display:block;width:100%;text-align:left;border:1px solid #d8e0e8;background:#fff;border-radius:9px;padding:9px 11px;margin:6px 0;font:600 12px/1.5 Inter,Arial,sans-serif;color:#334155;cursor:pointer}.ob-choice.right,.ob-opt.right{border-color:#15803d;background:#f0fdf4;color:#14532d}.ob-choice.wrong,.ob-opt.wrong{border-color:#b42318;background:#fef2f2;color:#7f1d1d}.ob-feedback{font-size:12px;line-height:1.5;color:#475569;margin-top:8px}',
+      '.ob-match{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ob-chip{border:1px solid #d8e0e8;border-radius:8px;padding:8px;font-size:12px;cursor:pointer;background:#fff}.ob-chip.on{border-color:' + accent + ';background:#eff6ff}.ob-chip.used{opacity:.45}',
+      '.ob-seq{display:flex;flex-wrap:wrap;gap:7px}.ob-seq button{border:1px solid #d8e0e8;background:#fff;border-radius:8px;padding:8px 10px;font:700 12px Inter,Arial,sans-serif;cursor:pointer}.ob-seq button.on{background:' + accent + ';color:#fff;border-color:' + accent + '}',
+      '.ob-process{display:flex;gap:7px;align-items:stretch;margin:12px 0 18px;overflow-x:auto}.ob-process div{min-width:105px;flex:1;background:#f8fafc;border-radius:10px;padding:10px;text-align:center}.ob-process b{display:block;font-size:11px;color:#102033}.ob-process span{font-size:10px;color:#64748b}',
       '.ob-product{border:1px solid #e2e8f0;border-radius:11px;padding:12px}.ob-product b{display:block;font-size:13px;color:#102033}.ob-product small{display:block;color:' + accent + ';font-weight:800;margin:3px 0}.ob-product p{margin:0;font-size:12px;line-height:1.5;color:#64748b}',
-      '.ob-q{border:1px solid #e2e8f0;border-radius:12px;padding:13px 14px;margin-bottom:10px}.ob-q h5{margin:0 0 9px;font-size:13px;color:#102033;line-height:1.5}.ob-opt{display:flex;gap:9px;border:1px solid #d8e0e8;border-radius:9px;padding:9px 11px;margin-bottom:6px;cursor:pointer;font-size:12px;line-height:1.5;color:#334155}.ob-opt input{margin-top:2px}.ob-q.right .picked{border-color:#15803d;background:#f0fdf4}.ob-q.wrong .picked{border-color:#b42318;background:#fef2f2}.ob-q.wrong .key{border-color:#15803d;background:#f0fdf4}.ob-why{display:none;font-size:12px;color:#475569;margin-top:7px}.ob-q.right .ob-why,.ob-q.wrong .ob-why{display:block}',
+      '.ob-q{border:1px solid #e2e8f0;border-radius:12px;padding:13px 14px;margin-bottom:10px}.ob-q h5{margin:0 0 9px;font-size:13px;color:#102033;line-height:1.5}.ob-why{display:none;font-size:12px;color:#475569;margin-top:7px}.ob-q.right .ob-why,.ob-q.wrong .ob-why{display:block}',
       '.ob-foot{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}.ob-btn{border:0;border-radius:9px;padding:11px 17px;background:' + accent + ';color:#fff;font:800 13px Inter,Arial,sans-serif;cursor:pointer}.ob-btn:disabled{opacity:.45}.ob-msg{font-size:12px;font-weight:700;color:#64748b}.ob-msg.ok{color:#15803d}.ob-msg.err{color:#b42318}.ob-cert{display:flex;gap:10px;align-items:center;background:#f0fdf4;border-radius:10px;padding:12px;color:#14532d;margin-bottom:13px}.ob-cert i{font-size:24px}.ob-cert b{font-size:13px}.ob-cert span{display:block;font-size:11px}',
-      '.ob-home-head{margin-top:18px;padding-top:16px;border-top:1px solid #e2e8f0}.ob-home-head h4{margin:0 0 5px;color:#102033}.ob-home-head p{margin:0;font-size:12px;line-height:1.55;color:#64748b}.ob-home-progress{margin:10px 0;font-size:11px;font-weight:800;color:' + accent + '}.ob-home-case{border:1px solid #e2e8f0;border-radius:11px;margin:9px 0;overflow:hidden}.ob-home-top{padding:11px 12px;background:#f8fafc;cursor:pointer;display:flex;gap:9px;align-items:center}.ob-home-top b{font-size:12px;color:#102033}.ob-home-top span{margin-left:auto;font-size:10px;color:#64748b}.ob-home-body{display:none;padding:12px}.ob-home-case.open .ob-home-body{display:block}.ob-home-line{border-left:3px solid ' + accent + ';padding:8px 10px;background:#f8fafc;font-size:12px;color:#334155;margin:8px 0}.ob-home-rules{font-size:11px;line-height:1.55;color:#475569;margin:8px 0}.ob-home-chips{display:flex;gap:5px;flex-wrap:wrap;margin:7px 0}.ob-home-chip{background:#eef2ff;color:#3730a3;border-radius:20px;padding:3px 7px;font-size:9px;font-weight:800}.ob-home-answer{width:100%;box-sizing:border-box;min-height:150px;border:1px solid #cbd5e1;border-radius:9px;padding:11px;font:12px/1.6 Inter,Arial,sans-serif;resize:vertical}.ob-home-answer:focus{outline:2px solid rgba(43,126,193,.18);border-color:' + accent + '}.ob-home-status{font-size:10px;font-weight:700;color:#64748b;margin-top:6px}.ob-home-status.ok{color:#15803d}.ob-no-paste{font-size:10px;color:#b45309;margin-top:5px}',
-      '.gm{border:1px solid #cbd5e1;border-radius:13px;overflow:hidden;background:#f8fafc}.gm-guide{display:flex;gap:12px;align-items:flex-start;background:#fff8cc;border-bottom:1px solid #f0cf50;padding:13px 15px}.gm-guide .gm-n{width:28px;height:28px;border-radius:50%;background:#eab308;color:#422006;display:grid;place-items:center;font-weight:900;flex:0 0 auto}.gm-guide b{display:block;font-size:13px;color:#422006}.gm-guide p{margin:3px 0 0;font-size:12px;line-height:1.5;color:#713f12}.gm-shell{display:grid;grid-template-columns:190px 1fr;min-height:410px}.gm-side{background:#1e1b4b;color:#fff;padding:12px}.gm-brand{font-size:11px;font-weight:900;margin-bottom:13px}.gm-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;opacity:.55;margin:9px 0 5px}.gm-client{padding:9px;border-radius:8px;font-size:11px;cursor:pointer;margin-bottom:5px}.gm-client b{display:block}.gm-client span{font-size:9px;opacity:.7}.gm-main{min-width:0}.gm-top{padding:11px 13px;background:#fff;border-bottom:1px solid #e2e8f0}.gm-top b{font-size:13px;color:#102033}.gm-top span{display:block;font-size:10px;color:#64748b}.gm-tabs{display:flex;gap:2px;padding:7px 8px;background:#fff;border-bottom:1px solid #e2e8f0;overflow-x:auto}.gm-tab{white-space:nowrap;border:0;background:transparent;border-radius:6px;padding:7px 8px;font:700 9px Inter,Arial,sans-serif;color:#64748b;cursor:pointer}.gm-view{padding:13px}.gm-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.gm-metric,.gm-product,.gm-row,.gm-contact{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:9px}.gm-metric small,.gm-product small{display:block;font-size:8px;color:#64748b;text-transform:uppercase}.gm-metric b{font-size:14px;color:#102033}.gm-product{margin-bottom:7px;cursor:pointer}.gm-product b{display:block;font-size:11px;color:#102033}.gm-product span{font-size:9px;color:#64748b}.gm-row,.gm-contact{display:flex;justify-content:space-between;gap:8px;margin-bottom:6px;font-size:10px;color:#334155;cursor:pointer}.gm-red{color:#b42318;font-weight:800}.gm-green{color:#15803d;font-weight:800}.gm-note{width:100%;box-sizing:border-box;min-height:74px;border:1px solid #cbd5e1;border-radius:8px;padding:9px;font:11px Inter,Arial,sans-serif}.gm-save{margin-top:7px;border:0;border-radius:7px;padding:8px 11px;background:#475569;color:#fff;font:800 10px Inter,Arial,sans-serif;cursor:pointer}.gm-target{position:relative;z-index:1;outline:4px solid #facc15!important;background:#fef9c3!important;color:#422006!important;animation:gmPulse 1s infinite alternate}.gm-target:after{content:\"CLICK HERE\";position:absolute;z-index:3;right:2px;top:-16px;background:#eab308;color:#422006;border-radius:4px;padding:2px 5px;font:900 7px Inter,Arial,sans-serif}.gm-wrong{animation:gmShake .25s}.gm-complete{text-align:center;padding:70px 20px}.gm-complete i{font-size:44px;color:#15803d}.gm-complete h4{margin:8px 0 3px;color:#14532d}.gm-complete p{font-size:12px;color:#64748b}',
-      '.ob-locked{text-align:center;padding:35px 15px;color:#64748b}.ob-locked i{font-size:34px;color:#cbd5e1}.ob-locked p{font-size:13px;line-height:1.6}',
+      '.ob-home-head{margin-top:18px;padding-top:16px;border-top:1px solid #e2e8f0}.ob-home-head h4{margin:0 0 5px;color:#102033}.ob-home-head p{margin:0;font-size:12px;line-height:1.55;color:#64748b}.ob-home-progress{margin:10px 0;font-size:11px;font-weight:800;color:' + accent + '}.ob-home-case{border:1px solid #e2e8f0;border-radius:11px;margin:9px 0;overflow:hidden}.ob-home-top{padding:11px 12px;background:#f8fafc;cursor:pointer;display:flex;gap:9px;align-items:center}.ob-home-top b{font-size:12px;color:#102033}.ob-home-top span{margin-left:auto;font-size:10px;color:#64748b}.ob-home-body{display:none;padding:12px}.ob-home-case.open .ob-home-body{display:block}.ob-home-line{border-left:3px solid ' + accent + ';padding:8px 10px;background:#f8fafc;font-size:12px;color:#334155;margin:8px 0}.ob-home-rules{font-size:11px;line-height:1.55;color:#475569;margin:8px 0}.ob-home-chips{display:flex;gap:5px;flex-wrap:wrap;margin:7px 0}.ob-home-chip{background:#eef2ff;color:#3730a3;border-radius:20px;padding:3px 7px;font-size:9px;font-weight:800}.ob-home-answer{width:100%;box-sizing:border-box;min-height:150px;border:1px solid #cbd5e1;border-radius:9px;padding:11px;font:12px/1.6 Inter,Arial,sans-serif;resize:vertical}.ob-home-status{font-size:10px;font-weight:700;color:#64748b;margin-top:6px}.ob-home-status.ok{color:#15803d}.ob-no-paste{font-size:10px;color:#b45309;margin-top:5px}',
+      '.gm{border:1px solid #cbd5e1;border-radius:13px;overflow:hidden;background:#f8fafc}.gm-guide{display:flex;gap:12px;align-items:flex-start;background:#fff8cc;border-bottom:1px solid #f0cf50;padding:13px 15px}.gm-guide .gm-n{width:28px;height:28px;border-radius:50%;background:#eab308;color:#422006;display:grid;place-items:center;font-weight:900;flex:0 0 auto}.gm-guide b{display:block;font-size:13px;color:#422006}.gm-guide p{margin:3px 0 0;font-size:12px;line-height:1.5;color:#713f12}.gm-shell{display:grid;grid-template-columns:190px 1fr;min-height:410px}.gm-side{background:#1e1b4b;color:#fff;padding:12px}.gm-brand{font-size:11px;font-weight:900;margin-bottom:13px}.gm-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;opacity:.55;margin:9px 0 5px}.gm-client{padding:9px;border-radius:8px;font-size:11px;cursor:pointer;margin-bottom:5px}.gm-client b{display:block}.gm-client span{font-size:9px;opacity:.7}.gm-main{min-width:0}.gm-top{padding:11px 13px;background:#fff;border-bottom:1px solid #e2e8f0}.gm-top b{font-size:13px;color:#102033}.gm-top span{display:block;font-size:10px;color:#64748b}.gm-tabs{display:flex;gap:2px;padding:7px 8px;background:#fff;border-bottom:1px solid #e2e8f0;overflow-x:auto}.gm-tab{white-space:nowrap;border:0;background:transparent;border-radius:6px;padding:7px 8px;font:700 9px Inter,Arial,sans-serif;color:#64748b;cursor:pointer}.gm-view{padding:13px}.gm-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.gm-metric,.gm-product,.gm-row,.gm-contact{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:9px}.gm-metric small,.gm-product small{display:block;font-size:8px;color:#64748b;text-transform:uppercase}.gm-metric b{font-size:14px;color:#102033}.gm-product{margin-bottom:7px;cursor:pointer}.gm-product b{display:block;font-size:11px;color:#102033}.gm-product span{font-size:9px;color:#64748b}.gm-row,.gm-contact{display:flex;justify-content:space-between;gap:8px;margin-bottom:6px;font-size:10px;color:#334155;cursor:pointer}.gm-red{color:#b42318;font-weight:800}.gm-green{color:#15803d;font-weight:800}.gm-note{width:100%;box-sizing:border-box;min-height:74px;border:1px solid #cbd5e1;border-radius:8px;padding:9px;font:11px Inter,Arial,sans-serif}.gm-save{margin-top:7px;border:0;border-radius:7px;padding:8px 11px;background:#475569;color:#fff;font:800 10px Inter,Arial,sans-serif;cursor:pointer}.gm-target{position:relative;z-index:1;outline:4px solid #facc15!important;background:#fef9c3!important;color:#422006!important;animation:gmPulse 1s infinite alternate}.gm-target:after{content:"CLICK HERE";position:absolute;z-index:3;right:2px;top:-16px;background:#eab308;color:#422006;border-radius:4px;padding:2px 5px;font:900 7px Inter,Arial,sans-serif}.gm-wrong{animation:gmShake .25s}.gm-complete{text-align:center;padding:70px 20px}.gm-complete i{font-size:44px;color:#15803d}',
+      '.ob-locked{text-align:center;padding:35px 15px;color:#64748b}.ob-locked i{font-size:34px;color:#cbd5e1}',
       '@keyframes gmPulse{to{outline-color:#eab308;box-shadow:0 0 14px #facc15}}@keyframes gmShake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}',
-      '@media(max-width:700px){.ob-grid,.ob-compare{grid-template-columns:1fr}.gm-shell{grid-template-columns:120px 1fr}.gm-side{padding:8px}.gm-tabs{max-width:calc(100vw - 190px)}.gm-metrics{grid-template-columns:1fr}.ob-panel{padding:14px}}'
+      '@media(max-width:700px){.ob-grid,.ob-compare,.ob-match{grid-template-columns:1fr}.gm-shell{grid-template-columns:120px 1fr}.ob-panel{padding:14px}}'
     ].join('');
   }
 
@@ -150,22 +169,69 @@
     config = config || {};
     var product = config.product === 'kamuk' ? 'kamuk' : 'infinity';
     var accent = product === 'kamuk' ? '#2B7EC1' : '#5B21B6';
-    var accessRoot = config.accessRoot || null;
     var launchUrl = String(config.launchUrl || (product === 'kamuk' ? 'kamuk-holdings-crm.html' : 'infinity-holdings-crm.html'));
     var studentId = String(config.studentId || '').trim();
     var apiBase = String(config.apiBase || (typeof INFINITY_API !== 'undefined' ? INFINITY_API : 'https://alice-by-infinity.onrender.com')).replace(/\/$/, '');
     var crmBase = product === 'kamuk' ? '/kamuk-holdings/crm' : '/infinity-holdings/crm';
     var state = readState(product, studentId);
-    var quizPicks = {};
     var nestingCompletedAt = null;
+    var crmEnabled = config.crmEnabled === true;
     var syncTimer = null;
     var syncing = false;
+    var matchPick = {};
     styles(accent);
 
     function unlocked(id) {
+      if (id === 'nesting' && crmEnabled) return true;
       var index = STEPS.map(function (s) { return s.id; }).indexOf(id);
       return index === 0 || state.done.indexOf(STEPS[index - 1].id) >= 0;
     }
+
+    function checkPassed(id) { return sameAnswer(CHECK_ANSWERS[id], state.checks[id]); }
+
+    function moduleReady(id) {
+      var keys = CHECK_KEYS[id];
+      if (!keys) {
+        if (id === 'quiz') return quizPassed();
+        if (id === 'mock') return (state.mockIndex || 0) >= MOCK_TASKS.length - 1 && state.done.indexOf('mock') >= 0;
+        return state.done.indexOf(id) >= 0;
+      }
+      return keys.every(checkPassed);
+    }
+
+    function quizPassed() {
+      var ids = state.quizOrder.length ? state.quizOrder : CERT_BANK.map(function (q) { return q.id; }).slice(0, 10);
+      var asked = ids.length;
+      if (asked < 10) return false;
+      var correct = ids.filter(function (id) {
+        var q = CERT_BANK.find(function (item) { return item.id === id; });
+        return q && Number(state.quizAnswers[id]) === q.answer;
+      }).length;
+      return (correct / asked) >= 0.8;
+    }
+
+    function quizScore() {
+      var ids = state.quizOrder.length ? state.quizOrder : [];
+      if (!ids.length) return 0;
+      var correct = ids.filter(function (id) {
+        var q = CERT_BANK.find(function (item) { return item.id === id; });
+        return q && Number(state.quizAnswers[id]) === q.answer;
+      }).length;
+      return Math.round((correct / ids.length) * 100);
+    }
+
+    function courseReady() {
+      return REQUIRED_DONE.every(moduleReady);
+    }
+
+    function localNestingReady() {
+      if (!courseReady()) return false;
+      return HOME_CASES.every(function (item) {
+        return homeAnswerStatus(item, (state.homeAnswers && state.homeAnswers[item.id]) || '').ready;
+      });
+    }
+
+    function deskUnlocked() { return crmEnabled || Boolean(nestingCompletedAt) || localNestingReady(); }
 
     function authToken() {
       return (typeof getAuthToken === 'function' && getAuthToken())
@@ -175,19 +241,14 @@
     }
 
     function trainingPayload() {
-      return { done: state.done.slice(), homeAnswers: state.homeAnswers || {} };
-    }
-
-    function localNestingReady() {
-      var required = ['welcome', 'service', 'practice', 'products', 'quiz', 'mock'];
-      if (required.some(function (step) { return state.done.indexOf(step) < 0; })) return false;
-      return HOME_CASES.every(function (item) {
-        return homeAnswerStatus(item, (state.homeAnswers && state.homeAnswers[item.id]) || '').ready;
-      });
-    }
-
-    function deskUnlocked() {
-      return Boolean(nestingCompletedAt) || localNestingReady();
+      return {
+        done: state.done.slice(),
+        homeAnswers: state.homeAnswers || {},
+        checks: state.checks || {},
+        quizAnswers: state.quizAnswers || {},
+        mockIndex: state.mockIndex || 0,
+        quizAttempts: state.quizAttempts || 0
+      };
     }
 
     async function api(path, options) {
@@ -195,10 +256,7 @@
       var token = authToken();
       var response = await fetch(apiBase + path, {
         method: options.method || 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: 'Bearer ' + token } : {})
-        },
+        headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) },
         body: options.body ? JSON.stringify(options.body) : undefined
       });
       var data = await response.json().catch(function () { return {}; });
@@ -210,17 +268,9 @@
       if (!studentId || !authToken()) return;
       try {
         var data = await api(crmBase + '/training/progress');
-        if (Array.isArray(data.done) && data.done.length) {
-          data.done.forEach(function (step) {
-            if (state.done.indexOf(step) < 0) state.done.push(step);
-          });
-        }
-        if (data.homeStatus && state.homeAnswers) {
-          /* keep local typed answers; server validates on push */
-        }
         nestingCompletedAt = data.nestingCompletedAt || nestingCompletedAt;
-        writeState(product, studentId, state);
-      } catch (error) { /* offline training book still works locally */ }
+        if (data.crmEnabled) crmEnabled = true;
+      } catch (error) { /* offline book still works */ }
     }
 
     async function pushProgress() {
@@ -229,10 +279,9 @@
       try {
         var data = await api(crmBase + '/training/progress', { method: 'POST', body: trainingPayload() });
         nestingCompletedAt = data.nestingCompletedAt || nestingCompletedAt;
+        if (data.crmEnabled) crmEnabled = true;
         return data;
-      } finally {
-        syncing = false;
-      }
+      } finally { syncing = false; }
     }
 
     function scheduleSync() {
@@ -240,149 +289,234 @@
       syncTimer = setTimeout(function () { pushProgress().catch(function () {}); }, 500);
     }
 
-    function save() {
-      writeState(product, studentId, state);
-      scheduleSync();
-    }
+    function save() { writeState(product, studentId, state); scheduleSync(); }
     function complete(id) { if (state.done.indexOf(id) < 0) state.done.push(id); save(); }
     function go(id) { state.step = id; save(); render(); }
 
+    function pathMeter() {
+      var doneCount = REQUIRED_DONE.filter(moduleReady).length;
+      var pct = Math.round((doneCount / REQUIRED_DONE.length) * 100);
+      return '<div class="ob-path"><span>60-minute learning path</span><span><b>' + doneCount + '/' + REQUIRED_DONE.length + '</b> modules · ~' + COURSE_MINS + ' min</span></div>'
+        + '<div class="ob-bar"><i style="width:' + pct + '%"></i></div>';
+    }
+
     function rail() {
       return '<div class="ob-rail">' + STEPS.map(function (step) {
-        var done = state.done.indexOf(step.id) >= 0;
+        var done = moduleReady(step.id) || (step.id === 'nesting' && localNestingReady());
         var open = unlocked(step.id);
         return '<div class="ob-step' + (done ? ' done' : '') + (state.step === step.id ? ' on' : '') + (open ? '' : ' locked') + '" data-step="' + step.id + '">'
-          + '<i class="ti ti-' + (done ? 'circle-check' : (open ? step.icon : 'lock')) + '"></i><span>' + step.label + '</span></div>';
+          + '<i class="ti ti-' + (done ? 'circle-check' : (open ? step.icon : 'lock')) + '"></i><span>' + step.label + '</span>'
+          + (step.mins ? '<em>' + step.mins + ' min</em>' : '<em>untimed</em>') + '</div>';
       }).join('') + '</div>';
     }
 
-    function panelShell(title, lead, body) {
-      return '<div class="ob-panel"><h3>' + title + '</h3><p class="ob-lead">' + lead + '</p>' + body + '</div>';
+    function panelShell(title, mins, lead, body) {
+      return '<div class="ob-panel">' + (mins ? '<span class="ob-mins">~' + mins + ' min</span>' : '') + '<h3>' + title + '</h3><p class="ob-lead">' + lead + '</p>' + body + '</div>';
+    }
+
+    function continueBtn(next, enabled, label) {
+      return '<div class="ob-foot"><button class="ob-btn" data-next="' + next + '"' + (enabled ? '' : ' disabled') + '>' + (label || 'Continue') + '</button></div>';
+    }
+
+    function mcqBlock(id, prompt, options, coach) {
+      var passed = checkPassed(id);
+      var pick = state.checks[id];
+      return '<div class="ob-check"><h5>' + prompt + '</h5>'
+        + options.map(function (opt, i) {
+          var cls = passed && i === CHECK_ANSWERS[id] ? ' right' : (pick === i && i !== CHECK_ANSWERS[id] ? ' wrong' : '');
+          return '<button class="ob-choice' + cls + '" data-mcq="' + id + '" data-pick="' + i + '"' + (passed ? ' disabled' : '') + '>' + esc(opt) + '</button>';
+        }).join('')
+        + '<div class="ob-feedback">' + (passed ? coach : (pick == null ? 'Select an answer to continue.' : 'Not yet. Review the lesson and try again.')) + '</div></div>';
+    }
+
+    function matchBlock(id, prompt, left, right) {
+      var passed = checkPassed(id);
+      var pairs = state.match[id] || {};
+      return '<div class="ob-check"><h5>' + prompt + '</h5><div class="ob-match">'
+        + '<div>' + left.map(function (item) {
+          return '<div class="ob-chip' + (pairs[item.key] ? ' used' : '') + '" data-match="' + id + '" data-side="left" data-key="' + item.key + '">' + esc(item.label) + (pairs[item.key] ? ' → ' + esc((right.find(function (r) { return r.key === pairs[item.key]; }) || {}).label || '') : '') + '</div>';
+        }).join('') + '</div>'
+        + '<div>' + right.map(function (item) {
+          return '<div class="ob-chip" data-match="' + id + '" data-side="right" data-key="' + item.key + '">' + esc(item.label) + '</div>';
+        }).join('') + '</div></div>'
+        + '<div class="ob-foot"><button class="ob-btn" data-match-submit="' + id + '"' + (passed ? ' disabled' : '') + '>' + (passed ? 'Matched' : 'Check matching') + '</button></div>'
+        + '<div class="ob-feedback">' + (passed ? 'Correct pairing.' : 'Match every term, then check.') + '</div></div>';
+    }
+
+    function seqBlock(id, prompt, items) {
+      var passed = checkPassed(id);
+      var order = state.seq[id] || [];
+      return '<div class="ob-check"><h5>' + prompt + '</h5><div class="ob-seq">'
+        + items.map(function (item) {
+          var n = order.indexOf(item.key);
+          return '<button data-seq="' + id + '" data-key="' + item.key + '"' + (passed ? ' disabled' : '') + '>' + (n >= 0 ? (n + 1) + '. ' : '') + esc(item.label) + '</button>';
+        }).join('') + '</div>'
+        + '<div class="ob-feedback">' + (passed ? 'Correct sequence.' : 'Click the steps in the correct order.') + '</div></div>';
     }
 
     function welcomePanel() {
-      return panelShell('Welcome — who we are', 'Before products and policies, understand the company, your role and the promise we make to every client.',
-        '<div class="ob-video"><i class="ti ti-player-play"></i><div><b>Welcome to Kamuk Holdings</b><span>3:00 · culture, purpose and the client promise</span></div></div>'
-        + '<div class="ob-b"><h4>Who we are</h4><p>Kamuk Holdings is a simulated financial services company serving businesses, executives and international clients. In this program, you are not pretending to know banking: you are learning how a professional investigates, communicates, decides and documents in English.</p></div>'
+      return panelShell('Welcome — who we are', 5, 'Before products and policies, understand the company, your role and the promise we make to every client.',
+        '<div class="ob-b"><h4>Who we are</h4><p>Kamuk Holdings is a simulated financial services company serving businesses, executives and international clients. You are learning how a professional investigates, communicates, decides and documents in English.</p></div>'
         + '<div class="ob-b"><h4>What we do</h4><div class="ob-grid">'
         + '<div class="ob-card"><i class="ti ti-user-heart"></i><b>Protect the client</b><p>Keep money, access and private information safe.</p></div>'
-        + '<div class="ob-card"><i class="ti ti-search"></i><b>Investigate</b><p>Use the CRM evidence before explaining or promising.</p></div>'
+        + '<div class="ob-card"><i class="ti ti-search"></i><b>Investigate</b><p>Use CRM evidence before explaining or promising.</p></div>'
         + '<div class="ob-card"><i class="ti ti-route"></i><b>Resolve or route</b><p>Take the safe action you own or escalate with a clear owner.</p></div>'
         + '<div class="ob-card"><i class="ti ti-notes"></i><b>Leave a trail</b><p>Document facts, actions and the timed next step.</p></div></div></div>'
-        + '<div class="ob-b"><h4>Our client promise</h4><p><strong>Clear, calm and accountable.</strong> We do not hide behind policy, guess, over-promise or make the client repeat information already in the CRM.</p></div>'
-        + '<div class="ob-foot"><button class="ob-btn" data-next="service">Continue to service basics</button></div>');
+        + '<div class="ob-b"><h4>Client promise</h4><p><strong>Clear, calm and accountable.</strong> We do not hide behind policy, guess, over-promise or make the client repeat information already in the CRM.</p></div>'
+        + mcqBlock('welcome-mcq', 'Knowledge check: what is the Kamuk Holdings client promise?',
+          ['Clear, calm and accountable service with investigation, a safe action and a timed next step.', 'Fast refunds on every complaint.', 'Transfer every difficult client to a supervisor immediately.'],
+          'Correct. Ownership plus evidence plus a next step.')
+        + continueBtn('service', checkPassed('welcome-mcq')));
     }
 
     function servicePanel() {
-      return panelShell('Service basics — empathy, sympathy and rapport', 'Professional service starts by understanding impact, not by memorizing apologies.',
-        '<div class="ob-b"><h4>Empathy versus sympathy</h4><div class="ob-compare">'
-        + '<div class="ob-empathy"><b>Empathy — use it</b><p>“You have called three times and your suppliers are still unpaid. I understand why this is urgent.”<br><br>It names the client’s specific reality and creates a bridge to action.</p></div>'
-        + '<div class="ob-sympathy"><b>Sympathy — do not stop here</b><p>“I feel so sorry for you. That is terrible.”<br><br>It describes your emotion, but it does not prove that you understood or that you will act.</p></div></div></div>'
-        + '<div class="ob-b"><h4>Build rapport</h4><p>Rapport is professional trust, not friendship. Build it by using the client’s name naturally, showing you read the history, matching the urgency without copying the anger, asking useful questions, and doing exactly what you promised.</p></div>'
-        + '<div class="ob-b"><h4>The first 30 seconds</h4><div class="ob-process">'
-        + '<div><b>1 · Recognize</b><span>Name the impact</span></div><i class="ti ti-chevron-right ob-arrow"></i>'
-        + '<div><b>2 · Own</b><span>Say what you will do now</span></div><i class="ti ti-chevron-right ob-arrow"></i>'
-        + '<div><b>3 · Discover</b><span>One open + one closed question</span></div><i class="ti ti-chevron-right ob-arrow"></i>'
-        + '<div><b>4 · Confirm</b><span>Repeat the agreed next step</span></div></div></div>'
-        + '<div class="ob-b"><h4>Useful English</h4><ul><li>“I can see why that created pressure for your business.”</li><li>“Let me review the previous contact first so you do not have to repeat everything.”</li><li>“What happened after the first payment failed?”</li><li>“Just to confirm, was the amount 18,000 dollars?”</li></ul></div>'
-        + '<div class="ob-foot"><button class="ob-btn" data-next="practice">Practise the skill</button></div>');
+      return panelShell('Service — empathy, rapport and ownership', 8, 'Professional service starts by understanding impact, not by memorizing apologies.',
+        '<div class="ob-compare"><div class="ob-empathy"><b>Empathy — use it</b><p>“You have called three times and your suppliers are still unpaid. I understand why this is urgent.”</p></div><div class="ob-sympathy"><b>Sympathy — do not stop here</b><p>“I feel so sorry for you. That is terrible.”</p></div></div>'
+        + '<div class="ob-b" style="margin-top:14px"><h4>Rapport and ownership</h4><p>Rapport is professional trust. Ownership uses “I”, a concrete action and an observable next step.</p></div>'
+        + mcqBlock('service-scenario', 'Scenario: the client says “This is the third time.” What do you do first?',
+          ['Ask them to explain everything from the beginning.', 'Acknowledge the repeated effort and review previous contacts in the CRM.', 'Transfer immediately because they sound angry.'],
+          'Correct. Remove effort from the client and use the history already available.')
+        + matchBlock('service-match', 'Match each concept to its purpose.',
+          [{ key: 'empathy', label: 'Empathy' }, { key: 'sympathy', label: 'Sympathy' }, { key: 'rapport', label: 'Rapport' }],
+          [{ key: 'impact', label: 'Names the client’s specific impact' }, { key: 'emotion', label: 'Describes your feelings' }, { key: 'trust', label: 'Creates professional trust to work the case' }])
+        + continueBtn('comms', checkPassed('service-scenario') && checkPassed('service-match')));
     }
 
-    function practicePanel() {
-      var games = [
-        { id: 'g1', title: 'Empathy or sympathy?', prompt: 'The client says: “My payroll is blocked and 45 employees are waiting.”', choices: ['“I am so sorry, that sounds awful.”', '“Forty-five employees may miss payroll today. I understand why you need a concrete answer now.”'], answer: 1, why: 'The second response names the real impact and prepares the conversation for action.' },
-        { id: 'g2', title: 'Build rapport', prompt: 'The CRM shows two previous calls. Choose your opening.', choices: ['“Please explain the entire problem from the beginning.”', '“Ms. Rivera, I reviewed your two previous calls before answering, so we can continue from the last commitment.”'], answer: 1, why: 'Rapport grows when you remove effort and demonstrate preparation.' },
-        { id: 'g3', title: 'Own the next step', prompt: 'The client asks: “What are you actually going to do?”', choices: ['“The department will review it as soon as possible.”', '“I will verify the two declined payments now, then call Compliance while you remain on the line.”'], answer: 1, why: 'Use “I”, name the action and make the next step observable.' }
-      ];
-      return panelShell('Practice lab', 'Three short games. Learn from the explanation; this is practice, not the certification.',
-        games.map(function (game) {
-          return '<div class="ob-game" data-game="' + game.id + '"><h5>' + game.title + '</h5><p>' + game.prompt + '</p>'
-            + game.choices.map(function (choice, i) { return '<button class="ob-choice" data-game-pick="' + i + '">' + choice + '</button>'; }).join('')
-            + '<div class="ob-feedback">' + (state.game[game.id] != null ? game.why : '') + '</div></div>';
-        }).join('')
-        + '<div class="ob-foot"><button class="ob-btn" data-next="products"' + (Object.keys(state.game).length === 3 ? '' : ' disabled') + '>Continue to operations and products</button></div>');
+    function commsPanel() {
+      return panelShell('Call control — professional communication', 8, 'A controlled call has a clear sequence. Do not skip investigation to please the client.',
+        '<div class="ob-process"><div><b>1. Acknowledge</b><span>Name the impact</span></div><div><b>2. Investigate</b><span>Open and closed questions</span></div><div><b>3. Act</b><span>Safe action you own</span></div><div><b>4. Next step</b><span>Owner + time</span></div></div>'
+        + '<div class="ob-b"><h4>Question types</h4><ul><li>Open: “What happened after the decline?”</li><li>Closed: “Is the card in your hand now?”</li></ul></div>'
+        + seqBlock('comms-seq', 'Put the call-control sequence in order.',
+          [{ key: 'act', label: 'Take or route a safe action' }, { key: 'acknowledge', label: 'Acknowledge impact' }, { key: 'next', label: 'Confirm a timed next step' }, { key: 'investigate', label: 'Investigate with evidence' }])
+        + continueBtn('products', checkPassed('comms-seq')));
     }
 
     function productsPanel() {
-      var products = [
-        ['Operating Account', 'Daily banking', 'Deposits, supplier payments, payroll and transfers.'],
-        ['Obsidian Corporate Card', 'Business spending', 'Purchases, travel, limits and card controls.'],
-        ['Wire Transfers', 'Domestic and international', 'High-value payments, beneficiaries and compliance review.'],
-        ['Business Financing', 'Growth and working capital', 'Credit facilities, expansion and equipment.'],
-        ['VIP & Concierge', 'Premium service', 'Travel coordination, priority support and executive requests.']
-      ];
-      return panelShell('How we operate and what we offer', 'Now connect the service method to the products the client actually sees.',
-        '<div class="ob-b"><h4>How every request moves</h4><div class="ob-process">'
-        + '<div><b>Receive</b><span>Case enters the queue</span></div><i class="ti ti-chevron-right ob-arrow"></i>'
-        + '<div><b>Verify</b><span>Open the client 360</span></div><i class="ti ti-chevron-right ob-arrow"></i>'
-        + '<div><b>Act</b><span>Resolve or escalate</span></div><i class="ti ti-chevron-right ob-arrow"></i>'
-        + '<div><b>Document</b><span>Note + next step</span></div></div></div>'
-        + '<div class="ob-b"><h4>Product map</h4><div class="ob-grid">'
-        + products.map(function (p) { return '<div class="ob-product"><b>' + p[0] + '</b><small>' + p[1] + '</small><p>' + p[2] + '</p></div>'; }).join('')
-        + '</div></div>'
-        + '<div class="ob-b"><h4>Important</h4><p>You do not need every rule yet. First recognize the product, explain its purpose in simple English, and know where its information lives in the CRM. Detailed product training comes later, one topic at a time.</p></div>'
-        + '<div class="ob-foot"><button class="ob-btn" data-next="quiz">Take the foundation certification</button></div>');
+      return panelShell('Products and client needs', 10, 'Match the client need to the right product before you promise anything.',
+        '<div class="ob-grid">'
+        + '<div class="ob-product"><b>Operating Account</b><small>Daily money movement</small><p>Deposits, supplier payments, payroll and transfers.</p></div>'
+        + '<div class="ob-product"><b>Obsidian Corporate Card</b><small>Travel and spend</small><p>Hotel, dining and travel. Needs travel notices and limits.</p></div>'
+        + '<div class="ob-product"><b>Expansion Financing</b><small>Growth capital</small><p>Loans subject to underwriting. Never promise approval.</p></div>'
+        + '<div class="ob-product"><b>Concierge / VIP</b><small>Aviation and ground</small><p>Activate verified itineraries; do not promise unconfirmed seats.</p></div></div>'
+        + matchBlock('products-match', 'Match the client need to the product.',
+          [{ key: 'payroll', label: 'Pay 45 employees today' }, { key: 'hotel', label: 'Hotel declined the card in Miami' }, { key: 'expansion', label: 'Need $1.2M to open a second warehouse' }],
+          [{ key: 'operating', label: 'Operating Account' }, { key: 'obsidian', label: 'Obsidian Corporate Card' }, { key: 'loan', label: 'Expansion Financing' }])
+        + continueBtn('compliance', checkPassed('products-match')));
+    }
+
+    function compliancePanel() {
+      var passedTf = checkPassed('compliance-tf');
+      var passedMulti = checkPassed('compliance-multi');
+      var selected = state.multi['compliance-multi'] || [];
+      return panelShell('CRM evidence, security and compliance', 10, 'The CRM is the source of truth. Card data, identity and AML rules protect the client and the bank.',
+        '<div class="ob-b"><h4>Security rules</h4><ul><li>Verify identity before disclosing account or card data.</li><li>You may read last 6 digits only — never the full number or the PIN.</li><li>Do not tip off a client during an AML or SAR review.</li></ul></div>'
+        + '<div class="ob-check"><h5>True or false: after the client asks, you may read the full card number.</h5>'
+        + '<button class="ob-choice' + (passedTf ? ' right' : '') + '" data-tf="compliance-tf" data-val="true"' + (passedTf ? ' disabled' : '') + '>True</button>'
+        + '<button class="ob-choice' + (passedTf ? ' right' : '') + '" data-tf="compliance-tf" data-val="false"' + (passedTf ? ' disabled' : '') + '>False</button>'
+        + '<div class="ob-feedback">' + (passedTf ? 'False. Last 6 digits only, and only after verification.' : 'Choose true or false.') + '</div></div>'
+        + '<div class="ob-check"><h5>Select every safe control. Then submit.</h5>'
+        + [['last6', 'Confirm last 6 digits after verification'], ['full-pan', 'Read the full card number if the client insists'], ['never-pin', 'Never share or regenerate a PIN on an unverified call'], ['sar-hint', 'Tell the client a SAR is being filed']].map(function (item) {
+          var on = selected.indexOf(item[0]) >= 0;
+          return '<label class="ob-opt"><input type="checkbox" data-multi="compliance-multi" value="' + item[0] + '"' + (on ? ' checked' : '') + (passedMulti ? ' disabled' : '') + '> ' + esc(item[1]) + '</label>';
+        }).join('')
+        + '<div class="ob-foot"><button class="ob-btn" data-multi-submit="compliance-multi"' + (passedMulti ? ' disabled' : '') + '>Check</button></div>'
+        + '<div class="ob-feedback">' + (passedMulti ? 'Correct. Last 6 and never share the PIN on an unverified call.' : 'Select only the safe controls.') + '</div></div>'
+        + continueBtn('resolution', passedTf && passedMulti));
+    }
+
+    function resolutionPanel() {
+      return panelShell('Resolution, escalation, documentation and email', 8, 'Every completed touch needs a client email and a brief internal note. Dispositions such as AA, PSA or queue hand the case to another agent.',
+        '<div class="ob-b"><h4>Email standard</h4><p>Natural greeting, one connector, the action taken, a named owner and a timed next step. Paste is disabled.</p></div>'
+        + '<div class="ob-b"><h4>Note standard</h4><p>Brief, factual, auditable: evidence, action, next step.</p></div>'
+        + mcqBlock('resolution-email', 'Which client email meets the standard?',
+          ['Hello, I reviewed the duplicate charge because the timestamps match. I opened the dispute and will call you today before 4:45 p.m.', 'Dear client, refund refund refund dispute merchant timeline authorization.', 'OK I will see what I can do later.'],
+          'Correct. Natural opening, connector, action and a timed next step.')
+        + continueBtn('quiz', checkPassed('resolution-email')));
+    }
+
+    function ensureQuizOrder() {
+      if (state.quizOrder && state.quizOrder.length >= 10) return;
+      var ids = CERT_BANK.map(function (q) { return q.id; });
+      for (var i = ids.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = ids[i]; ids[i] = ids[j]; ids[j] = tmp;
+      }
+      state.quizOrder = ids.slice(0, 10);
+      save();
     }
 
     function quizPanel() {
-      var certified = state.done.indexOf('quiz') >= 0;
-      return panelShell('Quick certification — foundation', 'Six questions. Score at least 5/6 to unlock the guided CRM.',
-        (certified ? '<div class="ob-cert"><i class="ti ti-rosette-discount-check"></i><div><b>Foundation certified</b><span>Culture, service and product basics</span></div></div>' : '')
-        + QUIZ.questions.map(function (q, i) {
-          return '<div class="ob-q" data-q="' + i + '"><h5>' + (i + 1) + '. ' + q.q + '</h5>'
-            + q.options.map(function (option, oi) { return '<label class="ob-opt' + (oi === q.answer ? ' key' : '') + '" data-pick="' + oi + '"><input type="radio" name="fq' + i + '"><span>' + option + '</span></label>'; }).join('')
-            + '<div class="ob-why"><strong>Why:</strong> ' + q.why + '</div></div>';
+      if (!REQUIRED_DONE.slice(0, 6).every(function (id) { return id === 'quiz' || id === 'mock' || moduleReady(id); })) {
+        return '<div class="ob-panel"><div class="ob-locked"><i class="ti ti-lock"></i><p>Finish the six learning modules before the certification.</p></div></div>';
+      }
+      ensureQuizOrder();
+      var passed = quizPassed();
+      return panelShell('Final certification', 4, 'Answer 10 questions. You need 80% to continue. Failed attempts show coaching, not a full answer key, and you may retry.',
+        (passed ? '<div class="ob-cert"><i class="ti ti-rosette-discount-check"></i><div><b>Certified ' + quizScore() + '%</b><span>Guided CRM is unlocked</span></div></div>' : '')
+        + state.quizOrder.map(function (id, index) {
+          var q = CERT_BANK.find(function (item) { return item.id === id; });
+          var pick = state.quizAnswers[id];
+          var show = passed || pick != null;
+          return '<div class="ob-q' + (show && pick === q.answer ? ' right' : (show && pick != null ? ' wrong' : '')) + '" data-qid="' + id + '"><h5>' + (index + 1) + '. ' + esc(q.q) + '</h5>'
+            + q.options.map(function (opt, i) {
+              return '<label class="ob-opt' + (show && i === q.answer && passed ? ' right' : '') + '"><input type="radio" name="' + id + '" data-quiz="' + id + '" data-pick="' + i + '"' + (pick === i ? ' checked' : '') + (passed ? ' disabled' : '') + '> ' + esc(opt) + '</label>';
+            }).join('')
+            + (show ? '<div class="ob-why">' + esc(q.why) + '</div>' : '') + '</div>';
         }).join('')
-        + '<div class="ob-foot"><button class="ob-btn" id="ob-submit">Submit answers</button>'
-        + (certified ? '<button class="ob-btn" data-next="mock">Enter the guided CRM</button>' : '')
-        + '<span class="ob-msg" id="ob-score"></span></div>');
+        + '<div class="ob-foot"><button class="ob-btn" id="ob-submit"' + (passed ? ' disabled' : '') + '>Submit certification</button>'
+        + (passed ? '<button class="ob-btn" data-next="mock">Continue to Guided CRM</button>' : '')
+        + '<span class="ob-msg" id="ob-score">' + (passed ? quizScore() + '% · passed' : '80% required · attempt ' + ((state.quizAttempts || 0) + 1)) + '</span></div>');
+    }
+
+    function cls(target, name) {
+      var task = MOCK_TASKS[Math.min(state.mockIndex || 0, MOCK_TASKS.length - 1)];
+      return name + (task && task.target === target ? ' gm-target' : '');
     }
 
     function crmView(panel) {
-      if (panel === 'complete') return '<div class="gm-complete"><i class="ti ti-rosette-discount-check"></i><h4>CRM navigation certified</h4><p>You completed the guided tour without entering the production desk.</p></div>';
-      if (panel === 'services') return '<div class="gm-product" data-gm="product-operating"><small>Daily banking</small><b>Operating Account · *4821</b><span>Active · Balance $148,300</span></div><div class="gm-product"><small>Business spending</small><b>Obsidian Corporate Card · *9204</b><span>Active · No preset limit</span></div><div class="gm-product"><small>Payments</small><b>Wire Transfer Service</b><span>Active · International enabled</span></div>';
-      if (panel === 'account') return '<div class="gm-metrics"><div class="gm-metric"><small>Balance</small><b>$148,300</b></div><div class="gm-metric"><small>Available</small><b>$0</b></div><div class="gm-metric"><small>Status</small><b class="gm-red">Restricted</b></div></div><div class="ob-b" style="margin-top:12px"><h4>What this product does</h4><p>Receives deposits and controls supplier payments, payroll, standing orders and transfers.</p></div>';
-      if (panel === 'statements') return '<div class="gm-row" data-gm="tx-declined"><span>Supplier · ConstruCR<br><small>Aug 14</small></span><b class="gm-red">DECLINED</b></div><div class="gm-row"><span>Wire · Banco Nacional<br><small>Aug 12</small></span><b>−$22,400</b></div><div class="gm-row"><span>Payroll · August cycle<br><small>Aug 10</small></span><b>−$18,000</b></div>';
-      if (panel === 'transaction') return '<div class="gm-product"><small>Transaction detail</small><b>Supplier · ConstruCR</b><span>Aug 14 · $12,800 · Declined</span></div><div class="ob-b" style="margin-top:12px"><h4>System reason</h4><p>Operating account restriction. The payment never left the account.</p></div>';
-      if (panel === 'cards') return '<div class="gm-product" data-gm="card-status"><small>Visa Infinite</small><b>Obsidian Corporate · *9204</b><span class="gm-green">ACTIVE</span></div>';
-      if (panel === 'card-detail') return '<div class="gm-metrics"><div class="gm-metric"><small>Status</small><b class="gm-green">Active</b></div><div class="gm-metric"><small>Travel notice</small><b>None</b></div><div class="gm-metric"><small>Last use</small><b>Aug 12</b></div></div><div class="ob-b" style="margin-top:12px"><h4>Important distinction</h4><p>The account is restricted, but the corporate card is active. Never assume one product status applies to every product.</p></div>';
-      if (panel === 'contacts') return '<div class="gm-contact" data-gm="contact-latest"><span>Today · 09:10<br><small>Phone · Corporate Desk</small></span><b>Open</b></div><div class="gm-contact"><span>Yesterday · 16:42<br><small>Email · Operations</small></span><b>Sent</b></div>';
-      if (panel === 'contact-detail') return '<div class="gm-product"><small>Latest contact · Today 09:10</small><b>Client called about declined supplier payments</b><span>Agent promised an Operations callback before 11:00. No callback recorded.</span></div>';
-      if (panel === 'note') return '<textarea class="gm-note" data-gm="note-box">Reviewed previous contacts: callback promised before 11:00 was not completed. Operating Account restricted; corporate card remains active.</textarea><button class="gm-save" data-gm="save-note">Save internal note</button>';
-      return '<div class="gm-metrics"><div class="gm-metric"><small>Balance</small><b>$148,300</b></div><div class="gm-metric"><small>Credit limit</small><b>$500,000</b></div><div class="gm-metric"><small>Relationship</small><b>A+</b></div></div><div class="ob-b" style="margin-top:12px"><h4>Active flag</h4><p>Operating Account restricted · two supplier payments declined.</p></div>';
+      if (panel === 'complete') return '<div class="gm-complete"><i class="ti ti-circle-check"></i><h4>Guided CRM complete</h4><p>You located evidence, products and history, then documented the next step.</p></div>';
+      if (panel === 'services') return '<div class="' + cls('product-operating', 'gm-product') + '" data-gm="product-operating"><small>Operating Account</small><b>Operating Account · Rivera Logistics</b><span>Payroll and supplier payments</span></div><div class="gm-product"><small>Card</small><b>Obsidian Corporate Card</b><span>Active</span></div>';
+      if (panel === 'account') return '<div class="gm-metrics"><div class="gm-metric"><small>Available</small><b>$42,110</b></div><div class="gm-metric"><small>Status</small><b>Restricted</b></div></div>';
+      if (panel === 'statements') return '<div class="' + cls('tx-declined', 'gm-row') + '" data-gm="tx-declined"><span>Supplier ACH · $18,400</span><span class="gm-red">Declined</span></div><div class="gm-row"><span>Payroll batch</span><span class="gm-green">Posted</span></div>';
+      if (panel === 'transaction') return '<p class="gm-red">Declined: insufficient available balance after restriction.</p>';
+      if (panel === 'cards') return '<div class="gm-product"><b>Obsidian Corporate · 4821</b><span class="' + cls('card-status', '') + '" data-gm="card-status">Status: Active</span></div>';
+      if (panel === 'card-detail') return '<p>Card is active. Last 6 remain masked until identity is verified on the live desk.</p>';
+      if (panel === 'contacts') return '<div class="' + cls('contact-latest', 'gm-contact') + '" data-gm="contact-latest"><span>Today 09:12 · promised callback</span><span>Open</span></div><div class="gm-contact"><span>Yesterday · restriction notice</span><span>Closed</span></div>';
+      if (panel === 'contact-detail') return '<p>Previous agent promised a callback before 11:00 a.m. and did not document a next owner.</p>';
+      if (panel === 'note') return '<textarea class="' + cls('note-box', 'gm-note') + '" data-gm="note-box" readonly>Restriction on operating account blocked supplier ACH $18,400. Card remains active. Next step: Operations restore before 11:00 a.m. and confirm with client.</textarea><button class="' + cls('save-note', 'gm-save') + '" data-gm="save-note">Save note</button>';
+      return '<div class="gm-metrics"><div class="gm-metric"><small>Priority</small><b>P1</b></div><div class="gm-metric"><small>Contacts</small><b>3</b></div><div class="gm-metric"><small>SLA</small><b>25 min</b></div></div>';
     }
 
     function guidedCrm() {
       var index = Math.min(state.mockIndex || 0, MOCK_TASKS.length - 1);
       var task = MOCK_TASKS[index];
-      var activePanel = index === 0 ? 'overview' : (state.mockPanel || 'overview');
-      var target = task.target;
-      function cls(id, base) { return base + (target === id ? ' gm-target' : ''); }
+      var activePanel = state.mockPanel || 'overview';
+      if (state.done.indexOf('mock') >= 0 && (state.mockIndex || 0) >= MOCK_TASKS.length - 1) activePanel = 'complete';
       return '<div class="gm"><div class="gm-guide"><div class="gm-n">' + (index + 1) + '</div><div><b>' + task.prompt + '</b><p>Hint: ' + task.tip + '</p></div></div>'
         + '<div class="gm-shell"><aside class="gm-side"><div class="gm-brand">KAMUK HOLDINGS · TRAINING MOCK</div><div class="gm-label">Case queue</div>'
         + '<div class="' + cls('client-rivera', 'gm-client') + '" data-gm="client-rivera"><b>Marta Rivera</b><span>Operating account restricted</span></div>'
-        + '<div class="gm-client"><b>Daniel Torres</b><span>Card declined abroad</span></div><div class="gm-client"><b>Elena Chen</b><span>VIP travel request</span></div></aside>'
-        + '<main class="gm-main"><div class="gm-top"><b>Marta Rivera · Rivera Logistics S.A.</b><span>Corporate · Mid-market · Client for 6 years</span></div>'
+        + '<div class="gm-client"><b>Daniel Torres</b><span>Card declined abroad</span></div></aside>'
+        + '<main class="gm-main"><div class="gm-top"><b>Marta Rivera · Rivera Logistics S.A.</b><span>Corporate · Mid-market</span></div>'
         + '<nav class="gm-tabs"><button class="gm-tab" data-gm="tab-overview">Overview</button><button class="' + cls('tab-statements', 'gm-tab') + '" data-gm="tab-statements">Statements</button><button class="' + cls('tab-services', 'gm-tab') + '" data-gm="tab-services">Services</button><button class="' + cls('tab-cards', 'gm-tab') + '" data-gm="tab-cards">Card transactions</button><button class="' + cls('tab-contacts', 'gm-tab') + '" data-gm="tab-contacts">Previous contacts</button><button class="' + cls('tab-note', 'gm-tab') + '" data-gm="tab-note">Internal note</button></nav>'
         + '<div class="gm-view">' + crmView(activePanel) + '</div></main></div></div>';
     }
 
     function mockPanel() {
-      return panelShell('Guided CRM — safe training environment', 'This is not the production CRM. The system asks one question, highlights the correct control in yellow and opens the relevant display after you click it.',
+      if (!quizPassed()) return '<div class="ob-panel"><div class="ob-locked"><i class="ti ti-lock"></i><p>Pass the certification at 80% before the guided CRM.</p></div></div>';
+      return panelShell('Guided CRM — safe training environment', 7, 'This is not the production CRM. Click the highlighted control. The tour has 12 evidence hot-spots.',
         (state.done.indexOf('mock') >= 0 ? '<div class="ob-cert"><i class="ti ti-rosette-discount-check"></i><div><b>CRM navigation certified</b><span>Safe guided tour completed</span></div></div>' : '')
-        + guidedCrm());
+        + guidedCrm()
+        + (state.done.indexOf('mock') >= 0 ? continueBtn('nesting', true, 'Continue to nesting cases') : ''));
     }
 
     function nestingPanel() {
-      if (!unlocked('nesting')) return '<div class="ob-panel"><div class="ob-locked"><i class="ti ti-lock"></i><p>Nesting unlocks only after the foundation certification and the guided CRM tour.</p></div></div>';
-      var completed = HOME_CASES.filter(function (item) {
-        return homeAnswerStatus(item, state.homeAnswers[item.id] || '').ready;
-      }).length;
+      if (!courseReady() && !crmEnabled) return '<div class="ob-panel"><div class="ob-locked"><i class="ti ti-lock"></i><p>Nesting unlocks after the 60-minute path, certification and guided CRM.</p></div></div>';
+      var completed = HOME_CASES.filter(function (item) { return homeAnswerStatus(item, state.homeAnswers[item.id] || '').ready; }).length;
       var ready = deskUnlocked();
-      return panelShell('Nesting — take live cases', 'Complete all 10 home cases after certification. Your Training Book session opens the desk automatically — no PIN.',
-        '<div class="ob-cert"><i class="ti ti-circle-check"></i><div><b>' + (ready ? 'Nesting unlocked' : 'Finish the 10 home cases') + '</b><span>' + (ready ? 'Portal session certified for the weekly case floor' : completed + '/10 structured responses ready') + '</span></div></div>'
-        + '<div class="ob-foot"><button class="ob-btn" id="ob-launch"' + (ready ? '' : ' disabled') + '><i class="ti ti-building-bank"></i> Open the Holdings desk</button><span class="ob-msg">' + (ready ? 'Opens in a new tab with your Training Book session.' : 'Desk stays locked until certification, guided CRM and all 10 home cases are complete.') + '</span></div>'
-        + '<div class="ob-home-head"><h4>Home practice · 10 written cases</h4><p>Write your own 80–180 word response. Use the facts naturally: do not write a vocabulary list. There are no model answers on the student screen.</p></div>'
+      return panelShell('Nesting — 10 written cases, untimed', 0, 'No time limit. Complete all 10 structured responses. Open the Holdings desk to work the cases in the CRM.',
+        '<div class="ob-cert"><i class="ti ti-circle-check"></i><div><b>' + (ready ? 'Holdings desk ready' : 'Write all 10 cases') + '</b><span>' + (ready ? 'Open the CRM to document the 10 nesting cases' : completed + '/10 structured responses ready') + '</span></div></div>'
+        + '<div class="ob-foot"><button class="ob-btn" id="ob-launch"' + (ready ? '' : ' disabled') + '><i class="ti ti-building-bank"></i> Open the Holdings desk</button><span class="ob-msg">' + (ready ? 'Opens in a new tab with your Training Book session.' : 'Desk stays locked until all 10 cases meet the language structure.') + '</span></div>'
+        + '<div class="ob-home-head"><h4>Home practice · 10 written cases</h4><p>Write your own 80–180 word response. Use the facts naturally. There are no model answers on the student screen.</p></div>'
         + '<div class="ob-home-progress">' + completed + '/10 responses meet the language structure</div>'
         + HOME_CASES.map(function (item, index) {
           var answer = state.homeAnswers[item.id] || '';
@@ -417,51 +551,37 @@
       if (!familyUsed) missing.push('one word-family form');
       if (!phrasalUsed) missing.push('the phrasal verb');
       if (vocabCount < 2) missing.push('two case terms');
-      return { ready: ready, words: words, message: ready ? 'Structure complete · ' + words + ' words · now read it aloud and make it sound natural.' : 'Still needed: ' + missing.join(' · ') };
+      return { ready: ready, words: words, message: ready ? 'Structure complete · ' + words + ' words.' : 'Still needed: ' + missing.join(' · ') };
     }
 
     function panel() {
       if (state.step === 'welcome') return welcomePanel();
       if (state.step === 'service') return servicePanel();
-      if (state.step === 'practice') return practicePanel();
+      if (state.step === 'comms') return commsPanel();
       if (state.step === 'products') return productsPanel();
+      if (state.step === 'compliance') return compliancePanel();
+      if (state.step === 'resolution') return resolutionPanel();
       if (state.step === 'quiz') return quizPanel();
       if (state.step === 'mock') return mockPanel();
       return nestingPanel();
     }
 
     function render() {
-      root.innerHTML = '<div class="ob"><div class="ob-head"><small>' + PROGRAM.label + '</small><h2>' + PROGRAM.title + '</h2><p>' + PROGRAM.intro + '</p></div>' + rail() + panel() + '</div>';
-      if (accessRoot) accessRoot.style.display = 'none';
-      if (state.step === 'mock') {
-        var task = MOCK_TASKS[Math.min(state.mockIndex || 0, MOCK_TASKS.length - 1)];
-        var target = root.querySelector('[data-gm="' + task.target + '"]');
-        if (target) target.classList.add('gm-target');
-      }
+      root.innerHTML = '<div class="ob"><div class="ob-head"><small>' + PROGRAM.label + '</small><h2>' + PROGRAM.title + '</h2><p>' + PROGRAM.intro + '</p>' + pathMeter() + '</div>' + rail() + panel() + '</div>';
     }
 
-    function gradeQuiz() {
-      var correct = 0;
-      QUIZ.questions.forEach(function (q, i) {
-        var card = root.querySelector('[data-q="' + i + '"]');
-        var pick = quizPicks[i];
-        card.classList.remove('right', 'wrong');
-        card.querySelectorAll('.ob-opt').forEach(function (o) { o.classList.remove('picked'); });
-        if (pick == null) return;
-        card.querySelector('[data-pick="' + pick + '"]').classList.add('picked');
-        card.classList.add(pick === q.answer ? 'right' : 'wrong');
-        if (pick === q.answer) correct++;
-      });
-      var msg = root.querySelector('#ob-score');
-      if (correct >= QUIZ.pass) {
-        complete('quiz');
-        msg.className = 'ob-msg ok';
-        msg.textContent = correct + '/6 — foundation certified. The guided CRM is unlocked.';
-        setTimeout(function () { render(); }, 700);
+    function markCheck(id, value) {
+      var ok = sameAnswer(CHECK_ANSWERS[id], value);
+      if (ok) {
+        state.checks[id] = value;
+        var moduleId = Object.keys(CHECK_KEYS).find(function (key) { return CHECK_KEYS[key].indexOf(id) >= 0; });
+        if (moduleId && CHECK_KEYS[moduleId].every(checkPassed)) complete(moduleId);
       } else {
-        msg.className = 'ob-msg err';
-        msg.textContent = correct + '/6 — review the explanations and try again.';
+        delete state.checks[id];
+        if (state.seq[id]) state.seq[id] = [];
       }
+      save();
+      render();
     }
 
     root.addEventListener('click', function (event) {
@@ -471,49 +591,81 @@
         return;
       }
       var next = event.target.closest('[data-next]');
-      if (next) { complete(state.step); go(next.dataset.next); return; }
-      var choice = event.target.closest('[data-game-pick]');
-      if (choice) {
-        var game = choice.closest('.ob-game');
-        var id = game.dataset.game;
-        var answers = { g1: 1, g2: 1, g3: 1 };
-        game.querySelectorAll('.ob-choice').forEach(function (b) { b.classList.remove('right', 'wrong'); });
-        choice.classList.add(Number(choice.dataset.gamePick) === answers[id] ? 'right' : 'wrong');
-        state.game[id] = Number(choice.dataset.gamePick);
-        save();
-        var feedback = game.querySelector('.ob-feedback');
-        var why = {
-          g1: 'Empathy names the real impact and leads to action.',
-          g2: 'Rapport grows when you remove effort and demonstrate preparation.',
-          g3: 'Ownership uses “I”, a concrete action and an observable next step.'
-        };
-        feedback.textContent = why[id];
-        var continueBtn = root.querySelector('[data-next="products"]');
-        if (continueBtn && Object.keys(state.game).length === 3) continueBtn.disabled = false;
+      if (next && !next.disabled) {
+        complete(state.step);
+        go(next.dataset.next);
         return;
       }
-      if (event.target.closest('#ob-submit')) { gradeQuiz(); return; }
+      var mcq = event.target.closest('[data-mcq]');
+      if (mcq) {
+        markCheck(mcq.dataset.mcq, Number(mcq.dataset.pick));
+        return;
+      }
+      var tf = event.target.closest('[data-tf]');
+      if (tf) {
+        markCheck(tf.dataset.tf, tf.dataset.val === 'true');
+        return;
+      }
+      var matchEl = event.target.closest('[data-match]');
+      if (matchEl && matchEl.dataset.side) {
+        var id = matchEl.dataset.match;
+        matchPick[id] = matchPick[id] || {};
+        if (matchEl.dataset.side === 'left') matchPick[id].left = matchEl.dataset.key;
+        if (matchEl.dataset.side === 'right') matchPick[id].right = matchEl.dataset.key;
+        if (matchPick[id].left && matchPick[id].right) {
+          state.match[id] = state.match[id] || {};
+          state.match[id][matchPick[id].left] = matchPick[id].right;
+          matchPick[id] = {};
+          save();
+          render();
+        }
+        return;
+      }
+      var matchSubmit = event.target.closest('[data-match-submit]');
+      if (matchSubmit) {
+        markCheck(matchSubmit.dataset.matchSubmit, state.match[matchSubmit.dataset.matchSubmit] || {});
+        return;
+      }
+      var seqBtn = event.target.closest('[data-seq]');
+      if (seqBtn) {
+        var sid = seqBtn.dataset.seq;
+        state.seq[sid] = state.seq[sid] || [];
+        if (state.seq[sid].indexOf(seqBtn.dataset.key) < 0) state.seq[sid].push(seqBtn.dataset.key);
+        var expected = CHECK_ANSWERS[sid];
+        if (state.seq[sid].length === expected.length) markCheck(sid, state.seq[sid]);
+        else { save(); render(); }
+        return;
+      }
+      var multiSubmit = event.target.closest('[data-multi-submit]');
+      if (multiSubmit) {
+        var mid = multiSubmit.dataset.multiSubmit;
+        var picked = Array.prototype.map.call(root.querySelectorAll('[data-multi="' + mid + '"]:checked'), function (el) { return el.value; });
+        state.multi[mid] = picked;
+        markCheck(mid, picked.slice().sort());
+        return;
+      }
+      if (event.target.closest('#ob-submit')) {
+        state.quizAttempts = (state.quizAttempts || 0) + 1;
+        state.quizScore = quizScore();
+        if (quizPassed()) complete('quiz');
+        save();
+        render();
+        return;
+      }
       if (event.target.closest('#ob-launch')) {
         if (!deskUnlocked()) return;
         pushProgress().then(function (data) {
           if (data && data.nestingCompletedAt) nestingCompletedAt = data.nestingCompletedAt;
-          if (!deskUnlocked()) {
-            render();
-            return;
-          }
-          window.open(launchUrl + (launchUrl.indexOf('?') >= 0 ? '&' : '?') + 'product=' + encodeURIComponent(product), '_blank', 'noopener');
+          if (data && data.crmEnabled) crmEnabled = true;
+          if (deskUnlocked()) window.open(launchUrl + (launchUrl.indexOf('?') >= 0 ? '&' : '?') + 'product=' + encodeURIComponent(product), '_blank', 'noopener');
+          else render();
         }).catch(function () {
-          if (localNestingReady()) {
-            window.open(launchUrl + (launchUrl.indexOf('?') >= 0 ? '&' : '?') + 'product=' + encodeURIComponent(product), '_blank', 'noopener');
-          }
+          if (deskUnlocked()) window.open(launchUrl + (launchUrl.indexOf('?') >= 0 ? '&' : '?') + 'product=' + encodeURIComponent(product), '_blank', 'noopener');
         });
         return;
       }
       var homeTop = event.target.closest('.ob-home-top');
-      if (homeTop) {
-        homeTop.parentElement.classList.toggle('open');
-        return;
-      }
+      if (homeTop) { homeTop.parentElement.classList.toggle('open'); return; }
       var crmControl = event.target.closest('[data-gm]');
       if (crmControl && state.step === 'mock') {
         var index = state.mockIndex || 0;
@@ -529,19 +681,18 @@
           state.mockIndex = MOCK_TASKS.length - 1;
           complete('mock');
           state.mockPanel = 'complete';
-          save();
-          render();
-          setTimeout(function () { complete('mock'); go('nesting'); }, 1200);
-        } else {
-          save();
-          render();
         }
+        save();
+        render();
       }
     });
 
     root.addEventListener('change', function (event) {
-      var option = event.target.closest('.ob-opt');
-      if (option) quizPicks[Number(option.closest('.ob-q').dataset.q)] = Number(option.dataset.pick);
+      var quiz = event.target.closest('[data-quiz]');
+      if (quiz) {
+        state.quizAnswers[quiz.dataset.quiz] = Number(quiz.dataset.pick);
+        save();
+      }
     });
 
     root.addEventListener('input', function (event) {
@@ -585,5 +736,5 @@
     });
   }
 
-  window.SimulationOnboarding = { mount: mount, quiz: QUIZ, mockTasks: MOCK_TASKS };
+  window.SimulationOnboarding = { mount: mount, quiz: CERT_BANK, mockTasks: MOCK_TASKS };
 })();

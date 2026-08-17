@@ -1331,6 +1331,8 @@ function applyServerStudentFlags(d){
   else if(d.companionEnabled == null) CURRENT_STUDENT.companionEnabled = true;
   if(typeof d.aliceEnabled !== 'boolean' && d.aliceEnabled == null) CURRENT_STUDENT.aliceEnabled = true;
   if(typeof d.jillEnabled !== 'boolean' && d.jillEnabled == null) CURRENT_STUDENT.jillEnabled = false;
+  if(typeof d.simulationEnabled === 'boolean') CURRENT_STUDENT.simulationEnabled = d.simulationEnabled;
+  else if(d.simulationEnabled == null) CURRENT_STUDENT.simulationEnabled = true;
   window._currentStudent = CURRENT_STUDENT;
   window._portalStudent = CURRENT_STUDENT;
 }
@@ -1574,7 +1576,8 @@ function mountKamukSimulation(){
   SimulationOnboarding.mount(onboardingRoot, {
     product:'kamuk',
     studentId: studentId,
-    launchUrl:'kamuk-holdings-crm.html'
+    launchUrl:'kamuk-holdings-crm.html',
+    crmEnabled: !CURRENT_STUDENT || CURRENT_STUDENT.simulationEnabled !== false
   });
 }
 // ── TYPING TEST — WPM / Accuracy / Coordination ──────────
@@ -2712,7 +2715,9 @@ function syncAliceNavLabel(s){
   if(!nav) return;
   var compOnly = studentCompanionOn(s) && !studentAliceOn(s);
   nav.classList.toggle('companion-nav', !!compOnly);
-  if(compOnly){
+  if(s && s.aliceDisplayName){
+    nav.innerHTML = '<i class="ti ti-messages"></i>'+aliceEscapeHtml(aliceDisplayName(s));
+  } else if(compOnly){
     nav.innerHTML = '<i class="ti ti-messages"></i>Companion';
   } else {
     nav.innerHTML = '<i class="ti ti-robot"></i>Alice';
@@ -4857,6 +4862,7 @@ function getAliceStudentPayload(){
       sessionsCompleted: (s.kpiTracker || []).length,
       companionEnabled: !!s.companionEnabled,
       companionConfig: s.companionConfig || null,
+      aliceDisplayName: aliceDisplayName(s),
       trainingBook: (s.trainingBook || []).map(function(ex){
         return { title: ex.title, kpi: ex.kpi, studentTask: ex.studentTask, freq: ex.freq };
       }),
@@ -4881,6 +4887,7 @@ function getAliceStudentPayload(){
     kpiFile: s.kpiFile || null,
     companionEnabled: !!s.companionEnabled,
     companionConfig: s.companionConfig || null,
+    aliceDisplayName: aliceDisplayName(s),
     kpiScale: s.kpiScale || (s.kpiFile && s.kpiFile.scale) || null,
     info: s.info,
     aiProfile: (typeof AiProfile !== 'undefined') ? AiProfile.getAiProfile(s) : (s.aiProfile || {})
@@ -5041,7 +5048,7 @@ function aliceApplyCompanionAmbient(){
   if(!aliceCompanionUiActive()) return;
   var mood = aliceResolveAmbientMood();
   _aliceState.ambientMood = mood;
-  var amb = ALICE_COMPANION_AMBIENTS[mood] || ALICE_COMPANION_AMBIENTS.default;
+  var amb = aliceStudentPalette() || ALICE_COMPANION_AMBIENTS[mood] || ALICE_COMPANION_AMBIENTS.default;
   var card = document.getElementById('alice-companion-card');
   if(!card) return;
   card.style.background = amb.cardBg;
@@ -5050,11 +5057,93 @@ function aliceApplyCompanionAmbient(){
   card.setAttribute('data-ambient', mood);
 }
 
+/** Paleta Alice por estudiante — se activa con data.aliceTheme en kamuk_students. */
+var ALICE_STUDENT_PALETTES = {
+  redblack: {
+    cardBg: 'linear-gradient(160deg,#000000 0%,#170206 45%,#3d0a10 100%)',
+    cardShadow: '0 8px 40px rgba(220,38,38,0.42), 0 0 44px rgba(0,0,0,0.6)',
+    cardBorder: 'rgba(239,68,68,0.55)',
+    studioLabel: '#FF7A7A',
+    title: '#EF4444',
+    titleShadow: 'rgba(239,68,68,0.7)',
+    accent: '#F87171',
+    accentLight: '#FCA5A5',
+    rgb: '239,68,68',
+    btnGrad: 'linear-gradient(135deg,#450A0A,#B91C1C,#EF4444)',
+    btnShadow: '0 4px 20px rgba(239,68,68,0.5)',
+    badgeBg: 'rgba(239,68,68,0.14)',
+    msgBg: 'rgba(239,68,68,0.16)'
+  },
+  pink: {
+    cardBg: 'linear-gradient(160deg,#2a0618 0%,#4a0f2e 45%,#9d174d 100%)',
+    cardShadow: '0 8px 40px rgba(236,72,153,0.45), 0 0 44px rgba(190,24,93,0.25)',
+    cardBorder: 'rgba(244,114,182,0.55)',
+    studioLabel: '#F9A8D4',
+    title: '#F472B6',
+    titleShadow: 'rgba(244,114,182,0.75)',
+    accent: '#F9A8D4',
+    accentLight: '#FBCFE8',
+    rgb: '244,114,182',
+    btnGrad: 'linear-gradient(135deg,#9D174D,#DB2777,#F472B6)',
+    btnShadow: '0 4px 20px rgba(236,72,153,0.5)',
+    badgeBg: 'rgba(244,114,182,0.16)',
+    msgBg: 'rgba(244,114,182,0.18)'
+  }
+};
+
+function aliceEscapeHtml(value){
+  return String(value == null ? '' : value)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+function aliceDisplayName(student){
+  var name = String(student && student.aliceDisplayName || '').trim().replace(/\s+/g,' ');
+  return name || 'Alice';
+}
+
+async function saveAliceDisplayName(){
+  var s = CURRENT_STUDENT;
+  var input = document.getElementById('alice-name-input');
+  if(!s || !s.id || !input) return;
+  var name = String(input.value || '').trim().replace(/\s+/g,' ');
+  if(name.length > 24){
+    showToast('El nombre puede tener máximo 24 caracteres.','err');
+    return;
+  }
+  if(name && !/^[A-Za-zÀ-ÖØ-öø-ÿĀ-ž' -]+$/.test(name)){
+    showToast('Usá solamente letras, espacios, guion o apóstrofo.','err');
+    return;
+  }
+  if(name) s.aliceDisplayName = name;
+  else delete s.aliceDisplayName;
+  var saved = await dbSet('kamuk_students', s.id, s);
+  if(!saved){
+    showToast('No se pudo guardar el nombre. Intentá de nuevo.','err');
+    return;
+  }
+  ALL_STUDENTS[s.id] = s;
+  syncAliceNavLabel(s);
+  showToast(name ? 'Tu asistente ahora se llama '+name+'.' : 'Nombre restaurado a Alice.');
+  renderAlice();
+}
+
+function aliceStudentPalette(){
+  var s = CURRENT_STUDENT;
+  var key = s && s.aliceTheme;
+  if(!key) return null;
+  return ALICE_STUDENT_PALETTES[String(key).toLowerCase()] || null;
+}
+
 function aliceTheme(){
+  var pal = aliceStudentPalette();
   if(aliceCompanionUiActive()){
     var mood = (_aliceState.sessionActive ? (_aliceState.ambientMood || aliceResolveAmbientMood()) : 'default');
     var amb = ALICE_COMPANION_AMBIENTS[mood] || ALICE_COMPANION_AMBIENTS.default;
-    return {
+    return Object.assign({
       cardBg: amb.cardBg,
       cardShadow: amb.cardShadow,
       cardBorder: amb.cardBorder,
@@ -5066,13 +5155,13 @@ function aliceTheme(){
       rgb: '255,215,0',
       btnGrad: 'linear-gradient(135deg,#B45309,#EAB308,#FFD700)',
       btnShadow: '0 4px 20px rgba(255,215,0,0.55)',
-      headline: 'ALICE',
+      headline: aliceEscapeHtml(aliceDisplayName(CURRENT_STUDENT)),
       subtitle: 'Companion · Conversación + corrección on the go',
       badgeBg: 'rgba(255,215,0,0.14)',
       msgBg: 'rgba(255,215,0,0.16)'
-    };
+    }, pal || {});
   }
-  return {
+  return Object.assign({
     cardBg: 'linear-gradient(160deg,#0B1437,#1a0533,#2d1060)',
     cardShadow: '0 8px 32px rgba(43,126,193,0.35)',
     cardBorder: 'rgba(192,132,252,0.2)',
@@ -5084,11 +5173,11 @@ function aliceTheme(){
     rgb: '192,132,252',
     btnGrad: 'linear-gradient(135deg,#2B7EC1,#1F6AA8)',
     btnShadow: '0 4px 16px rgba(192,132,252,0.4)',
-    headline: 'ALICE',
+    headline: aliceEscapeHtml(aliceDisplayName(CURRENT_STUDENT)),
     subtitle: 'Intermedio/avanzado — linkers, STAR, hablar con flujo',
     badgeBg: 'rgba(192,132,252,0.07)',
     msgBg: 'rgba(192,132,252,0.1)'
-  };
+  }, pal || {});
 }
 
 function renderAlice(){
@@ -5108,7 +5197,7 @@ function renderAlice(){
       +'<div style="font-size:26px;font-weight:900;color:#e9d5ff;letter-spacing:0.04em;">RAPID DRILL · PISO</div>'
       +'<div style="font-size:11px;color:rgba(255,255,255,0.82);">Foundations bajo presión — no es Infinity Arcade</div>'
       +'</div>'
-      +'<button type="button" onclick="portalCloseRapidDrill(true)" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#e9d5ff;font-size:11px;padding:6px 12px;border-radius:8px;cursor:pointer;">← Alice</button>'
+      +'<button type="button" onclick="portalCloseRapidDrill(true)" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#e9d5ff;font-size:11px;padding:6px 12px;border-radius:8px;cursor:pointer;">← '+aliceEscapeHtml(aliceDisplayName(s))+'</button>'
       +'</div>'
       + nemesisPreview
       +'<div id="alice-quiz-zone"></div>'
@@ -5186,6 +5275,7 @@ function aliceApplyCompanionDefaults(){
 function renderAliceStart(){
   aliceApplyCompanionDefaults();
   var th = aliceTheme();
+  var assistantName = aliceEscapeHtml(aliceDisplayName(CURRENT_STUDENT));
   var hasSaved = !!_aliceState.savedSession;
   var mode = _aliceState.sessionType || 'practice';
   var companionOn = aliceCompanionEnabled();
@@ -5199,15 +5289,21 @@ function renderAliceStart(){
       +'</div>'
     : '';
   var intro = companionOnly
-    ? '<strong>Alice Modo Libre</strong> — conversación libre en inglés (cualquier tema). Corrección on the go: si te trabás, pausa, explica, ejemplo y sigue. Para quien lee/escribe/entiende pero necesita hablar.'
+    ? '<strong>'+assistantName+' Modo Libre</strong> — conversación libre en inglés (cualquier tema). Corrección on the go: si te trabás, pausa, explica, ejemplo y sigue. Para quien lee/escribe/entiende pero necesita hablar.'
     : (companionOn
-      ? '<strong>Alice Modo Tutor</strong> = conversación + linkers + STAR + transiciones. <strong>Alice Modo Libre</strong> = mismo cerebro en charla libre ilimitada. No es Jill (Foundations/MSI).'
-      : '<strong>Alice Modo Tutor</strong> — intermedio/avanzado: te sigue el ritmo, corrige en vivo y refuerza linkers, estructura avanzada e improvisación (STAR). Ideal si entendés pero no hablás fluido. <span style="opacity:.85;">Modo Libre (charla libre) es premium — pedí a tu trainer.</span>');
+      ? '<strong>'+assistantName+' Modo Tutor</strong> = conversación + linkers + STAR + transiciones. <strong>'+assistantName+' Modo Libre</strong> = mismo cerebro en charla libre ilimitada. No es Jill (Foundations/MSI).'
+      : '<strong>'+assistantName+' Modo Tutor</strong> — intermedio/avanzado: te sigue el ritmo, corrige en vivo y refuerza linkers, estructura avanzada e improvisación (STAR). Ideal si entendés pero no hablás fluido. <span style="opacity:.85;">Modo Libre (charla libre) es premium — pedí a tu trainer.</span>');
   var startLabel = companionOnly ? 'Iniciar Modo Libre' : 'Iniciar sesión';
   return '<div style="text-align:center;">'
     +'<div style="background:rgba(255,255,255,0.06);border:1px solid rgba('+th.rgb+',0.2);border-radius:14px;padding:1.25rem;margin-bottom:1.25rem;font-size:13px;color:rgba(255,255,255,0.75);line-height:1.8;">'
     +intro
     +'</div>'
+    +'<div style="background:rgba(255,255,255,0.05);border:1px solid rgba('+th.rgb+',0.2);border-radius:12px;padding:12px;margin-bottom:12px;text-align:left;">'
+    +'<label for="alice-name-input" style="display:block;font-size:11px;font-weight:700;color:'+th.accent+';margin-bottom:7px;">Nombre de tu asistente</label>'
+    +'<div style="display:flex;gap:8px;">'
+    +'<input id="alice-name-input" maxlength="24" value="'+aliceEscapeHtml(CURRENT_STUDENT && CURRENT_STUDENT.aliceDisplayName || '')+'" placeholder="Alice" class="inp" style="flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba('+th.rgb+',0.28);color:white;border-radius:10px;padding:9px 12px;" onkeydown="if(event.key===\'Enter\')saveAliceDisplayName()">'
+    +'<button type="button" onclick="saveAliceDisplayName()" style="background:'+th.btnGrad+';border:none;color:white;font-weight:700;padding:9px 14px;border-radius:10px;cursor:pointer;">Guardar</button>'
+    +'</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:6px;">Dejalo vacío para volver a Alice.</div></div>'
     +modePicker
     +((companionOn && !companionOnly && mode !== 'companion' && typeof AliceProgress !== 'undefined') ? AliceProgress.renderQuickStart(CURRENT_STUDENT, true) : '')
     +'<div style="display:flex;flex-direction:column;gap:10px;align-items:center;">'
@@ -5221,11 +5317,12 @@ function renderAliceStart(){
 
 function renderAliceSession(){
   var th = aliceTheme();
+  var assistantName = aliceEscapeHtml(aliceDisplayName(CURRENT_STUDENT));
   var msgs = aliceFormatAllMessagesHtml();
   var scn = _aliceState.scenario;
   var badgeText = (_aliceState.sessionType==='companion')
-    ? '💬 Alice Modo Libre · Charla libre · cualquier tema, sin cortes'
-    : '🎓 Alice Modo Tutor · Método Nexus';
+    ? '💬 '+assistantName+' Modo Libre · Charla libre · cualquier tema, sin cortes'
+    : '🎓 '+assistantName+' Modo Tutor · Método Nexus';
   var gameChips = (studentGamesOn(CURRENT_STUDENT) && _aliceState.sessionType !== 'companion' && studentAliceOn(CURRENT_STUDENT))
     ? '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">'
       +'<button type="button" class="jill-chip jill-chip-kaboom" onclick="portalOpenRapidDrill(\'foundations\')">⚡ Rapid drill</button>'
@@ -5504,6 +5601,7 @@ var _aliceSending = false;
 function aliceFormatMessageHtml(m){
   var isAlice = m.role==='assistant';
   var th = aliceTheme();
+  var assistantName = aliceEscapeHtml(aliceDisplayName(CURRENT_STUDENT));
   var raw = m.content;
   var clientPart = raw;
   var aliceTip = '';
@@ -5516,7 +5614,7 @@ function aliceFormatMessageHtml(m){
     .replace(/\[\[\s*BOARD_DESIGN\s*:[^\]]*\]\]/gi, '')
     .replace(/GOOD: ([^\n]*)/g,'<em style="color:#86EFAC;font-size:11px;display:block;margin-top:6px;font-weight:700;font-style:normal;">✓ $1</em>')
     .replace(/TIP: ([^\n]*)/g,'<em style="color:'+tipColor+';font-size:11px;display:block;margin-top:6px;font-weight:600;font-style:normal;">💡 $1</em>');
-  var roleLabel = (_aliceState.sessionType==='companion' && isAlice) ? 'COMPANION' : (isAlice ? 'ALICE' : 'VOS');
+  var roleLabel = isAlice ? assistantName.toUpperCase() : 'VOS';
   return '<div style="display:flex;flex-direction:column;align-items:'+(isAlice?'flex-start':'flex-end')+';margin-bottom:14px;">'
     +(isAlice
       ?'<div style="font-size:10px;color:'+th.accent+';font-weight:800;margin-bottom:4px;letter-spacing:0.1em;">'+roleLabel+'</div>'
@@ -5526,7 +5624,7 @@ function aliceFormatMessageHtml(m){
     +';border-radius:'+(isAlice?'4px 14px 14px 14px':'14px 4px 14px 14px')
     +';padding:10px 14px;font-size:13px;line-height:1.6;color:white;">'
     +clean
-    +(aliceTip?'<div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba('+th.rgb+',0.22);font-size:11px;color:'+th.accent+';">💬 <strong>Alice:</strong> '+aliceTip+'</div>':'')
+    +(aliceTip?'<div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba('+th.rgb+',0.22);font-size:11px;color:'+th.accent+';">💬 <strong>'+assistantName+':</strong> '+aliceTip+'</div>':'')
     +'</div></div>';
 }
 
@@ -9525,7 +9623,7 @@ if(document.readyState === 'loading'){
   </div>
 </div>
 
-<script src="https://studioinfinitycr.com/js/simulation-onboarding.js?v=20260817simtab"></script>
+<script src="https://studioinfinitycr.com/js/simulation-onboarding.js?v=20260817crmall"></script>
 <script src="https://studioinfinitycr.com/js/infinity-arcade-lil-games.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/infinity-casino-floor.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/infinity-modern-games.js?v=20260814refresh"></script>
