@@ -22,23 +22,30 @@
   const pad = (n) => String(n).padStart(2, '0');
   const clock = (sec) => `${pad(Math.floor(sec / 60))}:${pad(Math.floor(sec % 60))}`;
 
+  function crmPath(suffix) {
+    const base = state.product === 'kamuk' ? '/kamuk-holdings/crm' : '/infinity-holdings/crm';
+    return base + suffix;
+  }
+
   async function api(path, options = {}) {
+    // Always use the Training Book / portal session. No simulation PIN codes.
     let response;
-    if (state.simulation) {
-      const token = localStorage.getItem('infinity_simulation_token') || '';
+    if (typeof infinityFetch === 'function') {
+      response = await infinityFetch(path, options);
+    } else {
+      const token = (typeof getAuthToken === 'function' && getAuthToken())
+        || localStorage.getItem('infinity_auth_token')
+        || sessionStorage.getItem('infinity_auth_token')
+        || '';
       response = await fetch(API + path, {
         ...options,
         headers: {
           'Content-Type': 'application/json',
           ...(options.headers || {}),
-          Authorization: token ? `Bearer ${token}` : ''
+          ...(token ? { Authorization: 'Bearer ' + token } : {})
         },
         body: options.body && typeof options.body === 'object' ? JSON.stringify(options.body) : options.body
       });
-    } else {
-      response = typeof infinityFetch === 'function'
-        ? await infinityFetch(path, options)
-        : await fetch(API + path, { ...options, headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }, body: options.body ? JSON.stringify(options.body) : undefined });
     }
     const text = await response.text();
     let data = {};
@@ -242,7 +249,7 @@
     $('accept-btn').disabled = true;
     try {
       if (!state.preview) {
-        const response = await api('/infinity-holdings/crm/case/start', { method: 'POST', body: { caseId: c.id } });
+        const response = await api(crmPath('/case/start'), { method: 'POST', body: { caseId: c.id } });
         state.metrics = response.metrics || state.metrics;
       }
       enterActiveCase(c);
@@ -257,7 +264,7 @@
 
   async function resumeActiveCase() {
     if (state.preview) return;
-    const data = await api('/infinity-holdings/crm/case/state');
+    const data = await api(crmPath('/case/state'));
     if (data.metrics) state.metrics = data.metrics;
     if (!data.active?.caseId) return;
     const c = state.cases.find((x) => x.id === data.active.caseId);
@@ -729,7 +736,7 @@
     updateActionCount();
     toast(`${label} recorded.`);
     if (!state.preview && state.active) {
-      api('/infinity-holdings/crm/case/event', { method: 'POST', body: { caseId: state.active.id, type: key === 'email-client' ? 'email-client' : 'action', payload: event } })
+      api(crmPath('/case/event'), { method: 'POST', body: { caseId: state.active.id, type: key === 'email-client' ? 'email-client' : 'action', payload: event } })
         .catch(() => toast('Action stored locally; the desk will retry the sync.', true));
     }
   }
@@ -788,7 +795,7 @@
     localStorage.setItem(`kamuk-crm-notes-${state.active.id}`, JSON.stringify(state.notes));
     renderContacts();
     if (!state.preview) {
-      api('/infinity-holdings/crm/case/event', { method: 'POST', body: { caseId: state.active.id, type: 'note', payload: note } }).catch(() => {});
+      api(crmPath('/case/event'), { method: 'POST', body: { caseId: state.active.id, type: 'note', payload: note } }).catch(() => {});
     }
     return note;
   }
@@ -1165,7 +1172,7 @@
       if (state.preview) {
         evaluation = localEvaluation(payload);
       } else {
-        const response = await api('/infinity-holdings/crm/case/resolve', { method: 'POST', body: payload });
+        const response = await api(crmPath('/case/resolve'), { method: 'POST', body: payload });
         evaluation = response.evaluation; metrics = response.metrics || metrics;
       }
       state.metrics = metrics;
@@ -1420,7 +1427,7 @@
   async function heartbeat() {
     if (state.preview) return;
     try {
-      await api('/infinity-holdings/crm/presence', {
+      await api(crmPath('/presence'), {
         method: 'POST',
         body: {
           status: state.active ? 'working' : 'online', caseId: state.active ? state.active.id : null,
@@ -1437,18 +1444,19 @@
     setInterval(() => { state.sessionSec++; $('sess').textContent = clock(state.sessionSec); }, 1000);
     try {
       const host = location.hostname;
-      state.preview = new URLSearchParams(location.search).get('preview') === '1' || (!state.simulation && (host === 'localhost' || host === '127.0.0.1' || location.protocol === 'file:'));
+      state.preview = new URLSearchParams(location.search).get('preview') === '1'
+        || host === 'localhost' || host === '127.0.0.1' || location.protocol === 'file:';
       if (state.preview) {
-        state.auth = { role: 'student', studentId: 'KAM-PREVIEW', name: 'Preview Executive' };
-        state.employee = { id: 'KAM-PREVIEW', name: 'Preview Executive', team: 'Apex' };
+        state.auth = { role: 'student', studentId: state.product === 'kamuk' ? 'KAM-PREVIEW' : 'IS-PREVIEW', name: 'Preview Executive' };
+        state.employee = { id: state.auth.studentId, name: 'Preview Executive', team: 'Apex' };
       } else {
         state.auth = await api('/auth/verify', { method: 'GET' });
         const studentId = String(state.auth.studentId || '');
         const productMatches = state.product === 'kamuk' ? studentId.startsWith('KAM-') : !studentId.startsWith('KAM-');
         if (state.auth.role !== 'student' || !productMatches) {
-          throw new Error('This simulation session does not match your Training Book.');
+          throw new Error('Open this desk from your Training Book while logged in.');
         }
-        const presence = await api('/infinity-holdings/crm/presence', { method: 'POST', body: { status: 'online' } });
+        const presence = await api(crmPath('/presence'), { method: 'POST', body: { status: 'online' } });
         state.employee = presence.employee;
         state.metrics = presence.metrics || state.metrics;
       }

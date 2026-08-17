@@ -862,9 +862,9 @@ body.inf-arcade-fs-lock,body.inf-arcade-lobby-lock{overflow:hidden;}
 
 <div class="portal-nav" id="portal-nav" style="display:none;">
   <div class="portal-nav-item active" data-tab="progreso" onclick="switchPortalTab('progreso')"><i class="ti ti-chart-radar"></i><span class="nav-full">Progreso</span><span class="nav-short">Prog.</span></div>
-  <div class="portal-nav-item" data-tab="trainingbook" onclick="switchPortalTab('trainingbook')"><i class="ti ti-dumbbell"></i><span class="nav-full">Training Book</span><span class="nav-short">Book</span></div>
+  <div class="portal-nav-item" data-tab="trainingbook" onclick="switchPortalTab('trainingbook');setTimeout(mountKamukSimulation,0)"><i class="ti ti-dumbbell"></i><span class="nav-full">Training Book</span><span class="nav-short">Book</span></div>
   <div class="portal-nav-item" data-tab="recursos" onclick="switchPortalTab('recursos')"><i class="ti ti-folder"></i>Recursos</div>
-  <div class="portal-nav-item" data-tab="simulation" onclick="switchPortalTab('simulation');setTimeout(mountKamukSimulation,0)"><i class="ti ti-device-gamepad-2"></i>Simulation</div>
+  <div class="portal-nav-item" data-tab="notas" onclick="switchPortalTab('notas')"><i class="ti ti-notes"></i>Notas</div>
   <div class="portal-nav-item" data-tab="news" onclick="switchPortalTab('news')"><i class="ti ti-news"></i>News</div>
   <div class="portal-nav-item" data-tab="jill" id="nav-jill" style="display:none;" onclick="switchPortalTab('jill')"><i class="ti ti-message-circle"></i>Jill</div>
   <div class="portal-nav-item" data-tab="alice" id="nav-alice" style="display:none;" onclick="switchPortalTab('alice')"><i class="ti ti-robot"></i>Alice</div>
@@ -1475,7 +1475,8 @@ function showPortal(s){
           +'<div style="font-size:12px;color:var(--t2);margin-bottom:6px;">'+ex.kpi+'</div>'
           +'<div style="font-size:12px;color:var(--text);line-height:1.6;">'+((ex.steps&&ex.steps.length)?ex.steps.slice(0,2).join(' '):'Tu trainer te va a explicar la dinámica de este ejercicio en la próxima sesión.')+'</div></div>'; }).join('')
         :'<div style="font-size:13px;color:var(--t3);">Tu trainer todavía no asignó ejercicios.</div>'))
-    +'</div>';
+    +'</div>'
+    +'<div id="simulation-onboarding-root"></div>';
 
   // ── RECURSOS ──────────────────────────────────────────
   var lastTt = (s.typingTests&&s.typingTests.length)?s.typingTests[s.typingTests.length-1]:null;
@@ -1517,8 +1518,13 @@ function showPortal(s){
     + arcadeGate
     +'</div>';
 
-  // ── KAMUK SIMULATION ──────────────────────────────────
-  var simulationHtml = '<div id="simulation-onboarding-root"></div><div id="simulation-access-root"></div>';
+  // ── NOTAS DE SESIÓN ───────────────────────────────────
+  var notasHtml = '<div class="card"><div class="card-title"><i class="ti ti-notes"></i>Notas de sesión</div>'
+    +(notes.length? notes.map(function(n){ return '<div style="background:var(--gray);border-radius:var(--r);padding:0.875rem;margin-bottom:8px;">'
+        +'<div style="font-size:11px;color:var(--t3);margin-bottom:4px;">'+fmtDate(n.date)+'</div>'
+        +'<div style="font-size:13px;line-height:1.6;">'+n.text+'</div></div>'; }).join('')
+      :'<div style="font-size:13px;color:var(--t3);">Todavía no hay notas de sesión.</div>')
+    +'</div>';
 
   var newsHtml = '<div class="card"><div class="card-title"><i class="ti ti-news"></i>News — Kamuk</div>'
     +'<div style="font-size:13px;line-height:1.7;">'+getPortalInfinityNewsHtml()+'</div></div>';
@@ -1534,7 +1540,7 @@ function showPortal(s){
     +'<div class="tab-pane active" id="tp-progreso">'+progresoHtml+'</div>'
     +'<div class="tab-pane" id="tp-trainingbook">'+trainingBookHtml+'</div>'
     +'<div class="tab-pane" id="tp-recursos">'+recursosHtml+'</div>'
-    +'<div class="tab-pane" id="tp-simulation">'+simulationHtml+'</div>'
+    +'<div class="tab-pane" id="tp-notas">'+notasHtml+'</div>'
     +'<div class="tab-pane" id="tp-news">'+newsHtml+'</div>'
     +'<div class="tab-pane" id="tp-jill"><div id="jill-root"></div></div>'
     +'<div class="tab-pane" id="tp-alice"><div id="alice-root"></div></div>'
@@ -1568,28 +1574,15 @@ function showPortal(s){
   afterPortalReady(s, opts);
 }
 
-function kamukSimulationLaunchUrl(){
-  return 'kamuk-holdings-crm.html';
-}
-
 function mountKamukSimulation(){
   var onboardingRoot = document.getElementById('simulation-onboarding-root');
-  var accessRoot = document.getElementById('simulation-access-root');
-  if(!onboardingRoot || !accessRoot) return;
+  if(!onboardingRoot || !window.SimulationOnboarding) return;
   var studentId = (CURRENT_STUDENT && (CURRENT_STUDENT.code || CURRENT_STUDENT.id)) || '';
-  if(window.SimulationOnboarding){
-    SimulationOnboarding.mount(onboardingRoot, {
-      product:'kamuk',
-      studentId: studentId,
-      accessRoot: accessRoot
-    });
-  }
-  if(window.SimulationAccess){
-    SimulationAccess.mount(accessRoot, {
-      product:'kamuk',
-      launchUrl: kamukSimulationLaunchUrl() + '?product=kamuk&simulation=1'
-    });
-  }
+  SimulationOnboarding.mount(onboardingRoot, {
+    product:'kamuk',
+    studentId: studentId,
+    launchUrl:'kamuk-holdings-crm.html'
+  });
 }
 // ── TYPING TEST — WPM / Accuracy / Coordination ──────────
 // Un pasaje completo por ronda (puntos, comas, apóstrofes, dos puntos, etc.)
@@ -9540,7 +9533,6 @@ if(document.readyState === 'loading'){
 </div>
 
 <script src="js/simulation-onboarding.js"></script>
-<script src="js/simulation-access.js"></script>
 <script src="https://studioinfinitycr.com/js/infinity-arcade-lil-games.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/infinity-casino-floor.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/infinity-modern-games.js?v=20260814refresh"></script>

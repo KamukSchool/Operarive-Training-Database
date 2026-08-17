@@ -135,6 +135,7 @@
     var product = config.product === 'kamuk' ? 'kamuk' : 'infinity';
     var accent = product === 'kamuk' ? '#2B7EC1' : '#5B21B6';
     var accessRoot = config.accessRoot || null;
+    var launchUrl = String(config.launchUrl || (product === 'kamuk' ? 'kamuk-holdings-crm.html' : 'infinity-holdings-crm.html'));
     var studentId = String(config.studentId || '').trim();
     var state = readState(product, studentId);
     var quizPicks = {};
@@ -277,8 +278,9 @@
 
     function nestingPanel() {
       if (!unlocked('nesting')) return '<div class="ob-panel"><div class="ob-locked"><i class="ti ti-lock"></i><p>Nesting unlocks only after the foundation certification and the guided CRM tour.</p></div></div>';
-      return panelShell('Ready for product training', 'Foundation completed. The next module teaches one product topic in depth before the trainee takes related nesting cases.',
+      return panelShell('Nesting — take live cases', 'Foundation completed. Your Training Book session opens the desk directly: no extra user, no code.',
         '<div class="ob-cert"><i class="ti ti-circle-check"></i><div><b>Foundation complete</b><span>Service basics + product map + CRM navigation</span></div></div>'
+        + '<div class="ob-foot"><button class="ob-btn" id="ob-launch"><i class="ti ti-building-bank"></i> Open the Holdings desk</button><span class="ob-msg">Opens in a new tab with your Training Book session.</span></div>'
         + '<div class="ob-card"><i class="ti ti-arrow-right"></i><b>Next: Cards, disputes and chargebacks</b><p>Detailed product lesson → quick certification → guided product tasks → nesting cases.</p></div>');
     }
 
@@ -294,7 +296,7 @@
 
     function render() {
       root.innerHTML = '<div class="ob"><div class="ob-head"><small>' + PROGRAM.label + '</small><h2>' + PROGRAM.title + '</h2><p>' + PROGRAM.intro + '</p></div>' + rail() + panel() + '</div>';
-      if (accessRoot) accessRoot.style.display = state.done.indexOf('mock') >= 0 ? '' : 'none';
+      if (accessRoot) accessRoot.style.display = 'none';
       if (state.step === 'mock') {
         var task = MOCK_TASKS[Math.min(state.mockIndex || 0, MOCK_TASKS.length - 1)];
         var target = root.querySelector('[data-gm="' + task.target + '"]');
@@ -355,6 +357,10 @@
         return;
       }
       if (event.target.closest('#ob-submit')) { gradeQuiz(); return; }
+      if (event.target.closest('#ob-launch')) {
+        window.open(launchUrl + (launchUrl.indexOf('?') >= 0 ? '&' : '?') + 'product=' + encodeURIComponent(product), '_blank', 'noopener');
+        return;
+      }
       var crmControl = event.target.closest('[data-gm]');
       if (crmControl && state.step === 'mock') {
         var index = state.mockIndex || 0;
