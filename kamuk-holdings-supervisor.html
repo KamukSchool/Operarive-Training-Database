@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Kamuk Holdings · Supervisor Command</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="css/kamuk-holdings-supervisor.css">
+</head>
+<body>
+  <div id="gate" class="gate">
+    <div class="gate-card"><div class="seal">KH</div><p>SECURE SUPERVISOR ACCESS</p><h1>Operations Command</h1><span id="gateStatus">Verifying trainer credentials…</span><a href="Kamuk_Engine.html">Return to Kamuk Engine</a></div>
+  </div>
+  <div id="app" class="app hidden">
+    <header>
+      <div class="brand"><div class="seal small">KH</div><div><strong>Kamuk Holdings</strong><span>Supervisor Command · Live QA</span></div></div>
+      <div class="sync"><i class="ti ti-shield-check"></i><span id="syncStatus">Secure live feed</span><b id="lastSync" class="mono">—</b></div>
+      <div class="supervisor"><div><strong id="supervisorName">Supervisor</strong><span>TRAINER AUTHORITY</span></div><i class="ti ti-user-shield"></i></div>
+    </header>
+    <main>
+      <section class="hero">
+        <div><p class="eyebrow">Corporate Banking Experience</p><h1>Operations floor</h1><p>Live student presence, case ownership, resolution decisions and Alice QA.</p></div>
+        <div class="team-board">
+          <div><span>TEAM APEX</span><strong id="apexScore">0</strong><small>POINTS</small></div>
+          <i class="ti ti-vs"></i>
+          <div><span>TEAM VANGUARD</span><strong id="vanguardScore">0</strong><small>POINTS</small></div>
+        </div>
+      </section>
+      <section class="metrics">
+        <article><i class="ti ti-wifi"></i><div><span>Connected</span><strong id="connectedMetric">0</strong><small>active desks</small></div></article>
+        <article><i class="ti ti-briefcase"></i><div><span>Working cases</span><strong id="workingMetric">0</strong><small>owned now</small></div></article>
+        <article><i class="ti ti-phone-call"></i><div><span>On call</span><strong id="onCallMetric">0</strong><small>live client audio</small></div></article>
+        <article><i class="ti ti-rosette-discount-check"></i><div><span>Resolutions</span><strong id="resolvedMetric">0</strong><small>audited cases</small></div></article>
+        <article><i class="ti ti-sparkles"></i><div><span>Average QA</span><strong id="qaMetric">—</strong><small>Alice standard</small></div></article>
+      </section>
+      <nav class="tabs">
+        <button class="active" data-view="floor">Live floor</button>
+        <button data-view="resolutions">Resolution ledger</button>
+        <button data-view="quality">Quality analytics</button>
+      </nav>
+      <section id="floorView" class="view active">
+        <div class="section-head"><div><p class="eyebrow">Current assignments</p><h2>Connected executives</h2></div><div class="legend"><span><i class="online"></i>Live</span><span><i class="working"></i>In case</span><span><i class="offline"></i>Offline</span></div></div>
+        <div id="floorGrid" class="floor-grid"></div>
+      </section>
+      <section id="resolutionsView" class="view">
+        <div class="section-head"><div><p class="eyebrow">Immutable audit trail</p><h2>Resolution ledger</h2></div><button id="exportLedger" class="button"><i class="ti ti-download"></i> Export CSV</button></div>
+        <div class="table-card"><table><thead><tr><th>Time</th><th>Executive</th><th>Team</th><th>Case</th><th>Disposition</th><th>Duration</th><th>Alice QA</th><th></th></tr></thead><tbody id="resolutionRows"></tbody></table></div>
+      </section>
+      <section id="qualityView" class="view">
+        <div class="quality-grid">
+          <article class="panel"><p class="eyebrow">QA distribution</p><h2>Resolution quality</h2><canvas id="qaChart"></canvas></article>
+          <article class="panel"><p class="eyebrow">Performance standard</p><h2>Dimension averages</h2><div id="dimensionBars" class="dimension-bars"></div></article>
+          <article class="panel coaching"><p class="eyebrow">Supervisor attention</p><h2>Coaching queue</h2><div id="coachingList"></div></article>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div id="detailBackdrop" class="backdrop">
+    <article class="detail">
+      <button id="closeDetail"><i class="ti ti-x"></i></button>
+      <p class="eyebrow">Alice QA · Resolution evidence</p>
+      <div class="detail-head"><div><h2 id="detailCase">—</h2><p id="detailStudent">—</p></div><div class="qa-orb"><strong id="detailQa">—</strong><span>QA</span></div></div>
+      <div class="detail-grid"><div><span>Disposition</span><strong id="detailDisposition">—</strong></div><div><span>Duration</span><strong id="detailDuration">—</strong></div><div><span>Team</span><strong id="detailTeam">—</strong></div><div><span>Verdict</span><strong id="detailVerdict">—</strong></div></div>
+      <h3>Executive resolution</h3><p id="detailSummary" class="copy"></p>
+      <h3>Confirmed next step</h3><p id="detailNext" class="copy"></p>
+      <div class="detail-columns"><div><h3>Strengths</h3><ul id="detailStrengths"></ul></div><div><h3>Required coaching</h3><ul id="detailImprove"></ul></div></div>
+      <h3>Recorded actions</h3><div id="detailActions" class="action-chips"></div>
+      <div class="call-panel" id="detailCallPanel">
+        <h3>Call evidence</h3>
+        <div class="detail-grid">
+          <div><span>Call status</span><strong id="detailCallStatus">—</strong></div>
+          <div><span>Duration</span><strong id="detailCallDuration">—</strong></div>
+          <div><span>Mood</span><strong id="detailCallMood">—</strong></div>
+          <div><span>Turns</span><strong id="detailCallTurns">—</strong></div>
+        </div>
+        <p id="detailCallSummary" class="copy"></p>
+        <div id="detailCallTranscript" class="call-transcript-list"></div>
+      </div>
+      <h3>Notes &amp; emails</h3><div id="detailComms" class="comms-list"></div>
+    </article>
+  </div>
+  <script src="https://studioinfinitycr.com/infinity-auth.js"></script>
+  <script src="js/kamuk-holdings-supervisor.js"></script>
+</body>
+</html>

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infinity Simulation — Corporate Banking Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<link rel="stylesheet" href="css/kamuk-holdings-crm.css">
+</head>
+<body>
+
+<div class="gate" id="gate">
+  <div class="spin"></div>
+  <h1>Infinity Simulation — Corporate Banking Desk</h1>
+  <p id="gate-msg">Verifying your simulation access and opening your desk session…</p>
+</div>
+
+<div class="shell hidden" id="app">
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:8px;">
+    <div class="topbar-logo">∞ Infinity Simulation</div>
+    <div class="topbar-sub" id="topbar-sub">Corporate Banking Desk</div>
+  </div>
+  <div class="topbar-right">
+    <span class="score-badge sc-a">Apex <strong id="sc-a">0</strong></span>
+    <span class="score-badge sc-v">Vanguard <strong id="sc-v">0</strong></span>
+    <span class="session-timer" id="sess">00:00</span>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- QUEUE -->
+<div class="queue">
+  <div class="queue-hdr">
+    <span id="queue-title">Case queue</span>
+    <button class="mini-btn" id="shuffle-btn">Shuffle</button>
+  </div>
+  <div class="queue-filters" id="queue-filters">
+    <button class="filter-btn on" data-filter="All">All</button>
+    <button class="filter-btn" data-filter="Retail Banking">Retail</button>
+    <button class="filter-btn" data-filter="Corporate Banking">Corporate</button>
+    <button class="filter-btn" data-filter="VIP Services">VIP</button>
+    <button class="filter-btn" data-filter="Compliance">AML</button>
+  </div>
+  <div class="queue-list" id="queue-list"></div>
+</div>
+
+<!-- CASE PANEL -->
+<div class="case-panel">
+  <div id="toast" class="toast"><i class="ti ti-check"></i><span id="toast-msg"></span></div>
+  <div id="confirm" class="confirm">
+    <div class="cf-title" id="cf-title"></div>
+    <div class="cf-msg" id="cf-msg"></div>
+    <div class="cf-btns">
+      <button class="act danger" id="cf-yes">Confirm</button>
+      <button class="act" id="cf-no">Cancel</button>
+    </div>
+  </div>
+
+  <!-- VIEW 1 -->
+  <div class="view1" id="view1">
+    <div class="v1-hdr">
+      <div class="v1-badges"><span class="bdg" id="v1-type">—</span><span class="bdg" id="v1-pri">—</span><span class="bdg bdg-ok" id="v1-sector">—</span></div>
+      <div class="v1-title" id="v1-title">—</div>
+    </div>
+    <div class="v1-quote" id="v1-quote">—</div>
+    <div class="v1-meta">
+      <div class="meta-i"><i class="ti ti-clock" style="font-size:13px;"></i> SLA: <strong id="v1-sla">—</strong></div>
+      <div class="meta-i"><i class="ti ti-mood-sad" style="font-size:13px;"></i> <span id="v1-mood">—</span></div>
+      <div class="meta-i"><i class="ti ti-user" style="font-size:13px;"></i> <span id="v1-client">—</span></div>
+    </div>
+    <div class="focus-box">
+      <div class="focus-lbl">Focus skill</div>
+      <div class="focus-val" id="v1-focus">—</div>
+    </div>
+    <div class="transcript-area">
+      <div class="tr-lbl">CASE BRIEF</div>
+      <div id="v1-desc" style="font-size:12.5px;color:var(--text2);line-height:1.55;margin-bottom:10px;"></div>
+      <div class="tr-lbl">TRANSCRIPT</div>
+      <div id="v1-transcript"></div>
+    </div>
+    <div class="accept-zone">
+      <div class="accept-disclaimer">
+        This case will be assigned to <strong id="st-display">—</strong> · ID: <strong id="st-id">—</strong> · Team <strong id="st-team">—</strong>
+      </div>
+      <button class="accept-btn" id="accept-btn"><i class="ti ti-check"></i> Accept case</button>
+    </div>
+  </div>
+
+  <!-- VIEW 2 -->
+  <div class="view2" id="view2">
+    <div class="v2-hdr">
+      <div class="v2-avatar" id="v2-av">—</div>
+      <div>
+        <div class="v2-name" id="v2-name">—</div>
+        <div class="v2-sub" id="v2-sub">—</div>
+      </div>
+      <div class="v2-status">
+        <span class="bdg bdg-ok" id="v2-status">Active</span>
+        <span class="bdg bdg-vip" id="v2-vip">VIP</span>
+      </div>
+    </div>
+    <div class="v2-actions">
+      <button class="act accent" id="btn-credit"><i class="ti ti-file-analytics"></i> Credit report</button>
+      <button class="act" data-soft="escalate">Escalate</button>
+      <button class="act warn" data-danger="freeze|Freeze account|All transactions blocked immediately.">Freeze</button>
+      <button class="act warn" data-danger="suspend|Suspend services|All cards and wire access suspended.">Suspend services</button>
+      <button class="act danger" data-danger="fraud|Flag for fraud|Escalated to Compliance. Do not notify the client.">Flag fraud</button>
+      <button class="act danger" data-soft="file-sar">File SAR</button>
+      <button class="act danger" data-danger="close|Close account|This action is irreversible.">Close acct</button>
+      <button class="act" id="btn-site"><i class="ti ti-world"></i> Website</button>
+      <button class="act" id="btn-email"><i class="ti ti-mail"></i> Email</button>
+      <button class="act" id="btn-call"><i class="ti ti-phone"></i> Call</button>
+      <button class="act solid" id="btn-resolve" style="margin-left:auto;"><i class="ti ti-flag-check"></i> Resolve case <span id="action-count">(0)</span></button>
+    </div>
+    <div class="tabs" id="tabs">
+      <div class="tab on" data-tab="ov">Overview</div>
+      <div class="tab" data-tab="stmt">Statements</div>
+      <div class="tab" data-tab="svc">Services</div>
+      <div class="tab" data-tab="info">Information</div>
+      <div class="tab" data-tab="risk">Risk &amp; credit</div>
+      <div class="tab" data-tab="billing">Billing</div>
+      <div class="tab" data-tab="spend">Spending</div>
+      <div class="tab" data-tab="cards">Card transactions</div>
+      <div class="tab" data-tab="wallet">Cards &amp; PIN</div>
+      <div class="tab" data-tab="fees">Fees &amp; penalties</div>
+      <div class="tab" data-tab="emails">Emails</div>
+      <div class="tab" data-tab="site">Website</div>
+      <div class="tab" data-tab="log">Acct log</div>
+      <div class="tab" data-tab="contacts">Previous contacts</div>
+      <div class="tab" data-tab="recos">Recommendations</div>
+    </div>
+    <div class="panes">
+
+      <!-- OVERVIEW -->
+      <div id="pane-ov" class="pane on">
+        <div class="metrics" id="ov-metrics"></div>
+        <div class="two-col">
+          <div>
+            <div class="sec">Recent activity</div>
+            <table class="tbl"><thead><tr><th style="width:46%">Description</th><th style="width:22%">Date</th><th style="width:32%">Amount</th></tr></thead><tbody id="ov-recent"></tbody></table>
+          </div>
+          <div>
+            <div class="sec">Active flags</div>
+            <div id="ov-flags"></div>
+            <div class="sec">Relationship</div>
+            <div id="ov-relationship"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATEMENTS -->
+      <div id="pane-stmt" class="pane">
+        <div style="display:flex;gap:6px;margin-bottom:10px;">
+          <select class="inp" id="stmt-period"><option>August 2026</option><option>July 2026</option><option>June 2026</option></select>
+          <select class="inp" id="stmt-type"><option>All types</option><option>Credits</option><option>Debits</option><option>Pending</option></select>
+          <button class="act" style="margin-left:auto;" id="stmt-export"><i class="ti ti-download"></i> Export</button>
+        </div>
+        <table class="tbl"><thead><tr><th style="width:13%">Date</th><th style="width:35%">Description</th><th style="width:14%">Type</th><th style="width:19%">Amount</th><th style="width:19%">Balance</th></tr></thead><tbody id="stmt-rows"></tbody></table>
+      </div>
+
+      <!-- SERVICES -->
+      <div id="pane-svc" class="pane"><div id="svc-list"></div></div>
+
+      <!-- INFORMATION -->
+      <div id="pane-info" class="pane">
+        <div class="two-col"><div id="info-left"></div><div id="info-right"></div></div>
+        <div class="edit-area" id="edit-area">
+          <div style="font-size:11.5px;font-weight:600;margin-bottom:5px;" id="edit-lbl">Editing</div>
+          <div style="display:flex;gap:5px;">
+            <input type="text" id="edit-inp" class="inp" style="flex:1;">
+            <button class="act accent" id="edit-save">Save</button>
+            <button class="act" id="edit-cancel">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RISK & CREDIT -->
+      <div id="pane-risk" class="pane">
+        <div id="cr-loading" style="display:none;padding:30px;text-align:center;"><div class="spin"></div><div style="font-size:12.5px;color:var(--text2);">Running verified credit report…</div></div>
+        <div id="cr-content">
+          <div class="score-wrap">
+            <div style="text-align:center;flex-shrink:0;">
+              <div class="score-big" id="cr-score">—</div>
+              <div class="score-sub">out of 900</div>
+              <div style="font-size:11.5px;font-weight:600;margin-top:4px;" id="cr-band">—</div>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:11.5px;color:var(--text2);margin-bottom:8px;line-height:1.55;" id="cr-desc">—</div>
+              <div class="score-range" id="cr-range"></div>
+            </div>
+          </div>
+          <div class="sec">Score factors</div>
+          <div class="factors" id="cr-factors"></div>
+          <div class="sec">Exposure model</div>
+          <div class="two-col">
+            <div class="card"><div style="font-size:11.5px;font-weight:700;margin-bottom:6px;">Current obligations</div><div id="cr-oblig"></div></div>
+            <div class="card"><div style="font-size:11.5px;font-weight:700;margin-bottom:6px;">Credit capacity</div><div id="cr-capacity"></div></div>
+          </div>
+          <div class="sec">AML &amp; compliance</div>
+          <div class="two-col">
+            <div id="cr-aml"></div>
+            <div><div class="sec" style="margin-top:0;">Incident history</div><table class="tbl"><thead><tr><th>Date</th><th>Type</th><th>Status</th></tr></thead><tbody id="cr-incidents"></tbody></table></div>
+          </div>
+          <div class="sec">Analyst classification — your decision</div>
+          <div class="card">
+            <div class="three-col" style="margin-bottom:6px;">
+              <label style="font-size:10.5px;color:var(--text2);font-weight:600;">Risk type<select class="inp" id="risk-type" style="width:100%;margin-top:3px;"><option value="">Select</option><option>Credit</option><option>Fraud</option><option>Market</option><option>Operational</option></select></label>
+              <label style="font-size:10.5px;color:var(--text2);font-weight:600;">Probability<select class="inp" id="risk-prob" style="width:100%;margin-top:3px;"><option value="">Select</option><option>Low</option><option>Medium</option><option>High</option></select></label>
+              <label style="font-size:10.5px;color:var(--text2);font-weight:600;">Impact<select class="inp" id="risk-impact" style="width:100%;margin-top:3px;"><option value="">Select</option><option>Low</option><option>Medium</option><option>High</option></select></label>
+            </div>
+            <div style="display:flex;gap:6px;align-items:flex-end;">
+              <label style="font-size:10.5px;color:var(--text2);font-weight:600;flex:1;">AML stage<select class="inp" id="risk-aml" style="width:100%;margin-top:3px;"><option value="">Not applicable</option><option>Placement</option><option>Layering</option><option>Integration</option></select></label>
+              <button class="act accent" id="risk-save">Record risk decision</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BILLING -->
+      <div id="pane-billing" class="pane">
+        <div style="display:flex;gap:6px;margin-bottom:10px;">
+          <button class="act accent" id="bill-invoice"><i class="ti ti-file-invoice"></i> Generate invoice</button>
+          <button class="act" id="bill-remind">Send reminder</button>
+          <button class="act" style="margin-left:auto;" id="bill-export"><i class="ti ti-download"></i> Export</button>
+        </div>
+        <table class="tbl"><thead><tr><th style="width:24%">Invoice</th><th style="width:30%">Description</th><th style="width:15%">Due</th><th style="width:16%">Amount</th><th style="width:15%">Status</th></tr></thead><tbody id="bill-rows"></tbody></table>
+        <div class="three-col" style="margin-top:10px;" id="bill-metrics"></div>
+      </div>
+
+      <!-- SPENDING -->
+      <div id="pane-spend" class="pane">
+        <div class="metrics" id="spend-metrics"></div>
+        <div class="two-col" style="margin-bottom:10px;">
+          <div class="card"><div style="font-size:11.5px;font-weight:700;margin-bottom:6px;">Spending composition</div><canvas id="spend-donut" height="180"></canvas><div id="spend-legend" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;font-size:10.5px;"></div></div>
+          <div class="card"><div style="font-size:11.5px;font-weight:700;margin-bottom:6px;">6-month net cash flow</div><canvas id="spend-flow" height="180"></canvas></div>
+        </div>
+        <table class="tbl" style="margin-bottom:10px;"><thead><tr><th style="width:30%">Category</th><th>This month</th><th>Last month</th><th>Change</th><th>% total</th></tr></thead><tbody id="spend-rows"></tbody></table>
+        <div class="sec">6-month cash flow</div>
+        <table class="tbl"><thead><tr><th>Month</th><th>Inflow</th><th>Outflow</th><th>Net</th><th>Balance</th></tr></thead><tbody id="flow-rows"></tbody></table>
+      </div>
+
+      <!-- CARD TRANSACTIONS -->
+      <div id="pane-cards" class="pane">
+        <div class="two-col" style="margin-bottom:10px;" id="card-metrics"></div>
+        <div class="sec">By merchant category — 60 days</div>
+        <table class="tbl" style="margin-bottom:10px;"><thead><tr><th style="width:34%">Category</th><th id="card-h1">Card 1</th><th id="card-h2">Card 2</th><th>Total</th></tr></thead><tbody id="card-cats"></tbody></table>
+        <div class="sec">All card transactions — 60 days</div>
+        <table class="tbl"><thead><tr><th style="width:13%">Date</th><th style="width:34%">Merchant</th><th style="width:13%">Card</th><th style="width:20%">Amount</th><th style="width:20%">Status</th></tr></thead><tbody id="card-rows"></tbody></table>
+      </div>
+
+      <!-- CARDS & PIN -->
+      <div id="pane-wallet" class="pane">
+        <div class="verify-bar">
+          <button class="act accent" id="wallet-verify"><i class="ti ti-id-badge-2"></i> Verify client identity</button>
+          <span class="bdg bdg-c" id="wallet-state">Not verified</span>
+          <span class="verify-hint" id="wallet-hint">Card data stays masked until the client passes verification. You may read the last 6 digits only — never the full number.</span>
+        </div>
+        <div id="wallet-list"></div>
+        <div class="sec">Card security log</div>
+        <div id="wallet-log"><p class="empty-state">No card security action recorded on this case yet.</p></div>
+      </div>
+
+      <!-- FEES -->
+      <div id="pane-fees" class="pane">
+        <div class="metrics" id="fee-metrics"></div>
+        <div id="fee-items"></div>
+        <div class="sec">Fee summary — 12 months</div>
+        <table class="tbl"><thead><tr><th>Period</th><th>Charged</th><th>Waived</th><th>Net</th></tr></thead><tbody id="fee-summary"></tbody></table>
+      </div>
+
+      <!-- EMAILS -->
+      <div id="pane-emails" class="pane">
+        <div style="display:flex;gap:6px;margin-bottom:10px;">
+          <button class="act accent" id="email-compose"><i class="ti ti-pencil"></i> Compose</button>
+          <select class="inp" id="email-filter"><option>All</option><option>Sent</option><option>Received</option></select>
+        </div>
+        <div id="email-list"></div>
+        <div class="compose-box" id="compose-box">
+          <div style="font-size:12.5px;font-weight:600;margin-bottom:4px;" id="compose-lbl">New email</div>
+          <div style="font-size:11.5px;color:var(--text2);margin-bottom:3px;">To: <strong id="compose-to">—</strong></div>
+          <input class="inp compose-subject" id="compose-subject" type="text" placeholder="Subject">
+          <textarea id="compose-txt" rows="5" placeholder="Write your email in professional English. Acknowledge, state the action taken and confirm the next step."></textarea>
+          <div style="display:flex;gap:5px;margin-top:6px;"><button class="act accent" id="compose-send">Send</button><button class="act" id="compose-cancel">Cancel</button></div>
+        </div>
+      </div>
+
+      <!-- COMPANY WEBSITE (co-browsing) -->
+      <div id="pane-site" class="pane">
+        <div class="site-toolbar">
+          <button class="act" id="site-back" title="Back"><i class="ti ti-arrow-left"></i></button>
+          <div class="site-url" id="site-url">https://www.kamukholdings.com/</div>
+          <button class="act accent" id="site-guide"><i class="ti ti-pointer"></i> Guide client here</button>
+          <button class="act" id="site-send"><i class="ti ti-mail-forward"></i> Send this page</button>
+        </div>
+        <div class="site-frame">
+          <div class="site-brand"><span class="site-logo">Kamuk Holdings</span><nav class="site-nav" id="site-nav"></nav></div>
+          <div class="site-page" id="site-page"></div>
+        </div>
+        <div class="sec">Co-browsing script — say it like this</div>
+        <div class="card" id="site-script">Open a page to get the guiding line for the client.</div>
+      </div>
+
+      <!-- ACCT LOG -->
+      <div id="pane-log" class="pane"><div id="log-list"></div></div>
+
+      <!-- PREVIOUS CONTACTS -->
+      <div id="pane-contacts" class="pane">
+        <div style="display:flex;gap:6px;margin-bottom:10px;">
+          <button class="act accent" id="note-add"><i class="ti ti-plus"></i> Add note</button>
+          <select class="inp" id="contact-filter"><option>All contacts</option><option>Calls</option><option>Emails</option><option>In-person</option></select>
+        </div>
+        <div id="contacts-list"></div>
+        <div id="note-form" style="display:none;background:var(--surface1);border:1px solid var(--border);border-radius:var(--radius);padding:10px;margin-top:8px;">
+          <div style="font-size:11.5px;font-weight:700;margin-bottom:8px;">Add contact note</div>
+          <div class="two-col" style="margin-bottom:6px;">
+            <select class="inp" id="note-type"><option>Inbound call</option><option>Outbound call</option><option>Email</option><option>In-person</option><option>Internal note</option></select>
+            <select class="inp" id="note-status"><option>Completed</option><option>Open</option><option>Pending follow-up</option><option>Escalated</option></select>
+          </div>
+          <textarea id="note-txt" rows="3" class="inp" style="width:100%;margin-bottom:6px;" placeholder="Document facts, action taken, owner and next step in professional English."></textarea>
+          <div style="display:flex;gap:5px;"><button class="act accent" id="note-save">Save note</button><button class="act" id="note-cancel">Cancel</button></div>
+        </div>
+        <div class="sec">Case disposition — document, then close</div>
+        <div class="card">
+          <div style="font-size:11.5px;color:var(--text2);line-height:1.55;margin-bottom:8px;">You can close or park the case even without a resolution, as long as you justify it in writing on the client record.</div>
+          <div class="disp-row" id="disp-row">
+            <button class="act warn" data-disp="unresolved"><i class="ti ti-circle-x"></i> Close unresolved</button>
+            <button class="act" data-disp="queue"><i class="ti ti-arrow-back-up"></i> Return to queue</button>
+            <button class="act warn" data-disp="aa"><i class="ti ti-user-exclamation"></i> Flag AA — awaiting action</button>
+            <button class="act warn" data-disp="psa"><i class="ti ti-server-cog"></i> Flag PSA — pending system action</button>
+            <button class="act" data-disp="duplicate"><i class="ti ti-copy"></i> Close as duplicate</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECOMMENDATIONS -->
+      <div id="pane-recos" class="pane">
+        <div style="background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:var(--radius);padding:8px 10px;margin-bottom:10px;">
+          <div style="font-size:11.5px;font-weight:700;color:var(--accent);margin-bottom:1px;"><i class="ti ti-robot" style="font-size:12px;"></i> Infinity Risk Engine — AI analysis</div>
+          <div style="font-size:11.5px;color:var(--text2);" id="reco-engine">—</div>
+        </div>
+        <div id="reco-list"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="tx-modal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title" id="modal-title">Transaction detail</div><button class="modal-close" data-close="tx-modal">×</button></div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<!-- EVIDENCE MODAL -->
+<div class="modal-overlay" id="ev-modal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title" id="ev-title">Action</div><button class="modal-close" data-close="ev-modal">×</button></div>
+    <div class="modal-body">
+      <p style="font-size:11.5px;color:var(--text2);line-height:1.55;margin-bottom:8px;" id="ev-help">—</p>
+      <label>Your exact professional wording<textarea id="ev-text" rows="5" placeholder="Write it exactly as you would say it to the client."></textarea></label>
+      <div style="background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:var(--radius);padding:7px 9px;font-size:11.5px;color:var(--accent);" id="ev-tip">—</div>
+    </div>
+    <div class="modal-foot"><button class="act" data-close="ev-modal">Cancel</button><button class="act solid" id="ev-confirm">Record action</button></div>
+  </div>
+</div>
+
+<!-- DISPOSITION MODAL -->
+<div class="modal-overlay" id="disp-modal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title" id="disp-title">Case disposition</div><button class="modal-close" data-close="disp-modal">×</button></div>
+    <div class="modal-body">
+      <p style="font-size:11.5px;color:var(--text2);line-height:1.55;margin-bottom:8px;" id="disp-help">—</p>
+      <label id="disp-ref-wrap" style="display:none;">Duplicate of case ID<input type="text" class="inp" id="disp-ref" placeholder="KH-1042" style="width:100%;"></label>
+      <label>Justification for the client record<textarea id="disp-note" rows="5" placeholder="State the facts, why the case cannot be resolved now, who owns the next action and when it will be reviewed."></textarea></label>
+      <div style="background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:var(--radius);padding:7px 9px;font-size:11.5px;color:var(--accent);" id="disp-tip">—</div>
+    </div>
+    <div class="modal-foot"><button class="act" data-close="disp-modal">Cancel</button><button class="act solid" id="disp-confirm">Document &amp; apply</button></div>
+  </div>
+</div>
+
+<!-- PIN MODAL -->
+<div class="modal-overlay" id="pin-modal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title">PIN regeneration</div><button class="modal-close" data-close="pin-modal">×</button></div>
+    <div class="modal-body" id="pin-body"></div>
+    <div class="modal-foot"><button class="act solid" data-close="pin-modal">Done</button></div>
+  </div>
+</div>
+
+<!-- RESOLUTION MODAL -->
+<div class="modal-overlay" id="res-modal">
+  <div class="modal wide">
+    <div class="modal-hdr"><div class="modal-title">Resolve case — submit for QA</div><button class="modal-close" data-close="res-modal">×</button></div>
+    <div class="modal-body">
+      <label>Disposition<select id="res-disp">
+        <option value="">Select the outcome</option>
+        <option>Resolved — action completed</option>
+        <option>Resolved — escalated with owner and ETA</option>
+        <option>Pending — client verification required</option>
+        <option>Escalated to Compliance</option>
+        <option>Closed — unresolved (justified)</option>
+        <option>Flagged AA — awaiting client action</option>
+        <option>Flagged PSA — pending system action</option>
+        <option>Closed — duplicate case</option>
+      </select></label>
+      <label>Professional summary (what you found and what you did)<textarea id="res-summary" rows="5" placeholder="State the facts, the action taken, the accountable desk and the client impact."></textarea></label>
+      <label>Timed next step<textarea id="res-next" rows="2" placeholder="Example: callback at 4:45 PM with the wire trace reference."></textarea></label>
+      <p style="font-size:11.5px;color:var(--text3);">Alice reviews your actions, documentation and risk classification, then returns a QA verdict to your supervisor.</p>
+    </div>
+    <div class="modal-foot"><button class="act" data-close="res-modal">Cancel</button><button class="act solid" id="res-submit">Submit to Alice QA</button></div>
+  </div>
+</div>
+
+<!-- VERDICT MODAL -->
+<div class="modal-overlay" id="verdict-modal">
+  <div class="modal wide">
+    <div class="modal-hdr"><div class="modal-title">Alice QA verdict</div><button class="modal-close" data-close="verdict-modal">×</button></div>
+    <div class="modal-body" id="verdict-body"></div>
+    <div class="modal-foot"><button class="act solid" id="verdict-next">Take next case</button></div>
+  </div>
+</div>
+
+<!-- EMAIL THREAD MODAL -->
+<div class="modal-overlay" id="email-modal">
+  <div class="modal wide">
+    <div class="modal-hdr"><div class="modal-title" id="email-modal-title">Email thread</div><button class="modal-close" data-close="email-modal">×</button></div>
+    <div class="modal-body" id="email-modal-body"></div>
+  </div>
+</div>
+
+<!-- CALL CONSOLE STRUCTURE -->
+<div class="modal-overlay" id="call-console">
+  <div class="call-console">
+    <div class="call-console-hdr">
+      <div><span class="call-status">Ready</span><h2 id="call-client-name">Client</h2><p>Mood: <strong id="call-mood">—</strong></p></div>
+      <button class="modal-close" data-close="call-console">×</button>
+    </div>
+    <div class="call-transcript" id="call-transcript"><p>Call transcript will appear here.</p></div>
+    <div class="call-controls">
+      <button class="call-control" id="call-mute" type="button"><i class="ti ti-microphone"></i> Mute</button>
+      <button class="call-control hangup" id="call-hangup" type="button"><i class="ti ti-phone-off"></i> Hang up</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://studioinfinitycr.com/infinity-auth.js"></script>
+<script src="js/kamuk-holdings-call.js"></script>
+<script src="js/kamuk-holdings-crm.js"></script>
+</body>
+</html>

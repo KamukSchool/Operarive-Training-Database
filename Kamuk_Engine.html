@@ -317,6 +317,7 @@ textarea.inp{resize:vertical;min-height:80px;}
       <div class="sb-section">Analytics</div>
       <div class="sb-item" onclick="showView('analytics',this)"><i class="ti ti-chart-bar"></i>Estadísticas</div>
       <div class="sb-item" onclick="showView('reports',this)"><i class="ti ti-file-text"></i>Reportes</div>
+      <div class="sb-item" onclick="showView('simulation-supervisor',this)"><i class="ti ti-building-bank"></i>Simulation Supervisor</div>
       <div class="sb-section" id="nav-master-section">Master</div>
       <div class="sb-item" id="nav-resources" onclick="showView('resources',this)"><i class="ti ti-package"></i>Resource Manager</div>
       <div class="sb-item" id="nav-users" onclick="showView('users',this)"><i class="ti ti-shield"></i>Gestión de usuarios</div>
@@ -1275,6 +1276,7 @@ function showView(view, btn){
   else if(view==='exercises') renderExercises(m);
   else if(view==='analytics') renderAnalytics(m);
   else if(view==='reports') renderReports(m);
+  else if(view==='simulation-supervisor') renderSimulationSupervisor(m);
   else if(view==='resources') renderResources(m);
   else if(view==='users') renderUsers(m);
   else if(view==='roster') renderRoster(m);
@@ -1295,6 +1297,20 @@ function showView(view, btn){
   else if(view==='crm') renderCRM(m);
   else if(view==='oe50-applications') renderOe50Applications(m);
   else if(view==='finance') renderFinance(m);
+}
+
+function renderSimulationSupervisor(m){
+  if(!window.SimulationSupervisor){
+    m.innerHTML='<div class="ib ib-red">Simulation Supervisor no pudo cargar.</div>';
+    return;
+  }
+  SimulationSupervisor.render(m,{
+    product:'kamuk',
+    label:'Kamuk School',
+    studentsTable:'kamuk_students',
+    sessionsTable:'kamuk_sessions',
+    students:allStudents
+  });
 }
 
 // ── HELPERS ───────────────────────────────────────────────
@@ -7730,6 +7746,7 @@ runAIAnalysis = async function(){
 };
 
 </script>
+<script src="js/simulation-supervisor.js"></script>
 <script src="https://studioinfinitycr.com/js/jill-f0-gate.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/johnny-class-recorder.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/nexus-unified.js"></script>
