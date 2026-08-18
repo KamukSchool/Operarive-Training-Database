@@ -69,6 +69,7 @@
     { id: 'hc10', title: 'Flight in 12 hours and a WhatsApp wire', line: '“A physical card in five days is useless. Wire $4,200 to this travel agency now.”', facts: 'Fraud block on the physical card. Flight at 6:00 a.m. Client wants a wire to a WhatsApp “travel agency” to pay the airline. Virtual card can be activated. Airport ATM cash is limited while the replacement is in transit. Policy: do not wire to an unverified third party; activate the virtual card; set a travel notice; explain the cash limitation.', connectors: ['therefore', 'however'], family: ['activate', 'activation', 'inactive'], phrasal: 'sort out', vocab: ['virtual card', 'travel notice', 'cash access', 'wire'], disposition: ['resolved', 'resolved with client'], resolution: ['virtual card', 'travel notice', 'do not wire', 'whatsapp'], forbidden: ['send the wire', 'wire the money', 'pay the whatsapp'], why: ['therefore', 'unverified', 'policy'] }
   ];
   var METHOD_PHRASES = ['even when', 'even though', 'what happens is that', 'in other words', 'which means', 'as well as', 'the thing is that', 'on the other hand', 'according to', 'instead of', 'however', 'despite that', 'not only', 'such as', 'unless', 'by now', 'so far'];
+  var PROFESSIONAL_CONNECTORS = ['because', 'however', 'therefore', 'although', 'in addition', 'as a result', 'even though', 'on the other hand', 'in order to', 'consequently', 'nevertheless'];
 
   var MOCK_TASKS = [
     { target: 'client-rivera', prompt: 'A client named Marta Rivera is calling. Click her name in the case queue.', tip: 'Look at the left side of the mock desk.', panel: 'overview' },
@@ -80,10 +81,63 @@
     { target: 'card-status', prompt: 'Click the card status to confirm whether the card is active.', tip: 'The status appears beside the card name.', panel: 'card-detail' },
     { target: 'tab-contacts', prompt: 'The client says this is her third call. Where do you verify that history?', tip: 'Open Previous contacts.', panel: 'contacts' },
     { target: 'contact-latest', prompt: 'Open the most recent contact and identify what was promised.', tip: 'The latest contact is at the top.', panel: 'contact-detail' },
-    { target: 'tab-note', prompt: 'You have enough evidence. Open Internal note to document what you found.', tip: 'Internal notes are visible to the bank, not the client.', panel: 'note' },
-    { target: 'note-box', prompt: 'Click the note field and review the professional summary.', tip: 'A useful note contains evidence, action and the next step.', panel: 'note' },
-    { target: 'save-note', prompt: 'Save the internal note to finish the guided tour.', tip: 'This saves only inside this training mock.', panel: 'complete' }
+    { target: 'tab-note', prompt: 'Tenés evidencia. Abrí Internal note y documentá con AMR.', tip: 'La nota es interna. Acknowledge → Mirror → Respond.', panel: 'note' },
+    { target: 'save-note', prompt: 'Escribí una nota AMR en inglés (editable) y tocá Save note. Un click vacío no cuenta.', tip: 'I understand… You mentioned… I will… today before 4:30 p.m.', panel: 'note', grade: 'amr' },
+    { target: 'tab-emails', prompt: 'Abrí Emails. En el desk real este tab es Compose / Send al cliente.', tip: 'El correo va en Formato E, en inglés.', panel: 'emails' },
+    { target: 'send-email', prompt: 'Escribí el correo en Formato E (E1–E5) y tocá Send. Mínimo 55 palabras, 2 conectores y 1 método linker.', tip: 'Hello Marta · Empatía · Explicación · Ejecución (qué YA hiciste en el CRM) · Encierro con hora + Kind regards.', panel: 'emails', grade: 'formato-e' }
   ];
+
+  function wordCount(text) {
+    var trimmed = String(text || '').trim();
+    return trimmed ? trimmed.split(/\s+/).filter(Boolean).length : 0;
+  }
+
+  function hasTimedNext(text) {
+    return /\b(today|tomorrow|within|business day|a\.m\.|p\.m\.|\d{1,2}:\d{2})\b/i.test(String(text || ''));
+  }
+
+  function listHits(lower, list) {
+    return (list || []).filter(function (word) { return lower.indexOf(String(word).toLowerCase()) >= 0; });
+  }
+
+  function fallbackFormatoE(emailBody) {
+    var text = String(emailBody || '').trim();
+    var lower = text.toLowerCase();
+    var words = wordCount(text);
+    var connectors = listHits(lower, PROFESSIONAL_CONNECTORS);
+    var method = listHits(lower, METHOD_PHRASES);
+    var missing = [];
+    if (!/^(dear|hello|hi)\s+[a-z]/i.test(text)) missing.push('E1 Encabezado: Dear/Hello/Hi + nombre del cliente');
+    if (!(/\b(understand|hear|sorry|apologize)\b/i.test(text) || /thank you for (writing|calling|waiting)/i.test(text))) missing.push('E2 Empatía');
+    if (connectors.length < 2) missing.push('E3 Explicación: 2 conectores');
+    if (method.length < 1) missing.push('E3 Explicación: 1 método linker');
+    if (!/\b(i have|i blocked|i opened|i verified|i reviewed|i filed|i set|i activated|i escalated|i looked into|i sorted out)\b/i.test(text)) missing.push('E4 Ejecución');
+    if (!hasTimedNext(text) || !/\b(i will|i am going to)\b/i.test(text)) missing.push('E5 Encierro: I will + hora');
+    if (!/\b(best regards|kind regards)\b/i.test(text)) missing.push('E5 Encierro: Best regards / Kind regards');
+    if (words < 55) missing.push('Mínimo 55 palabras (van ' + words + ')');
+    return { ok: missing.length === 0, missing: missing };
+  }
+
+  function fallbackAmr(noteText) {
+    var text = String(noteText || '').trim();
+    var missing = [];
+    if (!(/\b(understand|hear|sorry|apologize)\b/i.test(text) || /thank you for (writing|calling|waiting)/i.test(text))) missing.push('AMR Acknowledge');
+    if (!/\b(you said|you mentioned|so you|just to make sure|what happened was)\b/i.test(text)) missing.push('AMR Mirror');
+    if (!/\b(i will|i am going to)\b/i.test(text) || !hasTimedNext(text)) missing.push('AMR Respond: I will + hora');
+    return { ok: missing.length === 0, missing: missing };
+  }
+
+  function gradeMockEmail(text) {
+    return (window.KamukDeskEnglish && window.KamukDeskEnglish.gradeFormatoE)
+      ? window.KamukDeskEnglish.gradeFormatoE(text)
+      : fallbackFormatoE(text);
+  }
+
+  function gradeMockNote(text) {
+    return (window.KamukDeskEnglish && window.KamukDeskEnglish.gradeAmrNote)
+      ? window.KamukDeskEnglish.gradeAmrNote(text)
+      : fallbackAmr(text);
+  }
 
   function esc(value) {
     return String(value == null ? '' : value).replace(/[&<>"]/g, function (c) {
@@ -178,6 +232,7 @@
       '.ob-crm-where{margin:0 0 14px;padding:14px 16px;border-radius:12px;background:#fff1f2;border:2px solid #e11d48;color:#9f1239}.ob-crm-where b{display:block;font-size:13px;margin-bottom:6px}.ob-crm-where p{margin:0 0 6px;font-size:13px;line-height:1.55}.ob-crm-where p:last-child{margin:0}.ob-crm-where ol{margin:6px 0 0;padding-left:18px}.ob-crm-where li{font-size:12px;line-height:1.5;margin:4px 0}',
       '.ob-rules{background:#fff7ed;border:1px solid #fdba74;border-radius:14px;padding:18px 20px;box-shadow:0 10px 28px rgba(154,52,18,.12)}.ob-rules h4{margin:0 0 8px;font-size:16px;color:#9a3412}.ob-rules p{margin:0 0 10px;font-size:13px;line-height:1.6;color:#7c2d12}.ob-rules ul{margin:0 0 14px;padding-left:18px}.ob-rules li{font-size:13px;line-height:1.55;color:#7c2d12;margin:6px 0}.ob-rules-actions{display:flex;gap:8px;flex-wrap:wrap}.ob-btn-ghost{border:1px solid #d8e0e8;background:#fff;color:#334155}',
       '.gm{border:1px solid #cbd5e1;border-radius:13px;overflow:hidden;background:#f8fafc}.gm-guide{display:flex;gap:12px;align-items:flex-start;background:#fff8cc;border-bottom:1px solid #f0cf50;padding:13px 15px}.gm-guide .gm-n{width:28px;height:28px;border-radius:50%;background:#eab308;color:#422006;display:grid;place-items:center;font-weight:900;flex:0 0 auto}.gm-guide b{display:block;font-size:13px;color:#422006}.gm-guide p{margin:3px 0 0;font-size:12px;line-height:1.5;color:#713f12}.gm-shell{display:grid;grid-template-columns:190px 1fr;min-height:410px}.gm-side{background:#1e1b4b;color:#fff;padding:12px}.gm-brand{font-size:11px;font-weight:900;margin-bottom:13px}.gm-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;opacity:.55;margin:9px 0 5px}.gm-client{padding:9px;border-radius:8px;font-size:11px;cursor:pointer;margin-bottom:5px}.gm-client b{display:block}.gm-client span{font-size:9px;opacity:.7}.gm-main{min-width:0}.gm-top{padding:11px 13px;background:#fff;border-bottom:1px solid #e2e8f0}.gm-top b{font-size:13px;color:#102033}.gm-top span{display:block;font-size:10px;color:#64748b}.gm-tabs{display:flex;gap:2px;padding:7px 8px;background:#fff;border-bottom:1px solid #e2e8f0;overflow-x:auto}.gm-tab{white-space:nowrap;border:0;background:transparent;border-radius:6px;padding:7px 8px;font:700 9px Inter,Arial,sans-serif;color:#64748b;cursor:pointer}.gm-view{padding:13px}.gm-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.gm-metric,.gm-product,.gm-row,.gm-contact{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:9px}.gm-metric small,.gm-product small{display:block;font-size:8px;color:#64748b;text-transform:uppercase}.gm-metric b{font-size:14px;color:#102033}.gm-product{margin-bottom:7px;cursor:pointer}.gm-product b{display:block;font-size:11px;color:#102033}.gm-product span{font-size:9px;color:#64748b}.gm-row,.gm-contact{display:flex;justify-content:space-between;gap:8px;margin-bottom:6px;font-size:10px;color:#334155;cursor:pointer}.gm-red{color:#b42318;font-weight:800}.gm-green{color:#15803d;font-weight:800}.gm-note{width:100%;box-sizing:border-box;min-height:74px;border:1px solid #cbd5e1;border-radius:8px;padding:9px;font:11px Inter,Arial,sans-serif}.gm-save{margin-top:7px;border:0;border-radius:7px;padding:8px 11px;background:#475569;color:#fff;font:800 10px Inter,Arial,sans-serif;cursor:pointer}.gm-target{position:relative;z-index:1;outline:4px solid #facc15!important;background:#fef9c3!important;color:#422006!important;animation:gmPulse 1s infinite alternate}.gm-target:after{content:"CLICK HERE";position:absolute;z-index:3;right:2px;top:-16px;background:#eab308;color:#422006;border-radius:4px;padding:2px 5px;font:900 7px Inter,Arial,sans-serif}.gm-wrong{animation:gmShake .25s}.gm-complete{text-align:center;padding:70px 20px}.gm-complete i{font-size:44px;color:#15803d}',
+      '.gm-email{width:100%;box-sizing:border-box;min-height:130px;border:1px solid #cbd5e1;border-radius:8px;padding:9px;font:11px/1.5 Inter,Arial,sans-serif}.gm-coach{margin-top:8px;font-size:11px;line-height:1.45;color:#9f1239;background:#fff1f2;border:1px solid #e11d48;border-radius:8px;padding:8px 10px}',
       '.ob-locked{text-align:center;padding:35px 15px;color:#64748b}.ob-locked i{font-size:34px;color:#cbd5e1}',
       '@keyframes gmPulse{to{outline-color:#eab308;box-shadow:0 0 14px #facc15}}@keyframes gmShake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}',
       '@media(max-width:700px){.ob-grid,.ob-compare{grid-template-columns:1fr}.gm-shell{grid-template-columns:120px 1fr}.ob-panel{padding:14px}.ob-choice,.ob-home-top,.ob-btn,.ob-select{min-height:44px}}'
@@ -225,7 +280,10 @@
       var keys = CHECK_KEYS[id];
       if (!keys) {
         if (id === 'quiz') return quizPassed();
-        if (id === 'mock') return (state.mockIndex || 0) >= MOCK_TASKS.length - 1 && state.done.indexOf('mock') >= 0;
+        if (id === 'mock') {
+          var idx = state.mockIndex || 0;
+          return state.done.indexOf('mock') >= 0 && (idx >= MOCK_TASKS.length - 1 || idx >= 11);
+        }
         return state.done.indexOf(id) >= 0;
       }
       return keys.every(checkPassed);
@@ -553,8 +611,13 @@
       return name + (task && task.target === target ? ' gm-target' : '');
     }
 
+    function mockCoachHtml() {
+      if (!state.mockCoach) return '';
+      return '<div class="gm-coach">' + esc(state.mockCoach) + '</div>';
+    }
+
     function crmView(panel) {
-      if (panel === 'complete') return '<div class="gm-complete"><i class="ti ti-circle-check"></i><h4>Guided CRM complete</h4><p>You located evidence, products and history, then documented the next step.</p></div>';
+      if (panel === 'complete') return '<div class="gm-complete"><i class="ti ti-circle-check"></i><h4>Guided CRM complete</h4><p>You located evidence, wrote an AMR note, and sent a Formato E email.</p></div>';
       if (panel === 'services') return '<div class="' + cls('product-operating', 'gm-product') + '" data-gm="product-operating"><small>Operating Account</small><b>Operating Account · Rivera Logistics</b><span>Payroll and supplier payments</span></div><div class="gm-product"><small>Card</small><b>Obsidian Corporate Card</b><span>Active</span></div>';
       if (panel === 'account') return '<div class="gm-metrics"><div class="gm-metric"><small>Available</small><b>$42,110</b></div><div class="gm-metric"><small>Status</small><b>Restricted</b></div></div>';
       if (panel === 'statements') return '<div class="' + cls('tx-declined', 'gm-row') + '" data-gm="tx-declined"><span>Supplier ACH · $18,400</span><span class="gm-red">Declined</span></div><div class="gm-row"><span>Payroll batch</span><span class="gm-green">Posted</span></div>';
@@ -563,7 +626,8 @@
       if (panel === 'card-detail') return '<p>Card is active. Last 6 remain masked until identity is verified on the live desk.</p>';
       if (panel === 'contacts') return '<div class="' + cls('contact-latest', 'gm-contact') + '" data-gm="contact-latest"><span>Today 09:12 · promised callback</span><span>Open</span></div><div class="gm-contact"><span>Yesterday · restriction notice</span><span>Closed</span></div>';
       if (panel === 'contact-detail') return '<p>Previous agent promised a callback before 11:00 a.m. and did not document a next owner.</p>';
-      if (panel === 'note') return '<textarea class="' + cls('note-box', 'gm-note') + '" data-gm="note-box" readonly>Restriction on operating account blocked supplier ACH $18,400. Card remains active. Next step: Operations restore before 11:00 a.m. and confirm with client.</textarea><button class="' + cls('save-note', 'gm-save') + '" data-gm="save-note">Save note</button>';
+      if (panel === 'note') return '<textarea class="gm-note" data-gm="note-box" placeholder="AMR in English: I understand… You mentioned… I will… today before 4:30 p.m.">' + esc(state.mockNote || '') + '</textarea><button class="' + cls('save-note', 'gm-save') + '" data-gm="save-note">Save note</button>' + mockCoachHtml();
+      if (panel === 'emails') return '<p style="margin:0 0 8px;font-size:11px;color:#64748b">Emails · Compose · Send to Marta Rivera</p><textarea class="gm-email" data-gm="email-box" placeholder="Hello Marta, thank you for writing… Formato E in English.">' + esc(state.mockEmail || '') + '</textarea><button class="' + cls('send-email', 'gm-save') + '" data-gm="send-email">Send</button>' + mockCoachHtml();
       return '<div class="gm-metrics"><div class="gm-metric"><small>Priority</small><b>P1</b></div><div class="gm-metric"><small>Contacts</small><b>3</b></div><div class="gm-metric"><small>SLA</small><b>25 min</b></div></div>';
     }
 
@@ -571,19 +635,20 @@
       var index = Math.min(state.mockIndex || 0, MOCK_TASKS.length - 1);
       var task = MOCK_TASKS[index];
       var activePanel = state.mockPanel || 'overview';
-      if (state.done.indexOf('mock') >= 0 && (state.mockIndex || 0) >= MOCK_TASKS.length - 1) activePanel = 'complete';
+      var mockDone = state.done.indexOf('mock') >= 0 && ((state.mockIndex || 0) >= MOCK_TASKS.length - 1 || (state.mockIndex || 0) >= 11);
+      if (mockDone) activePanel = 'complete';
       return '<div class="gm"><div class="gm-guide"><div class="gm-n">' + (index + 1) + '</div><div><b>' + task.prompt + '</b><p>Hint: ' + task.tip + '</p></div></div>'
         + '<div class="gm-shell"><aside class="gm-side"><div class="gm-brand">KAMUK HOLDINGS · TRAINING MOCK</div><div class="gm-label">Case queue</div>'
         + '<div class="' + cls('client-rivera', 'gm-client') + '" data-gm="client-rivera"><b>Marta Rivera</b><span>Operating account restricted</span></div>'
         + '<div class="gm-client"><b>Daniel Torres</b><span>Card declined abroad</span></div></aside>'
         + '<main class="gm-main"><div class="gm-top"><b>Marta Rivera · Rivera Logistics S.A.</b><span>Corporate · Mid-market</span></div>'
-        + '<nav class="gm-tabs"><button class="gm-tab" data-gm="tab-overview">Overview</button><button class="' + cls('tab-statements', 'gm-tab') + '" data-gm="tab-statements">Statements</button><button class="' + cls('tab-services', 'gm-tab') + '" data-gm="tab-services">Services</button><button class="' + cls('tab-cards', 'gm-tab') + '" data-gm="tab-cards">Card transactions</button><button class="' + cls('tab-contacts', 'gm-tab') + '" data-gm="tab-contacts">Previous contacts</button><button class="' + cls('tab-note', 'gm-tab') + '" data-gm="tab-note">Internal note</button></nav>'
+        + '<nav class="gm-tabs"><button class="gm-tab" data-gm="tab-overview">Overview</button><button class="' + cls('tab-statements', 'gm-tab') + '" data-gm="tab-statements">Statements</button><button class="' + cls('tab-services', 'gm-tab') + '" data-gm="tab-services">Services</button><button class="' + cls('tab-cards', 'gm-tab') + '" data-gm="tab-cards">Card transactions</button><button class="' + cls('tab-contacts', 'gm-tab') + '" data-gm="tab-contacts">Previous contacts</button><button class="' + cls('tab-note', 'gm-tab') + '" data-gm="tab-note">Internal note</button><button class="' + cls('tab-emails', 'gm-tab') + '" data-gm="tab-emails">Emails</button></nav>'
         + '<div class="gm-view">' + crmView(activePanel) + '</div></main></div></div>';
     }
 
     function mockPanel() {
       if (!quizPassed()) return '<div class="ob-panel"><div class="ob-locked"><i class="ti ti-lock"></i><p>Pass the certification at 80% before the guided CRM.</p></div></div>';
-      return panelShell('Guided CRM — safe training environment', 7, 'This is not the production CRM. Click the highlighted control. The tour has 12 evidence hot-spots.',
+      return panelShell('Guided CRM — safe training environment', 7, 'This is not the production CRM. Click the highlighted control. The last steps require a real AMR note and a Formato E email — not click-through.',
         (state.done.indexOf('mock') >= 0 ? '<div class="ob-cert"><i class="ti ti-rosette-discount-check"></i><div><b>CRM navigation certified</b><span>Safe guided tour completed</span></div></div>' : '')
         + guidedCrm()
         + (state.done.indexOf('mock') >= 0 ? continueBtn('nesting', true, 'Continue to nesting cases') : ''));
@@ -785,12 +850,37 @@
       if (homeTop) { homeTop.parentElement.classList.toggle('open'); return; }
       var crmControl = event.target.closest('[data-gm]');
       if (crmControl && state.step === 'mock') {
+        if (crmControl.matches('textarea, input')) return;
         var index = state.mockIndex || 0;
         var task = MOCK_TASKS[index];
         if (crmControl.dataset.gm !== task.target) {
           crmControl.classList.add('gm-wrong');
           setTimeout(function () { crmControl.classList.remove('gm-wrong'); }, 300);
           return;
+        }
+        if (task.grade === 'amr') {
+          var note = root.querySelector('[data-gm="note-box"]');
+          if (note) state.mockNote = note.value;
+          var amr = gradeMockNote(state.mockNote);
+          if (!amr.ok) {
+            state.mockCoach = 'Nota AMR incompleta: ' + amr.missing.join(' · ');
+            save();
+            render();
+            return;
+          }
+          state.mockCoach = '';
+        }
+        if (task.grade === 'formato-e') {
+          var email = root.querySelector('[data-gm="email-box"]');
+          if (email) state.mockEmail = email.value;
+          var graded = gradeMockEmail(state.mockEmail);
+          if (!graded.ok) {
+            state.mockCoach = 'Formato E incompleto: ' + graded.missing.join(' · ');
+            save();
+            render();
+            return;
+          }
+          state.mockCoach = '';
         }
         state.mockPanel = task.panel;
         state.mockIndex = index + 1;
@@ -822,6 +912,13 @@
     });
 
     root.addEventListener('input', function (event) {
+      var mockField = event.target.closest('[data-gm="note-box"], [data-gm="email-box"]');
+      if (mockField) {
+        if (mockField.dataset.gm === 'note-box') state.mockNote = mockField.value;
+        else state.mockEmail = mockField.value;
+        save();
+        return;
+      }
       var field = event.target.closest('.ob-home-answer');
       if (!field) return;
       state.homeAnswers[field.dataset.homeAnswer] = field.value;
@@ -842,12 +939,17 @@
     });
 
     function blockImportedText(event) {
-      var field = event.target.closest('.ob-home-answer');
+      var field = event.target.closest('.ob-home-answer, [data-gm="note-box"], [data-gm="email-box"]');
       if (!field) return;
       event.preventDefault();
-      var statusEl = field.parentElement.querySelector('.ob-home-status');
-      statusEl.className = 'ob-home-status';
-      statusEl.textContent = 'Paste is disabled. Build the answer by typing it in your own words.';
+      if (field.classList.contains('ob-home-answer')) {
+        var statusEl = field.parentElement.querySelector('.ob-home-status');
+        statusEl.className = 'ob-home-status';
+        statusEl.textContent = 'Paste is disabled. Build the answer by typing it in your own words.';
+        return;
+      }
+      state.mockCoach = 'Pegar está desactivado. Escribí el texto en inglés, en tus palabras.';
+      render();
     }
     root.addEventListener('paste', blockImportedText);
     root.addEventListener('drop', blockImportedText);

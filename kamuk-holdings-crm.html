@@ -299,8 +299,8 @@
           <div style="font-size:12.5px;font-weight:600;margin-bottom:4px;" id="compose-lbl">New email</div>
           <div style="font-size:11.5px;color:var(--text2);margin-bottom:3px;">To: <strong id="compose-to">—</strong></div>
           <input class="inp compose-subject" id="compose-subject" type="text" placeholder="Subject">
-          <textarea id="compose-txt" rows="5" placeholder="Write your email in professional English. Acknowledge, state the action taken and confirm the next step."></textarea>
-          <div id="compose-coach" style="font-size:10.5px;line-height:1.5;color:var(--text2);margin-top:6px;">Type your own email. Include a natural opening, one connector, one precise case term, the action taken and a timed next step. Paste and drag/drop are disabled.</div>
+          <textarea id="compose-txt" rows="8" placeholder="Formato E in English: Hello Marta, Empatía, Explicación (2 connectors + 1 método linker), Ejecución (what you already did in the CRM), Encierro (I will + 4:30 p.m.) + Kind regards."></textarea>
+          <div id="compose-coach" style="font-size:10.5px;line-height:1.5;color:var(--text2);margin-top:6px;">Formato E: Encabezado, Empatía, Explicación, Ejecución, Encierro. 2 conectores + 1 método linker. 55+ palabras. Paste is disabled.</div>
           <div style="display:flex;gap:5px;margin-top:6px;"><button class="act accent" id="compose-send">Send</button><button class="act" id="compose-cancel">Cancel</button></div>
         </div>
       </div>
@@ -337,7 +337,7 @@
             <select class="inp" id="note-type"><option>Inbound call</option><option>Outbound call</option><option>Email</option><option>In-person</option><option>Internal note</option></select>
             <select class="inp" id="note-status"><option>Completed</option><option>Open</option><option>Pending follow-up</option><option>Escalated</option></select>
           </div>
-          <textarea id="note-txt" rows="3" class="inp" style="width:100%;margin-bottom:6px;" placeholder="Document facts, action taken, owner and next step in professional English."></textarea>
+          <textarea id="note-txt" rows="3" class="inp" style="width:100%;margin-bottom:6px;" placeholder="AMR note: Acknowledge the impact, mirror what they said, then I will + timed next step."></textarea>
           <div style="display:flex;gap:5px;"><button class="act accent" id="note-save">Save note</button><button class="act" id="note-cancel">Cancel</button></div>
         </div>
         <div class="sec">Case disposition — document, then close</div>
@@ -470,6 +470,7 @@
 
 <script src="https://studioinfinitycr.com/infinity-auth.js"></script>
 <script src="js/kamuk-holdings-call.js"></script>
-<script src="js/kamuk-holdings-crm.js?v=20260818gp10"></script>
+<script src="js/kamuk-desk-english.js?v=20260818fmtE"></script>
+<script src="js/kamuk-holdings-crm.js?v=20260818fmtE"></script>
 </body>
 </html>

@@ -22,6 +22,7 @@
   };
 
   const $ = (id) => document.getElementById(id);
+  const deskEnglish = () => window.KamukDeskEnglish || null;
   const money = (n) => (n < 0 ? '-' : '') + '$' + Math.abs(Math.round(Number(n) || 0)).toLocaleString('en-US');
   const signed = (n) => (n >= 0 ? '+' : '-') + '$' + Math.abs(Math.round(Number(n) || 0)).toLocaleString('en-US');
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -59,6 +60,7 @@
     if (!response.ok) {
       const error = new Error(data.error || `Request failed (${response.status})`);
       error.code = data.code || '';
+      error.missing = data.missing;
       error.status = response.status;
       throw error;
     }
@@ -598,10 +600,10 @@
     $('compose-lbl').textContent = email ? 'Reply' : 'New email';
     $('compose-subject').value = email ? (/^Re:/i.test(email.subject) ? email.subject : `Re: ${email.subject}`) : `Case update — ${state.active.id}`;
     $('compose-txt').value = '';
-    $('compose-txt').placeholder = 'Write your email in professional English. Acknowledge, state the action taken and confirm the next step.';
+    $('compose-txt').placeholder = 'Formato E in English: Encabezado, Empatía, Explicación, Ejecución, Encierro. Hello Marta + 2 connectors + 1 método linker.';
     if ($('compose-coach')) {
       $('compose-coach').style.color = 'var(--text2)';
-      $('compose-coach').textContent = 'Type your own email. Include a natural opening, one connector, one precise case term, the action taken and a timed next step. Paste and drag/drop are disabled.';
+      $('compose-coach').textContent = EMAIL_MODEL;
     }
     $('compose-box').classList.add('open');
     $('compose-txt').focus();
@@ -884,15 +886,17 @@
   function sendEmail() {
     const text = $('compose-txt').value.trim();
     const subject = $('compose-subject').value.trim();
-    const lower = text.toLowerCase();
-    const connectors = ['because', 'therefore', 'however', 'although', 'in addition', 'as a result', 'while'];
-    const naturalOpenings = ['dear ', 'hello ', 'hi '];
-    const timedStep = /\b(today|tomorrow|within|by\s+\d|by\s+(monday|tuesday|wednesday|thursday|friday)|business day|a\.m\.|p\.m\.)\b/i;
     if (!subject) return toast('Add an email subject.', true);
-    if (text.split(/\s+/).filter(Boolean).length < 45) return toast('Write at least 45 words in your own professional English.', true);
-    if (!naturalOpenings.some((opening) => lower.startsWith(opening))) return toast('Start with a natural greeting: Dear, Hello or Hi + client name.', true);
-    if (!connectors.some((connector) => lower.includes(connector))) return toast('Use at least one connector naturally: because, however, therefore, although or in addition.', true);
-    if (!timedStep.test(text)) return toast('Include a timed next step: today, tomorrow, within X days or by a specific time.', true);
+    const grader = deskEnglish();
+    const graded = grader && grader.gradeFormatoE ? grader.gradeFormatoE(text) : { ok: false, missing: ['Formato E no cargó. Recargá el desk.'] };
+    if (!graded.ok) {
+      const msg = 'Formato E incompleto: ' + (grader && grader.missingMessage ? grader.missingMessage(graded.missing) : graded.missing.join(' · '));
+      if ($('compose-coach')) {
+        $('compose-coach').style.color = 'var(--danger)';
+        $('compose-coach').textContent = msg;
+      }
+      return toast(msg, true);
+    }
     const now = new Date();
     state.profile.emails.unshift({
       id: `LOCAL-${Date.now()}`, direction: 'outbound', from: `${state.employee.id.toLowerCase()}@kamukholdings.com`,
@@ -922,6 +926,11 @@
   function saveNote() {
     const text = $('note-txt').value.trim();
     if (text.length < 15) return toast('Document at least 15 characters of factual evidence.', true);
+    if (state.guide) {
+      const grader = deskEnglish();
+      const amr = grader && grader.gradeAmrNote ? grader.gradeAmrNote(text) : { ok: false, missing: ['AMR no cargó. Recargá el desk.'] };
+      if (!amr.ok) return toast('Nota AMR incompleta: ' + amr.missing.join(' · '), true);
+    }
     addNote($('note-type').value, $('note-status').value, text);
     $('note-form').style.display = 'none'; $('note-txt').value = '';
     if (!state.actions.some((a) => a.key === 'note')) recordAction('note', 'Professional documentation added', text);
@@ -1294,6 +1303,20 @@
     try {
       let evaluation, metrics = state.metrics;
       const finishingGuide = Boolean(state.guide);
+      if (finishingGuide) {
+        const lastEmail = (state.profile.emails || []).find((email) => email.direction === 'outbound');
+        const lastNote = state.notes.length ? state.notes[state.notes.length - 1] : null;
+        state.guide.practiceEmail = lastEmail && lastEmail.body || '';
+        state.guide.practiceNote = lastNote && (lastNote.text || lastNote.body) || '';
+        const grader = deskEnglish();
+        if (grader && grader.gradePracticeTouch) {
+          const graded = grader.gradePracticeTouch({ email: state.guide.practiceEmail, note: state.guide.practiceNote });
+          if (!graded.ok) {
+            toast('Formato E / AMR incompleto: ' + graded.missing.join(' · '), true);
+            return;
+          }
+        }
+      }
       if (state.preview || finishingGuide) {
         evaluation = localEvaluation(payload);
       } else {
@@ -1566,6 +1589,22 @@
     });
     $('compose-send').addEventListener('click', sendEmail);
     $('compose-cancel').addEventListener('click', () => $('compose-box').classList.remove('open'));
+    $('compose-txt').addEventListener('input', () => {
+      const coach = $('compose-coach');
+      const grader = deskEnglish();
+      if (!coach || !grader || !grader.gradeFormatoE) return;
+      const text = $('compose-txt').value.trim();
+      if (!text) {
+        coach.style.color = 'var(--text2)';
+        coach.textContent = EMAIL_MODEL;
+        return;
+      }
+      const graded = grader.gradeFormatoE(text);
+      coach.style.color = graded.ok ? '#15803d' : 'var(--danger)';
+      coach.textContent = graded.ok
+        ? 'Formato E listo (' + graded.words + ' palabras). Podés Send.'
+        : graded.missing.join(' · ');
+    });
     $('compose-box').addEventListener('paste', blockImportedEmailText);
     $('compose-box').addEventListener('drop', blockImportedEmailText);
     $('compose-box').addEventListener('beforeinput', (event) => {
@@ -1653,7 +1692,8 @@
 
   /* ─────────────── 10 GUIDED PRACTICE CASES (real desk, off weekly floor) ─────────────── */
 
-  const EMAIL_MODEL = 'Cómo escribir el correo: 1) Hello + nombre. 2) Impacto del cliente. 3) Un connector (because / however / therefore). 4) Qué YA hiciste. 5) Next step con hora. Ejemplo: “Hello Marta, I reviewed the freeze because two supplier payments declined. I escalated to Operations and I will call you today before 4:30 p.m.” Mínimo 45 palabras. Sin pegar.';
+  const EMAIL_MODEL = 'Formato E (escribilo en inglés, no copies): E1 Encabezado Dear/Hello/Hi + nombre. E2 Empatía (understand / thank you for writing). E3 Explicación: 2 conectores + 1 método linker. E4 Ejecución: qué YA hiciste en el CRM (I reviewed / I escalated). E5 Encierro: I will + today/4:30 p.m. + Kind regards. Ejemplo de escritorio: “Hello Marta, thank you for writing. I understand the payroll freeze is blocking supplier ACH. I reviewed the Operating Account restriction because two payments declined. However I will not lift every control. In other words, I escalated to Operations and I have documented Previous contacts. I will call you today before 4:30 p.m. Kind regards.” Mínimo 55 palabras. Sin pegar.';
+  const NOTE_MODEL = 'Nota AMR (inglés): Acknowledge el impacto · Mirror (you said / you mentioned / just to make sure) · Respond (I will + hora). Ejemplo: “I understand payroll is frozen. You mentioned two supplier ACH declines. Just to make sure, the Operating Account is restricted and the card stays active. I will follow up with Operations today before 4:30 p.m.”';
 
   function openPracticeSteps() {
     return [
@@ -1667,10 +1707,10 @@
     return [
       { action: 'tab-emails', title: 'Tab que debés usar: Emails', body: 'El tab rojo es Emails. Ahí sale el correo al cliente — evidencia de cierre.', target: '[data-tab="emails"]', kind: 'click' },
       { action: 'compose', title: 'Dónde click: Compose', body: 'Abrí el compositor real. El modelo en rojo es la estructura, no un texto para copiar.', target: '#email-compose', kind: 'click', model: EMAIL_MODEL },
-      { action: 'email', title: 'Escribí y enviá el correo', body: 'Greeting + impacto + connector + acción + next step con hora. El botón Send queda en rojo cuando el texto cumple la rúbrica.', target: '#compose-send', kind: 'click', model: EMAIL_MODEL },
+      { action: 'email', title: 'Escribí y enviá el correo', body: 'Formato E: Encabezado, Empatía, Explicación (2 conectores + 1 método linker), Ejecución, Encierro. Send solo pasa si cumple.', target: '#compose-send', kind: 'click', model: EMAIL_MODEL },
       { action: 'tab-contacts', title: 'Tab: Previous contacts', body: 'Notas internas. El banco las ve; el cliente no. Documentá evidencia y dueño.', target: '[data-tab="contacts"]', kind: 'click' },
-      { action: 'note-open', title: 'Dónde click: Add note', body: 'Tocá Add note (rojo). Hechos + acción + next step. Mínimo 15 caracteres.', target: '#note-add', kind: 'click' },
-      { action: 'note', title: 'Guardá la nota', body: 'Save note cierra la evidencia interna. Sin nota no hay cierre correcto.', target: '#note-save', kind: 'click' },
+      { action: 'note-open', title: 'Dónde click: Add note', body: 'Tocá Add note (rojo). Nota AMR: Acknowledge → Mirror → Respond.', target: '#note-add', kind: 'click' },
+      { action: 'note', title: 'Guardá la nota', body: 'Save note cierra la evidencia interna. AMR obligatorio en práctica.', target: '#note-save', kind: 'click', model: NOTE_MODEL },
       { action: 'resolve', title: 'Cómo cerrar el caso', body: dispositionHint || 'Resolve case (rojo). Email + note son la evidencia. AA o PSA si falta trabajo; Resolved si ya cerraste.', target: '#btn-resolve', kind: 'click' },
       { action: 'close-submit', title: 'Disposition + Submit', body: 'Subrayado en rojo: disposition, summary y next step. Submit to Alice QA cierra el caso con evidencia.', look: ['#res-disp', '#res-summary', '#res-next'], target: '#res-submit', kind: 'click' }
     ];
@@ -1705,7 +1745,7 @@
       { action: 'tab-stmt', title: 'Tab: Statements', body: 'Evidencia del ACH. Click Statements (rojo) antes de prometer un refund.', target: '[data-tab="stmt"]', kind: 'click' }
     ] },
     { id: 'gp9', packId: 'KH-1120', title: 'PRACTICE 9 · Client email update — write it right', extra: [
-      { action: 'compose', title: 'Dónde click: Email (barra de acciones)', body: 'El botón Email de la barra (rojo) abre el compositor real. Usá el modelo de abajo.', target: '#btn-email', kind: 'click', model: EMAIL_MODEL }
+      { action: 'compose', title: 'Dónde click: Email (barra de acciones)', body: 'El botón Email de la barra (rojo) abre el compositor real. Usá Formato E.', target: '#btn-email', kind: 'click', model: EMAIL_MODEL }
     ] },
     { id: 'gp10', packId: 'KH-1202', title: 'PRACTICE 10 · Close with AA / PSA / Resolved', extra: [
       { action: 'tab-contacts', title: 'Tab: Previous contacts + disposition', body: 'Click Previous contacts. Abajo están AA (awaiting action) y PSA (pending system). Eso es estacionar el caso con dueño.', target: '[data-tab="contacts"]', kind: 'click' },
@@ -1827,15 +1867,34 @@
     if (!spec || !state.guide) return completeDeskGuide();
     const replay = Boolean(state.guide.replay);
     const done = Array.isArray(state.guide.done) ? state.guide.done.slice() : [];
-    if (done.indexOf(spec.id) < 0) done.push(spec.id);
+    const practiceEmail = state.guide.practiceEmail || '';
+    const practiceNote = state.guide.practiceNote || '';
     if (!replay) {
-      try {
-        const data = await api(crmPath('/training/progress'), { method: 'POST', body: { practiceCaseId: spec.id } });
-        if (Array.isArray(data.deskGuideDone)) {
-          data.deskGuideDone.forEach((id) => { if (done.indexOf(id) < 0) done.push(id); });
+      const grader = deskEnglish();
+      if (grader && grader.gradePracticeTouch) {
+        const graded = grader.gradePracticeTouch({ email: practiceEmail, note: practiceNote });
+        if (!graded.ok) {
+          toast('Formato E / AMR incompleto: ' + graded.missing.join(' · '), true);
+          return;
         }
-      } catch (_) { /* keep local progress this session */ }
+      }
+      if (!state.preview) {
+        try {
+          const data = await api(crmPath('/training/progress'), {
+            method: 'POST',
+            body: { practiceCaseId: spec.id, practiceEmail, practiceNote }
+          });
+          if (Array.isArray(data.deskGuideDone)) {
+            data.deskGuideDone.forEach((id) => { if (done.indexOf(id) < 0) done.push(id); });
+          }
+        } catch (err) {
+          const bits = Array.isArray(err.missing) ? err.missing.join(' · ') : (err.message || 'Formato E');
+          toast(err.code === 'FORMATO_E' ? bits : (err.message || 'No se pudo guardar la práctica'), true);
+          return;
+        }
+      }
     }
+    if (done.indexOf(spec.id) < 0) done.push(spec.id);
     const from = state.guide.caseIndex;
     const next = PRACTICE_CASES.findIndex((item, i) => i > from && (replay || done.indexOf(item.id) < 0));
     if (next < 0) return completeDeskGuide();

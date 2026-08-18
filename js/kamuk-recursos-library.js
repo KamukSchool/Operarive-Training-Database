@@ -11,6 +11,8 @@
   }
 
   var GLOSS_CATS = [
+    { id: 'email', label: 'Email' },
+    { id: 'phone', label: 'Phone' },
     { id: 'metodo', label: 'Método' },
     { id: 'natural', label: 'Expresiones' },
     { id: 'extra', label: 'Conectores' },
@@ -27,6 +29,18 @@
   }
 
   var GLOSS_ITEMS = [
+    item('email', 'E1 Encabezado', 'Hello / Dear + nombre', 'Abrí Emails → Compose. Primera línea: Dear/Hello/Hi + first name del cliente del case (Marta, no “Dear Client”). Send no pasa sin esto.', 'Hello Marta,', 'Hi Daniel,'),
+    item('email', 'E2 Empatía', 'Acknowledge impact', 'Nombrá el impacto que ves en el case brief / quote. Usá understand, hear, sorry, apologize o thank you for writing.', 'Thank you for writing. I understand the payroll freeze is blocking supplier ACH.', 'I hear this is the third call. I will review Previous contacts first.'),
+    item('email', 'E3 Explicación + linkers', '2 conectores + 1 método', 'En Explicación usá 2 conectores (because, however, therefore…) y 1 método linker (in other words, even though, as well as). Tocá Método / Conectores para más chips.', 'I reviewed the Operating Account restriction because two supplier ACH payments declined. However I will not lift every control. In other words, Operations owns the restore.', 'Even though the Obsidian card is Active, the Operating Account is Restricted; therefore payroll is still blocked.'),
+    item('email', 'E4 Ejecución', 'Qué YA hiciste en el CRM', 'Usá I have / I reviewed / I verified / I escalated / I blocked / I set. Debe ser acción del desk, no una promesa.', 'I reviewed Statements, I verified the freeze flag, and I escalated to Operations.', 'I have documented Previous contacts and I set AA until Operations restores the account.'),
+    item('email', 'E5 Encierro', 'I will + hora + regards', 'Dueño + today / 4:30 p.m. / business days. Cierre: Best regards o Kind regards. Mínimo 55 palabras en todo el correo.', 'I will call you today before 4:30 p.m. with the Operations outcome. Kind regards', 'I will follow up within two business days. Best regards'),
+    item('email', 'Technicismos in the email', 'AA, PSA, PIN, MCC, last 6', 'Usá los términos del desk, no teoría. Nunca pongas un PIN. Last 6 only after identity. AA/PSA son dispositions, no relleno.', 'I set AA and I will call you today before 4:30 p.m. I cannot send a PIN; last 6 only after identity on a recorded line.', 'PSA: the restore is with Operations. I reviewed the hotel MCC block and the travel notice in Cards.'),
+    item('phone', 'AMR Acknowledge', 'Acknowledge', 'Primera frase: el impacto. Línea grabada. Entendé antes de investigar.', 'I understand payroll is frozen and two supplier payments declined.', 'Thank you for waiting. I hear this is the third call.'),
+    item('phone', 'AMR Mirror', 'Mirror', 'Repetí el hecho clave: you said / you mentioned / so you / just to make sure / what happened was.', 'You mentioned the supplier ACH of $18,400 declined. Just to make sure, that is on the Operating Account.', 'So you need the card to work at the Lisbon hotel desk — what happened was a decline, not a lost card.'),
+    item('phone', 'AMR Respond', 'Respond', 'I will + dueño + hora. Luego documentá la nota con el mismo AMR.', 'I will review Statements now and I will call you today before 4:30 p.m.', 'I will escalate to Operations and I will follow up within two business days.'),
+    item('phone', 'Recorded line + hold', 'Línea grabada / hold', 'Identidad y last 6 solo en recorded line. En hold: decí por qué y volvé. No dejes al cliente colgado.', 'We are on a recorded line. Please stay with me while I look into Statements.', 'I am placing you on a brief hold to review Previous contacts. I will be right back.'),
+    item('phone', 'Identity before disclosure', 'Identidad primero', 'Verify identity en Cards & PIN antes de last 6. Nunca PAN completo. Nunca PIN.', 'Once identity is complete on the recorded line, I can confirm last 6 — never the PIN.', 'Date of birth does not match. I will not confirm last 6 until verification is complete.'),
+    item('phone', 'Ownership, no PIN', 'Dueño + política PIN', 'Nombrá qué vas a hacer vos. Policy: never send, read or email a PIN. SMS no es canal.', 'I own the callback today before 4:30 p.m. I cannot text the PIN.', 'I will not email the PIN. I will complete identity and confirm last 6 only.'),
     item('metodo', 'Even when / even though', 'Aun cuando', 'Use even though to keep the policy after naming a fact that does not change the decision.', 'Even though the flight is tonight, I cannot send a PIN.', 'Even when the merchant refunded, I will confirm before I close the claim.'),
     item('metodo', 'Once', 'Una vez que', 'Use once for a condition that unlocks the next safe action.', 'Once identity is complete on the recorded line, I can confirm last 6.', 'Once the travel notice is on file, I will re-try the authorization.'),
     item('metodo', 'however', 'Sin embargo', 'Use however to contrast the client request with policy without sounding rude.', 'I hear the urgency; however, I cannot wire to an unverified WhatsApp agency.', 'The refund posted; however, I must withdraw the open dispute to avoid a double credit.'),
@@ -222,12 +236,12 @@
       if (kind === 'gloss') {
         panel = selected
           ? '<div class="kh-lib-panel"><h4>' + esc(selected.en) + '</h4><div class="kh-lib-es">Español: ' + esc(selected.es) + (selected.gloss ? ' — ' + esc(selected.gloss) : '') + '</div><p class="kh-lib-how">' + esc(selected.how) + '</p>' + ((selected.forms && selected.forms.length) ? '<div class="kh-lib-forms"><b>Formas, conjugaciones y para qué</b><ul class="kh-lib-ex">' + selected.forms.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') + '</ul></div>' : '') + '<ul class="kh-lib-ex"><li>' + esc(selected.examples[0]) + '</li><li>' + esc(selected.examples[1]) + '</li></ul></div>'
-          : '<div class="kh-lib-panel"><p class="kh-lib-empty">Tocá Expresiones para the thing is / what happened was. En Slang está el habla del cliente y esas mismas frases. Buscá o tocá un chip.</p></div>';
+          : '<div class="kh-lib-panel"><p class="kh-lib-empty">Tocá Email (Formato E) o Phone (AMR). En Expresiones está the thing is. Buscá o tocá un chip.</p></div>';
       }
       el.innerHTML = '<p class="kh-lib-lead">' + (kind === 'gloss'
-        ? 'Buscá the thing is o tocá Expresiones / Slang. Cada chip abre para qué sirve, conjugaciones y ejemplos de desk.'
+        ? 'Buscá Encabezado, AMR, however o PIN. Cada chip es un ejemplo para el desk de Kamuk Holdings (queue, Emails/Compose/Send, notes, Resolve).'
         : 'Después de Jill, leé 5–10 min. Solo sitios libres verificados (sin 404, sin muro duro). Abrí en una pestaña nueva.') + '</p>'
-        + '<input class="kh-lib-search" type="search" enterkeyhint="search" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="' + (kind === 'gloss' ? 'Buscá: however, aun cuando, look into…' : 'Buscá: Burns, BBC Scotland, Austen…') + '" value="' + esc(q) + '">'
+        + '<input class="kh-lib-search" type="search" enterkeyhint="search" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="' + (kind === 'gloss' ? 'Buscá: Encabezado, AMR, however, PIN, AA…' : 'Buscá: Burns, BBC Scotland, Austen…') + '" value="' + esc(q) + '">'
         + '<div class="kh-lib-cats">' + cats.map(function (c) {
           return '<button type="button" class="kh-lib-cat' + (c.id === cat ? ' is-on' : '') + '" data-cat="' + c.id + '">' + esc(c.label) + '</button>';
         }).join('') + '</div>'
