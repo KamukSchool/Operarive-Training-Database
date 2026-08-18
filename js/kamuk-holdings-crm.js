@@ -14,7 +14,11 @@
     pendingDanger: null, pendingEvidence: null, pendingDisposition: null, editTarget: null, preview: false,
     identityVerified: false, verificationSource: null, revealedCards: {}, cardEvents: [], sitePath: '/', siteHistory: [],
     simulation: new URLSearchParams(location.search).get('simulation') === '1',
-    product: new URLSearchParams(location.search).get('product') === 'kamuk' ? 'kamuk' : 'infinity'
+    product: (function () {
+      const requested = new URLSearchParams(location.search).get('product');
+      if (requested === 'infinity') return 'infinity';
+      return 'kamuk';
+    })()
   };
 
   const $ = (id) => document.getElementById(id);
@@ -157,6 +161,12 @@
   }
 
   function buildQueue(filter) {
+    if (state.guide) {
+      state.filter = 'All';
+      state.queue = (state.pool || []).slice();
+      renderQueue();
+      return;
+    }
     const options = arguments[1] || {};
     if (state.active) {
       renderQueue();
@@ -225,6 +235,7 @@
       <div class="turn"><div class="turn-role ex">Desk</div><div class="turn-text">Case routed to the Corporate Banking Desk. Priority ${esc(c.priority)} · SLA ${esc(c.slaMinutes)} minutes.</div></div>`;
     $('view1').style.display = 'flex';
     $('view2').style.display = 'none';
+    deskGuideMark('select');
   }
 
   /* ─────────────── ACCEPT + RENDER 360 ─────────────── */
@@ -315,12 +326,15 @@
   }
 
   async function acceptCase() {
+    if (state.guide && currentGuideStep() && currentGuideStep().action !== 'accept') {
+      return toast('Seguí el módulo guiado: ' + currentGuideStep().title, true);
+    }
     let c = state.queue.find((x) => queueKey(x) === state.selected)
       || state.cases.find((x) => x.id === state.selected);
     if (!c) return;
     $('accept-btn').disabled = true;
     try {
-      if (!state.preview) {
+      if (!state.preview && !state.guide) {
         const response = c.workItemId
           ? await api(crmPath('/case/claim'), { method: 'POST', body: { workItemId: c.workItemId } })
           : await api(crmPath('/case/start'), { method: 'POST', body: { caseId: c.id } });
@@ -329,7 +343,8 @@
       }
       enterActiveCase(c, { acceptedAt: c.acceptedAt });
       addLog('ti-user-check', 'pro', `Case accepted — ${c.id}`, `${state.employee.name} · ${state.employee.id}`);
-      toast('Case accepted. Your supervisor can now see this assignment.');
+      toast(state.guide ? 'Práctica aceptada. Este caso no entra al queue semanal.' : 'Case accepted. Your supervisor can now see this assignment.');
+      deskGuideMark('accept');
     } catch (error) {
       toast(error.message, true);
     } finally {
@@ -590,6 +605,7 @@
     }
     $('compose-box').classList.add('open');
     $('compose-txt').focus();
+    deskGuideMark('compose');
   }
 
   /* ─────────────── CHARTS ─────────────── */
@@ -788,6 +804,7 @@
       state.verificationSource = 'Verified on this contact — two questions confirmed against the record.';
       pushCardEvent('ti-id-badge-2', 'success', 'Client identity verified', text);
       renderWallet();
+      deskGuideMark('verify');
     }
     close('ev-modal');
   }
@@ -820,7 +837,7 @@
     addLog('ti-check', 'accent', label, detail || `Recorded by ${state.employee.name} · ${state.employee.id}`);
     updateActionCount();
     toast(`${label} recorded.`);
-    if (!state.preview && state.active) {
+    if (!state.preview && !state.guide && state.active) {
       trackSync(api(crmPath('/case/event'), { method: 'POST', body: { caseId: state.active.id, type: key === 'email-client' ? 'email-client' : 'action', payload: event } })
         .catch(() => toast('Action stored locally; the desk will retry the sync.', true)));
     }
@@ -886,6 +903,7 @@
     $('compose-box').classList.remove('open');
     $('compose-txt').value = ''; $('compose-subject').value = '';
     recordAction('email-client', 'Email sent to client', text);
+    deskGuideMark('email');
   }
 
   function addNote(channel, status, text) {
@@ -895,7 +913,7 @@
     state.profile.contacts.unshift({ id: note.id, channel, when: `Today ${pad(now.getHours())}:${pad(now.getMinutes())}`, agent: `${state.employee.name} · ${state.employee.id}`, body: text, status });
     localStorage.setItem(`kamuk-crm-notes-${state.active.id}`, JSON.stringify(state.notes));
     renderContacts();
-    if (!state.preview) {
+    if (!state.preview && !state.guide) {
       trackSync(api(crmPath('/case/event'), { method: 'POST', body: { caseId: state.active.id, type: 'note', payload: note } }).catch(() => {}));
     }
     return note;
@@ -908,6 +926,7 @@
     $('note-form').style.display = 'none'; $('note-txt').value = '';
     if (!state.actions.some((a) => a.key === 'note')) recordAction('note', 'Professional documentation added', text);
     else { addLog('ti-note', 'accent', 'Contact note added', text); toast('Note saved to the client record.'); }
+    deskGuideMark('note');
   }
 
   function generateInvoice() {
@@ -987,6 +1006,7 @@
   }
 
   function autoVerifyByChannel() {
+    if (state.guide) return;
     const clientEmail = String(state.active?.client?.email || '').toLowerCase();
     const inbound = (state.profile?.emails || []).find((email) => email.direction === 'inbound' && String(email.from || '').toLowerCase() === clientEmail);
     if (!clientEmail || !inbound) return;
@@ -1273,7 +1293,8 @@
     const payload = { caseId: state.active.id, actions: state.actions, notes: state.notes, risk: state.risk, resolution: { disposition, summary, nextStep }, durationSec };
     try {
       let evaluation, metrics = state.metrics;
-      if (state.preview) {
+      const finishingGuide = Boolean(state.guide);
+      if (state.preview || finishingGuide) {
         evaluation = localEvaluation(payload);
       } else {
         if (state.pendingSyncs.length) await Promise.all(state.pendingSyncs.slice());
@@ -1292,7 +1313,10 @@
       state.actions = [];
       state.notes = [];
       state.selected = null;
-      if (state.preview) buildQueue(state.filter, { selectFirst: true });
+      if (finishingGuide) {
+        deskGuideMark('close-submit');
+        await completePracticeCase();
+      } else if (state.preview) buildQueue(state.filter, { selectFirst: true });
       else {
         await Promise.all([loadPool(), loadLeaderboard().catch(() => {})]);
       }
@@ -1397,6 +1421,7 @@
     document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('on', t.dataset.tab === id));
     document.querySelectorAll('.pane').forEach((p) => p.classList.toggle('on', p.id === 'pane-' + id));
     if (id === 'spend') requestAnimationFrame(drawCharts);
+    deskGuideMark('tab-' + id);
   }
 
   function toast(msg, bad) {
@@ -1417,6 +1442,10 @@
       if (btn) buildQueue(btn.dataset.filter);
     });
     $('shuffle-btn').addEventListener('click', async () => {
+      if (state.guide) {
+        loadPracticeQueue();
+        return;
+      }
       if (state.preview) return buildQueue(state.filter);
       $('shuffle-btn').disabled = true;
       try {
@@ -1444,7 +1473,16 @@
       if (danger) return triggerDanger(danger.dataset.danger);
     });
     $('btn-credit').addEventListener('click', runCredit);
-    $('btn-email').addEventListener('click', () => { showTab('emails'); startCompose(); });
+    $('btn-email').addEventListener('click', () => {
+      if (state.guide) {
+        const step = currentGuideStep();
+        if (!step || (step.action !== 'compose' && step.action !== 'tab-emails')) {
+          return toast('Seguí el módulo guiado: ' + (step ? step.title : 'el recuadro rojo'), true);
+        }
+      }
+      showTab('emails');
+      startCompose();
+    });
     $('btn-call').addEventListener('click', () => {
       if (!state.active) return toast('Accept a case before calling the client.', true);
       if (state.identityVerified && /^Authenticated channel/.test(state.verificationSource || '')) {
@@ -1475,8 +1513,13 @@
     $('btn-site').addEventListener('click', () => showTab('site'));
     $('btn-resolve').addEventListener('click', () => {
       if (!state.active) return;
+      if (state.guide && currentGuideStep() && currentGuideStep().action !== 'resolve') {
+        return toast('Seguí el módulo guiado: ' + currentGuideStep().title, true);
+      }
       if (!state.actions.length && !state.notes.length) return toast('Document at least one note or action before you close the case.', true);
+      deskGuideMark('resolve');
       open('res-modal');
+      renderDeskGuide();
     });
     $('cf-yes').addEventListener('click', confirmDanger);
     $('cf-no').addEventListener('click', () => { $('confirm').classList.remove('show'); state.pendingDanger = null; });
@@ -1484,7 +1527,17 @@
     $('res-submit').addEventListener('click', () => submitResolution());
     $('disp-row').addEventListener('click', (e) => {
       const btn = e.target.closest('[data-disp]');
-      if (btn) openDisposition(btn.dataset.disp);
+      if (!btn) return;
+      if (state.guide) {
+        const step = currentGuideStep();
+        if (step && step.action === 'look-disp') {
+          return toast('Miralo subrayado en rojo y tocá Continuar. Flags AA/PSA van después del correo y la nota.', true);
+        }
+        if (step && step.action !== 'resolve' && step.action !== 'close-submit') {
+          return toast('Seguí el módulo guiado: ' + step.title, true);
+        }
+      }
+      openDisposition(btn.dataset.disp);
     });
     $('disp-confirm').addEventListener('click', confirmDisposition);
     $('wallet-verify').addEventListener('click', () => {
@@ -1506,6 +1559,11 @@
     $('site-send').addEventListener('click', sendSitePage);
     $('risk-save').addEventListener('click', saveRisk);
     $('email-compose').addEventListener('click', () => startCompose());
+    $('note-add').addEventListener('click', () => {
+      $('note-form').style.display = 'block';
+      $('note-txt').focus();
+      deskGuideMark('note-open');
+    });
     $('compose-send').addEventListener('click', sendEmail);
     $('compose-cancel').addEventListener('click', () => $('compose-box').classList.remove('open'));
     $('compose-box').addEventListener('paste', blockImportedEmailText);
@@ -1513,7 +1571,6 @@
     $('compose-box').addEventListener('beforeinput', (event) => {
       if (event.inputType === 'insertFromPaste' || event.inputType === 'insertFromDrop') blockImportedEmailText(event);
     });
-    $('note-add').addEventListener('click', () => { $('note-form').style.display = 'block'; $('note-txt').focus(); });
     $('note-save').addEventListener('click', saveNote);
     $('note-cancel').addEventListener('click', () => { $('note-form').style.display = 'none'; $('note-txt').value = ''; });
     $('stmt-period').addEventListener('change', renderStatements);
@@ -1557,6 +1614,15 @@
       state.editTarget = null;
     });
     $('edit-cancel').addEventListener('click', () => { $('edit-area').style.display = 'none'; state.editTarget = null; });
+    if ($('desk-guide-next')) {
+      $('desk-guide-next').addEventListener('click', () => {
+        const step = currentGuideStep();
+        if (step && step.next) deskGuideMark(step.action);
+      });
+    }
+    if ($('practice-replay')) {
+      $('practice-replay').addEventListener('click', () => startDeskGuide(state.deskGuideDone || [], { replay: true }));
+    }
     window.addEventListener('resize', () => { if (state.profile) drawCharts(); });
   }
 
@@ -1569,7 +1635,7 @@
   }
 
   async function heartbeat() {
-    if (state.preview) return;
+    if (state.preview || state.guide) return;
     try {
       const presence = await api(crmPath('/presence'), {
         method: 'POST',
@@ -1585,15 +1651,223 @@
     } catch (_) { /* the desk keeps working offline */ }
   }
 
+  /* ─────────────── 10 GUIDED PRACTICE CASES (real desk, off weekly floor) ─────────────── */
+
+  const EMAIL_MODEL = 'Cómo escribir el correo: 1) Hello + nombre. 2) Impacto del cliente. 3) Un connector (because / however / therefore). 4) Qué YA hiciste. 5) Next step con hora. Ejemplo: “Hello Marta, I reviewed the freeze because two supplier payments declined. I escalated to Operations and I will call you today before 4:30 p.m.” Mínimo 45 palabras. Sin pegar.';
+
+  function openPracticeSteps() {
+    return [
+      { action: 'select', title: 'Dónde click: Case queue', body: 'El recuadro rojo es el queue real. Tocá el caso PRACTICE. No es Nexora ni un mock.', target: '.qi', kind: 'click' },
+      { action: 'look', title: 'Qué debés ver', body: 'Subrayado en rojo: título, quote del cliente, CASE BRIEF y nombre. Leé el impacto antes de Accept.', look: ['#v1-title', '#v1-quote', '#v1-desc', '#v1-client'], next: true, kind: 'look' },
+      { action: 'accept', title: 'Dónde click: Accept case', body: 'Assigna el caso a tu ID. Esta práctica NO consume el queue semanal ni el bono de 8/10.', target: '#accept-btn', kind: 'click' }
+    ];
+  }
+
+  function closePracticeSteps(dispositionHint) {
+    return [
+      { action: 'tab-emails', title: 'Tab que debés usar: Emails', body: 'El tab rojo es Emails. Ahí sale el correo al cliente — evidencia de cierre.', target: '[data-tab="emails"]', kind: 'click' },
+      { action: 'compose', title: 'Dónde click: Compose', body: 'Abrí el compositor real. El modelo en rojo es la estructura, no un texto para copiar.', target: '#email-compose', kind: 'click', model: EMAIL_MODEL },
+      { action: 'email', title: 'Escribí y enviá el correo', body: 'Greeting + impacto + connector + acción + next step con hora. El botón Send queda en rojo cuando el texto cumple la rúbrica.', target: '#compose-send', kind: 'click', model: EMAIL_MODEL },
+      { action: 'tab-contacts', title: 'Tab: Previous contacts', body: 'Notas internas. El banco las ve; el cliente no. Documentá evidencia y dueño.', target: '[data-tab="contacts"]', kind: 'click' },
+      { action: 'note-open', title: 'Dónde click: Add note', body: 'Tocá Add note (rojo). Hechos + acción + next step. Mínimo 15 caracteres.', target: '#note-add', kind: 'click' },
+      { action: 'note', title: 'Guardá la nota', body: 'Save note cierra la evidencia interna. Sin nota no hay cierre correcto.', target: '#note-save', kind: 'click' },
+      { action: 'resolve', title: 'Cómo cerrar el caso', body: dispositionHint || 'Resolve case (rojo). Email + note son la evidencia. AA o PSA si falta trabajo; Resolved si ya cerraste.', target: '#btn-resolve', kind: 'click' },
+      { action: 'close-submit', title: 'Disposition + Submit', body: 'Subrayado en rojo: disposition, summary y next step. Submit to Alice QA cierra el caso con evidencia.', look: ['#res-disp', '#res-summary', '#res-next'], target: '#res-submit', kind: 'click' }
+    ];
+  }
+
+  const PRACTICE_CASES = [
+    { id: 'gp1', packId: 'KH-1042', title: 'PRACTICE 1 · Frozen operating account — learn the queue', extra: [
+      { action: 'look-360', title: 'Qué debés ver: Overview', body: 'Métricas y flags del cliente. Este es el tab Overview (ya abierto). Miralo y tocá Continuar.', look: ['#ov-metrics', '#ov-flags'], next: true, kind: 'look' }
+    ] },
+    { id: 'gp2', packId: 'KH-1051', title: 'PRACTICE 2 · Payroll wire held — Statements', extra: [
+      { action: 'tab-stmt', title: 'Tab: Statements', body: 'Acá se confirma si el pago salió. Click el tab rojo Statements y buscá el wire / ACH.', target: '[data-tab="stmt"]', kind: 'click' }
+    ] },
+    { id: 'gp3', packId: 'KH-1064', title: 'PRACTICE 3 · Hotel card decline — Cards & PIN', extra: [
+      { action: 'tab-wallet', title: 'Tab: Cards & PIN', body: 'Click el tab rojo. Nunca leas el PAN completo ni el PIN. Last 6 only after identity.', target: '[data-tab="wallet"]', kind: 'click' },
+      { action: 'verify', title: 'Dónde click: Verify identity', body: 'Dos datos del record. Nunca pidas PIN, número completo ni código SMS.', target: '#wallet-verify', kind: 'click' }
+    ] },
+    { id: 'gp4', packId: 'KH-1064', title: 'PRACTICE 4 · Identity before any disclosure', extra: [
+      { action: 'tab-wallet', title: 'Tab: Cards & PIN', body: 'Identity primero. El tab rojo es Cards & PIN.', target: '[data-tab="wallet"]', kind: 'click' },
+      { action: 'verify', title: 'Verify client identity', body: 'Click Verify (rojo). Sin esto el wallet permanece masked.', target: '#wallet-verify', kind: 'click' },
+      { action: 'look-wallet', title: 'Qué debés ver: wallet', body: 'Last 6 digits only. Subrayado en rojo. Continuar cuando lo hayas visto.', look: ['#wallet-list', '#wallet-hint'], next: true, kind: 'look' }
+    ] },
+    { id: 'gp5', packId: 'KH-1042', title: 'PRACTICE 5 · Third-time caller — Previous contacts', extra: [
+      { action: 'tab-contacts', title: 'Tab: Previous contacts', body: 'El cliente dice “this is the third time”. Click Previous contacts (rojo) y leé el historial antes de preguntar todo de nuevo.', target: '[data-tab="contacts"]', kind: 'click' }
+    ] },
+    { id: 'gp6', packId: 'KH-1102', title: 'PRACTICE 6 · Products on file — Services', extra: [
+      { action: 'tab-svc', title: 'Tab: Services', body: 'Productos del cliente (operating account, card, loan). Click Services (rojo).', target: '[data-tab="svc"]', kind: 'click' }
+    ] },
+    { id: 'gp7', packId: 'KH-1064', title: 'PRACTICE 7 · Card transactions trail', extra: [
+      { action: 'tab-cards', title: 'Tab: Card transactions', body: 'Merchant, monto y status. Click Card transactions (rojo) y localizá el decline.', target: '[data-tab="cards"]', kind: 'click' }
+    ] },
+    { id: 'gp8', packId: 'KH-1201', title: 'PRACTICE 8 · Supplier ACH failed — find evidence', extra: [
+      { action: 'tab-stmt', title: 'Tab: Statements', body: 'Evidencia del ACH. Click Statements (rojo) antes de prometer un refund.', target: '[data-tab="stmt"]', kind: 'click' }
+    ] },
+    { id: 'gp9', packId: 'KH-1120', title: 'PRACTICE 9 · Client email update — write it right', extra: [
+      { action: 'compose', title: 'Dónde click: Email (barra de acciones)', body: 'El botón Email de la barra (rojo) abre el compositor real. Usá el modelo de abajo.', target: '#btn-email', kind: 'click', model: EMAIL_MODEL }
+    ] },
+    { id: 'gp10', packId: 'KH-1202', title: 'PRACTICE 10 · Close with AA / PSA / Resolved', extra: [
+      { action: 'tab-contacts', title: 'Tab: Previous contacts + disposition', body: 'Click Previous contacts. Abajo están AA (awaiting action) y PSA (pending system). Eso es estacionar el caso con dueño.', target: '[data-tab="contacts"]', kind: 'click' },
+      { action: 'look-disp', title: 'Qué debés ver: dispositions', body: 'Subrayado en rojo: Flag AA, Flag PSA, Close unresolved. No cierres Resolved si todavía falta trabajo.', look: ['#disp-row'], next: true, kind: 'look' }
+    ] }
+  ].map((item) => {
+    const extra = item.id === 'gp9'
+      ? item.extra.concat(closePracticeSteps('Resolve (rojo). En este caso el foco es el correo: greeting, acción, next step con hora.').filter((step) => step.action !== 'tab-emails' && step.action !== 'compose'))
+      : item.extra.concat(closePracticeSteps(item.id === 'gp10'
+        ? 'Resolve case (rojo). AA o PSA si falta trabajo del banco; Resolved solo si ya cumpliste con el cliente. Email + note obligatorios.'
+        : null));
+    return Object.assign({}, item, { steps: openPracticeSteps().concat(extra) });
+  });
+
+  function currentGuideCase() {
+    return state.guide ? PRACTICE_CASES[state.guide.caseIndex] || null : null;
+  }
+
+  function currentGuideStep() {
+    const item = currentGuideCase();
+    if (!item) return null;
+    return item.steps[state.guide.step] || null;
+  }
+
+  function practiceCaseFrom(spec) {
+    const source = (state.cases || []).find((item) => item.id === spec.packId) || (state.cases || [])[0];
+    const c = clone(source);
+    c.title = spec.title;
+    c.id = 'KH-PRAC-' + spec.id.toUpperCase();
+    c.caseId = c.id;
+    c.workItemId = 'PRACTICE-' + spec.id;
+    c.touchNumber = 1;
+    c.history = [];
+    c._practice = true;
+    c._practiceId = spec.id;
+    return c;
+  }
+
+  function loadPracticeQueue() {
+    const spec = currentGuideCase();
+    if (!spec) return;
+    const c = practiceCaseFrom(spec);
+    state.pool = [c];
+    state.queue = [c];
+    state.filter = 'All';
+    state.active = null;
+    state.selected = null;
+    renderQueue();
+    $('view1').style.display = 'flex';
+    $('view2').style.display = 'none';
+    $('v1-title').textContent = spec.title;
+    $('v1-desc').textContent = 'Caso de práctica en el desk real. No entra al queue semanal ni al bono. Completá los clicks rojos.';
+    $('v1-transcript').innerHTML = '';
+  }
+
+  function startDeskGuide(doneIds, options) {
+    const done = Array.isArray(doneIds) ? doneIds.slice() : [];
+    const replay = options && options.replay;
+    const next = replay ? 0 : Math.max(0, PRACTICE_CASES.findIndex((item) => done.indexOf(item.id) < 0));
+    if (!replay && (next < 0 || done.length >= PRACTICE_CASES.length)) return false;
+    state.guide = { step: 0, caseIndex: next < 0 ? 0 : next, done: done, replay: !!replay };
+    loadPracticeQueue();
+    renderDeskGuide();
+    return true;
+  }
+
+  function renderDeskGuide() {
+    const box = $('desk-guide');
+    if (!box) return;
+    document.querySelectorAll('.desk-guide-spot').forEach((el) => el.classList.remove('desk-guide-spot'));
+    document.querySelectorAll('.desk-guide-look').forEach((el) => el.classList.remove('desk-guide-look'));
+    if (!state.guide) {
+      box.classList.add('hidden');
+      const replay = $('practice-replay');
+      if (replay) replay.style.display = '';
+      return;
+    }
+    const replayBtn = $('practice-replay');
+    if (replayBtn) replayBtn.style.display = 'none';
+    box.classList.remove('hidden');
+    const spec = currentGuideCase();
+    const steps = spec ? spec.steps : [];
+    const step = currentGuideStep() || steps[steps.length - 1];
+    const kicker = $('desk-guide-kicker');
+    if (kicker) kicker.textContent = 'Práctica ' + (state.guide.caseIndex + 1) + '/10 · desk real · no es el queue semanal';
+    $('desk-guide-title').textContent = (spec ? spec.title.replace(/^PRACTICE \d+ · /, '') + ' — ' : '') + step.title;
+    $('desk-guide-body').textContent = step.body;
+    const model = $('desk-guide-model');
+    if (model) {
+      if (step.model) { model.classList.remove('hidden'); model.textContent = step.model; }
+      else model.classList.add('hidden');
+    }
+    $('desk-guide-steps').innerHTML = PRACTICE_CASES.map((item, i) =>
+      '<span class="' + (i < state.guide.caseIndex || (state.guide.done || []).indexOf(item.id) >= 0 ? 'done' : (i === state.guide.caseIndex ? 'on' : '')) + '">' + (i + 1) + '</span>'
+    ).join('');
+    $('desk-guide-next').style.display = step.next ? '' : 'none';
+    (step.look || (step.target ? [step.target] : [])).forEach((sel) => {
+      document.querySelectorAll(sel).forEach((el) => {
+        el.classList.add(step.kind === 'look' ? 'desk-guide-look' : 'desk-guide-spot');
+      });
+    });
+    const focusSel = step.target || (step.look && step.look[0]);
+    if (focusSel) {
+      const el = document.querySelector(focusSel);
+      if (el) try { el.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (_) { /* older tablets */ }
+    }
+  }
+
+  function deskGuideMark(action) {
+    if (!state.guide) return;
+    const step = currentGuideStep();
+    if (!step || step.action !== action) return;
+    state.guide.step += 1;
+    renderDeskGuide();
+  }
+
+  async function completePracticeCase() {
+    const spec = currentGuideCase();
+    if (!spec || !state.guide) return completeDeskGuide();
+    const replay = Boolean(state.guide.replay);
+    const done = Array.isArray(state.guide.done) ? state.guide.done.slice() : [];
+    if (done.indexOf(spec.id) < 0) done.push(spec.id);
+    if (!replay) {
+      try {
+        const data = await api(crmPath('/training/progress'), { method: 'POST', body: { practiceCaseId: spec.id } });
+        if (Array.isArray(data.deskGuideDone)) {
+          data.deskGuideDone.forEach((id) => { if (done.indexOf(id) < 0) done.push(id); });
+        }
+      } catch (_) { /* keep local progress this session */ }
+    }
+    const from = state.guide.caseIndex;
+    const next = PRACTICE_CASES.findIndex((item, i) => i > from && (replay || done.indexOf(item.id) < 0));
+    if (next < 0) return completeDeskGuide();
+    state.guide.done = done;
+    state.guide.caseIndex = next;
+    state.guide.step = 0;
+    loadPracticeQueue();
+    renderDeskGuide();
+    toast('Práctica ' + (from + 1) + '/10 lista. Siguiente caso en el queue.');
+  }
+
+  async function completeDeskGuide() {
+    state.guide = null;
+    renderDeskGuide();
+    toast('10 prácticas completas. El queue semanal ya está abierto.');
+    try {
+      if (!state.preview) await api(crmPath('/training/progress'), { method: 'POST', body: { acceptDeskGuide: true } });
+    } catch (_) { /* session unlock still works */ }
+    await loadPool();
+  }
+
   /* ─────────────── BOOT ─────────────── */
 
   async function boot() {
     bind();
     setInterval(() => { state.sessionSec++; $('sess').textContent = clock(state.sessionSec); }, 1000);
     try {
+      if (state.product === 'kamuk') document.documentElement.classList.add('kamuk-desk');
       const host = location.hostname;
       state.preview = new URLSearchParams(location.search).get('preview') === '1'
         || host === 'localhost' || host === '127.0.0.1' || location.protocol === 'file:';
+      let deskGuideCompleted = false;
       if (state.preview) {
         state.auth = { role: 'student', studentId: state.product === 'kamuk' ? 'KAM-PREVIEW' : 'IS-PREVIEW', name: 'Preview Executive' };
         state.employee = { id: state.auth.studentId, name: 'Preview Executive', team: 'Apex' };
@@ -1607,6 +1881,8 @@
         const presence = await api(crmPath('/presence'), { method: 'POST', body: { status: 'online' } });
         state.employee = presence.employee;
         state.metrics = presence.metrics || state.metrics;
+        deskGuideCompleted = Boolean(presence.deskGuideCompleted);
+        state.deskGuideDone = Array.isArray(presence.deskGuideDone) ? presence.deskGuideDone : [];
       }
       const response = await fetch(PACK_URL, { cache: 'no-store' });
       if (!response.ok) throw new Error('The corporate case pack could not be loaded.');
@@ -1622,12 +1898,17 @@
       $('st-id').textContent = state.employee.id;
       $('st-team').textContent = state.employee.team;
       updateMetrics();
-      await loadPool();
-      if (!state.preview) await loadLeaderboard();
       $('gate').classList.add('hidden');
       $('app').classList.remove('hidden');
-      if (!state.preview) {
+      if (state.preview) {
+        startDeskGuide([]);
+      } else {
         await resumeActiveCase();
+        if (!state.active && !deskGuideCompleted) startDeskGuide(state.deskGuideDone || []);
+        else if (!state.active) {
+          await loadPool();
+          await loadLeaderboard().catch(() => {});
+        }
         setInterval(heartbeat, 20000);
       }
     } catch (error) {

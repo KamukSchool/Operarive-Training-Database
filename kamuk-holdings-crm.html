@@ -39,6 +39,7 @@
 <div class="queue">
   <div class="queue-hdr">
     <span id="queue-title">Case queue</span>
+    <button class="mini-btn" id="practice-replay" style="display:none">Replay 10 prácticas</button>
     <button class="mini-btn" id="shuffle-btn">Refresh</button>
   </div>
   <div class="queue-filters" id="queue-filters">
@@ -54,6 +55,16 @@
 <!-- CASE PANEL -->
 <div class="case-panel">
   <div id="toast" class="toast"><i class="ti ti-check"></i><span id="toast-msg"></span></div>
+  <div id="desk-guide" class="desk-guide hidden">
+    <div class="desk-guide-kicker" id="desk-guide-kicker">Práctica 1/10 · desk real · no es el queue semanal</div>
+    <div class="desk-guide-title" id="desk-guide-title">Práctica de resolución</div>
+    <p class="desk-guide-body" id="desk-guide-body"></p>
+    <pre class="desk-guide-model hidden" id="desk-guide-model"></pre>
+    <div class="desk-guide-pips" id="desk-guide-steps"></div>
+    <div class="desk-guide-actions">
+      <button type="button" class="desk-guide-btn" id="desk-guide-next">Continuar</button>
+    </div>
+  </div>
   <div id="confirm" class="confirm">
     <div class="cf-title" id="cf-title"></div>
     <div class="cf-msg" id="cf-msg"></div>
@@ -457,6 +468,6 @@
 
 <script src="https://studioinfinitycr.com/infinity-auth.js"></script>
 <script src="js/kamuk-holdings-call.js"></script>
-<script src="js/kamuk-holdings-crm.js"></script>
+<script src="js/kamuk-holdings-crm.js?v=20260818gp10"></script>
 </body>
 </html>

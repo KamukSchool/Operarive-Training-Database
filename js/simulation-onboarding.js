@@ -150,28 +150,37 @@
       '.ob-b{margin-bottom:16px}.ob-b h4{margin:0 0 6px;font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:' + accent + '}.ob-b p,.ob-b li{font-size:13px;line-height:1.65;color:#334155}.ob-b p{margin:0}.ob-b ul{margin:0;padding-left:17px}',
       '.ob-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.ob-card{border:1px solid #e2e8f0;border-radius:11px;padding:12px}.ob-card i{font-size:20px;color:' + accent + '}.ob-card b{display:block;margin:5px 0 3px;font-size:13px;color:#102033}.ob-card p{font-size:12px;line-height:1.55;color:#64748b;margin:0}',
       '.ob-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ob-compare>div{border-radius:10px;padding:12px}.ob-empathy{background:#f0fdf4;color:#166534}.ob-sympathy{background:#fff7ed;color:#9a3412}.ob-compare b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}.ob-compare p{margin:0;font-size:12.5px;line-height:1.6}',
-      '.ob-check{border:1px solid #e2e8f0;border-radius:12px;padding:14px;margin:12px 0}.ob-check h5{margin:0 0 8px;font-size:13px;color:#102033}.ob-choice,.ob-opt{display:block;width:100%;text-align:left;border:1px solid #d8e0e8;background:#fff;border-radius:9px;padding:9px 11px;margin:6px 0;font:600 12px/1.5 Inter,Arial,sans-serif;color:#334155;cursor:pointer}.ob-choice.right,.ob-opt.right{border-color:#15803d;background:#f0fdf4;color:#14532d}.ob-choice.wrong,.ob-opt.wrong{border-color:#b42318;background:#fef2f2;color:#7f1d1d}.ob-feedback{font-size:12px;line-height:1.5;color:#475569;margin-top:8px}',
-      '.ob-match{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ob-chip{border:1px solid #d8e0e8;border-radius:8px;padding:8px;font-size:12px;cursor:pointer;background:#fff}.ob-chip.on{border-color:' + accent + ';background:#eff6ff}.ob-chip.used{opacity:.45}',
+      '.ob-check{border:1px solid #e2e8f0;border-radius:12px;padding:14px;margin:12px 0}.ob-check h5{margin:0 0 8px;font-size:13px;color:#102033}.ob-choice,.ob-opt{display:block;width:100%;text-align:left;border:1px solid #d8e0e8;background:#fff;border-radius:9px;padding:9px 11px;margin:6px 0;font:600 12px/1.5 Inter,Arial,sans-serif;color:#334155;cursor:pointer;pointer-events:auto;touch-action:manipulation}.ob-choice.right,.ob-opt.right{border-color:#15803d;background:#f0fdf4;color:#14532d}.ob-choice.wrong,.ob-opt.wrong{border-color:#b42318;background:#fef2f2;color:#7f1d1d}.ob-feedback{font-size:12px;line-height:1.5;color:#475569;margin-top:8px}',
+      '.ob-match{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ob-chip{border:1px solid #d8e0e8;border-radius:8px;padding:8px;font-size:12px;cursor:pointer;background:#fff;pointer-events:auto;touch-action:manipulation}.ob-chip.on{border-color:' + accent + ';background:#eff6ff}.ob-chip.used{opacity:.45}',
       '.ob-seq{display:flex;flex-wrap:wrap;gap:7px}.ob-seq button{border:1px solid #d8e0e8;background:#fff;border-radius:8px;padding:8px 10px;font:700 12px Inter,Arial,sans-serif;cursor:pointer}.ob-seq button.on{background:' + accent + ';color:#fff;border-color:' + accent + '}',
       '.ob-process{display:flex;gap:7px;align-items:stretch;margin:12px 0 18px;overflow-x:auto}.ob-process div{min-width:105px;flex:1;background:#f8fafc;border-radius:10px;padding:10px;text-align:center}.ob-process b{display:block;font-size:11px;color:#102033}.ob-process span{font-size:10px;color:#64748b}',
       '.ob-product{border:1px solid #e2e8f0;border-radius:11px;padding:12px}.ob-product b{display:block;font-size:13px;color:#102033}.ob-product small{display:block;color:' + accent + ';font-weight:800;margin:3px 0}.ob-product p{margin:0;font-size:12px;line-height:1.5;color:#64748b}',
       '.ob-q{border:1px solid #e2e8f0;border-radius:12px;padding:13px 14px;margin-bottom:10px}.ob-q h5{margin:0 0 9px;font-size:13px;color:#102033;line-height:1.5}.ob-why{display:none;font-size:12px;color:#475569;margin-top:7px}.ob-q.right .ob-why,.ob-q.wrong .ob-why{display:block}',
       '.ob-foot{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}.ob-btn{border:0;border-radius:9px;padding:11px 17px;background:' + accent + ';color:#fff;font:800 13px Inter,Arial,sans-serif;cursor:pointer}.ob-btn:disabled{opacity:.45}.ob-msg{font-size:12px;font-weight:700;color:#64748b}.ob-msg.ok{color:#15803d}.ob-msg.err{color:#b42318}.ob-cert{display:flex;gap:10px;align-items:center;background:#f0fdf4;border-radius:10px;padding:12px;color:#14532d;margin-bottom:13px}.ob-cert i{font-size:24px}.ob-cert b{font-size:13px}.ob-cert span{display:block;font-size:11px}',
-      '.ob-home-head{margin-top:18px;padding-top:16px;border-top:1px solid #e2e8f0}.ob-home-head h4{margin:0 0 5px;color:#102033}.ob-home-head p{margin:0;font-size:12px;line-height:1.55;color:#64748b}.ob-home-progress{margin:10px 0;font-size:11px;font-weight:800;color:' + accent + '}.ob-home-case{border:1px solid #e2e8f0;border-radius:11px;margin:9px 0;overflow:hidden}.ob-home-top{padding:11px 12px;background:#f8fafc;cursor:pointer;display:flex;gap:9px;align-items:center}.ob-home-top b{font-size:12px;color:#102033}.ob-home-top span{margin-left:auto;font-size:10px;color:#64748b}.ob-home-body{display:none;padding:12px}.ob-home-case.open .ob-home-body{display:block}.ob-home-line{border-left:3px solid ' + accent + ';padding:8px 10px;background:#f8fafc;font-size:12px;color:#334155;margin:8px 0}.ob-home-rules{font-size:11px;line-height:1.55;color:#475569;margin:8px 0}.ob-home-chips{display:flex;gap:5px;flex-wrap:wrap;margin:7px 0}.ob-home-chip{background:#eef2ff;color:#3730a3;border-radius:20px;padding:3px 7px;font-size:9px;font-weight:800}.ob-home-answer{width:100%;box-sizing:border-box;min-height:150px;border:1px solid #cbd5e1;border-radius:9px;padding:11px;font:12px/1.6 Inter,Arial,sans-serif;resize:vertical}.ob-home-status{font-size:10px;font-weight:700;color:#64748b;margin-top:6px}.ob-home-status.ok{color:#15803d}.ob-no-paste{font-size:10px;color:#b45309;margin-top:5px}',
+      '.ob-home-head{margin-top:18px;padding-top:16px;border-top:1px solid #e2e8f0}.ob-home-head h4{margin:0 0 5px;color:#102033}.ob-home-head p{margin:0;font-size:12px;line-height:1.55;color:#64748b}.ob-home-progress{margin:10px 0;font-size:11px;font-weight:800;color:' + accent + '}.ob-home-case{border:1px solid #e2e8f0;border-radius:11px;margin:9px 0;overflow:hidden;position:relative;z-index:1}.ob-home-top{padding:11px 12px;background:#f8fafc;cursor:pointer;display:flex;gap:9px;align-items:center;pointer-events:auto}.ob-home-top i{color:' + accent + ';font-size:16px}.ob-home-top b{font-size:12px;color:#102033}.ob-home-top span{margin-left:auto;font-size:10px;color:#64748b}.ob-home-body{display:none;padding:12px}.ob-home-case.open .ob-home-body{display:block}.ob-home-case.open .ob-home-top i{transform:rotate(180deg)}.ob-home-line{border-left:3px solid ' + accent + ';padding:8px 10px;background:#f8fafc;font-size:12px;color:#334155;margin:8px 0}.ob-home-rules{font-size:11px;line-height:1.55;color:#475569;margin:8px 0}.ob-home-chips{display:flex;gap:5px;flex-wrap:wrap;margin:7px 0}.ob-home-chip{background:#eef2ff;color:#3730a3;border-radius:20px;padding:3px 7px;font-size:9px;font-weight:800}.ob-home-answer{width:100%;box-sizing:border-box;min-height:150px;border:1px solid #cbd5e1;border-radius:9px;padding:11px;font:12px/1.6 Inter,Arial,sans-serif;resize:vertical}.ob-home-status{font-size:10px;font-weight:700;color:#64748b;margin-top:6px}.ob-home-status.ok{color:#15803d}.ob-no-paste{font-size:10px;color:#b45309;margin-top:5px}',
       '.ob-rules{background:#fff7ed;border:1px solid #fdba74;border-radius:14px;padding:18px 20px;box-shadow:0 10px 28px rgba(154,52,18,.12)}.ob-rules h4{margin:0 0 8px;font-size:16px;color:#9a3412}.ob-rules p{margin:0 0 10px;font-size:13px;line-height:1.6;color:#7c2d12}.ob-rules ul{margin:0 0 14px;padding-left:18px}.ob-rules li{font-size:13px;line-height:1.55;color:#7c2d12;margin:6px 0}.ob-rules-actions{display:flex;gap:8px;flex-wrap:wrap}.ob-btn-ghost{border:1px solid #d8e0e8;background:#fff;color:#334155}',
       '.gm{border:1px solid #cbd5e1;border-radius:13px;overflow:hidden;background:#f8fafc}.gm-guide{display:flex;gap:12px;align-items:flex-start;background:#fff8cc;border-bottom:1px solid #f0cf50;padding:13px 15px}.gm-guide .gm-n{width:28px;height:28px;border-radius:50%;background:#eab308;color:#422006;display:grid;place-items:center;font-weight:900;flex:0 0 auto}.gm-guide b{display:block;font-size:13px;color:#422006}.gm-guide p{margin:3px 0 0;font-size:12px;line-height:1.5;color:#713f12}.gm-shell{display:grid;grid-template-columns:190px 1fr;min-height:410px}.gm-side{background:#1e1b4b;color:#fff;padding:12px}.gm-brand{font-size:11px;font-weight:900;margin-bottom:13px}.gm-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;opacity:.55;margin:9px 0 5px}.gm-client{padding:9px;border-radius:8px;font-size:11px;cursor:pointer;margin-bottom:5px}.gm-client b{display:block}.gm-client span{font-size:9px;opacity:.7}.gm-main{min-width:0}.gm-top{padding:11px 13px;background:#fff;border-bottom:1px solid #e2e8f0}.gm-top b{font-size:13px;color:#102033}.gm-top span{display:block;font-size:10px;color:#64748b}.gm-tabs{display:flex;gap:2px;padding:7px 8px;background:#fff;border-bottom:1px solid #e2e8f0;overflow-x:auto}.gm-tab{white-space:nowrap;border:0;background:transparent;border-radius:6px;padding:7px 8px;font:700 9px Inter,Arial,sans-serif;color:#64748b;cursor:pointer}.gm-view{padding:13px}.gm-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.gm-metric,.gm-product,.gm-row,.gm-contact{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:9px}.gm-metric small,.gm-product small{display:block;font-size:8px;color:#64748b;text-transform:uppercase}.gm-metric b{font-size:14px;color:#102033}.gm-product{margin-bottom:7px;cursor:pointer}.gm-product b{display:block;font-size:11px;color:#102033}.gm-product span{font-size:9px;color:#64748b}.gm-row,.gm-contact{display:flex;justify-content:space-between;gap:8px;margin-bottom:6px;font-size:10px;color:#334155;cursor:pointer}.gm-red{color:#b42318;font-weight:800}.gm-green{color:#15803d;font-weight:800}.gm-note{width:100%;box-sizing:border-box;min-height:74px;border:1px solid #cbd5e1;border-radius:8px;padding:9px;font:11px Inter,Arial,sans-serif}.gm-save{margin-top:7px;border:0;border-radius:7px;padding:8px 11px;background:#475569;color:#fff;font:800 10px Inter,Arial,sans-serif;cursor:pointer}.gm-target{position:relative;z-index:1;outline:4px solid #facc15!important;background:#fef9c3!important;color:#422006!important;animation:gmPulse 1s infinite alternate}.gm-target:after{content:"CLICK HERE";position:absolute;z-index:3;right:2px;top:-16px;background:#eab308;color:#422006;border-radius:4px;padding:2px 5px;font:900 7px Inter,Arial,sans-serif}.gm-wrong{animation:gmShake .25s}.gm-complete{text-align:center;padding:70px 20px}.gm-complete i{font-size:44px;color:#15803d}',
       '.ob-locked{text-align:center;padding:35px 15px;color:#64748b}.ob-locked i{font-size:34px;color:#cbd5e1}',
       '@keyframes gmPulse{to{outline-color:#eab308;box-shadow:0 0 14px #facc15}}@keyframes gmShake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}',
-      '@media(max-width:700px){.ob-grid,.ob-compare,.ob-match{grid-template-columns:1fr}.gm-shell{grid-template-columns:120px 1fr}.ob-panel{padding:14px}}'
+      '@media(max-width:700px){.ob-grid,.ob-compare,.ob-match{grid-template-columns:1fr}.gm-shell{grid-template-columns:120px 1fr}.ob-panel{padding:14px}.ob-choice,.ob-chip,.ob-home-top,.ob-btn{min-height:44px}}'
     ].join('');
   }
 
   function mount(root, config) {
     if (!root) return;
+    if (root.parentNode) {
+      var fresh = root.cloneNode(false);
+      root.parentNode.replaceChild(fresh, root);
+      root = fresh;
+    }
     config = config || {};
     var product = config.product === 'kamuk' ? 'kamuk' : 'infinity';
     var accent = product === 'kamuk' ? '#2B7EC1' : '#5B21B6';
-    var launchUrl = String(config.launchUrl || (product === 'kamuk' ? 'kamuk-holdings-crm.html' : 'infinity-holdings-crm.html'));
+    var kamukDesk = 'https://studioinfinitycr.com/kamuk/kamuk-holdings-crm.html';
+    var launchUrl = String(config.launchUrl || (product === 'kamuk' ? kamukDesk : 'infinity-holdings-crm.html'));
+    if (product === 'kamuk' && (!launchUrl || /github\.io|nexora|infinity-holdings/i.test(launchUrl) || launchUrl === 'kamuk-holdings-crm.html')) {
+      launchUrl = kamukDesk;
+    }
     var studentId = String(config.studentId || '').trim();
     var apiBase = String(config.apiBase || (typeof INFINITY_API !== 'undefined' ? INFINITY_API : 'https://alice-by-infinity.onrender.com')).replace(/\/$/, '');
     var crmBase = product === 'kamuk' ? '/kamuk-holdings/crm' : '/infinity-holdings/crm';
@@ -182,6 +191,7 @@
     var syncing = false;
     var matchPick = {};
     var rulesAck = false;
+    try { rulesAck = localStorage.getItem(stateKey(product, studentId) + ':rules') === '1'; } catch (eRules) { rulesAck = false; }
     styles(accent);
 
     function unlocked(id) {
@@ -267,13 +277,45 @@
       return data;
     }
 
+    function mergeServerProgress(data) {
+      if (!data) return;
+      nestingCompletedAt = data.nestingCompletedAt || nestingCompletedAt;
+      if (data.crmEnabled) crmEnabled = true;
+      if (data.casesRulesAccepted) {
+        rulesAck = true;
+        try { localStorage.setItem(stateKey(product, studentId) + ':rules', '1'); } catch (eAck) { /* keep in-memory */ }
+      }
+      if (Array.isArray(data.done)) {
+        data.done.forEach(function (id) {
+          if (id && state.done.indexOf(id) < 0) state.done.push(id);
+        });
+      }
+      if (data.homeAnswers && typeof data.homeAnswers === 'object') {
+        Object.keys(data.homeAnswers).forEach(function (id) {
+          var remote = String(data.homeAnswers[id] || '');
+          var local = String((state.homeAnswers && state.homeAnswers[id]) || '');
+          if (remote && remote.length >= local.length) state.homeAnswers[id] = remote;
+        });
+      }
+      if (data.checks && typeof data.checks === 'object') {
+        Object.keys(data.checks).forEach(function (id) {
+          if (state.checks[id] == null && data.checks[id] != null) state.checks[id] = data.checks[id];
+        });
+      }
+      if (data.quizAnswers && typeof data.quizAnswers === 'object') {
+        Object.keys(data.quizAnswers).forEach(function (id) {
+          if (state.quizAnswers[id] == null && data.quizAnswers[id] != null) state.quizAnswers[id] = data.quizAnswers[id];
+        });
+      }
+      if (Number(data.mockIndex) > (state.mockIndex || 0)) state.mockIndex = Number(data.mockIndex);
+      if (Number(data.quizAttempts) > (state.quizAttempts || 0)) state.quizAttempts = Number(data.quizAttempts);
+      writeState(product, studentId, state);
+    }
+
     async function pullProgress() {
       if (!studentId || !authToken()) return;
       try {
-        var data = await api(crmBase + '/training/progress');
-        nestingCompletedAt = data.nestingCompletedAt || nestingCompletedAt;
-        if (data.crmEnabled) crmEnabled = true;
-        if (data.casesRulesAccepted) rulesAck = true;
+        mergeServerProgress(await api(crmBase + '/training/progress'));
       } catch (error) { /* offline book still works */ }
     }
 
@@ -282,9 +324,7 @@
       syncing = true;
       try {
         var data = await api(crmBase + '/training/progress', { method: 'POST', body: trainingPayload() });
-        nestingCompletedAt = data.nestingCompletedAt || nestingCompletedAt;
-        if (data.crmEnabled) crmEnabled = true;
-        if (data.casesRulesAccepted) rulesAck = true;
+        mergeServerProgress(data);
         return data;
       } finally { syncing = false; }
     }
@@ -341,15 +381,17 @@
     function matchBlock(id, prompt, left, right) {
       var passed = checkPassed(id);
       var pairs = state.match[id] || {};
+      var pick = matchPick[id] || {};
       return '<div class="ob-check"><h5>' + prompt + '</h5><div class="ob-match">'
         + '<div>' + left.map(function (item) {
-          return '<div class="ob-chip' + (pairs[item.key] ? ' used' : '') + '" data-match="' + id + '" data-side="left" data-key="' + item.key + '">' + esc(item.label) + (pairs[item.key] ? ' → ' + esc((right.find(function (r) { return r.key === pairs[item.key]; }) || {}).label || '') : '') + '</div>';
+          var on = pick.left === item.key && !pairs[item.key];
+          return '<div class="ob-chip' + (pairs[item.key] ? ' used' : '') + (on ? ' on' : '') + '" data-match="' + id + '" data-side="left" data-key="' + item.key + '">' + esc(item.label) + (pairs[item.key] ? ' → ' + esc((right.find(function (r) { return r.key === pairs[item.key]; }) || {}).label || '') : '') + '</div>';
         }).join('') + '</div>'
         + '<div>' + right.map(function (item) {
-          return '<div class="ob-chip" data-match="' + id + '" data-side="right" data-key="' + item.key + '">' + esc(item.label) + '</div>';
+          return '<div class="ob-chip' + (pick.right === item.key ? ' on' : '') + '" data-match="' + id + '" data-side="right" data-key="' + item.key + '">' + esc(item.label) + '</div>';
         }).join('') + '</div></div>'
         + '<div class="ob-foot"><button class="ob-btn" data-match-submit="' + id + '"' + (passed ? ' disabled' : '') + '>' + (passed ? 'Matched' : 'Check matching') + '</button></div>'
-        + '<div class="ob-feedback">' + (passed ? 'Correct pairing.' : 'Match every term, then check.') + '</div></div>';
+        + '<div class="ob-feedback">' + (passed ? 'Correct pairing.' : (pick.left ? 'Now tap the matching purpose on the right.' : 'Tap a term, then tap its purpose. Then check.')) + '</div></div>';
     }
 
     function seqBlock(id, prompt, items) {
@@ -534,14 +576,14 @@
       var ready = deskUnlocked();
       return panelShell('Nesting — 10 written cases, untimed', 0, 'No time limit. Complete all 10 structured responses. Open the Holdings desk to work the cases in the CRM.',
         '<div class="ob-cert"><i class="ti ti-circle-check"></i><div><b>' + (ready ? 'Holdings desk ready' : 'Write all 10 cases') + '</b><span>' + (ready ? 'Open the CRM to document the 10 nesting cases' : completed + '/10 structured responses ready') + '</span></div></div>'
-        + '<div class="ob-foot"><button class="ob-btn" id="ob-launch"' + (ready ? '' : ' disabled') + '><i class="ti ti-building-bank"></i> Open the Holdings desk</button><span class="ob-msg">' + (ready ? 'Opens in a new tab with your Training Book session.' : 'Desk stays locked until all 10 cases meet the rubric.') + '</span></div>'
+        + '<div class="ob-foot"><button class="ob-btn" id="ob-launch"' + (ready ? '' : ' disabled') + '><i class="ti ti-building-bank"></i> Open the Holdings desk</button><span class="ob-msg">' + (ready ? 'Opens the real Kamuk Holdings CRM desk (practice walkthrough, then the weekly queue).' : 'Desk stays locked until all 10 cases meet the rubric.') + '</span></div>'
         + (product === 'kamuk' ? '<div class="ob-home-rules"><strong>Premio:</strong> 8/10+ esta semana gana bono de producción. Tres pausas de más de 30 minutos el mismo día CR descuentan. Patrones de IA/traductor no son elegibles al premio.</div>' : '')
         + '<div class="ob-home-head"><h4>Home practice · 10 written cases</h4><p>Write 100–200 words in your own English. Use the glossary in Recursos (método linkers, phrasals, prefixes/suffixes). Name the disposition and explain why.</p></div>'
         + '<div class="ob-home-progress">' + completed + '/10 responses meet the rubric</div>'
         + HOME_CASES.map(function (item, index) {
           var answer = state.homeAnswers[item.id] || '';
           var status = homeAnswerStatus(item, answer);
-          return '<div class="ob-home-case" data-home-case="' + item.id + '"><div class="ob-home-top"><b>' + (index + 1) + ' · ' + esc(item.title) + '</b><span>' + (status.ready ? 'Ready ✓' : status.words + ' words') + '</span></div>'
+          return '<div class="ob-home-case' + (index === 0 ? ' open' : '') + '" data-home-case="' + item.id + '"><div class="ob-home-top" role="button" tabindex="0"><i class="ti ti-chevron-down"></i><b>' + (index + 1) + ' · ' + esc(item.title) + '</b><span>' + (status.ready ? 'Ready ✓' : (status.words ? status.words + ' words' : 'Tap to write')) + '</span></div>'
             + '<div class="ob-home-body"><div class="ob-home-rules"><strong>Case facts:</strong> ' + esc(item.facts) + '</div><div class="ob-home-line">' + esc(item.line) + '</div>'
             + '<div class="ob-home-rules"><strong>Required:</strong> acknowledge impact → one open and one closed question → explain why (policy) → safe action/disposition → timed next step. Use método linkers from Recursos.</div>'
             + '<textarea class="ob-home-answer" data-home-answer="' + item.id + '" autocomplete="off" spellcheck="true" placeholder="Type your response here. Pasting and dropping text are disabled.">' + esc(answer) + '</textarea>'
@@ -627,17 +669,20 @@
       }
       var mcq = event.target.closest('[data-mcq]');
       if (mcq) {
+        if (mcq.disabled) return;
         markCheck(mcq.dataset.mcq, Number(mcq.dataset.pick));
         return;
       }
       var tf = event.target.closest('[data-tf]');
       if (tf) {
+        if (tf.disabled) return;
         markCheck(tf.dataset.tf, tf.dataset.val === 'true');
         return;
       }
       var matchEl = event.target.closest('[data-match]');
-      if (matchEl && matchEl.dataset.side) {
+      if (matchEl && matchEl.dataset.side && !matchEl.closest('[data-match-submit]')) {
         var id = matchEl.dataset.match;
+        if (checkPassed(id)) return;
         matchPick[id] = matchPick[id] || {};
         if (matchEl.dataset.side === 'left') matchPick[id].left = matchEl.dataset.key;
         if (matchEl.dataset.side === 'right') matchPick[id].right = matchEl.dataset.key;
@@ -646,17 +691,19 @@
           state.match[id][matchPick[id].left] = matchPick[id].right;
           matchPick[id] = {};
           save();
-          render();
         }
+        render();
         return;
       }
       var matchSubmit = event.target.closest('[data-match-submit]');
       if (matchSubmit) {
+        if (matchSubmit.disabled) return;
         markCheck(matchSubmit.dataset.matchSubmit, state.match[matchSubmit.dataset.matchSubmit] || {});
         return;
       }
       var seqBtn = event.target.closest('[data-seq]');
       if (seqBtn) {
+        if (seqBtn.disabled) return;
         var sid = seqBtn.dataset.seq;
         state.seq[sid] = state.seq[sid] || [];
         if (state.seq[sid].indexOf(seqBtn.dataset.key) < 0) state.seq[sid].push(seqBtn.dataset.key);
@@ -683,15 +730,13 @@
       }
       if (event.target.closest('#ob-rules-ack')) {
         rulesAck = true;
+        try { localStorage.setItem(stateKey(product, studentId) + ':rules', '1'); } catch (eSave) { /* in-memory unlock is enough to write */ }
+        render();
         if (studentId && authToken()) {
           api(crmBase + '/training/progress', { method: 'POST', body: Object.assign(trainingPayload(), { acceptCasesRules: true }) })
-            .then(function (data) {
-              if (data && data.casesRulesAccepted) rulesAck = true;
-              if (data && data.nestingCompletedAt) nestingCompletedAt = data.nestingCompletedAt;
-              render();
-            })
-            .catch(function () { render(); });
-        } else render();
+            .then(function (data) { mergeServerProgress(data); })
+            .catch(function () {});
+        }
         return;
       }
       if (event.target.closest('#ob-rules-cancel')) {
@@ -700,14 +745,11 @@
       }
       if (event.target.closest('#ob-launch')) {
         if (!deskUnlocked()) return;
-        pushProgress().then(function (data) {
-          if (data && data.nestingCompletedAt) nestingCompletedAt = data.nestingCompletedAt;
-          if (data && data.crmEnabled) crmEnabled = true;
-          if (deskUnlocked()) window.open(launchUrl + (launchUrl.indexOf('?') >= 0 ? '&' : '?') + 'product=' + encodeURIComponent(product), '_blank', 'noopener');
-          else render();
-        }).catch(function () {
-          if (deskUnlocked()) window.open(launchUrl + (launchUrl.indexOf('?') >= 0 ? '&' : '?') + 'product=' + encodeURIComponent(product), '_blank', 'noopener');
-        });
+        var deskHref = launchUrl;
+        if (deskHref.indexOf('product=') < 0) deskHref += (deskHref.indexOf('?') >= 0 ? '&' : '?') + 'product=kamuk';
+        var deskWin = window.open(deskHref, '_blank', 'noopener');
+        pushProgress().catch(function () {});
+        if (!deskWin) window.location.href = deskHref;
         return;
       }
       var homeTop = event.target.closest('.ob-home-top');

@@ -1499,6 +1499,22 @@ function showPortal(s){
     +'<a href="https://www.nacion.com/el-mundo/" target="_blank" rel="noopener" style="color:var(--navy);font-weight:600;">La Nación — resumí titular en inglés (PR/PC)</a>'
     +'</div>'+vocabCard+'</div>'
 
+    +'<div class="card"><div class="card-title"><i class="ti ti-book-2"></i> Kamuk Holdings — glosario de nesting</div>'
+    +'<div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:12px;">Usá estas listas al escribir los 10 casos. EN + glosa ES. El método de abajo es la base de evaluación (no dumps de IELTS).</div>'
+    +'<h3 style="margin:0 0 8px;font-size:14px;color:var(--navy);">Linkers y expresiones — método</h3>'
+    +'<div style="display:grid;grid-template-columns:1fr;gap:0;font-size:12px;margin-bottom:14px;">'
+    +[['Aun cuando','Even when / even though'],['Una vez que','Once'],['Sin embargo','however'],['Lo que pasa es que','What happens is that…'],['¿Cuándo fue qué?','When was that?'],['Cuando se piensa','when thinking'],['En la que','in which / on which'],['La cual se usa','which is used for'],['Pero a pesar de eso','despite that'],['En otras palabras','in other words'],['Lo que / lo cual significa','which means'],['No solo eso, sino que también','not only that… but also'],['Así como','as well as'],['El asunto es que','The thing is that'],['Usted sabe a qué me refiero','You know what I mean'],['Se dice que','it is said that'],['Debería ser hecho','It should be done'],['De alguna forma','somehow'],['Me di cuenta','I realized'],['Encontrar la manera','find a way / figure out'],['En la (dentro)','In the'],['En una','in / on / a / an'],['Por la','by the / for the / to the'],['Sin la','without the / it / her'],['Por ahora','by now'],['Por el momento','for the moment / so far'],['En vez de','instead of'],['A punto de','about to'],['Alrededor de','around'],['Cerca de','near, close to'],['Lejos de','far from'],['A menos que','unless'],['Preferir que','rather… than'],['Por el otro lado','on the other hand'],['De acuerdo con','according to'],['No / sí / podría / debería ser','combine pronouns and tenses'],['Tal como','such as']].map(function(row){
+      return '<div style="display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid #e2e8f0;"><span style="color:var(--t2);">'+row[0]+'</span><b style="color:var(--navy);text-align:right;">'+row[1]+'</b></div>';
+    }).join('')+'</div>'
+    +'<div class="inf-skill-grid two">'
+    +'<div><h3 style="margin:0 0 6px;font-size:13px;color:var(--navy);">Connectors (extra)</h3><div style="font-size:12px;line-height:1.7;color:var(--t2);">because · therefore · although · in addition · as a result · consequently</div></div>'
+    +'<div><h3 style="margin:0 0 6px;font-size:13px;color:var(--navy);">Phrasal verbs</h3><div style="font-size:12px;line-height:1.7;color:var(--t2);">look into — investigar<br>sort out — resolver<br>follow up — dar seguimiento<br>hand off — pasar el caso<br>write up — documentar</div></div>'
+    +'<div><h3 style="margin:0 0 6px;font-size:13px;color:var(--navy);">Prefijos / sufijos</h3><div style="font-size:12px;line-height:1.7;color:var(--t2);">un- unauthorized, unverified, unresolved<br>in- / non- ineligible, non-compliant<br>-tion / -ment authorization, verification, replacement, activation</div></div>'
+    +'<div><h3 style="margin:0 0 6px;font-size:13px;color:var(--navy);">Technicismos Holdings</h3><div style="font-size:12px;line-height:1.7;color:var(--t2);">PIN · last 6 · travel notice · provisional credit · chargeback · reporting window · virtual card · AA (awaiting action) · PSA (pending system) · disposition · goodwill · MCC block</div></div>'
+    +'<div><h3 style="margin:0 0 6px;font-size:13px;color:var(--navy);">Slang del cliente → desk</h3><div style="font-size:12px;line-height:1.7;color:var(--t2);">“fix it now” → I will take a safe action<br>“my money is gone” → the funds are under investigation<br>“just in case” → I will not keep both credits open</div></div>'
+    +'<div><h3 style="margin:0 0 6px;font-size:13px;color:var(--navy);">Glosario de casos</h3><div style="font-size:12px;line-height:1.7;color:var(--t2);">identity verification · recorded line · service not rendered · double credit · withdraw / reopen · operating account · Obsidian card</div></div>'
+    +'</div></div>'
+
     +'<div class="inf-skill">'
     +'<h3><i class="ti ti-keyboard"></i> Typing Lab</h3>'
     +'<p class="inf-skill-lead">Un solo lab: adentro elegís texto/audio, idioma y escenario (Call Center, 911, Grandma).</p>'
@@ -1576,7 +1592,7 @@ function mountKamukSimulation(){
   SimulationOnboarding.mount(onboardingRoot, {
     product:'kamuk',
     studentId: studentId,
-    launchUrl:'kamuk-holdings-crm.html',
+    launchUrl:'https://studioinfinitycr.com/kamuk/kamuk-holdings-crm.html',
     crmEnabled: !CURRENT_STUDENT || CURRENT_STUDENT.simulationEnabled !== false
   });
 }
@@ -5088,6 +5104,21 @@ var ALICE_STUDENT_PALETTES = {
     btnShadow: '0 4px 20px rgba(236,72,153,0.5)',
     badgeBg: 'rgba(244,114,182,0.16)',
     msgBg: 'rgba(244,114,182,0.18)'
+  },
+  black: {
+    cardBg: 'linear-gradient(160deg,#000000 0%,#0a0a0a 40%,#171717 100%)',
+    cardShadow: '0 8px 40px rgba(0,0,0,0.7), 0 0 44px rgba(255,255,255,0.08)',
+    cardBorder: 'rgba(255,255,255,0.22)',
+    studioLabel: '#E5E5E5',
+    title: '#F5F5F5',
+    titleShadow: 'rgba(255,255,255,0.35)',
+    accent: '#E5E5E5',
+    accentLight: '#FAFAFA',
+    rgb: '229,229,229',
+    btnGrad: 'linear-gradient(135deg,#0a0a0a,#262626,#525252)',
+    btnShadow: '0 4px 20px rgba(0,0,0,0.65)',
+    badgeBg: 'rgba(255,255,255,0.10)',
+    msgBg: 'rgba(255,255,255,0.12)'
   }
 };
 
@@ -9623,7 +9654,7 @@ if(document.readyState === 'loading'){
   </div>
 </div>
 
-<script src="https://studioinfinitycr.com/js/simulation-onboarding.js?v=20260817crmall"></script>
+<script src="js/simulation-onboarding.js?v=20260818gp10"></script>
 <script src="https://studioinfinitycr.com/js/infinity-arcade-lil-games.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/infinity-casino-floor.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/infinity-modern-games.js?v=20260814refresh"></script>
