@@ -12,6 +12,7 @@
 
   var GLOSS_CATS = [
     { id: 'metodo', label: 'Método' },
+    { id: 'natural', label: 'Expresiones' },
     { id: 'extra', label: 'Conectores' },
     { id: 'phrasals', label: 'Phrasals' },
     { id: 'affix', label: 'Prefijos' },
@@ -20,8 +21,9 @@
     { id: 'casos', label: 'Casos' }
   ];
 
-  function item(cat, en, es, how, a, b, gloss) {
-    return { cat: cat, en: en, es: es, how: how, examples: [a, b], gloss: gloss || '' };
+  function item(cat, en, es, how, a, b, forms) {
+    var extra = Array.isArray(forms) ? { forms: forms } : (forms && typeof forms === 'object' ? forms : {});
+    return { cat: cat, en: en, es: es, how: how, examples: [a, b], gloss: extra.gloss || '', forms: extra.forms || [] };
   }
 
   var GLOSS_ITEMS = [
@@ -62,6 +64,35 @@
     item('metodo', 'according to', 'De acuerdo con', 'Cite policy, CRM or the statement — not memory.', 'According to policy, last 6 only after identity on a recorded line.', 'According to the statement date, the reporting window has closed.'),
     item('metodo', 'combine pronouns and tenses', 'No / sí / podría / debería ser', 'Nesting drill: rotate I/you/we + can/could/should + the verb.', 'I should document this. You could confirm last 6. We cannot send the PIN.', 'She cannot approve goodwill. I will escalate. You should keep the card blocked.'),
     item('metodo', 'such as', 'Tal como', 'Give a concrete example, then act.', 'I need evidence such as the booking confirmation.', 'Safe actions such as block, replace and investigate — not an instant refund.'),
+    item('natural', 'the thing is / the thing is that', 'el asunto es que / lo que pasa es que', 'Inglés natural del método. Sirve para enfocar UNA restricción antes de la acción. No es grosería.', 'The thing is that I cannot send a PIN by SMS.', 'The thing is, the reporting window is counted from the statement date.', [
+      'Presente: the thing is / the thing is that…',
+      'Pasado: the thing was / the thing was that…',
+      'Futuro: preferí the next step is… (the thing will be that es raro)',
+      'Para qué: meter el problema real sin pelear. Luego nombrás la acción segura.'
+    ]),
+    item('natural', 'what happened was / what happens is that', 'lo que pasó fue / lo que pasa es que', 'Contás el mecanismo o el evento. Presente = regla del sistema. Pasado = el hecho de ESTE caso.', 'What happens is that a deposit plus a balance is not a duplicate charge.', 'What happened was the hotel MCC block fired because there was no Lisbon notice.', [
+      'Presente (regla): what happens is that…',
+      'Pasado (este caso): what happened was… / what happened is…',
+      'Pasado perfecto: what had happened was… (contacto previo)',
+      'Futuro: what will happen is that… (próximo paso del proceso)',
+      'Pregunta: what happened? When was that?',
+      'Para qué: explicar sin culpar. Luego evidencia + next step.'
+    ]),
+    item('natural', 'here’s the thing / the point is', 'el punto es / mira, el tema es', 'Misma familia que the thing is. El punto es = la decisión. Here’s the thing = voy a ser directo.', 'Here’s the thing: I can activate the virtual card today.', 'The point is I need identity on the recorded line before last 6.'),
+    item('natural', 'what I mean is / I mean', 'lo que quiero decir es', 'Reformulá si el cliente no entendió. No lo uses para rellenar.', 'What I mean is last 6 only — never the PIN.', 'I mean the dispute must be withdrawn because the refund already posted.'),
+    item('natural', 'actually', 'en realidad / de hecho', 'Corregí un dato del CRM o del cliente sin pelear.', 'Actually, the notice on file is Paris, not Lisbon.', 'Actually, those two postings are deposit and balance.'),
+    item('natural', 'on top of that', 'encima de eso / además', 'Segundo hecho, tono natural (semana 4 Nexus).', 'There is no Lisbon notice. On top of that, a hotel MCC block is still on.', 'The refund posted. On top of that, an open dispute is still live.'),
+    item('natural', 'to be honest', 'con franqueza', 'Bajá expectativa falsa (promesa de ventas) y ofrecé lo que sí podés.', 'To be honest, I cannot guarantee a network win.', 'To be honest, goodwill is supervisor-only. I will hand this off.'),
+    item('natural', 'at the end of the day', 'al final / en resumen', 'Cierre: dueño + hora. Una vez por correo, no tres.', 'At the end of the day, you will have a virtual card and a 4:30 p.m. call.', 'At the end of the day I own the note, the email and the disposition.'),
+    item('natural', 'as it turns out', 'resulta que', 'Después de mirar el CRM. No adivinés antes.', 'As it turns out, the two descriptors are not the same merchant.', 'As it turns out, identity is incomplete: date of birth does not match.'),
+    item('natural', 'just to make sure I understood', 'solo para confirmar que entendí', 'Stall profesional + pregunta cerrada. Gana 3 segundos.', 'Just to make sure I understood: the decline was at the Lisbon hotel desk, correct?', 'Just to make sure I understood: you want last 6, not the PIN.'),
+    item('natural', 'that is a great point. Let me address that', 'buen punto, déjeme atenderlo', 'Stall de 5 segundos. Luego evidencia, no relleno.', 'That is a great point. Let me address that: I will check which control fired.', 'That is a great point. Let me look into the statement date first.'),
+    item('natural', 'I realized / I notice / I can see', 'me di cuenta / veo / noto', 'Verbos de evidencia. Conjugá según el momento.', 'I realized the travel notice was for Paris.', 'I can see two postings; I notice the descriptors differ.', [
+      'Presente: I notice / I can see / I am looking at…',
+      'Pasado: I realized / I saw / I found…',
+      'Presente perfecto: I have noticed / I have confirmed…',
+      'Para qué: mostrar que usaste el CRM, no la memoria.'
+    ]),
     item('extra', 'because', 'porque', 'Give the reason after the decision.', 'I will not send the PIN because identity is incomplete.', 'I opened a billing inquiry because this is not a duplicate.'),
     item('extra', 'therefore', 'por lo tanto', 'Result of the evidence.', 'There is no Lisbon notice; therefore I will file the correct one.', 'The refund posted; therefore I will withdraw the dispute.'),
     item('extra', 'although', 'aunque', 'Concede, then keep policy.', 'Although the client is in hospital, I still need documents for hardship.', 'Although the hotel refused in chat, I will still document merchant contact.'),
@@ -88,9 +119,28 @@
     item('tech', 'disposition', 'disposición', 'The official case status you name and justify.', 'I will name the disposition and explain why in the note.', 'Safe disposition: AA until identity is complete.'),
     item('tech', 'goodwill', 'gesto comercial / goodwill', 'Supervisor authority. Do not match an invalid promise yourself.', 'Goodwill is supervisor-only. I will hand this off with the case number.', 'I cannot pay goodwill from desk funds today.'),
     item('tech', 'MCC block', 'bloqueo MCC', 'Merchant category control. Confirm which rule fired.', 'A $500 hotel MCC block remains from a prior dispute.', 'I will not lift every MCC block until we know which rule fired.'),
+    item('slang', 'the thing is (inglés natural)', 'el asunto es que', 'Slang de escritorio, no grosería. Sirve para enfocar. Conjugá: is / was.', 'The thing is I cannot text a PIN.', 'The thing was the window had already closed.', [
+      'the thing is that… (presente)',
+      'the thing was that… (pasado)',
+      'Para qué: una sola restricción + acción. También está en Expresiones.'
+    ]),
+    item('slang', 'what happened was (inglés natural)', 'lo que pasó fue que', 'Contá el hecho. Presente = how the system works. Pasado = this case.', 'What happened was the MCC block fired.', 'What happens is that PIN-present ATM needs investigation.', [
+      'what happens is that… (regla)',
+      'what happened was… (este caso)',
+      'what will happen is that… (próximo paso)'
+    ]),
     item('slang', '“fix it now” → I will take a safe action', '“arréglalo ya”', 'Do not promise an illegal fix. Name the safe action.', 'I will take a safe action now: file the correct travel notice.', 'I cannot “fix it now” by lifting every control.'),
     item('slang', '“my money is gone” → the funds are under investigation', '“se desapareció mi plata”', 'Do not confirm loss. Investigation language.', 'The funds are under investigation; I blocked the card and ordered a replacement.', 'I will not say the money is gone. I will look into the ATM trail.'),
     item('slang', '“just in case” → I will not keep both credits open', '“por si acaso”', 'Keeping dispute + refund = double credit risk.', 'I will not keep both credits open. I will withdraw the dispute.', 'We can reopen within 10 days if the refund reverses.'),
+    item('slang', '“just refund me” → I will follow the eligible path', '“devolvéme la plata ya”', 'Refund is not automatic. Name the path you own.', 'I cannot refund on the spot. I will open the billing inquiry with a case number.', 'If the merchant already refunded, I will confirm the posting instead of a second credit.'),
+    item('slang', '“this is ridiculous / third time” → acknowledge + CRM history', '“esto es ridículo / tercera vez”', 'Empathy: name the repeated effort. Then previous contacts. Do not restart from zero.', 'I understand this is the third time. I will review previous contacts in the CRM first.', 'I will not ask you to explain everything from the beginning.'),
+    item('slang', '“I already told you” → I have the prior note', '“ya se lo dije”', 'Ownership: the CRM should show it. If not, you write it now.', 'I see the prior note. I will not make you repeat the whole story.', 'The previous contact is incomplete; I will document this call properly.'),
+    item('slang', '“my card died” → the card is blocked / declined', '“se me murió la tarjeta”', 'Desk: declined, blocked, or expired. Check which control fired.', 'The card declined at the hotel. I will check travel notice and MCC.', 'The card is blocked after the ATM case. I can activate the virtual card.'),
+    item('slang', '“they stole my money” → unauthorized vs PIN-present', '“me robaron”', 'Do not confirm theft. Evidence first.', 'I will look into whether PIN was present before I call it unauthorized.', 'I blocked the card and ordered a replacement while we investigate.'),
+    item('slang', '“I don’t have time” → one concrete next step', '“no tengo tiempo”', 'Shorter path, still legal. Timed callback.', 'I will do identity now and call you today before 4:30 p.m.', 'I can activate the virtual card in this call so you can pay the airline.'),
+    item('slang', '“you guys always…” → this case, this evidence', '“ustedes siempre…”', 'Do not defend the company. Work THIS file.', 'I will work this case on the evidence in the CRM, not on what usually happens.', 'I cannot speak for another desk. I own this next step.'),
+    item('slang', '“hang on / wait wait” → please stay with me', '“esperá / hold on”', 'Keep the client. Name what you are doing.', 'Please stay with me while I look into the statement.', 'I am still here. I am writing up the identity check.'),
+    item('slang', '“I need this like yesterday” → timed owner', '“esto era para ayer”', 'Urgency + a clock. No fake same-day promises.', 'I hear the urgency. The next step I own is today before 4:30 p.m.', 'Same-day goodwill is not something I can promise. I will escalate with a time.'),
     item('casos', 'identity verification', 'verificación de identidad', 'Recorded line, data points, then last 6. Never PIN.', 'Identity verification is incomplete: date of birth does not match.', 'I will complete identity verification before I confirm last 6.'),
     item('casos', 'recorded line', 'línea grabada', 'Where identity and PIN rules live.', 'We are on a recorded line. I will not send the PIN.', 'Mother’s maiden name matched; date of birth did not — I stay on the recorded line.'),
     item('casos', 'service not rendered', 'servicio no prestado', 'Usually merchant first unless written refusal exists.', 'This is service not rendered: overbooking. I will document merchant contact.', 'A screenshot can be enough if I write it up clearly.'),
@@ -171,11 +221,11 @@
       var panel = '';
       if (kind === 'gloss') {
         panel = selected
-          ? '<div class="kh-lib-panel"><h4>' + esc(selected.en) + '</h4><div class="kh-lib-es">Español: ' + esc(selected.es) + (selected.gloss ? ' — ' + esc(selected.gloss) : '') + '</div><p class="kh-lib-how">' + esc(selected.how) + '</p><ul class="kh-lib-ex"><li>' + esc(selected.examples[0]) + '</li><li>' + esc(selected.examples[1]) + '</li></ul></div>'
-          : '<div class="kh-lib-panel"><p class="kh-lib-empty">Escribí however o aun cuando, o tocá un chip. No hay lista interminable: buscá y filtrá.</p></div>';
+          ? '<div class="kh-lib-panel"><h4>' + esc(selected.en) + '</h4><div class="kh-lib-es">Español: ' + esc(selected.es) + (selected.gloss ? ' — ' + esc(selected.gloss) : '') + '</div><p class="kh-lib-how">' + esc(selected.how) + '</p>' + ((selected.forms && selected.forms.length) ? '<div class="kh-lib-forms"><b>Formas, conjugaciones y para qué</b><ul class="kh-lib-ex">' + selected.forms.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') + '</ul></div>' : '') + '<ul class="kh-lib-ex"><li>' + esc(selected.examples[0]) + '</li><li>' + esc(selected.examples[1]) + '</li></ul></div>'
+          : '<div class="kh-lib-panel"><p class="kh-lib-empty">Tocá Expresiones para the thing is / what happened was. En Slang está el habla del cliente y esas mismas frases. Buscá o tocá un chip.</p></div>';
       }
       el.innerHTML = '<p class="kh-lib-lead">' + (kind === 'gloss'
-        ? 'Buscá un linker o tocá una categoría. Luego tocá el chip para explicación, ejemplos de desk y el español. El método es la base de los 10 casos.'
+        ? 'Buscá the thing is o tocá Expresiones / Slang. Cada chip abre para qué sirve, conjugaciones y ejemplos de desk.'
         : 'Después de Jill, leé 5–10 min. Solo sitios libres verificados (sin 404, sin muro duro). Abrí en una pestaña nueva.') + '</p>'
         + '<input class="kh-lib-search" type="search" enterkeyhint="search" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="' + (kind === 'gloss' ? 'Buscá: however, aun cuando, look into…' : 'Buscá: Burns, BBC Scotland, Austen…') + '" value="' + esc(q) + '">'
         + '<div class="kh-lib-cats">' + cats.map(function (c) {
