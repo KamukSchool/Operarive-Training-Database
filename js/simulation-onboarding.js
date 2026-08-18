@@ -151,7 +151,24 @@
       '.ob-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.ob-card{border:1px solid #e2e8f0;border-radius:11px;padding:12px}.ob-card i{font-size:20px;color:' + accent + '}.ob-card b{display:block;margin:5px 0 3px;font-size:13px;color:#102033}.ob-card p{font-size:12px;line-height:1.55;color:#64748b;margin:0}',
       '.ob-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ob-compare>div{border-radius:10px;padding:12px}.ob-empathy{background:#f0fdf4;color:#166534}.ob-sympathy{background:#fff7ed;color:#9a3412}.ob-compare b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}.ob-compare p{margin:0;font-size:12.5px;line-height:1.6}',
       '.ob-check{border:1px solid #e2e8f0;border-radius:12px;padding:14px;margin:12px 0}.ob-check h5{margin:0 0 8px;font-size:13px;color:#102033}.ob-choice,.ob-opt{display:block;width:100%;text-align:left;border:1px solid #d8e0e8;background:#fff;border-radius:9px;padding:9px 11px;margin:6px 0;font:600 12px/1.5 Inter,Arial,sans-serif;color:#334155;cursor:pointer;pointer-events:auto;touch-action:manipulation}.ob-choice.right,.ob-opt.right{border-color:#15803d;background:#f0fdf4;color:#14532d}.ob-choice.wrong,.ob-opt.wrong{border-color:#b42318;background:#fef2f2;color:#7f1d1d}.ob-feedback{font-size:12px;line-height:1.5;color:#475569;margin-top:8px}',
-      '.ob-match{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ob-chip{border:1px solid #d8e0e8;border-radius:8px;padding:8px;font-size:12px;cursor:pointer;background:#fff;pointer-events:auto;touch-action:manipulation}.ob-chip.on{border-color:' + accent + ';background:#eff6ff}.ob-chip.used{opacity:.45}',
+      '.ob-match-help{font-size:13px;line-height:1.55;color:#334155;background:#eef6fc;border-radius:10px;padding:10px 12px;margin:0 0 12px}',
+      '.ob-match-list{display:flex;flex-direction:column;gap:10px}',
+      '.ob-match-row{display:flex;flex-direction:column;gap:6px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:12px}',
+      '.ob-match-row.ok{border-color:#15803d;background:#f0fdf4}',
+      '.ob-match-row.bad{border-color:#b42318;background:#fef2f2}',
+      '.ob-match-row label b{font-size:14px;color:#102033}',
+      '.ob-select{width:100%;min-height:48px;font-size:16px;padding:10px 12px;border:1.5px solid #d8e0e8;border-radius:10px;background:#fff;font-family:inherit;touch-action:manipulation}',
+      '.ob-match-note{font-size:12px;line-height:1.5}',
+      '.ob-match-note.ok{color:#14532d}',
+      '.ob-match-note.bad{color:#7f1d1d}',
+      '.ob-chip{display:none}',
+      '.ob-pair{display:flex;flex-direction:column;gap:6px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:12px;background:#fff}',
+      '.ob-pair.ok{border-color:#15803d;background:#f0fdf4}',
+      '.ob-pair.bad{border-color:#b42318;background:#fef2f2}',
+      '.ob-pair-label{font-size:14px;font-weight:800;color:#102033}',
+      '.ob-pair-select{width:100%;min-height:48px;font-size:16px;padding:10px 12px;border:1.5px solid #d8e0e8;border-radius:10px;background:#fff;font-family:inherit;touch-action:manipulation}',
+      '.ob-pair-note{font-size:12px;line-height:1.45;color:#475569}',
+      '.ob-match{display:flex;flex-direction:column;gap:10px}',
       '.ob-seq{display:flex;flex-wrap:wrap;gap:7px}.ob-seq button{border:1px solid #d8e0e8;background:#fff;border-radius:8px;padding:8px 10px;font:700 12px Inter,Arial,sans-serif;cursor:pointer}.ob-seq button.on{background:' + accent + ';color:#fff;border-color:' + accent + '}',
       '.ob-process{display:flex;gap:7px;align-items:stretch;margin:12px 0 18px;overflow-x:auto}.ob-process div{min-width:105px;flex:1;background:#f8fafc;border-radius:10px;padding:10px;text-align:center}.ob-process b{display:block;font-size:11px;color:#102033}.ob-process span{font-size:10px;color:#64748b}',
       '.ob-product{border:1px solid #e2e8f0;border-radius:11px;padding:12px}.ob-product b{display:block;font-size:13px;color:#102033}.ob-product small{display:block;color:' + accent + ';font-weight:800;margin:3px 0}.ob-product p{margin:0;font-size:12px;line-height:1.5;color:#64748b}',
@@ -162,7 +179,7 @@
       '.gm{border:1px solid #cbd5e1;border-radius:13px;overflow:hidden;background:#f8fafc}.gm-guide{display:flex;gap:12px;align-items:flex-start;background:#fff8cc;border-bottom:1px solid #f0cf50;padding:13px 15px}.gm-guide .gm-n{width:28px;height:28px;border-radius:50%;background:#eab308;color:#422006;display:grid;place-items:center;font-weight:900;flex:0 0 auto}.gm-guide b{display:block;font-size:13px;color:#422006}.gm-guide p{margin:3px 0 0;font-size:12px;line-height:1.5;color:#713f12}.gm-shell{display:grid;grid-template-columns:190px 1fr;min-height:410px}.gm-side{background:#1e1b4b;color:#fff;padding:12px}.gm-brand{font-size:11px;font-weight:900;margin-bottom:13px}.gm-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;opacity:.55;margin:9px 0 5px}.gm-client{padding:9px;border-radius:8px;font-size:11px;cursor:pointer;margin-bottom:5px}.gm-client b{display:block}.gm-client span{font-size:9px;opacity:.7}.gm-main{min-width:0}.gm-top{padding:11px 13px;background:#fff;border-bottom:1px solid #e2e8f0}.gm-top b{font-size:13px;color:#102033}.gm-top span{display:block;font-size:10px;color:#64748b}.gm-tabs{display:flex;gap:2px;padding:7px 8px;background:#fff;border-bottom:1px solid #e2e8f0;overflow-x:auto}.gm-tab{white-space:nowrap;border:0;background:transparent;border-radius:6px;padding:7px 8px;font:700 9px Inter,Arial,sans-serif;color:#64748b;cursor:pointer}.gm-view{padding:13px}.gm-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.gm-metric,.gm-product,.gm-row,.gm-contact{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:9px}.gm-metric small,.gm-product small{display:block;font-size:8px;color:#64748b;text-transform:uppercase}.gm-metric b{font-size:14px;color:#102033}.gm-product{margin-bottom:7px;cursor:pointer}.gm-product b{display:block;font-size:11px;color:#102033}.gm-product span{font-size:9px;color:#64748b}.gm-row,.gm-contact{display:flex;justify-content:space-between;gap:8px;margin-bottom:6px;font-size:10px;color:#334155;cursor:pointer}.gm-red{color:#b42318;font-weight:800}.gm-green{color:#15803d;font-weight:800}.gm-note{width:100%;box-sizing:border-box;min-height:74px;border:1px solid #cbd5e1;border-radius:8px;padding:9px;font:11px Inter,Arial,sans-serif}.gm-save{margin-top:7px;border:0;border-radius:7px;padding:8px 11px;background:#475569;color:#fff;font:800 10px Inter,Arial,sans-serif;cursor:pointer}.gm-target{position:relative;z-index:1;outline:4px solid #facc15!important;background:#fef9c3!important;color:#422006!important;animation:gmPulse 1s infinite alternate}.gm-target:after{content:"CLICK HERE";position:absolute;z-index:3;right:2px;top:-16px;background:#eab308;color:#422006;border-radius:4px;padding:2px 5px;font:900 7px Inter,Arial,sans-serif}.gm-wrong{animation:gmShake .25s}.gm-complete{text-align:center;padding:70px 20px}.gm-complete i{font-size:44px;color:#15803d}',
       '.ob-locked{text-align:center;padding:35px 15px;color:#64748b}.ob-locked i{font-size:34px;color:#cbd5e1}',
       '@keyframes gmPulse{to{outline-color:#eab308;box-shadow:0 0 14px #facc15}}@keyframes gmShake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}',
-      '@media(max-width:700px){.ob-grid,.ob-compare,.ob-match{grid-template-columns:1fr}.gm-shell{grid-template-columns:120px 1fr}.ob-panel{padding:14px}.ob-choice,.ob-chip,.ob-home-top,.ob-btn{min-height:44px}}'
+      '@media(max-width:700px){.ob-grid,.ob-compare{grid-template-columns:1fr}.gm-shell{grid-template-columns:120px 1fr}.ob-panel{padding:14px}.ob-choice,.ob-home-top,.ob-btn,.ob-select{min-height:44px}}'
     ].join('');
   }
 
@@ -190,6 +207,7 @@
     var syncTimer = null;
     var syncing = false;
     var matchPick = {};
+    var matchFeedback = {};
     var rulesAck = false;
     try { rulesAck = localStorage.getItem(stateKey(product, studentId) + ':rules') === '1'; } catch (eRules) { rulesAck = false; }
     styles(accent);
@@ -378,20 +396,29 @@
         + '<div class="ob-feedback">' + (passed ? coach : (pick == null ? 'Select an answer to continue.' : 'Not yet. Review the lesson and try again.')) + '</div></div>';
     }
 
-    function matchBlock(id, prompt, left, right) {
+    function matchBlock(id, prompt, left, right, helperHtml) {
       var passed = checkPassed(id);
       var pairs = state.match[id] || {};
-      var pick = matchPick[id] || {};
-      return '<div class="ob-check"><h5>' + prompt + '</h5><div class="ob-match">'
-        + '<div>' + left.map(function (item) {
-          var on = pick.left === item.key && !pairs[item.key];
-          return '<div class="ob-chip' + (pairs[item.key] ? ' used' : '') + (on ? ' on' : '') + '" data-match="' + id + '" data-side="left" data-key="' + item.key + '">' + esc(item.label) + (pairs[item.key] ? ' → ' + esc((right.find(function (r) { return r.key === pairs[item.key]; }) || {}).label || '') : '') + '</div>';
-        }).join('') + '</div>'
-        + '<div>' + right.map(function (item) {
-          return '<div class="ob-chip' + (pick.right === item.key ? ' on' : '') + '" data-match="' + id + '" data-side="right" data-key="' + item.key + '">' + esc(item.label) + '</div>';
-        }).join('') + '</div></div>'
-        + '<div class="ob-foot"><button class="ob-btn" data-match-submit="' + id + '"' + (passed ? ' disabled' : '') + '>' + (passed ? 'Matched' : 'Check matching') + '</button></div>'
-        + '<div class="ob-feedback">' + (passed ? 'Correct pairing.' : (pick.left ? 'Now tap the matching purpose on the right.' : 'Tap a term, then tap its purpose. Then check.')) + '</div></div>';
+      var result = matchFeedback[id] || null;
+      var rows = left.map(function (item) {
+        var selected = pairs[item.key] || '';
+        var rowState = result && result.rows ? result.rows[item.key] : '';
+        var opts = '<option value="">Elegí el propósito…</option>' + right.map(function (choice) {
+          return '<option value="' + esc(choice.key) + '"' + (selected === choice.key ? ' selected' : '') + '>' + esc(choice.label) + '</option>';
+        }).join('');
+        var note = '';
+        if (rowState === 'ok') note = '<div class="ob-pair-note">Correcto / Correct.</div>';
+        if (rowState === 'bad') note = '<div class="ob-pair-note">Todavía no. Cambiá la opción y tocá Check de nuevo. / Not yet — change this row and check again.</div>';
+        return '<div class="ob-pair' + (rowState === 'ok' ? ' ok' : (rowState === 'bad' ? ' bad' : '')) + '"><label class="ob-pair-label" for="ob-sel-' + id + '-' + item.key + '">' + esc(item.label) + '</label><select id="ob-sel-' + id + '-' + item.key + '" class="ob-pair-select" data-match-select="' + id + '" data-key="' + item.key + '"' + (passed ? ' disabled' : '') + '>' + opts + '</select>' + note + '</div>';
+      }).join('');
+      var feedback = passed
+        ? 'Correct pairing. Podés seguir.'
+        : (result && result.tried ? 'Revisá las filas en rojo y volvé a Check. No se bloquea el curso — podés reintentar.' : 'Elegí un propósito distinto para cada concepto, luego tocá Check.');
+      return '<div class="ob-check"><h5>' + prompt + '</h5>'
+        + (helperHtml ? '<div class="ob-match-help">' + helperHtml + '</div>' : '')
+        + '<div class="ob-match">' + rows + '</div>'
+        + '<div class="ob-foot"><button type="button" class="ob-btn" data-match-submit="' + id + '"' + (passed ? ' disabled' : '') + '>' + (passed ? 'Matched' : 'Check matching') + '</button></div>'
+        + '<div class="ob-feedback">' + feedback + '</div></div>';
     }
 
     function seqBlock(id, prompt, items) {
@@ -429,7 +456,8 @@
           'Correct. Remove effort from the client and use the history already available.')
         + matchBlock('service-match', 'Match each concept to its purpose.',
           [{ key: 'empathy', label: 'Empathy' }, { key: 'sympathy', label: 'Sympathy' }, { key: 'rapport', label: 'Rapport' }],
-          [{ key: 'impact', label: 'Names the client’s specific impact' }, { key: 'emotion', label: 'Describes your feelings' }, { key: 'trust', label: 'Creates professional trust to work the case' }])
+          [{ key: 'impact', label: 'Names the client’s specific impact' }, { key: 'emotion', label: 'Describes your feelings' }, { key: 'trust', label: 'Creates professional trust to work the case' }],
+          '<strong>Pista:</strong> Empatía = nombra el impacto específico del cliente. Simpatía = habla de TUS sentimientos (incorrecto en el desk). Rapport = confianza profesional para trabajar el caso.')
         + continueBtn('comms', checkPassed('service-scenario') && checkPassed('service-match')));
     }
 
@@ -583,7 +611,7 @@
         + HOME_CASES.map(function (item, index) {
           var answer = state.homeAnswers[item.id] || '';
           var status = homeAnswerStatus(item, answer);
-          return '<div class="ob-home-case' + (index === 0 ? ' open' : '') + '" data-home-case="' + item.id + '"><div class="ob-home-top" role="button" tabindex="0"><i class="ti ti-chevron-down"></i><b>' + (index + 1) + ' · ' + esc(item.title) + '</b><span>' + (status.ready ? 'Ready ✓' : (status.words ? status.words + ' words' : 'Tap to write')) + '</span></div>'
+          return '<div class="ob-home-case' + (index === 0 ? ' open' : '') + '" data-home-case="' + item.id + '"><button type="button" class="ob-home-top"><i class="ti ti-chevron-down"></i><b>' + (index + 1) + ' · ' + esc(item.title) + '</b><span>' + (status.ready ? 'Ready ✓' : (status.words ? status.words + ' words' : 'Tap to write')) + '</span></button>'
             + '<div class="ob-home-body"><div class="ob-home-rules"><strong>Case facts:</strong> ' + esc(item.facts) + '</div><div class="ob-home-line">' + esc(item.line) + '</div>'
             + '<div class="ob-home-rules"><strong>Required:</strong> acknowledge impact → one open and one closed question → explain why (policy) → safe action/disposition → timed next step. Use método linkers from Recursos.</div>'
             + '<textarea class="ob-home-answer" data-home-answer="' + item.id + '" autocomplete="off" spellcheck="true" placeholder="Type your response here. Pasting and dropping text are disabled.">' + esc(answer) + '</textarea>'
@@ -679,26 +707,22 @@
         markCheck(tf.dataset.tf, tf.dataset.val === 'true');
         return;
       }
-      var matchEl = event.target.closest('[data-match]');
-      if (matchEl && matchEl.dataset.side && !matchEl.closest('[data-match-submit]')) {
-        var id = matchEl.dataset.match;
-        if (checkPassed(id)) return;
-        matchPick[id] = matchPick[id] || {};
-        if (matchEl.dataset.side === 'left') matchPick[id].left = matchEl.dataset.key;
-        if (matchEl.dataset.side === 'right') matchPick[id].right = matchEl.dataset.key;
-        if (matchPick[id].left && matchPick[id].right) {
-          state.match[id] = state.match[id] || {};
-          state.match[id][matchPick[id].left] = matchPick[id].right;
-          matchPick[id] = {};
-          save();
-        }
-        render();
-        return;
-      }
       var matchSubmit = event.target.closest('[data-match-submit]');
       if (matchSubmit) {
         if (matchSubmit.disabled) return;
-        markCheck(matchSubmit.dataset.matchSubmit, state.match[matchSubmit.dataset.matchSubmit] || {});
+        var mid = matchSubmit.dataset.matchSubmit;
+        var expected = CHECK_ANSWERS[mid] || {};
+        var value = {};
+        Array.prototype.forEach.call(root.querySelectorAll('[data-match-select="' + mid + '"]'), function (sel) {
+          if (sel.value) value[sel.dataset.key] = sel.value;
+        });
+        state.match[mid] = value;
+        var rows = {};
+        Object.keys(expected).forEach(function (key) {
+          rows[key] = String(value[key] || '') === String(expected[key]) ? 'ok' : 'bad';
+        });
+        matchFeedback[mid] = { tried: true, rows: rows };
+        markCheck(mid, value);
         return;
       }
       var seqBtn = event.target.closest('[data-seq]');
@@ -779,6 +803,15 @@
       var quiz = event.target.closest('[data-quiz]');
       if (quiz) {
         state.quizAnswers[quiz.dataset.quiz] = Number(quiz.dataset.pick);
+        save();
+      }
+      var matchSel = event.target.closest('[data-match-select]');
+      if (matchSel) {
+        var mid = matchSel.dataset.matchSelect;
+        state.match[mid] = state.match[mid] || {};
+        if (matchSel.value) state.match[mid][matchSel.dataset.key] = matchSel.value;
+        else delete state.match[mid][matchSel.dataset.key];
+        if (matchFeedback[mid]) delete matchFeedback[mid];
         save();
       }
     });

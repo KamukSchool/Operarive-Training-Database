@@ -9,17 +9,17 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Kamuk Portal">
-<link rel="manifest" href="https://studioinfinitycr.com/manifest-portal.json">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="https://studioinfinitycr.com/icon-192.png?v=20260703" type="image/png">
 <link rel="apple-touch-icon" href="https://studioinfinitycr.com/icon-512.png?v=20260703">
 <link rel="stylesheet" href="https://studioinfinitycr.com/css/pwa-install.css?v=2">
-<script src="https://studioinfinitycr.com/js/site-urls.js"></script>
-<script src="https://studioinfinitycr.com/js/pwa-register.js?v=20260814refresh" defer></script>
+<script src="https://studioinfinitycr.com/js/site-urls.js?v=20260818ios"></script>
+<script src="https://studioinfinitycr.com/js/pwa-register.js?v=20260818ios" defer></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 <link rel="stylesheet" href="https://studioinfinitycr.com/css/daily-inspiration.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://studioinfinitycr.com/js/live-kpi-charts.js?v=20260814refresh"></script>
-<script src="https://studioinfinitycr.com/infinity-auth.js?v=20260814refresh"></script>
+<script src="https://studioinfinitycr.com/infinity-auth.js?v=20260818ios"></script>
 <script src="https://studioinfinitycr.com/nexora-profile.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/nexora-voice-lock.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/nexora-characters.js"></script>
@@ -103,6 +103,9 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
 .btn-navy{background:var(--navy);color:white;}
 .btn-outline{background:white;color:var(--t2);border:1px solid var(--border);}
 .btn-block{width:100%;justify-content:center;}
+.login-form{display:flex;flex-direction:column;gap:0;}
+.login-form .inp{font-size:16px;min-height:48px;}
+.btn-login{min-height:48px;width:100%;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
 .btn:hover{opacity:0.9;}
 .nav-short{display:none;}
 .btn-login.is-loading{pointer-events:none;cursor:wait;opacity:0.95;animation:loginPulse 1.1s ease-in-out infinite;}
@@ -627,6 +630,32 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
 .inf-action-soft .inf-action-title{color:var(--navy);}
 .inf-action-soft .inf-action-sub{color:var(--t2);opacity:1;}
 .inf-persona-stack{display:flex;flex-direction:column;gap:10px;}
+.kh-lib{font-family:inherit;}
+.kh-lib-lead{font-size:12px;line-height:1.55;color:var(--t2);margin:0 0 12px;}
+.kh-lib-search{width:100%;min-height:48px;font-size:16px;padding:12px 14px;border:1.5px solid var(--border);border-radius:12px;font-family:inherit;margin-bottom:10px;-webkit-appearance:none;appearance:none;}
+.kh-lib-search:focus{outline:none;border-color:var(--navy);}
+.kh-lib-cats{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;margin-bottom:10px;scrollbar-width:none;}
+.kh-lib-cats::-webkit-scrollbar{display:none;}
+.kh-lib-cat{flex:0 0 auto;min-height:44px;padding:10px 14px;border-radius:999px;border:1px solid var(--border);background:#fff;color:var(--t2);font:700 12px/1 inherit;cursor:pointer;touch-action:manipulation;}
+.kh-lib-cat.is-on{background:var(--navy);border-color:var(--navy);color:#fff;}
+.kh-lib-count{font-size:11px;color:var(--t3);margin:0 0 8px;}
+.kh-lib-chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px;max-height:220px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.kh-lib-chip{min-height:52px;text-align:left;padding:10px 12px;border-radius:14px;border:1px solid var(--border);background:#fff;cursor:pointer;touch-action:manipulation;font:inherit;}
+.kh-lib-chip b{display:block;font-size:13px;color:var(--navy);line-height:1.25;}
+.kh-lib-chip small{display:block;margin-top:3px;font-size:11px;color:var(--t2);font-weight:600;}
+.kh-lib-chip.is-on{border-color:var(--navy);box-shadow:0 0 0 2px rgba(43,126,193,.25);background:var(--nl);}
+.kh-lib-panel{margin-top:10px;min-height:132px;border-radius:14px;background:var(--nl);border:1px solid var(--border);padding:14px;}
+.kh-lib-panel h4{margin:0 0 4px;font-size:16px;color:var(--navy);}
+.kh-lib-es{font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px;}
+.kh-lib-how{font-size:13px;line-height:1.55;color:var(--text);margin:0 0 8px;}
+.kh-lib-ex{margin:0;padding-left:18px;font-size:12px;line-height:1.55;color:var(--nd);}
+.kh-lib-empty{font-size:13px;color:var(--t2);margin:0;}
+.kh-read-grid{display:grid;grid-template-columns:1fr;gap:8px;max-height:320px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+@media(min-width:520px){.kh-read-grid{grid-template-columns:1fr 1fr;}}
+.kh-read-card{display:flex;flex-direction:column;gap:4px;min-height:88px;padding:12px 14px;border-radius:14px;border:1px solid var(--border);background:#fff;text-decoration:none;color:inherit;touch-action:manipulation;}
+.kh-read-card strong{font-size:13px;color:var(--navy);}
+.kh-read-card span{font-size:12px;line-height:1.45;color:var(--t2);}
+.kh-read-go{margin-top:auto;font-size:12px;font-weight:800;color:var(--navy);}
 /* Typing Lab — pantalla completa */
 .tt-fs{position:fixed;inset:0;z-index:2380;display:none;flex-direction:column;background:linear-gradient(165deg,#1A5A8F 0%,#2B7EC1 42%,#0F3A5C 100%);color:#fff;box-sizing:border-box;height:100%;height:100dvh;max-height:100dvh;overflow:hidden;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 .tt-fs.is-open{display:flex;}
@@ -839,12 +868,14 @@ body.inf-arcade-fs-lock,body.inf-arcade-lobby-lock{overflow:hidden;}
       <img class="login-logo" id="login-logo" src="https://studioinfinitycr.com/assets/logos/infinity-studio-cr.png?v=20260703" alt="Kamuk School">
       <div class="login-title">Portal del Estudiante</div>
       <div class="login-sub">Kamuk School · Tu Training Book, KPIs, horario y progreso, sincronizados en tiempo real.</div>
-      <input class="inp" id="l-user" placeholder="Usuario" autocomplete="username">
-      <input class="inp" id="l-pass" placeholder="Contraseña" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
-      <button type="button" class="btn btn-navy btn-block btn-login" id="btn-login" onclick="doLogin()"><i class="ti ti-login"></i>Ingresar</button>
-      <button type="button" class="btn btn-outline btn-block" style="margin-top:10px;border-color:var(--nm);color:var(--navy);" onclick="infinityPwaInstall()"><i class="ti ti-device-mobile"></i>Instalar app en el celular</button>
+      <form id="login-form" class="login-form" action="#" method="post" autocomplete="on">
+      <input class="inp" id="l-user" name="username" type="text" placeholder="Usuario" inputmode="email" autocapitalize="none" autocorrect="off" autocomplete="username" spellcheck="false" enterkeyhint="next">
+      <input class="inp" id="l-pass" name="password" placeholder="Contraseña" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="go">
+      <button type="submit" class="btn btn-navy btn-block btn-login" id="btn-login"><i class="ti ti-login"></i>Ingresar</button>
+      </form>
+      <button type="button" class="btn btn-outline btn-block" style="margin-top:10px;border-color:var(--nm);color:var(--navy);min-height:44px;" onclick="infinityPwaInstall()"><i class="ti ti-device-mobile"></i>Instalar app en el dispositivo</button>
       <div id="login-err" style="font-size:12px;color:var(--rm);margin-top:0.75rem;display:none;"></div>
-      <div style="font-size:11px;color:var(--t3);margin-top:1rem;">¿No tenés credenciales? Pedíselas a tu trainer.</div>
+      <div style="font-size:11px;color:var(--t3);margin-top:1rem;">¿No tenés credenciales? Pedíselas a tu trainer. URL oficial: studioinfinitycr.com/kamuk/</div>
     </div>
   </div>
 </div>
@@ -881,16 +912,16 @@ body.inf-arcade-fs-lock,body.inf-arcade-lobby-lock{overflow:hidden;}
 <div class="toast" id="toast"></div>
 
 <div id="pwa-install-bar" class="pwa-install-bar" hidden>
-  <span class="pwa-install-msg">Instalá el Portal en tu celular</span>
+  <span class="pwa-install-msg">Instalá el Portal en tu dispositivo</span>
   <button type="button" class="pwa-install-btn" onclick="infinityPwaInstall()">Instalar</button>
   <button type="button" class="pwa-dismiss-btn" onclick="document.getElementById('pwa-install-bar').hidden=true" aria-label="Cerrar">×</button>
 </div>
 
 <div id="pwa-ios-help" class="pwa-ios-help" hidden>
   <div class="pwa-ios-help-card">
-    <h3><i class="ti ti-brand-apple"></i> Instalar en iPhone</h3>
+    <h3><i class="ti ti-brand-apple"></i> Instalar en iPhone / iPad</h3>
     <ol>
-      <li>Asegurate de estar en <strong>Safari</strong> (no Chrome).</li>
+      <li>Asegurate de estar en <strong>Safari</strong> en <strong>studioinfinitycr.com/kamuk/</strong>.</li>
       <li>Tocá <strong>Compartir</strong> (cuadrado con flecha hacia arriba).</li>
       <li>Elegí <strong>Agregar a pantalla de inicio</strong> → <strong>Agregar</strong>.</li>
     </ol>
@@ -931,26 +962,42 @@ async function dbQuery(pathAndQuery){
   const data = await r.json();
   return Array.isArray(data) ? data : [];
 }
+function pgRestQuote(value){
+  return '"' + String(value || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
+}
+function normalizePortalUser(value){
+  return String(value || '').replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\u00a0/g, ' ').trim().toLowerCase();
+}
+function normalizePortalPass(value){
+  return String(value == null ? '' : value).replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\u00a0/g, ' ');
+}
+function portalPassMatches(stored, password){
+  var got = normalizePortalPass(password);
+  var gotTrim = got.trim();
+  var want = String(stored == null ? '' : stored);
+  return want === got || want === gotTrim || want.trim() === gotTrim;
+}
 async function dbGetStudentRow(sid){
   if(!sid) return null;
   var rows = await dbQuery('kamuk_students?id=eq.'+encodeURIComponent(sid)+'&select=id,data&limit=1');
   return rows[0] || null;
 }
 async function dbFindStudentByPortalLogin(user, pass){
-  var login = String(user || '').trim().toLowerCase();
-  var password = String(pass == null ? '' : pass);
+  var login = normalizePortalUser(user);
+  var password = normalizePortalPass(pass);
   var passwordTrim = password.trim();
   if(!login || !passwordTrim) return null;
-  var rows = await dbQuery('kamuk_students?select=id,data&data->>portalUser=ilike.'+encodeURIComponent(login)+'&limit=5');
+  var quoted = encodeURIComponent(pgRestQuote(login));
+  var rows = await dbQuery('kamuk_students?select=id,data&data->>portalUser=ilike.'+quoted+'&limit=10');
   if(!rows.length){
-    // Fallback exact lowercase (older rows / filters)
-    rows = await dbQuery('kamuk_students?select=id,data&data->>portalUser=eq.'+encodeURIComponent(login)+'&limit=5');
+    rows = await dbQuery('kamuk_students?select=id,data&data->>portalUser=eq.'+quoted+'&limit=10');
   }
   for(var i=0;i<rows.length;i++){
     var r = rows[i];
     if(!r.data) continue;
-    var stored = String(r.data.portalPass == null ? '' : r.data.portalPass);
-    if(stored === password || stored === passwordTrim){
+    var storedUser = normalizePortalUser(r.data.portalUser);
+    if(storedUser !== login) continue;
+    if(portalPassMatches(r.data.portalPass, password)){
       r.data.id = r.id;
       return r.data;
     }
@@ -1021,21 +1068,46 @@ function setLoginLoading(on){
   if(p) p.disabled = !!on;
 }
 
-async function doLogin(){
-  var user = document.getElementById('l-user').value.trim().toLowerCase();
-  var pass = String(document.getElementById('l-pass').value || '').trim();
+function readLoginFields(){
+  var u = document.getElementById('l-user');
+  var p = document.getElementById('l-pass');
+  return {
+    user: normalizePortalUser(u && u.value),
+    pass: normalizePortalPass(p && p.value).trim()
+  };
+}
+
+async function doLogin(ev){
+  if(ev && ev.preventDefault) ev.preventDefault();
   var err = document.getElementById('login-err');
+  if(!err) return;
+  await new Promise(function(resolve){
+    requestAnimationFrame(function(){ setTimeout(resolve, 60); });
+  });
+  var fields = readLoginFields();
+  var user = fields.user;
+  var pass = fields.pass;
   if(!user || !pass){ err.textContent='Ingresá tu usuario y contraseña.'; err.style.display='block'; return; }
 
   err.style.display='none';
   setLoginLoading(true);
 
   try{
-    // 1) Auth server first (source of truth) — avoids false "incorrecto" if Supabase filter fails in browser
+    if(typeof infinityLogin !== 'function'){
+      err.textContent='El módulo de acceso no cargó. Recargá Safari en studioinfinitycr.com/kamuk/';
+      err.style.display='block';
+      setLoginLoading(false);
+      return;
+    }
+
     var loginData = null;
+    var loginErr = null;
     try {
       loginData = await infinityLogin(user, pass, 'student', { silent: true, product: 'kamuk' });
-    } catch(e) { loginData = null; }
+    } catch(e) {
+      loginErr = e;
+      loginData = null;
+    }
 
     var student = null;
     if(loginData && loginData.studentId){
@@ -1050,7 +1122,10 @@ async function doLogin(){
     }
 
     if(!student){
-      err.textContent='Usuario o contraseña incorrectos. Revisá mayúsculas/minúsculas y caracteres especiales (!).';
+      var netFail = loginErr && (loginErr.network || loginErr.status === 0 || (loginErr.status && loginErr.status >= 500));
+      err.textContent = netFail
+        ? 'No se pudo verificar el acceso (red o servidor). No es la contraseña — esperá 10s e intentá de nuevo.'
+        : 'Usuario o contraseña incorrectos. Usá minúsculas (ej. nombre.apellido) y la URL studioinfinitycr.com/kamuk/';
       err.style.display='block';
       setLoginLoading(false);
       return;
@@ -1106,6 +1181,15 @@ async function doLogin(){
     setLoginLoading(false);
   }
 }
+
+(function bindKamukLoginForm(){
+  var form = document.getElementById('login-form');
+  if(!form) return;
+  form.addEventListener('submit', function(ev){
+    ev.preventDefault();
+    doLogin(ev);
+  });
+})();
 
 function switchPortalTab(tab){
   var s = CURRENT_STUDENT || window._currentStudent || window._portalStudent;
@@ -1490,30 +1574,10 @@ function showPortal(s){
       + '</div>'
     : '<div style="font-size:13px;color:var(--t3);">Activá Jill, Modo Libre o Alice para entrar al Arcade.</div>';
   var recursosHtml = '<div class="card"><div class="card-title"><i class="ti ti-book"></i>Lectura — Jill + leer</div>'
-    +'<div style="font-size:12px;color:var(--t2);line-height:1.65;margin-bottom:10px;">Después de practicar con Jill, leé <strong>5–10 min</strong> en voz baja o alta. Anotá palabras nuevas en tu cuaderno — entran a tu vocab activo.</div>'
-    +'<div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">'
-    +'<a href="https://www.bbc.co.uk/learningenglish/english/features/news-review" target="_blank" rel="noopener" style="color:var(--navy);font-weight:600;">BBC Learning English — News Review</a>'
-    +'<a href="https://learningenglish.voanews.com/" target="_blank" rel="noopener" style="color:var(--navy);font-weight:600;">VOA Learning English</a>'
-    +'<a href="https://www.newsinlevels.com/" target="_blank" rel="noopener" style="color:var(--navy);font-weight:600;">News in Levels</a>'
-    +'<a href="https://learnenglish.britishcouncil.org/skills/reading" target="_blank" rel="noopener" style="color:var(--navy);font-weight:600;">British Council — Reading</a>'
-    +'<a href="https://www.nacion.com/el-mundo/" target="_blank" rel="noopener" style="color:var(--navy);font-weight:600;">La Nación — resumí titular en inglés (PR/PC)</a>'
-    +'</div>'+vocabCard+'</div>'
+    +'<div id="kamuk-readings-root"></div>'+vocabCard+'</div>'
 
     +'<div class="card"><div class="card-title"><i class="ti ti-book-2"></i> Kamuk Holdings — glosario de nesting</div>'
-    +'<div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:12px;">Usá estas listas al escribir los 10 casos. EN + glosa ES. El método de abajo es la base de evaluación (no dumps de IELTS).</div>'
-    +'<h3 style="margin:0 0 8px;font-size:14px;color:var(--navy);">Linkers y expresiones — método</h3>'
-    +'<div style="display:grid;grid-template-columns:1fr;gap:0;font-size:12px;margin-bottom:14px;">'
-    +[['Aun cuando','Even when / even though'],['Una vez que','Once'],['Sin embargo','however'],['Lo que pasa es que','What happens is that…'],['¿Cuándo fue qué?','When was that?'],['Cuando se piensa','when thinking'],['En la que','in which / on which'],['La cual se usa','which is used for'],['Pero a pesar de eso','despite that'],['En otras palabras','in other words'],['Lo que / lo cual significa','which means'],['No solo eso, sino que también','not only that… but also'],['Así como','as well as'],['El asunto es que','The thing is that'],['Usted sabe a qué me refiero','You know what I mean'],['Se dice que','it is said that'],['Debería ser hecho','It should be done'],['De alguna forma','somehow'],['Me di cuenta','I realized'],['Encontrar la manera','find a way / figure out'],['En la (dentro)','In the'],['En una','in / on / a / an'],['Por la','by the / for the / to the'],['Sin la','without the / it / her'],['Por ahora','by now'],['Por el momento','for the moment / so far'],['En vez de','instead of'],['A punto de','about to'],['Alrededor de','around'],['Cerca de','near, close to'],['Lejos de','far from'],['A menos que','unless'],['Preferir que','rather… than'],['Por el otro lado','on the other hand'],['De acuerdo con','according to'],['No / sí / podría / debería ser','combine pronouns and tenses'],['Tal como','such as']].map(function(row){
-      return '<div style="display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid #e2e8f0;"><span style="color:var(--t2);">'+row[0]+'</span><b style="color:var(--navy);text-align:right;">'+row[1]+'</b></div>';
-    }).join('')+'</div>'
-    +'<div class="inf-skill-grid two">'
-    +'<div><h3 style="margin:0 0 6px;font-size:13px;color:var(--navy);">Connectors (extra)</h3><div style="font-size:12px;line-height:1.7;color:var(--t2);">because · therefore · although · in addition · as a result · consequently</div></div>'
-    +'<div><h3 style="margin:0 0 6px;font-size:13px;color:var(--navy);">Phrasal verbs</h3><div style="font-size:12px;line-height:1.7;color:var(--t2);">look into — investigar<br>sort out — resolver<br>follow up — dar seguimiento<br>hand off — pasar el caso<br>write up — documentar</div></div>'
-    +'<div><h3 style="margin:0 0 6px;font-size:13px;color:var(--navy);">Prefijos / sufijos</h3><div style="font-size:12px;line-height:1.7;color:var(--t2);">un- unauthorized, unverified, unresolved<br>in- / non- ineligible, non-compliant<br>-tion / -ment authorization, verification, replacement, activation</div></div>'
-    +'<div><h3 style="margin:0 0 6px;font-size:13px;color:var(--navy);">Technicismos Holdings</h3><div style="font-size:12px;line-height:1.7;color:var(--t2);">PIN · last 6 · travel notice · provisional credit · chargeback · reporting window · virtual card · AA (awaiting action) · PSA (pending system) · disposition · goodwill · MCC block</div></div>'
-    +'<div><h3 style="margin:0 0 6px;font-size:13px;color:var(--navy);">Slang del cliente → desk</h3><div style="font-size:12px;line-height:1.7;color:var(--t2);">“fix it now” → I will take a safe action<br>“my money is gone” → the funds are under investigation<br>“just in case” → I will not keep both credits open</div></div>'
-    +'<div><h3 style="margin:0 0 6px;font-size:13px;color:var(--navy);">Glosario de casos</h3><div style="font-size:12px;line-height:1.7;color:var(--t2);">identity verification · recorded line · service not rendered · double credit · withdraw / reopen · operating account · Obsidian card</div></div>'
-    +'</div></div>'
+    +'<div id="kamuk-glossary-root"></div></div>'
 
     +'<div class="inf-skill">'
     +'<h3><i class="ti ti-keyboard"></i> Typing Lab</h3>'
@@ -1568,6 +1632,10 @@ function showPortal(s){
 
   document.getElementById('portal-content').innerHTML = html;
   switchPortalTab(opts.tab || 'progreso');
+  if(window.KamukRecursosLibrary){
+    window.KamukRecursosLibrary.mountReadings(document.getElementById('kamuk-readings-root'));
+    window.KamukRecursosLibrary.mountGlossary(document.getElementById('kamuk-glossary-root'));
+  }
   // Arcade lobby opens on demand (fullscreen) — not embedded small.
 
   // Foundation onboarding for every Kamuk student profile
@@ -9654,7 +9722,8 @@ if(document.readyState === 'loading'){
   </div>
 </div>
 
-<script src="js/simulation-onboarding.js?v=20260818gp10"></script>
+<script src="js/kamuk-recursos-library.js?v=20260818ios"></script>
+<script src="js/simulation-onboarding.js?v=20260818ios"></script>
 <script src="https://studioinfinitycr.com/js/infinity-arcade-lil-games.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/infinity-casino-floor.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/infinity-modern-games.js?v=20260814refresh"></script>
