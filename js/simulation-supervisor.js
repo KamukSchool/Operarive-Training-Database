@@ -184,13 +184,65 @@
   }
 
   function renderTraining(rows) {
-    return table(['Estudiante', 'Módulos', 'Certificación', 'Casos', 'Nesting'], (rows || []).map(function (row) {
-      return '<tr><td><strong>' + esc(row.name || row.studentId) + '</strong><br><span style="color:var(--t3)">' + esc(row.studentId) + '</span></td>'
-        + '<td>' + (Number(row.modulesDone) || 0) + '/' + (Number(row.modulesTotal) || 8) + (row.courseComplete ? ' · curso listo' : '') + '</td>'
-        + '<td><span class="sim-chip ' + (row.quizPassed ? 'ok' : 'warn') + '">' + (row.quizPassed ? (row.quizScore || 0) + '%' : ((row.quizScore || 0) + '% · ' + (row.quizAttempts || 0) + ' intentos')) + '</span></td>'
-        + '<td>' + (Number(row.homeReady) || 0) + '/' + (Number(row.homeTotal) || 10) + '</td>'
-        + '<td>' + (row.nestingCompletedAt ? '<span class="sim-chip ok">Listo</span><br>' + fmtDate(row.nestingCompletedAt) : '<span class="sim-chip off">Pendiente</span>') + '</td></tr>';
+    return table(['Estudiante', 'Login', 'Duración', 'Curso', 'Correos', 'Decisión'], (rows || []).map(function (row) {
+      return '<tr data-audit="' + esc(row.studentId) + '"><td><strong>' + esc(row.name || row.studentId) + '</strong><br><span style="color:var(--t3)">' + esc(row.studentId) + '</span></td>'
+        + '<td>' + (Number(row.loginCount) || 0) + ' logins<br>' + fmtDate(row.lastLoginAt) + '</td>'
+        + '<td>Desk ' + (Number(row.deskMin) || 0) + ' min<br>Call ' + (Number(row.callMin) || 0) + ' min</td>'
+        + '<td>' + (Number(row.modulesDone) || 0) + '/' + (Number(row.modulesTotal) || 8) + (row.courseComplete ? ' · curso' : '') + '<br>'
+        + '<span class="sim-chip ' + (row.quizPassed ? 'ok' : 'warn') + '">' + (row.quizPassed ? (row.quizScore || 0) + '%' : ((row.quizScore || 0) + '% · ' + (row.quizAttempts || 0) + ' intentos')) + '</span> · '
+        + (row.nestingCompletedAt ? '<span class="sim-chip ok">Nesting</span>' : '<span class="sim-chip off">Nesting</span>') + '</td>'
+        + '<td>' + (Number(row.emailPass) || 0) + ' E-OK · ' + (Number(row.emailFail) || 0) + ' fallan</td>'
+        + '<td><span class="sim-chip ' + (row.decision === 'ready' ? 'ok' : (row.decision === 'hold' ? 'off' : 'warn')) + '">' + esc(row.decision || '—') + '</span></td></tr>';
     }), 'Todavía no hay progreso de e-learning.');
+  }
+
+  function renderEmails(rows) {
+    return table(['Alumno / caso', 'Formato E', 'Faltantes', 'Extracto'], (rows || []).slice(0, 40).map(function (row) {
+      return '<tr><td><strong>' + esc(row.studentName || row.studentId) + '</strong><br>' + esc(row.caseId || '') + '</td>'
+        + '<td><span class="sim-chip ' + (row.formatoE ? 'ok' : 'warn') + '">' + (row.formatoE ? 'Pass' : 'Fail') + '</span> · ' + (Number(row.words) || 0) + 'w</td>'
+        + '<td class="sim-errors">' + esc((row.missing || []).join(' · ') || '—') + '</td>'
+        + '<td>' + esc(String(row.body || '').slice(0, 180)) + '</td></tr>';
+    }), 'No hay correos de desk para auditar todavía.');
+  }
+
+  function bindAudit(root, product) {
+    var select = root.querySelector('#sim-audit-student');
+    var askBtn = root.querySelector('#sim-audit-ask');
+    var reportBtn = root.querySelector('#sim-audit-report');
+    var out = root.querySelector('#sim-audit-out');
+    async function run(kind) {
+      var studentId = select && select.value;
+      if (!studentId) return;
+      out.textContent = 'Consultando IA / reglas…';
+      try {
+        var data;
+        if (kind === 'ask') {
+          data = await apiRequest(crmPath(product, '/supervisor/ask') + '?product=' + encodeURIComponent(product), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ studentId: studentId, question: (root.querySelector('#sim-audit-q') || {}).value || '¿Qué debo decidir con este estudiante?' })
+          });
+          out.textContent = data.answer || data.report || JSON.stringify(data);
+        } else {
+          data = await apiRequest(crmPath(product, '/supervisor/report') + '?product=' + encodeURIComponent(product), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ studentId: studentId })
+          });
+          out.textContent = data.report || data.answer || JSON.stringify(data);
+        }
+      } catch (error) {
+        out.textContent = error.message;
+      }
+    }
+    if (askBtn) askBtn.addEventListener('click', function () { run('ask'); });
+    if (reportBtn) reportBtn.addEventListener('click', function () { run('report'); });
+    root.querySelectorAll('[data-audit]').forEach(function (row) {
+      row.style.cursor = 'pointer';
+      row.addEventListener('click', function () {
+        if (select) select.value = row.getAttribute('data-audit');
+      });
+    });
   }
 
   async function submitCoaching(form, product) {
@@ -225,11 +277,11 @@
       var data = await loadData(config, product);
       var summary = data.summary || {};
       var winner = data.winner;
-      root.innerHTML = '<div class="sim-sup-head"><div><h2><i class="ti ti-building-bank"></i> ' + esc(config.label || (product === 'kamuk' ? 'Kamuk' : 'Infinity')) + ' Nesting Floor</h2>'
-        + '<p>Propiedad en vivo, calidad AI y coaching del equipo.' + (data.fallback ? ' Vista de respaldo local.' : '') + '</p></div>'
+      root.innerHTML = '<div class="sim-sup-head"><div><h2><i class="ti ti-building-bank"></i> ' + esc(config.label || (product === 'kamuk' ? 'Kamuk' : 'Infinity')) + ' · Auditoría</h2>'
+        + '<p>Logins, duración, completions, correos Formato E y copilot IA para decidir.' + (data.fallback ? ' Vista de respaldo local.' : '') + '</p></div>'
         + '<button class="btn btn-outline btn-sm" id="sim-sup-refresh"><i class="ti ti-refresh"></i> Actualizar</button></div>'
         + '<div class="sim-sup-metrics">'
-        + [['Conectados', summary.connected], ['Trabajando', summary.working], ['Sin asignar', summary.unassigned], ['Pool fresco', summary.freshPool], ['Follow-up', summary.followUpPool], ['AI pendientes', summary.pendingEvaluations]].map(function (metric) {
+        + [['Conectados', summary.connected], ['Trabajando', summary.working], ['Sin asignar', summary.unassigned], ['Pool fresco', summary.freshPool], ['Follow-up', summary.followUpPool], ['AI pendientes', summary.pendingEvaluations], ['Correos', summary.emailsAudited], ['E fallan', summary.formatoEFail]].map(function (metric) {
           return '<div class="sim-sup-metric"><span>' + metric[0] + '</span><strong>' + (Number(metric[1]) || 0) + '</strong></div>';
         }).join('') + '</div>'
         + (winner ? '<div class="sim-sup-winner"><div><span>Ganador semanal · bono de producción si 8/10</span><strong>' + esc(winner.name || winner.studentId) + '</strong></div><b>' + (Number(winner.weeklyPoints) || 0) + ' pts</b></div>' : '')
@@ -237,14 +289,24 @@
         + '<section class="sim-sup-card"><h3>Leaderboard semanal</h3>' + renderLeaderboard(data.leaderboard) + '</section></div>'
         + '<div class="sim-sup-grid"><section class="sim-sup-card"><h3>Resolve rates</h3>' + renderRates(data.resolveRates) + '</section>'
         + '<section class="sim-sup-card"><h3>Touches recientes y deducciones</h3>' + renderTouches(data.recentTouches) + '</section></div>'
-        + '<section class="sim-sup-card"><h3>E-learning 60 min · progreso del curso</h3>' + renderTraining(data.training) + '</section>';
+        + '<section class="sim-sup-card"><h3>Auditoría de alumnos · login / duración / curso</h3>' + renderTraining(data.training) + '</section>'
+        + '<section class="sim-sup-card" style="margin-top:13px"><h3>Q&A · auditar correos y trabajo</h3>' + renderEmails(data.emails)
+        + '<div class="sim-coach" style="margin-top:12px;flex-wrap:wrap">'
+        + '<select id="sim-audit-student">' + (data.training || []).map(function (row) {
+          return '<option value="' + esc(row.studentId) + '">' + esc(row.name || row.studentId) + '</option>';
+        }).join('') + '</select>'
+        + '<input id="sim-audit-q" maxlength="500" placeholder="Preguntá: ¿este correo pasa Formato E? ¿está listo para el desk?">'
+        + '<button type="button" id="sim-audit-ask">Preguntar a la IA</button>'
+        + '<button type="button" id="sim-audit-report">Reporte detallado</button></div>'
+        + '<pre id="sim-audit-out" style="white-space:pre-wrap;font-size:12px;line-height:1.5;margin:10px 0 0;max-height:320px;overflow:auto"></pre></section>';
       root.querySelector('#sim-sup-refresh').addEventListener('click', function () { render(root, config); });
       root.querySelectorAll('.sim-coach').forEach(function (form) {
-        form.addEventListener('submit', function (event) {
+        if (form.tagName === 'FORM') form.addEventListener('submit', function (event) {
           event.preventDefault();
           submitCoaching(form, product);
         });
       });
+      bindAudit(root, product);
     } catch (error) {
       root.innerHTML = '<div class="sim-empty">No se pudo cargar el nesting floor: ' + esc(error.message) + '</div>';
     }

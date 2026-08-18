@@ -317,7 +317,7 @@ textarea.inp{resize:vertical;min-height:80px;}
       <div class="sb-section">Analytics</div>
       <div class="sb-item" onclick="showView('analytics',this)"><i class="ti ti-chart-bar"></i>Estadísticas</div>
       <div class="sb-item" onclick="showView('reports',this)"><i class="ti ti-file-text"></i>Reportes</div>
-      <div class="sb-item" onclick="showView('simulation-supervisor',this)"><i class="ti ti-building-bank"></i>Simulation Supervisor</div>
+      <div class="sb-item" onclick="showView('simulation-supervisor',this)"><i class="ti ti-building-bank"></i>Auditoría Kamuk</div>
       <div class="sb-section" id="nav-master-section">Master</div>
       <div class="sb-item" id="nav-resources" onclick="showView('resources',this)"><i class="ti ti-package"></i>Resource Manager</div>
       <div class="sb-item" id="nav-users" onclick="showView('users',this)"><i class="ti ti-shield"></i>Gestión de usuarios</div>
@@ -921,6 +921,11 @@ async function loadUsers(){
       await dbSet('kamuk_users','USR-MASTER-001',master);
       TRAINERS['trainer@infinity.cr']=master;
     }
+    if(!TRAINERS['robert.grego@kamuk.cr']){
+      var grego = {id:'USR-KAM-GREGO',email:'robert.grego@kamuk.cr',pass:'KmRg#8d2c4a',name:'Robert Grego',role:'trainer',department:'training',status:'active',kamukAudit:true};
+      await dbSet('kamuk_users','USR-KAM-GREGO',grego);
+      TRAINERS['robert.grego@kamuk.cr']=grego;
+    }
   }catch(e){ console.error('loadUsers error',e); }
 }
 
@@ -1150,6 +1155,11 @@ async function doLogin(){
   var MASTER_FALLBACK = MASTER_FALLBACKS.find(function(f){ return f.email===user && f.pass===pass; });
   if(MASTER_FALLBACK){
     SESSION = { user, name: MASTER_FALLBACK.name, role: MASTER_FALLBACK.role };
+    try {
+      if (typeof infinityLogin === 'function') {
+        await infinityLogin(user, pass, 'trainer', { silent: true, product: 'kamuk' });
+      }
+    } catch (authErr) { /* local Engine still works */ }
     await loadData();
     SESSION.code = getTrainerCode(user);
     startApp();
@@ -1171,6 +1181,11 @@ async function doLogin(){
     return;
   }
   SESSION = { user, name: trainer.name, role: trainer.role, department: trainer.department };
+  try {
+    if (typeof infinityLogin === 'function') {
+      await infinityLogin(user, pass, 'trainer', { silent: true, product: 'kamuk' });
+    }
+  } catch (authErr) { /* Simulation Supervisor still has local fallback */ }
   await loadCoreData();
   SESSION.code = getTrainerCode(user);
   await logAction('Inicio de sesión', trainer.email);
@@ -7748,7 +7763,8 @@ runAIAnalysis = async function(){
 };
 
 </script>
-<script src="js/simulation-supervisor.js"></script>
+<script src="https://studioinfinitycr.com/infinity-auth.js"></script>
+<script src="js/simulation-supervisor.js?v=20260818audit"></script>
 <script src="https://studioinfinitycr.com/js/jill-f0-gate.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/johnny-class-recorder.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/nexus-unified.js"></script>

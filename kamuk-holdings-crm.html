@@ -461,6 +461,11 @@
       <button class="modal-close" data-close="call-console">×</button>
     </div>
     <div class="call-transcript" id="call-transcript"><p>Call transcript will appear here.</p></div>
+    <p class="call-coach hidden" id="call-coach"></p>
+    <div class="call-reply">
+      <textarea id="call-reply-txt" rows="3" placeholder="Type your turn in English. AMR: Acknowledge → Mirror → Respond. Recorded line. No PIN. I will + today/4:30 p.m."></textarea>
+      <button class="call-control" id="call-send" type="button">Send reply</button>
+    </div>
     <div class="call-controls">
       <button class="call-control" id="call-mute" type="button"><i class="ti ti-microphone"></i> Mute</button>
       <button class="call-control hangup" id="call-hangup" type="button"><i class="ti ti-phone-off"></i> Hang up</button>
@@ -469,8 +474,8 @@
 </div>
 
 <script src="https://studioinfinitycr.com/infinity-auth.js"></script>
-<script src="js/kamuk-holdings-call.js"></script>
-<script src="js/kamuk-desk-english.js?v=20260818fmtE"></script>
-<script src="js/kamuk-holdings-crm.js?v=20260818fmtE"></script>
+<script src="js/kamuk-holdings-call.js?v=20260818call"></script>
+<script src="js/kamuk-desk-english.js?v=20260818call"></script>
+<script src="js/kamuk-holdings-crm.js?v=20260818call"></script>
 </body>
 </html>

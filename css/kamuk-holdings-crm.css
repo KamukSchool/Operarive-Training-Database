@@ -294,6 +294,10 @@ select,input[type=text],textarea{font-family:inherit;color:var(--text);}
 .call-turn.user{border-left:3px solid var(--accent);}
 .call-turn strong{display:block;font-size:10.5px;margin-bottom:3px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;}
 .call-turn p{margin:0;color:var(--text);font-size:12.5px;line-height:1.5;}
+.call-coach{margin:0;padding:8px 18px;font-size:12px;line-height:1.45;color:#9f1239;background:#fff1f2;border-top:1px solid #fecdd3;}
+.call-reply{display:flex;gap:8px;align-items:flex-end;padding:10px 12px;border-top:1px solid var(--border);background:#fff;}
+.call-reply textarea{flex:1;min-height:64px;border:1px solid var(--border-strong);border-radius:8px;padding:8px 10px;font:12px Inter,Arial,sans-serif;resize:vertical;}
+.call-reply .call-control{flex:0 0 auto;}
 
 /* auth gate */
 .gate{position:fixed;inset:0;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;z-index:200;flex-direction:column;gap:10px;text-align:center;padding:24px;}

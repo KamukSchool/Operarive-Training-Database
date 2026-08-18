@@ -1515,9 +1515,14 @@
         renderWallet();
         toast('Voice contact: verify the client again before disclosing card data.');
       }
+      deskGuideMark('call');
       if ($('call-client-name')) $('call-client-name').textContent = state.active.client.name;
       if ($('call-mood')) $('call-mood').textContent = state.profile?.personality?.baselineMood || state.active.mood || 'Ready';
       if ($('call-console')) open('call-console');
+      const token = (typeof getAuthToken === 'function' && getAuthToken())
+        || localStorage.getItem('infinity_auth_token')
+        || sessionStorage.getItem('infinity_auth_token')
+        || '';
       window.KamukHoldingsCall?.start({
         caseId: state.active.id,
         caseTitle: state.active.title,
@@ -1526,6 +1531,9 @@
         mood: state.profile?.personality?.baselineMood || state.active.mood || 'neutral',
         employee: state.employee,
         preview: state.preview,
+        product: state.product,
+        apiRoot: API,
+        authToken: token,
         api,
         toast,
         recordLocal: (key, label, detail) => {
@@ -1732,8 +1740,9 @@
       { action: 'verify', title: 'Verify client identity', body: 'Click Verify (rojo). Sin esto el wallet permanece masked.', target: '#wallet-verify', kind: 'click' },
       { action: 'look-wallet', title: 'Qué debés ver: wallet', body: 'Last 6 digits only. Subrayado en rojo. Continuar cuando lo hayas visto.', look: ['#wallet-list', '#wallet-hint'], next: true, kind: 'look' }
     ] },
-    { id: 'gp5', packId: 'KH-1042', title: 'PRACTICE 5 · Third-time caller — Previous contacts', extra: [
-      { action: 'tab-contacts', title: 'Tab: Previous contacts', body: 'El cliente dice “this is the third time”. Click Previous contacts (rojo) y leé el historial antes de preguntar todo de nuevo.', target: '[data-tab="contacts"]', kind: 'click' }
+    { id: 'gp5', packId: 'KH-1042', title: 'PRACTICE 5 · Third-time caller — Previous contacts + call', extra: [
+      { action: 'tab-contacts', title: 'Tab: Previous contacts', body: 'El cliente dice “this is the third time”. Click Previous contacts (rojo) y leé el historial antes de preguntar todo de nuevo.', target: '[data-tab="contacts"]', kind: 'click' },
+      { action: 'call', title: 'Llamá al cliente (AMR)', body: 'Botón Call (rojo). El cliente cambia de mood según el servicio. Voces ElevenLabs de Nexora. AMR en inglés, línea grabada, nunca PIN. Podés escribir el turno.', target: '#btn-call', kind: 'click' }
     ] },
     { id: 'gp6', packId: 'KH-1102', title: 'PRACTICE 6 · Products on file — Services', extra: [
       { action: 'tab-svc', title: 'Tab: Services', body: 'Productos del cliente (operating account, card, loan). Click Services (rojo).', target: '[data-tab="svc"]', kind: 'click' }
