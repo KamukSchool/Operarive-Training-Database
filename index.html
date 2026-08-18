@@ -13,13 +13,13 @@
 <link rel="icon" href="https://studioinfinitycr.com/icon-192.png?v=20260703" type="image/png">
 <link rel="apple-touch-icon" href="https://studioinfinitycr.com/icon-512.png?v=20260703">
 <link rel="stylesheet" href="https://studioinfinitycr.com/css/pwa-install.css?v=2">
-<script src="https://studioinfinitycr.com/js/site-urls.js?v=20260818ios"></script>
-<script src="https://studioinfinitycr.com/js/pwa-register.js?v=20260818ios" defer></script>
+<script src="https://studioinfinitycr.com/js/site-urls.js?v=20260818login"></script>
+<script src="https://studioinfinitycr.com/js/pwa-register.js?v=20260818login" defer></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 <link rel="stylesheet" href="https://studioinfinitycr.com/css/daily-inspiration.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://studioinfinitycr.com/js/live-kpi-charts.js?v=20260814refresh"></script>
-<script src="https://studioinfinitycr.com/infinity-auth.js?v=20260818ios"></script>
+<script src="https://studioinfinitycr.com/infinity-auth.js?v=20260818login"></script>
 <script src="https://studioinfinitycr.com/nexora-profile.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/nexora-voice-lock.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/nexora-characters.js"></script>
@@ -951,19 +951,32 @@ var EXERCISES = {
 };
 
 async function dbGet(table){
-  const r=await fetch(SUPA_URL+'/rest/v1/'+table+'?select=id,data',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+  var r;
+  try {
+    r=await fetch(SUPA_URL+'/rest/v1/'+table+'?select=id,data',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+  } catch(e) {
+    var nerr = new Error('dbGet network');
+    nerr.status = 0;
+    nerr.network = true;
+    throw nerr;
+  }
   if(!r.ok){ console.error('dbGet '+table+' failed: '+r.status); return []; }
   const data = await r.json();
   return Array.isArray(data) ? data : [];
 }
 async function dbQuery(pathAndQuery){
-  const r=await fetch(SUPA_URL+'/rest/v1/'+pathAndQuery,{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+  var r;
+  try {
+    r=await fetch(SUPA_URL+'/rest/v1/'+pathAndQuery,{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+  } catch(e) {
+    var nerr = new Error('dbQuery network');
+    nerr.status = 0;
+    nerr.network = true;
+    throw nerr;
+  }
   if(!r.ok){ console.error('dbQuery failed: '+r.status); return []; }
   const data = await r.json();
   return Array.isArray(data) ? data : [];
-}
-function pgRestQuote(value){
-  return '"' + String(value || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
 }
 function normalizePortalUser(value){
   return String(value || '').replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\u00a0/g, ' ').trim().toLowerCase();
@@ -982,27 +995,31 @@ async function dbGetStudentRow(sid){
   var rows = await dbQuery('kamuk_students?id=eq.'+encodeURIComponent(sid)+'&select=id,data&limit=1');
   return rows[0] || null;
 }
-async function dbFindStudentByPortalLogin(user, pass){
-  var login = normalizePortalUser(user);
-  var password = normalizePortalPass(pass);
-  var passwordTrim = password.trim();
-  if(!login || !passwordTrim) return null;
-  var quoted = encodeURIComponent(pgRestQuote(login));
-  var rows = await dbQuery('kamuk_students?select=id,data&data->>portalUser=ilike.'+quoted+'&limit=10');
-  if(!rows.length){
-    rows = await dbQuery('kamuk_students?select=id,data&data->>portalUser=eq.'+quoted+'&limit=10');
-  }
-  for(var i=0;i<rows.length;i++){
+function pickPortalStudentRow(rows, login, password){
+  for(var i=0;i<(rows||[]).length;i++){
     var r = rows[i];
-    if(!r.data) continue;
-    var storedUser = normalizePortalUser(r.data.portalUser);
-    if(storedUser !== login) continue;
+    if(!r || !r.data) continue;
+    if(normalizePortalUser(r.data.portalUser) !== login) continue;
     if(portalPassMatches(r.data.portalPass, password)){
       r.data.id = r.id;
       return r.data;
     }
   }
   return null;
+}
+async function dbFindStudentByPortalLogin(user, pass){
+  var login = normalizePortalUser(user);
+  var password = normalizePortalPass(pass);
+  var passwordTrim = password.trim();
+  if(!login || !passwordTrim) return null;
+  var enc = encodeURIComponent(login);
+  var rows = await dbQuery('kamuk_students?select=id,data&data->>portalUser=eq.'+enc+'&limit=10');
+  var hit = pickPortalStudentRow(rows, login, password);
+  if(hit) return hit;
+  rows = await dbQuery('kamuk_students?select=id,data&data->>portalUser=ilike.'+enc+'&limit=10');
+  hit = pickPortalStudentRow(rows, login, password);
+  if(hit) return hit;
+  return pickPortalStudentRow(await dbGet('kamuk_students'), login, password);
 }
 async function dbSet(table,id,data){
   const r=await fetch(SUPA_URL+'/rest/v1/'+table,{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},body:JSON.stringify({id,data,updated_at:new Date().toISOString()})});
@@ -1118,7 +1135,12 @@ async function doLogin(ev){
       }
     }
     if(!student){
-      student = await dbFindStudentByPortalLogin(user, pass);
+      try {
+        student = await dbFindStudentByPortalLogin(user, pass);
+      } catch(e) {
+        loginErr = loginErr || e;
+        student = null;
+      }
     }
 
     if(!student){
@@ -1145,10 +1167,7 @@ async function doLogin(ev){
       }
     } catch(e) { /* handled below */ }
     if(!getAuthToken()){
-      err.textContent = 'Credenciales OK, pero el servidor de voz no respondió. Esperá 10s e intentá de nuevo.';
-      err.style.display = 'block';
-      setLoginLoading(false);
-      return;
+      showToast('Entraste al portal. Alice/Jill pueden pedir reintento de voz en un minuto.','err');
     }
     warmInfinityApi();
 
@@ -1175,6 +1194,7 @@ async function doLogin(ev){
 
     showPortal(student);
     maybeShowPortalTermsGate(student);
+    setLoginLoading(false);
   }catch(e){
     err.textContent='Error de conexión. Intentá de nuevo.';
     err.style.display='block';
