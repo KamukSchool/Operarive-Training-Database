@@ -1912,7 +1912,7 @@ function informeView(s) {
   const shareText = informeText(s);
   const phone = String(PHONE[s.name] || '').replace(/\D/g, '');
   const wa = 'https://wa.me/'+(phone ? phone : '')+'?text='+encodeURIComponent(shareText);
-  const mail = 'mailto:?subject='+encodeURIComponent('Informe de inglés · '+s.name)+'&body='+encodeURIComponent(shareText);
+  const mail = 'mailto:info@studioinfinitycr.com?subject='+encodeURIComponent('Informe de inglés · '+s.name)+'&body='+encodeURIComponent(shareText);
   return '<article class="informe"><div class="brandline">'+LOGO+'<b>EVTOOL</b><span class="tag">Informe de inglés</span><div class="share"><a class="edit" id="send-wa" href="'+wa+'" target="_blank" rel="noopener">WhatsApp</a><a class="edit" id="send-mail" href="'+mail+'">Email</a><button type="button" class="edit" id="informe-back">Volver a la ficha</button></div></div>'+
     '<h1>'+esc(s.name)+'</h1>'+
     '<p class="who">'+esc(s.section || '10.º A')+' · Cuatro meses, del 20 de julio al 24 de noviembre de 2026</p>'+
