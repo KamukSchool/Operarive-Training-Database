@@ -21,7 +21,7 @@
   button, input, textarea { font: inherit; color: inherit; }
   .app { height: 100%; display: grid; grid-template-rows: 64px 1fr; }
   header {
-    display: flex; align-items: center; gap: 22px;
+    display: flex; align-items: center; gap: 16px;
     padding: 0 20px; background: #fff; border-bottom: 1px solid var(--line);
   }
   .mark { font-weight: 800; letter-spacing: .12em; color: var(--blue); font-size: 14px; }
@@ -70,7 +70,7 @@
   .stats { margin-left: auto; display: flex; gap: 18px; }
   .stats[hidden] { display: none; }
   .stat b { display: block; font-size: 18px; font-variant-numeric: tabular-nums; }
-  .stat span { font-size: 11px; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+  .stat span { font-size: 11px; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
   .body { display: grid; grid-template-columns: 280px 1fr; min-height: 0; }
   .body.solo { grid-template-columns: 1fr; }
   .body.solo aside { display: none; }
