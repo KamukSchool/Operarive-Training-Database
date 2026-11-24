@@ -1130,7 +1130,7 @@ const edits = students.map(s => ({
 }));
 let library = {};
 try { library = JSON.parse(localStorage.getItem('kamuk-qa-lib-v1')) || {}; } catch (e) { library = {}; }
-let current = students.findIndex(s => s.name === 'Alonso Barrantes');
+let current = 0;
 let informeOn = false;
 let groupOn = true;
 let listHidden = false;
