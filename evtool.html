@@ -1804,6 +1804,7 @@ function analisisDe(s) {
     let cambio = '';
     if (now && Number(now[1]) > low) cambio = 'En eso ya mejoró.';
     else if (now && Number(now[1]) < low) cambio = 'En eso bajó un poco.';
+    else if (now && s.name === 'Alice Toro') cambio = 'Ahora responde más rápido que antes.';
     else if (now) cambio = 'Eso todavía le cuesta.';
     limite = toma(s.name+'lim', [
       'Cuando empezó, lo que más le costaba era '+cuesta+'.',
