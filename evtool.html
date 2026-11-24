@@ -1143,6 +1143,7 @@ let viewMode = 'eval';
 let glossQ = '';
 let savedMark = false;
 let needPrueba = false;
+let needFive = false;
 const PRUEBAS = ['Exposición', 'Conversación libre de práctica', '1 on 1', 'Mentoring'];
 const guideBands = [
   { title: '1 a 3', name: 'Arranque', text: 'El turno todavía no se sostiene. Que salga una frase corta y que la termine. No corrijas los ocho criterios en la misma sesión: se queda en silencio. Marca solo lo que oíste.' },
@@ -1200,6 +1201,7 @@ function sheetOf(ed) {
     startNote: ed.startNote || '',
     prueba: ed.prueba || '',
     fresh: !!ed.fresh,
+    isFinal: !!ed.isFinal,
     editingId: ed.editingId || null,
     pdfs: (ed.pdfs || []).map(keptFile).filter(Boolean),
     audio: keptFile(ed.audio),
@@ -1233,6 +1235,7 @@ function applySheets() {
     ed.startNote = bag.startNote || '';
     ed.prueba = bag.prueba || '';
     ed.fresh = !!bag.fresh;
+    ed.isFinal = !!bag.isFinal;
     ed.editingId = bag.editingId || null;
     ed.pdfs = bag.pdfs || [];
     ed.audio = bag.audio || null;
@@ -1356,11 +1359,28 @@ function novRecord(s) {
   }
   return null;
 }
-function fiveForMedia(s) {
+function novFive(s) {
   const row = novRecord(s);
   if (row) return kpis.map(c => [c.name, Number(row.scores[c.id])]);
   return recordedFives(s).closeFive;
 }
+function finalRecord(s) {
+  return (library[s.name] || []).find(r => r && r.kind === 'final' && oralSumOf(r) != null) || null;
+}
+function fiveForMedia(s) {
+  const fin = finalRecord(s);
+  if (fin) return kpis.map(c => [c.name, Number(fin.scores[c.id])]);
+  return novFive(s);
+}
+const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+function closeDate(s) {
+  const fin = finalRecord(s);
+  if (!fin) return { day: 9, month: 10 };
+  const d = new Date(new Date(fin.at).toLocaleString('en-US', { timeZone: 'America/Costa_Rica' }));
+  return { day: d.getDate(), month: d.getMonth() };
+}
+function closeLong(s) { const d = closeDate(s); return d.day + ' de ' + MESES[d.month]; }
+function closeShort(s) { const d = closeDate(s); return d.day + ' ' + MESES[d.month].slice(0, 3); }
 function julyFive(s) {
   const row = (library[s.name] || []).find(r => r && r.id === 'medicion-2026-07-20' && r.edited);
   if (!row) return null;
@@ -1391,6 +1411,9 @@ function applySavedScores() {
     const nov = novRecord(s);
     const sum = nov && nov.edited ? oralSumOf(nov) : null;
     if (sum != null) s.close = sum;
+    s.novClose = s.close;
+    const fin = finalRecord(s);
+    if (fin) s.close = oralSumOf(fin);
   });
 }
 function oralNow(s) {
@@ -1422,8 +1445,8 @@ function sameFive(a, b) {
 }
 function finalView(s) {
   const pack = recordedFives(s);
-  const five = fiveForMedia(s);
-  const close = Number(s.close);
+  const five = novFive(s);
+  const close = Number(s.novClose != null ? s.novClose : s.close);
   const start = Number(s.start);
   const why = notaInicio(s);
   const startFive = pack.startFive;
@@ -1594,7 +1617,7 @@ function informeText(s) {
     (s.section || '10.º A') + ' · 20 de julio al 24 de noviembre de 2026',
     '',
     'De dónde viene: ' + bandOfOral(start) + ' · ' + start + ' de 25 · 20 de julio',
-    'Dónde está: ' + bandNow + ' · ' + close + ' de 25 · 9 de noviembre',
+    'Dónde está: ' + bandNow + ' · ' + close + ' de 25 · ' + closeLong(s),
     'Para dónde va: ' + (close >= 24 ? 'C1' : bandOfOral(toward)) + ' · ' + (atTop ? close : toward) + ' de 25 · proyección',
     '',
     movimiento(Object.assign({}, s, { close: close }))
@@ -1741,7 +1764,7 @@ function analisisDe(s) {
     abre = toma(s.name, [
       quien+' salió de '+from+' y entró en '+here+'. El oral pasó de '+startN+' a '+closeN+'.',
       'En estos cuatro meses '+first+' cruzó de '+from+' a '+here+', del '+startN+' al '+closeN+'.',
-      first+' ya no se queda en '+from+'. El 9 de noviembre el oral da '+closeN+', '+here+'.',
+      first+' ya no se queda en '+from+'. El '+closeLong(s)+' el oral da '+closeN+', '+here+'.',
       'En '+first+' se movió la banda: '+startN+' en '+from+', '+closeN+' en '+here+'.'
     ]);
   } else if (gainN > 0) {
@@ -1894,7 +1917,7 @@ function informeView(s) {
     '<h1>'+esc(s.name)+'</h1>'+
     '<p class="who">'+esc(s.section || '10.º A')+' · Cuatro meses, del 20 de julio al 24 de noviembre de 2026</p>'+
     '<p class="lead">'+esc(movimiento(shown))+'</p>'+
-    '<section class="hero"><div class="hc"><span>De dónde viene</span><b>'+bandOfOral(start)+'</b><small>'+start+' de 25 · 20 de julio</small></div><div class="hc"><span>Dónde está</span><b>'+bandNow+'</b><small>'+close+' de 25 · 9 de noviembre</small></div><div class="hc next"><span>Para dónde va</span><b>'+goBand+'</b><small>'+(atTop ? close : toward)+' de 25 · proyección</small></div></section>'+
+    '<section class="hero"><div class="hc"><span>De dónde viene</span><b>'+bandOfOral(start)+'</b><small>'+start+' de 25 · 20 de julio</small></div><div class="hc"><span>Dónde está</span><b>'+bandNow+'</b><small>'+close+' de 25 · '+closeLong(s)+'</small></div><div class="hc next"><span>Para dónde va</span><b>'+goBand+'</b><small>'+(atTop ? close : toward)+' de 25 · proyección</small></div></section>'+
     '<h2>Análisis</h2><p>'+esc(analisisDe(shown))+'</p>'+
     '<h2>Qué significa</h2><p>'+esc(queSignifica(shown))+'</p>'+
     '<div class="scale">'+bandCards+'</div>'+
@@ -1904,7 +1927,7 @@ function informeView(s) {
     (iniNote ? '<p>Entró con '+start+' de 25. '+esc(iniNote)+'</p>' : '<p>Entró con '+start+' de 25.</p>')+
     startBlock+
     (iniNote ? '<div class="note"><b>Nota de inicio</b>'+esc(iniNote)+'</div>' : '')+
-    '<h2>Dónde está</h2><p class="who">Lunes 9 de noviembre de 2026</p>'+
+    '<h2>Dónde está</h2><p class="who">'+(finalRecord(s) ? closeLong(s)+' de 2026' : 'Lunes 9 de noviembre de 2026')+'</p>'+
     '<div class="score"><b>'+close+'</b><span>de 25<br>'+bandNow+' · medición</span></div>'+
     '<p>'+subida+(close === 15 && s.name === 'Alonso Barrantes' ? ' Sigue en el último punto de esa banda. Con uno más, 16, empezaría B1.' : '')+'</p>'+
     (s.name === 'Alonso Barrantes' ? '<p>En ese cierre se hace entender y genera ideas. Sabe lo que quiere decir, pero no le salen las palabras. Estructura con mucha dificultad. No habla en frases largas o continuas. El 3 de estructura del inicio no se lee como que ya organiza: ese 3 es solo secuencia funcional.</p>' : '')+
@@ -1912,7 +1935,7 @@ function informeView(s) {
     (finNote ? '<div class="note close"><b>Nota de cierre</b>'+esc(finNote)+'</div>' : '')+
     savedEvalCards(s)+
     '<h2>Los cuatro meses</h2>'+
-    '<ul class="tl"><li class="key"><span class="dot"></span><b>20 jul</b><div>Descripción de inicio<em>'+start+' de 25 · entra en la nota</em></div></li><li><span class="dot"></span><b>25 ago</b><div>Conversación libre<em>1:40 pm</em></div></li><li><span class="dot"></span><b>26 oct</b><div>Conversación libre<em>10:20 am</em></div></li><li class="key"><span class="dot"></span><b>9 nov</b><div>Medición<em>'+close+' de 25 · '+bandNow+'</em></div></li></ul>'+
+    '<ul class="tl"><li class="key"><span class="dot"></span><b>20 jul</b><div>Descripción de inicio<em>'+start+' de 25 · entra en la nota</em></div></li><li><span class="dot"></span><b>25 ago</b><div>Conversación libre<em>1:40 pm</em></div></li><li><span class="dot"></span><b>26 oct</b><div>Conversación libre<em>10:20 am</em></div></li><li class="key"><span class="dot"></span><b>9 nov</b><div>Medición<em>'+(finalRecord(s) ? s.novClose+' de 25 · '+bandOfOral(Number(s.novClose)) : close+' de 25 · '+bandNow)+'</em></div></li>'+(finalRecord(s) ? '<li class="key"><span class="dot"></span><b>'+closeShort(s)+'</b><div>Evaluación final<em>'+close+' de 25 · '+bandNow+'</em></div></li>' : '')+'</ul>'+
     '<h2>Otra nota, otra escala</h2><div class="other">El promedio de sus materias en el curso es <b>'+(s.prom || '—')+'</b>. Esa cifra no es el '+close+'. El '+close+' de 25 es solo el inglés hablado de esta prueba.</div>'+
     '</article>';
 }
@@ -1925,6 +1948,7 @@ function groupView() {
     const five = fiveForMedia(s);
     return { name: s.name, start: start, close: close, band: band, marks: five ? five.map(x => x[1]).join(' · ') : '', next: next, gain: close - start, alto: start >= 24 && close >= 24 };
   });
+  const anyFinal = students.some(s => finalRecord(s));
   const order = ['A1', 'A2', 'B1', 'B2'];
   const range = { A1: 'Hasta 10', A2: 'De 11 a 15', B1: 'De 16 a 20', B2: 'De 21 a 25' };
   const counts = order.map(name => rows.filter(r => r.band === name).length);
@@ -1932,7 +1956,7 @@ function groupView() {
   const blocks = shown.map(name => {
     const list = rows.filter(r => r.band === name).sort((a, b) => b.close - a.close || a.name.localeCompare(b.name));
     const body = list.length
-      ? '<table><tr><th>Estudiante</th><th>9 nov</th><th></th></tr>'+list.map(r => { const bubble = r.gain ? '<b class="moved">'+(r.gain > 0 ? '+' : '−')+Math.abs(r.gain)+'</b>' : ''; return '<tr class="'+(r.next ? 'near' : '')+'"><td>'+esc(r.name)+bubble+'</td><td class="n">'+r.close+'</td><td>'+[r.marks, r.alto ? 'Entró en el tramo alto' : '', r.next ? 'A 1 punto de '+r.next : ''].filter(Boolean).join(' · ')+'</td></tr>'; }).join('')+'</table>'
+      ? '<table><tr><th>Estudiante</th><th>'+(anyFinal ? 'Cierre' : '9 nov')+'</th><th></th></tr>'+list.map(r => { const bubble = r.gain ? '<b class="moved">'+(r.gain > 0 ? '+' : '−')+Math.abs(r.gain)+'</b>' : ''; return '<tr class="'+(r.next ? 'near' : '')+'"><td>'+esc(r.name)+bubble+'</td><td class="n">'+r.close+'</td><td>'+[r.marks, r.alto ? 'Entró en el tramo alto' : '', r.next ? 'A 1 punto de '+r.next : ''].filter(Boolean).join(' · ')+'</td></tr>'; }).join('')+'</table>'
       : '<p>Nadie está en esta banda.</p>';
     const tone = name.toLowerCase();
     return '<div class="band g-'+tone+'"><em>'+range[name]+'</em><h3>'+name+'</h3>'+body+'</div>';
@@ -1951,8 +1975,8 @@ function groupView() {
   const down = rows.filter(r => r.gain < 0).map(r => r.name.split(' ').slice(0, 2).join(' ')+' bajó de '+r.start+' a '+r.close);
   const cohorte = yaB2+' ya entraron en B2, por eso el promedio pasó de 82 a 86. '+up+' subieron de nota. '+jumped+' cambiaron de banda. '+held.length+' sostuvieron su número'+(heldTop ? ', '+heldTop+' de ellos en el tope de la prueba' : '')+'. '+(quietSay ? quietSay+' sostuvieron B1. ' : '')+down.join('. ')+'.';
   const who = bandOn
-    ? (n ? n+' '+(n===1?'estudiante':'estudiantes') : 'Nadie en esta banda')+' · '+range[bandOn]+'. El 9 de noviembre.'
-    : 'Dónde está cada uno el 9 de noviembre.';
+    ? (n ? n+' '+(n===1?'estudiante':'estudiantes') : 'Nadie en esta banda')+' · '+range[bandOn]+'.'+(anyFinal ? ' Al cierre.' : ' El 9 de noviembre.')
+    : (anyFinal ? 'Dónde está cada uno al cierre.' : 'Dónde está cada uno el 9 de noviembre.');
   return '<article class="informe lit"><h1>'+esc(title)+'</h1><p class="lead">'+esc(cohorte)+'</p><p class="who">'+esc(who)+'</p>'+
     '<div class="counts">'+chips+back+'</div>'+
     '<div class="scale'+(bandOn?' one':'')+'">'+blocks+'</div></article>';
@@ -2076,7 +2100,7 @@ function render() {
     wins+
     fichaHtml(s)+
     '<div class="tabs"><button type="button" data-tab="eval"'+(tab==='eval'?' class="on"':'')+'>Evaluaciones</button><button type="button" data-tab="asig"'+(tab==='asig'?' class="on"':'')+'>Asignaciones</button><button type="button" data-tab="proy"'+(tab==='proy'?' class="on"':'')+'>Proyecto</button></div>'+
-    (tab==='eval' ? '<div class="eval-block"><h2>Evaluaciones</h2><div class="lib">'+libraryHtml(s)+'</div>'+finalView(s)+'<div class="eval-actions">'+(finalRep ? '<span class="final-done">Evaluación final cerrada · '+esc(when(finalRep.at))+'</span>' : '<button type="button" class="edit" id="new">Nueva evaluación</button>'+(marking ? '' : '<button type="button" class="gen" id="final-open">Generar evaluación final</button>'))+actions+'</div>'+(marking && needPrueba && !ed.prueba ? '<p class="mean wait" id="need-prueba">Elige la prueba. Si no, no se guarda y el formulario sigue abierto.</p>' : '')+(savedMark && !marking ? '<p class="mean" id="save-state">Guardando en Kamuk…</p>' : '')+(marking ? sheet : '')+'</div>' : '')+
+    (tab==='eval' ? '<div class="eval-block"><h2>Evaluaciones</h2><div class="lib">'+libraryHtml(s)+'</div>'+finalView(s)+'<div class="eval-actions">'+(finalRep ? '<span class="final-done">Evaluación final cerrada · '+esc(when(finalRep.at))+'</span>' : '<button type="button" class="edit" id="new">Nueva evaluación</button>'+(marking ? '' : '<button type="button" class="gen" id="final-open">Generar evaluación final</button>'))+actions+'</div>'+(marking && needPrueba && !ed.prueba ? '<p class="mean wait" id="need-prueba">Elige la prueba. Si no, no se guarda y el formulario sigue abierto.</p>' : '')+(marking && ed.isFinal && needFive ? '<p class="mean wait" id="need-five">Para guardar la evaluación final marca los cinco KPI del oral, de 1 a 5.</p>' : '')+(savedMark && !marking ? '<p class="mean" id="save-state">Guardando en Kamuk…</p>' : '')+(marking ? sheet : '')+'</div>' : '')+
     (tab==='asig' ? '<div class="panel"><table><tr><th>Asignación</th><th>Nota</th><th>Observación</th></tr>'+assignments(s)+'</table></div>' : '')+
     (tab==='proy' ? proyectoHtml(s) : '');
 
@@ -2574,7 +2598,7 @@ function reportView(s, r) {
     '<article><span>Dónde está</span><b>'+j.now+'</b><small>sobre 25</small><p>'+esc('El mismo oral, ahora. '+(g ? g.oral.now : parentLevel(j.now)))+'</p></article>'+
     '<article class="ahead"><span>Dónde estará</span><b>'+(j.now >= 24 ? 'C1' : j.toward)+'</b><small>'+(j.now >= 24 ? 'B2+ se entiende como C1' : (j.toward !== Math.min(25, j.now + (j.gain > 0 ? j.gain : 1)) ? 'proyección' : (j.gain < 0 ? 'siguiente' : 'al mismo ritmo')))+'</small><p class="fine">'+esc(whereWillBe(j.start, j.now, j.toward))+'</p></article></section>'+
     '<div class="chart">'+inicioAhora(s, { from: j.start, quiet: true })+'</div>'+
-    '<h3>Esta evaluación</h3><div class="result"><div><b>'+(oral != null ? oral : ((g && g.oralSum != null) ? g.oralSum : (hasSheet ? (r.mean==null?'—':r.mean) : s.total)))+'</b><span>'+(oral != null ? '9 de noviembre, sobre 25' : ((g && g.oralSum != null) ? 'KPI de esta evaluación' : (hasSheet ? 'Exposición' : 'Oral de la ficha')))+'</span></div></div>'+
+    '<h3>Esta evaluación</h3><div class="result"><div><b>'+(oral != null ? oral : ((g && g.oralSum != null) ? g.oralSum : (hasSheet ? (r.mean==null?'—':r.mean) : s.total)))+'</b><span>'+(oral != null ? (r.kind === 'final' ? 'Evaluación final' : '9 de noviembre')+', sobre 25' : ((g && g.oralSum != null) ? 'KPI de esta evaluación' : (hasSheet ? 'Exposición' : 'Oral de la ficha')))+'</span></div></div>'+
     (s.prom ? '<p>Promedio de la ficha: '+esc(s.prom)+'.</p>' : '')+
     '<div class="chart">'+(oral != null ? barChart(kpis.map(c => [c.name, Number(r.scores[c.id])]), 5) : ((g && g.kpis && g.kpis.length) ? barChart(g.kpis.map(line => [line.name, Number(String(line.note).split('/')[0])]), 5) : (hasSheet ? bars(r.scores) : oralBars(s))))+'</div>'+
     (g ? '<p>Calificado a partir del score.</p>' : '')+
@@ -2688,6 +2712,13 @@ function saveDraft() {
   const note = document.getElementById('eval-note');
   if (note) ed.obs = note.value;
   needPrueba = false;
+  if (ed.isFinal && !kpis.every(c => { const n = Number(ed.scores[c.id]); return n >= 1 && n <= 5; })) {
+    needFive = true;
+    saveSheet();
+    render();
+    return;
+  }
+  needFive = false;
   const markedAny = Object.keys(ed.scores).some(function (k) { return ed.scores[k] != null; }) || String(ed.obs || '').trim();
   let saved = null;
   if (markedAny) {
@@ -2717,6 +2748,7 @@ function saveDraft() {
   informeOn = false;
   viewMode = 'eval';
   tab = '';
+  renderList();
   render();
   const showSaved = () => {
     const state = document.getElementById('save-state');
@@ -2969,6 +3001,7 @@ document.body.addEventListener('click', e => {
     clearSheet();
     edits[current].fresh = true;
     edits[current].isFinal = goFinal;
+    needFive = false;
     saveSheet();
     openId = null;
     savedMark = false;
