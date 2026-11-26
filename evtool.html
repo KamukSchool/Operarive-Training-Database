@@ -2018,9 +2018,7 @@ function informeView(s) {
     '<h1>'+esc(s.name)+'</h1>'+
     '<p class="who">'+esc(placeLine)+'</p>'+
     '<p class="lead">'+esc(lead)+'</p>'+
-    '<section class="hero">'+(kamukReport
-      ? '<div class="hc"><span>De dónde viene</span><b>'+bandOfOral(start)+'</b><small>'+start+' de 25 · '+fromWhen+'</small></div><div class="hc"><span>Dónde está</span><b>'+bandNow+'</b><small>'+close+' de 25 · '+nowWhen+'</small></div><div class="hc next"><span>Para dónde va</span><b>'+goBand+'</b><small>'+(atTop ? close : toward)+' de 25 · proyección</small></div>'
-      : '<div class="hc"><span>Dónde está</span><b>'+bandNow+'</b><small>'+close+' de 25 · '+nowWhen+'</small></div>')+'</section>'+
+    '<section class="hero"><div class="hc"><span>De dónde viene</span><b>'+bandOfOral(start)+'</b><small>'+start+' de 25 · '+fromWhen+'</small></div><div class="hc"><span>Dónde está</span><b>'+bandNow+'</b><small>'+close+' de 25 · '+nowWhen+'</small></div><div class="hc next"><span>Para dónde va</span><b>'+goBand+'</b><small>'+(atTop ? close : toward)+' de 25 · proyección</small></div></section>'+
     '<h2>Análisis</h2><p>'+esc(kamukReport ? analisisDe(shown) : primerNombre(s.name)+' queda en '+close+' de 25, '+bandOfOral(close)+', con la evaluación del '+(lastEv ? when(lastEv.at, true) : '—')+'.')+'</p>'+
     '<h2>Qué significa</h2><p>'+esc(queSignifica(shown))+'</p>'+
     '<div class="scale">'+bandCards+'</div>'+
@@ -2358,9 +2356,17 @@ const CEFR = [
 ];
 function competenciesView(s, wins) {
   const first = s.name.split(' ')[0];
-  const known = s.start != null || s.close != null;
-  const close = Number(s.close);
-  const start = Number(s.start);
+  let known = s.start != null || s.close != null;
+  let close = Number(s.close);
+  let start = Number(s.start);
+  if (project !== 'kamuk') {
+    const evals = (library[s.name] || []).slice().sort((a, b) => new Date(a.at) - new Date(b.at));
+    const a = evals.length ? oralSumOf(evals[0]) : null;
+    const b = evals.length ? oralSumOf(evals[evals.length - 1]) : null;
+    if (s.start == null && a != null) start = a;
+    if (s.close == null && b != null) close = b;
+    if (b != null) known = true;
+  }
   const atTop = close >= 25;
   const toward = projectOral(start, close, s);
   const bandNow = bandOfOral(close);
