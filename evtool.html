@@ -1506,8 +1506,9 @@ function finalView(s) {
     const shown = mark ? mark[1]+'. '+text : text;
     return explainRow(name, shown, s.name, 'ini-'+name);
   }).join('');
-  const inicial = '<h2>Evaluación inicial · '+start+'/25'+iniWhen+'</h2>'+startRows+
-    '<h2>Observación inicial</h2>'+fieldHtml(s.name, 'ini-obs', project === 'kamuk' ? (why || inicioObs(s)) : (savedText(s.name, 'ini-obs') || ''));
+  const inicial = project === 'kamuk'
+    ? '<h2>Evaluación inicial · '+start+'/25'+iniWhen+'</h2>'+startRows+'<h2>Observación inicial</h2>'+fieldHtml(s.name, 'ini-obs', why || inicioObs(s))
+    : '';
   const nov = novRecord(s);
   const mediaRows = ORAL_NAMES.map(name => {
     const hit = five && five.find(x => x[0] === name);
@@ -1531,7 +1532,7 @@ function finalView(s) {
   const guardadas = savedEvalsOf(s).filter(r => !nov || r.id !== nov.id).map(savedEvalMarkup).join('');
   return '<div class="sheet"><div class="sheet-scroll">'+inicial+media+guardadas+'</div>'+
     '<div class="result"><div><b>'+close+'</b><span>'+close+'/25 · evaluación media · '+band(close)+'</span></div></div>'+
-    '<p class="sheet-note">Evaluación inicial '+start+'/25. Evaluación media '+close+'/25.</p></div>';
+    '<p class="sheet-note">'+(project === 'kamuk' ? 'Evaluación inicial '+start+'/25. Evaluación media '+close+'/25.' : close+'/25 · '+mediaWhen)+'</p></div>';
 }
 function enteredKpiNote(ed) {
   const picked = kpis.map(c => ({ name: c.name, n: ed.scores[c.id] })).filter(row => row.n != null);
@@ -1977,9 +1978,19 @@ function informeView(s) {
   }).join('');
   const bars = (pairs, say) => pairs.map(p => '<div class="kp"><div class="kn">'+p[0]+'</div><div class="kb"><i style="width:'+(Number(p[1])*20)+'%"></i></div><div class="kv">'+p[1]+'<small>/5</small></div><div class="kt">'+esc(say(p[0], p[1]))+'</div></div>').join('');
   const startFive = pack.startFive;
-  const startBlock = startFive
-    ? bars(startFive, (n) => startExplain(s, n))+'<div class="sum">'+startFive.map(x => x[1]).join(' + ')+' = '+start+'</div>'
-    : startTable;
+  const evalFive = function (rec) {
+    if (!rec || !rec.scores) return null;
+    const pairs = kpis.map(function (c) { return [c.name, Number(rec.scores[c.id])]; });
+    return pairs.every(function (p) { return p[1] >= 1 && p[1] <= 5; }) ? pairs : null;
+  };
+  const fromFive = kamukReport ? null : evalFive(firstEv);
+  const startBlock = kamukReport
+    ? (startFive
+      ? bars(startFive, (n) => startExplain(s, n))+'<div class="sum">'+startFive.map(x => x[1]).join(' + ')+' = '+start+'</div>'
+      : startTable)
+    : (fromFive
+      ? bars(fromFive, (n, v) => ahoraSay(n, v))+'<div class="sum">'+fromFive.map(x => x[1]).join(' + ')+' = '+fromFive.reduce(function (a, x) { return a + Number(x[1]); }, 0)+'</div>'
+      : '');
   const closeSum = closeFive ? closeFive.reduce((a, x) => a + Number(x[1]), 0) : 0;
   const closeBlock = closeFive
     ? bars(closeFive, (n, v) => {
@@ -2007,16 +2018,14 @@ function informeView(s) {
     '<h1>'+esc(s.name)+'</h1>'+
     '<p class="who">'+esc(placeLine)+'</p>'+
     '<p class="lead">'+esc(lead)+'</p>'+
-    '<section class="hero"><div class="hc"><span>De dónde viene</span><b>'+bandOfOral(start)+'</b><small>'+start+' de 25 · '+fromWhen+'</small></div><div class="hc"><span>Dónde está</span><b>'+bandNow+'</b><small>'+close+' de 25 · '+nowWhen+'</small></div><div class="hc next"><span>Para dónde va</span><b>'+goBand+'</b><small>'+(atTop ? close : toward)+' de 25 · proyección</small></div></section>'+
+    '<section class="hero">'+(kamukReport
+      ? '<div class="hc"><span>De dónde viene</span><b>'+bandOfOral(start)+'</b><small>'+start+' de 25 · '+fromWhen+'</small></div><div class="hc"><span>Dónde está</span><b>'+bandNow+'</b><small>'+close+' de 25 · '+nowWhen+'</small></div><div class="hc next"><span>Para dónde va</span><b>'+goBand+'</b><small>'+(atTop ? close : toward)+' de 25 · proyección</small></div>'
+      : '<div class="hc"><span>Dónde está</span><b>'+bandNow+'</b><small>'+close+' de 25 · '+nowWhen+'</small></div>')+'</section>'+
     '<h2>Análisis</h2><p>'+esc(kamukReport ? analisisDe(shown) : primerNombre(s.name)+' queda en '+close+' de 25, '+bandOfOral(close)+', con la evaluación del '+(lastEv ? when(lastEv.at, true) : '—')+'.')+'</p>'+
     '<h2>Qué significa</h2><p>'+esc(queSignifica(shown))+'</p>'+
     '<div class="scale">'+bandCards+'</div>'+
     '<h2>Competencias</h2>'+compBox(first, bandNow, bandNext)+
-    '<h2>De dónde viene</h2><p class="who">'+fromLong+'</p>'+
-    '<div class="score"><b>'+start+'</b><span>de 25<br>'+bandOfOral(start)+'</span></div>'+
-    (iniNote ? '<p>Entró con '+start+' de 25. '+esc(iniNote)+'</p>' : '<p>Entró con '+start+' de 25.</p>')+
-    startBlock+
-    (iniNote ? '<div class="note"><b>Nota de inicio</b>'+esc(iniNote)+'</div>' : '')+
+    (kamukReport ? '<h2>De dónde viene</h2><p class="who">'+fromLong+'</p><div class="score"><b>'+start+'</b><span>de 25<br>'+bandOfOral(start)+'</span></div>'+(iniNote ? '<p>Entró con '+start+' de 25. '+esc(iniNote)+'</p>' : '<p>Entró con '+start+' de 25.</p>')+startBlock+(iniNote ? '<div class="note"><b>Nota de inicio</b>'+esc(iniNote)+'</div>' : '') : '')+
     '<h2>Dónde está</h2><p class="who">'+nowLong+'</p>'+
     '<div class="score"><b>'+close+'</b><span>de 25<br>'+bandNow+' · medición</span></div>'+
     '<p>'+subida+(close === 15 && s.name === 'Alonso Barrantes' ? ' Sigue en el último punto de esa banda. Con uno más, 16, empezaría B1.' : '')+'</p>'+
