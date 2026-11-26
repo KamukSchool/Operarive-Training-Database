@@ -1299,10 +1299,7 @@ function renderList() {
     if (!inProject(s)) return '';
     if (q && (s.name + s.company).toLowerCase().indexOf(q) < 0) return '';
     const prom = s.prom || '—';
-    const line = s.sample
-      ? 'Muestra · sin evaluaciones'
-      : esc(s.company)+' · '+s.start+(s.close!==s.start?' → '+s.close:'')+'/25 · '+prom;
-    return '<button class="stu' + (i===current?' on':'') + '" data-i="'+i+'"><b>'+esc(s.name)+'</b><em>'+line+'</em></button>';
+    return '<button class="stu' + (i===current?' on':'') + '" data-i="'+i+'"><b>'+esc(s.name)+'</b><em>'+esc(s.company)+' · '+s.start+(s.close!==s.start?' → '+s.close:'')+'/25 · '+prom+'</em></button>';
   }).join('');
 }
 function pips(id, value, max) {
@@ -1408,7 +1405,6 @@ function applySavedScores() {
     s.recuperacion = s._base.recuperacion;
     s.resolucion = s._base.resolucion;
     s.respuesta = s._base.respuesta;
-    if (s.sample || s.home === 'privado') return;
     const july = julyFive(s);
     if (july) {
       s.ideas = july[0][1];
@@ -1454,7 +1450,6 @@ function sameFive(a, b) {
   return a.every((row, i) => row[0] === b[i][0] && Number(row[1]) === Number(b[i][1]));
 }
 function finalView(s) {
-  if (s.sample || s.home === 'privado') return '<div class="sheet"><p class="empty">Sin evaluaciones.</p></div>';
   const pack = recordedFives(s);
   const five = novFive(s);
   const close = Number(s.novClose != null ? s.novClose : s.close);
@@ -1580,14 +1575,7 @@ function bindFiles() {
 }
 const PHONE = {};
 function fichaHtml(s) {
-  const rows = s.home === 'privado'
-    ? [
-        ['Nombre', s.name],
-        ['Grado', ''],
-        ['Teléfono', ''],
-        ['Colegio', '']
-      ]
-    : [
+  const rows = [
     ['Nombre', s.name],
     ['Grado', s.section || '—'],
     ['Trainers', 'Robert Grego'],
@@ -1868,7 +1856,6 @@ function analisisDe(s) {
   return [abre, limite, nota ? 'Al entrar: '+nota : '', espera].filter(Boolean).join(' ');
 }
 function informeView(s) {
-  if (s.sample || s.home === 'privado') return '<article class="informe"><h1>'+esc(s.name)+'</h1><p class="who">Sin evaluaciones.</p></article>';
   const first = s.name.split(' ')[0];
   const start = Number(s.start);
   const close = oralNow(s);
@@ -2122,15 +2109,13 @@ function render() {
     ? competenciesView(s, wins)
     : informeOn
     ? informeView(s)
-    : '<div class="who"><div><h1>'+esc(s.name)+'</h1></div><div class="tools">'+(s.home==='privado'?'':'<button type="button" class="gen" id="informe">Generar reporte</button>')+'</div></div>'+
+    : '<div class="who"><div><h1>'+esc(s.name)+'</h1></div><div class="tools"><button type="button" class="gen" id="informe">Generar reporte</button></div></div>'+
     wins+
     fichaHtml(s)+
-    (s.home==='privado'
-      ? '<div class="tabs"><button type="button" data-tab="eval" class="on">Evaluaciones</button></div>'
-      : '<div class="tabs"><button type="button" data-tab="eval"'+(tab==='eval'?' class="on"':'')+'>Evaluaciones</button><button type="button" data-tab="asig"'+(tab==='asig'?' class="on"':'')+'>Asignaciones</button><button type="button" data-tab="proy"'+(tab==='proy'?' class="on"':'')+'>Proyecto</button></div>')+
-    ((s.home==='privado' || tab==='eval') ? '<div class="eval-block"><h2>Evaluaciones</h2><div class="lib">'+libraryHtml(s)+'</div>'+finalView(s)+'<div class="eval-actions">'+(finalRep ? '<span class="final-done">Evaluación final cerrada · '+esc(when(finalRep.at))+'</span>' : '<button type="button" class="edit" id="new">Nueva evaluación</button>'+(s.home==='privado' || marking ? '' : '<button type="button" class="gen" id="final-open">Generar evaluación final</button>'))+actions+'</div>'+(marking && needPrueba && !ed.prueba ? '<p class="mean wait" id="need-prueba">Elige la prueba. Si no, no se guarda y el formulario sigue abierto.</p>' : '')+(marking && ed.isFinal && needFive ? '<p class="mean wait" id="need-five">Para guardar la evaluación final marca los cinco KPI del oral, de 1 a 5.</p>' : '')+(savedMark && !marking ? '<p class="mean" id="save-state">Guardando en Kamuk…</p>' : '')+(marking ? sheet : '')+'</div>' : '')+
-    (tab==='asig' && s.home!=='privado' ? '<div class="panel"><table><tr><th>Asignación</th><th>Nota</th><th>Observación</th></tr>'+assignments(s)+'</table></div>' : '')+
-    (tab==='proy' && s.home!=='privado' ? proyectoHtml(s) : '');
+    '<div class="tabs"><button type="button" data-tab="eval"'+(tab==='eval'?' class="on"':'')+'>Evaluaciones</button><button type="button" data-tab="asig"'+(tab==='asig'?' class="on"':'')+'>Asignaciones</button><button type="button" data-tab="proy"'+(tab==='proy'?' class="on"':'')+'>Proyecto</button></div>'+
+    (tab==='eval' ? '<div class="eval-block"><h2>Evaluaciones</h2><div class="lib">'+libraryHtml(s)+'</div>'+finalView(s)+'<div class="eval-actions">'+(finalRep ? '<span class="final-done">Evaluación final cerrada · '+esc(when(finalRep.at))+'</span>' : '<button type="button" class="edit" id="new">Nueva evaluación</button>'+(marking ? '' : '<button type="button" class="gen" id="final-open">Generar evaluación final</button>'))+actions+'</div>'+(marking && needPrueba && !ed.prueba ? '<p class="mean wait" id="need-prueba">Elige la prueba. Si no, no se guarda y el formulario sigue abierto.</p>' : '')+(marking && ed.isFinal && needFive ? '<p class="mean wait" id="need-five">Para guardar la evaluación final marca los cinco KPI del oral, de 1 a 5.</p>' : '')+(savedMark && !marking ? '<p class="mean" id="save-state">Guardando en Kamuk…</p>' : '')+(marking ? sheet : '')+'</div>' : '')+
+    (tab==='asig' ? '<div class="panel"><table><tr><th>Asignación</th><th>Nota</th><th>Observación</th></tr>'+assignments(s)+'</table></div>' : '')+
+    (tab==='proy' ? proyectoHtml(s) : '');
 
   const tiles = Object.keys(s.nums).filter(k => k !== 'Promedio').map(k => '<div class="tile"><span>'+esc(k === 'Test oral' && isInicioCien(s, s.nums[k]) ? 'Inicio /100' : k)+'</span><b>'+esc(s.nums[k])+'</b></div>').join('');
   const pdfs = ed.pdfs.map(f => f.url ? '<a class="doc" href="'+f.url+'" target="_blank" rel="noopener">'+esc(f.name)+'</a>' : esc(f.name)).join('');
@@ -2275,7 +2260,6 @@ const CEFR = [
     'Escribe un texto fluido y un informe o un resumen que deja las ideas que importan.']
 ];
 function competenciesView(s, wins) {
-  if (s.sample || s.home === 'privado') return winOf(s, wins, 'Competencias de inglés')+'<p class="empty">Sin evaluaciones.</p>';
   const first = s.name.split(' ')[0];
   const close = Number(s.close);
   const start = Number(s.start);
