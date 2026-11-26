@@ -1471,6 +1471,7 @@ function savedEvalMarkup(r) {
     (comment ? '<h2>Comentario</h2><p class="mean" style="padding:0 16px 12px">'+esc(comment)+'</p>' : '');
 }
 function savedEvalCards(s) {
+  if (project !== 'kamuk') return '';
   const nov = novRecord(s);
   return savedEvalsOf(s).filter(r => !nov || r.id !== nov.id).map(r => '<div class="sheet">'+savedEvalMarkup(r)+'</div>').join('');
 }
@@ -1529,7 +1530,7 @@ function finalView(s) {
     (expoRows ? '<h2>Exposición · '+mediaWhen+'</h2>'+expoRows : '')+
     novNote+
     '<h2>Desarrollo de empresa</h2>'+fieldHtml(s.name, 'media-empresa', s.gain || '');
-  const guardadas = savedEvalsOf(s).filter(r => !nov || r.id !== nov.id).map(savedEvalMarkup).join('');
+  const guardadas = project === 'kamuk' ? savedEvalsOf(s).filter(r => !nov || r.id !== nov.id).map(savedEvalMarkup).join('') : '';
   return '<div class="sheet"><div class="sheet-scroll">'+inicial+media+guardadas+'</div>'+
     '<div class="result"><div><b>'+close+'</b><span>'+close+'/25 · evaluación media · '+band(close)+'</span></div></div>'+
     '<p class="sheet-note">'+(project === 'kamuk' ? 'Evaluación inicial '+start+'/25. Evaluación media '+close+'/25.' : close+'/25 · '+mediaWhen)+'</p></div>';
