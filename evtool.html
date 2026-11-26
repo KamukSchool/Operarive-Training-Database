@@ -1113,6 +1113,29 @@ function hydrateKamuk() {
       persistKamuk('EVTOOL-SHEET', sheets);
     }
     applySheets();
+    const johnny = 'Johnny Ramirez Mena';
+    const johnnyRows = library[johnny] || [];
+    const johnnyKept = johnnyRows.filter(function (r) {
+      const scores = r && r.scores || {};
+      return Object.keys(scores).some(function (k) { return scores[k] != null && scores[k] !== ''; });
+    });
+    if (johnnyKept.length !== johnnyRows.length) {
+      library[johnny] = johnnyKept;
+      saveLib();
+    }
+    const johnnySheet = sheets[johnny];
+    if (johnnySheet) {
+      const scores = johnnySheet.scores || {};
+      const any = Object.keys(scores).some(function (k) { return scores[k] != null && scores[k] !== ''; });
+      if (!any && !String(johnnySheet.obs || '').trim() && !String(johnnySheet.draft || '').trim()) {
+        delete sheets[johnny];
+        try {
+          localStorage.setItem('kamuk-qa-sheet-v1', JSON.stringify(sheets));
+          localStorage.setItem('kamuk-qa-sheet-at', String(Date.now()));
+        } catch (e) {}
+        persistKamuk('EVTOOL-SHEET', sheets);
+      }
+    }
   });
 }
 const edits = students.map(s => ({
