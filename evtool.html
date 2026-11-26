@@ -1623,8 +1623,10 @@ const PHONE = {};
 function fichaHtml(s) {
   const rows = [
     ['Nombre', s.name],
-    ['Grado', s.section || '—'],
-    ['Trainers', 'Robert Grego'],
+    ['Grado', s.section || '—']
+  ];
+  if (project === 'kamuk') rows.push(['Trainers', 'Robert Grego']);
+  rows.push(
     ['Lead Trainer', 'Johnny Ramirez M'],
     ['Teléfono', PHONE[s.name] || '—'],
     ['Colegio', project === 'kamuk' ? 'Colegio Kamuk' : (project === 'muni' ? 'Municipalidad COR' : 'Estudiante privado')],
