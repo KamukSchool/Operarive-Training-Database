@@ -2024,6 +2024,7 @@ function informeView(s) {
     '<h2>Qué significa</h2><p>'+esc(queSignifica(shown))+'</p>'+
     '<div class="scale">'+bandCards+'</div>'+
     '<h2>Competencias</h2>'+compBox(first, bandNow, bandNext)+
+    '<h2>Cuadro de referencia</h2>'+referenceChart(first, bandNow, bandNext, true)+
     (kamukReport ? '<h2>De dónde viene</h2><p class="who">'+fromLong+'</p><div class="score"><b>'+start+'</b><span>de 25<br>'+bandOfOral(start)+'</span></div>'+(iniNote ? '<p>Entró con '+start+' de 25. '+esc(iniNote)+'</p>' : '<p>Entró con '+start+' de 25.</p>')+startBlock+(iniNote ? '<div class="note"><b>Nota de inicio</b>'+esc(iniNote)+'</div>' : '') : '')+
     '<h2>Dónde está</h2><p class="who">'+nowLong+'</p>'+
     '<div class="score"><b>'+close+'</b><span>de 25<br>'+bandNow+' · medición</span></div>'+
@@ -2355,6 +2356,17 @@ const CEFR = [
     'Presenta un argumento fluido, con una estructura que el oyente puede seguir.',
     'Escribe un texto fluido y un informe o un resumen que deja las ideas que importan.']
 ];
+function referenceChart(first, bandNow, bandNext, known) {
+  const body = CEFR.map(r => {
+    const now = r[0] === bandNow;
+    const later = r[0] === bandNext;
+    const pins = known ? ((now ? '<b class="pin now">Aquí está '+esc(first)+'</b>' : '')+(later ? '<b class="pin later">Aquí estará '+esc(first)+'</b>' : '')) : '';
+    const mark = known ? (now ? ' class="now"' : later ? ' class="later"' : '') : '';
+    return '<tr'+mark+'><td class="lv">'+r[0]+'<span>'+esc(r[1])+'</span>'+pins+'</td><td>'+esc(r[2])+'</td><td>'+esc(r[3])+'</td><td>'+esc(r[4])+'</td><td>'+esc(r[5])+'</td><td>'+esc(r[6])+'</td></tr>';
+  }).join('');
+  return '<div class="twrap"><table class="ctable"><tr><th>Nivel</th><th>Comprensión auditiva</th><th>Comprensión de lectura</th><th>Interacción oral</th><th>Expresión oral</th><th>Expresión escrita</th></tr>'+body+'</table></div>'+
+    '<p class="glead src" style="margin-top:14px">La referencia de estos niveles es la <a href="https://www.coe.int/en/web/common-european-framework-reference-languages/table-1-cefr-3.3-common-reference-levels-global-scale" target="_blank" rel="noopener">escala global del Marco común europeo de referencia</a>. Consejo de Europa, 2001, capítulo 3, cuadro 1.</p>';
+}
 function competenciesView(s, wins) {
   const first = s.name.split(' ')[0];
   let known = s.start != null || s.close != null;
@@ -2368,21 +2380,12 @@ function competenciesView(s, wins) {
     if (s.close == null && b != null) close = b;
     if (b != null) known = true;
   }
-  const atTop = close >= 25;
   const toward = projectOral(start, close, s);
   const bandNow = bandOfOral(close);
   const bandNext = bandAhead(close, toward);
-  const body = CEFR.map(r => {
-    const now = r[0] === bandNow;
-    const later = r[0] === bandNext;
-    const pins = known ? ((now ? '<b class="pin now">Aquí está '+esc(first)+'</b>' : '')+(later ? '<b class="pin later">Aquí estará '+esc(first)+'</b>' : '')) : '';
-    const mark = known ? (now ? ' class="now"' : later ? ' class="later"' : '') : '';
-    return '<tr'+mark+'><td class="lv">'+r[0]+'<span>'+esc(r[1])+'</span>'+pins+'</td><td>'+esc(r[2])+'</td><td>'+esc(r[3])+'</td><td>'+esc(r[4])+'</td><td>'+esc(r[5])+'</td><td>'+esc(r[6])+'</td></tr>';
-  }).join('');
   return winOf(s, wins, 'Competencias de inglés · '+s.section)+
     '<section class="gblock"><h2>Cuadro de referencia</h2>'+
-    '<div class="twrap"><table class="ctable"><tr><th>Nivel</th><th>Comprensión auditiva</th><th>Comprensión de lectura</th><th>Interacción oral</th><th>Expresión oral</th><th>Expresión escrita</th></tr>'+body+'</table></div>'+
-    '<p class="glead src" style="margin-top:14px">La referencia de estos niveles es la <a href="https://www.coe.int/en/web/common-european-framework-reference-languages/table-1-cefr-3.3-common-reference-levels-global-scale" target="_blank" rel="noopener">escala global del Marco común europeo de referencia</a>. Consejo de Europa, 2001, capítulo 3, cuadro 1.</p></section>';
+    referenceChart(first, bandNow, bandNext, known)+'</section>';
 }
 function when(iso, dateOnly) {
   const opt = { day:'numeric', month:'short', year:'numeric', timeZone:'America/Costa_Rica' };
