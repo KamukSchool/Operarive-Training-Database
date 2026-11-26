@@ -1631,7 +1631,7 @@ function fichaHtml(s) {
     ['Teléfono', PHONE[s.name] || '—'],
     ['Colegio', project === 'kamuk' ? 'Colegio Kamuk' : (project === 'muni' ? 'Municipalidad COR' : 'Estudiante privado')],
     ['Kamuk ID', s.kamukId || '—']
-  ];
+  );
   return '<section class="ficha">'+rows.map(r => '<div><span>'+esc(r[0])+'</span>'+fieldHtml(s.name, 'ficha-'+r[0], r[1])+'</div>').join('')+'</section>';
 }
 function proyectoHtml(s) {
@@ -2025,7 +2025,6 @@ function informeView(s) {
     '<h2>Análisis</h2><p>'+esc(kamukReport ? analisisDe(shown) : primerNombre(s.name)+' queda en '+close+' de 25, '+bandOfOral(close)+', con la evaluación del '+(lastEv ? when(lastEv.at, true) : '—')+'.')+'</p>'+
     '<h2>Qué significa</h2><p>'+esc(queSignifica(shown))+'</p>'+
     '<div class="scale">'+bandCards+'</div>'+
-    '<h2>Competencias</h2>'+compBox(first, bandNow, bandNext)+
     '<h2>Cuadro de referencia</h2>'+referenceChart(first, bandNow, bandNext, true)+
     (kamukReport ? '<h2>De dónde viene</h2><p class="who">'+fromLong+'</p><div class="score"><b>'+start+'</b><span>de 25<br>'+bandOfOral(start)+'</span></div>'+(iniNote ? '<p>Entró con '+start+' de 25. '+esc(iniNote)+'</p>' : '<p>Entró con '+start+' de 25.</p>')+startBlock+(iniNote ? '<div class="note"><b>Nota de inicio</b>'+esc(iniNote)+'</div>' : '') : '')+
     '<h2>Dónde está</h2><p class="who">'+nowLong+'</p>'+
