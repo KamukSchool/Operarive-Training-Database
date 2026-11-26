@@ -1439,7 +1439,7 @@ function savedEvalMarkup(r) {
     const kpi = kpis.filter(c => scores[c.id] != null).map(c => explainRow(c.name, scores[c.id]+'. '+ahoraSay(c.name, scores[c.id]))).join('');
   const nums = kpis.map(c => scores[c.id]).filter(v => v != null);
   const total = nums.length === 5 ? nums.reduce((a, b) => a + Number(b), 0) : null;
-  const title = 'Evaluación'+(r.prueba ? ' · '+r.prueba : '')+(total != null ? ' · '+total+'/25' : '')+' · '+when(r.at, project === 'kamuk');
+  const title = 'Evaluación'+(r.prueba ? ' · '+r.prueba : '')+(total != null ? ' · '+total+'/25' : '')+' · '+when(r.at, true);
   const comment = String(r.obs || '').trim();
   return '<h2>'+esc(title)+'</h2>'+
     (expo ? '<h2>Exposición · 1 a 8</h2>'+expo : '')+
@@ -1456,24 +1456,35 @@ function sameFive(a, b) {
   return a.every((row, i) => row[0] === b[i][0] && Number(row[1]) === Number(b[i][1]));
 }
 function finalView(s) {
-  if (project !== 'kamuk') {
-    const cards = (library[s.name] || []).map(savedEvalMarkup).join('');
-    return '<div class="sheet"><div class="sheet-scroll">'+(cards || '<p class="empty">Aún no hay evaluaciones de '+esc(s.name)+'.</p>')+'</div></div>';
-  }
   const pack = recordedFives(s);
   const five = novFive(s);
-  const close = Number(s.novClose != null ? s.novClose : s.close);
-  const start = Number(s.start);
+  const evals = project === 'kamuk' ? null : (library[s.name] || []).slice().sort((a, b) => new Date(a.at) - new Date(b.at));
+  let close = Number(s.novClose != null ? s.novClose : s.close);
+  let start = Number(s.start);
+  let mediaWhen = '9 de noviembre';
+  if (project !== 'kamuk' && evals && evals.length) {
+    const a = oralSumOf(evals[0]);
+    const b = oralSumOf(evals[evals.length - 1]);
+    if (a != null) start = a;
+    if (b != null) close = b;
+    mediaWhen = when(evals[evals.length - 1].at, true);
+  }
   const why = notaInicio(s);
   const startFive = pack.startFive;
-  const startRows = ORAL_NAMES.map(name => {
+  const iniWhen = project === 'kamuk' || !evals || !evals.length ? '' : ' · '+when(evals[0].at, true);
+  const startRows = project !== 'kamuk' && evals && evals[0] && evals[0].scores ? ORAL_NAMES.map(name => {
+    const kpi = kpis.find(c => c.name === name);
+    const value = kpi ? evals[0].scores[kpi.id] : null;
+    const shown = value == null ? '' : value+'. '+ahoraSay(name, value);
+    return explainRow(name, shown, s.name, 'ini-'+name);
+  }).join('') : ORAL_NAMES.map(name => {
     const text = startExplain(s, name);
     const mark = startFive && startFive.find(row => row[0] === name);
     const shown = mark ? mark[1]+'. '+text : text;
     return explainRow(name, shown, s.name, 'ini-'+name);
   }).join('');
-  const inicial = '<h2>Evaluación inicial · '+start+'/25</h2>'+startRows+
-    '<h2>Observación inicial</h2>'+fieldHtml(s.name, 'ini-obs', why || inicioObs(s));
+  const inicial = '<h2>Evaluación inicial · '+start+'/25'+iniWhen+'</h2>'+startRows+
+    '<h2>Observación inicial</h2>'+fieldHtml(s.name, 'ini-obs', project === 'kamuk' ? (why || inicioObs(s)) : (savedText(s.name, 'ini-obs') || ''));
   const nov = novRecord(s);
   const mediaRows = ORAL_NAMES.map(name => {
     const hit = five && five.find(x => x[0] === name);
@@ -1489,9 +1500,9 @@ function finalView(s) {
     const n = Number(nov.scores[c.id]);
     return '<div class="row"><div class="lab"><b>'+esc(c.name)+' · '+n+'/8</b></div><div><p class="mean">'+esc(c.levels[n - 1] || '')+'</p></div></div>';
   }).join('') : '';
-  const novNote = nov && String(nov.obs || '').trim() ? '<h2>Comentario · 9 de noviembre</h2><p class="mean">'+esc(nov.obs)+'</p>' : '';
-  const media = '<h2>Evaluación media · '+close+'/25 · 9 de noviembre</h2>'+mediaRows+
-    (expoRows ? '<h2>Exposición · 9 de noviembre</h2>'+expoRows : '')+
+  const novNote = nov && String(nov.obs || '').trim() ? '<h2>Comentario · '+mediaWhen+'</h2><p class="mean">'+esc(nov.obs)+'</p>' : '';
+  const media = '<h2>Evaluación media · '+close+'/25 · '+mediaWhen+'</h2>'+mediaRows+
+    (expoRows ? '<h2>Exposición · '+mediaWhen+'</h2>'+expoRows : '')+
     novNote+
     '<h2>Desarrollo de empresa</h2>'+fieldHtml(s.name, 'media-empresa', s.gain || '');
   const guardadas = savedEvalsOf(s).filter(r => !nov || r.id !== nov.id).map(savedEvalMarkup).join('');
@@ -1591,7 +1602,7 @@ function fichaHtml(s) {
     ['Trainers', 'Robert Grego'],
     ['Lead Trainer', 'Johnny Ramirez M'],
     ['Teléfono', PHONE[s.name] || '—'],
-    ['Colegio', 'Colegio Kamuk'],
+    ['Colegio', project === 'kamuk' ? 'Colegio Kamuk' : (project === 'muni' ? 'Municipalidad COR' : 'Estudiante privado')],
     ['Kamuk ID', s.kamukId || '—']
   ];
   return '<section class="ficha">'+rows.map(r => '<div><span>'+esc(r[0])+'</span>'+fieldHtml(s.name, 'ficha-'+r[0], r[1])+'</div>').join('')+'</section>';
@@ -1622,6 +1633,29 @@ function compBox(first, bandNow, bandNext) {
   return '<div class="compbox"><table><tr><th>Competencia</th><th class="now">Aquí está '+esc(first)+' · '+esc(bandNow)+'</th><th class="later">Aquí estará '+esc(first)+' · '+esc(bandNext)+'</th></tr>'+rows+'</table></div>';
 }
 function informeText(s) {
+  if (project !== 'kamuk') {
+    const evals = (library[s.name] || []).slice().sort((a, b) => new Date(a.at) - new Date(b.at));
+    const firstEv = evals[0] || null;
+    const lastEv = evals.length ? evals[evals.length - 1] : null;
+    const start = firstEv && oralSumOf(firstEv) != null ? oralSumOf(firstEv) : Number(s.start);
+    const close = lastEv && oralSumOf(lastEv) != null ? oralSumOf(lastEv) : Number(s.close);
+    const atTop = close >= 25;
+    const toward = projectOral(start, close, s);
+    const place = project === 'muni' ? 'Municipalidad COR' : 'Estudiante privado';
+    const fromWhen = firstEv ? when(firstEv.at, true) : '—';
+    const nowWhen = lastEv ? when(lastEv.at, true) : '—';
+    return [
+      'EVTOOL · Informe de inglés',
+      s.name,
+      place + (firstEv ? ' · ' + fromWhen + (lastEv && lastEv !== firstEv ? ' al ' + nowWhen : '') : ''),
+      '',
+      'De dónde viene: ' + bandOfOral(start) + ' · ' + start + ' de 25 · ' + fromWhen,
+      'Dónde está: ' + bandOfOral(close) + ' · ' + close + ' de 25 · ' + nowWhen,
+      'Para dónde va: ' + (close >= 24 ? 'C1' : bandOfOral(toward)) + ' · ' + (atTop ? close : toward) + ' de 25 · proyección',
+      '',
+      movimiento(Object.assign({}, s, { start: start, close: close }))
+    ].join('\n');
+  }
   const start = Number(s.start);
   const close = oralNow(s);
   const atTop = close >= 25;
@@ -1866,14 +1900,14 @@ function analisisDe(s) {
   return [abre, limite, nota ? 'Al entrar: '+nota : '', espera].filter(Boolean).join(' ');
 }
 function informeView(s) {
-  if (project !== 'kamuk') {
-    const cards = (library[s.name] || []).map(r => '<div class="sheet">'+savedEvalMarkup(r)+'</div>').join('');
-    return '<article class="informe"><div class="who"><div><h1>'+esc(s.name)+'</h1><p>Reporte</p></div><div class="tools"><button type="button" class="edit" id="informe-back">Volver a la ficha</button></div></div>'+(cards || '<p class="empty">Aún no hay evaluaciones de '+esc(s.name)+'.</p>')+'</article>';
-  }
+  const kamukReport = project === 'kamuk';
+  const evals = (library[s.name] || []).slice().sort((a, b) => new Date(a.at) - new Date(b.at));
+  const firstEv = evals[0] || null;
+  const lastEv = evals.length ? evals[evals.length - 1] : null;
   const first = s.name.split(' ')[0];
-  const start = Number(s.start);
-  const close = oralNow(s);
-  const shown = Object.assign({}, s, { close: close });
+  const start = kamukReport ? Number(s.start) : (firstEv && oralSumOf(firstEv) != null ? oralSumOf(firstEv) : Number(s.start));
+  const close = kamukReport ? oralNow(s) : (lastEv && oralSumOf(lastEv) != null ? oralSumOf(lastEv) : oralNow(s));
+  const shown = Object.assign({}, s, kamukReport ? { close: close } : { close: close, start: start });
   const gain = close - start;
   const atTop = close >= 25;
   const toward = projectOral(start, close, s);
@@ -1901,7 +1935,9 @@ function informeView(s) {
   const closeFive = fiveForMedia(s);
   const startTable = '<table><tr><th>KPI</th><th>A partir de la descripción de inicio</th></tr>'+ORAL_NAMES.map(name => '<tr><td>'+name+'</td><td>'+esc(startExplain(s, name))+'</td></tr>').join('')+'</table><p>El '+start+' de 25 es el aproximado que sale de esa descripción.</p>';
   const paso = falta === 1 ? ' Le faltó un punto para pasar.' : falta > 1 ? ' Le faltan '+falta+' puntos para la banda siguiente.' : bandNow === 'B2' ? ' Está en la banda más alta de esta prueba.' : '';
-  const subida = gain > 0
+  const subida = !kamukReport
+    ? (start === close ? 'La evaluación da '+close+' de 25.' : 'De '+start+' pasó a '+close+'.')
+    : gain > 0
     ? 'Del '+start+' del test de entrada pasó a '+close+'. Son '+gain+' puntos'+(bandOfOral(start)===bandNow ? ', dentro del mismo '+bandNow : '')+'.'
     : gain < 0
       ? 'Del '+start+' del test de entrada pasó a '+close+'.'
@@ -1910,7 +1946,7 @@ function informeView(s) {
         : close >= 24
           ? 'Sostuvo el '+close+' del test de entrada. Estaba en el tope y ahí sigue.'
           : 'Sostuvo el '+close+' del test de entrada. En cuatro meses el oral no bajó.');
-  const iniNote = savedText(s.name, 'ini-obs') != null ? savedText(s.name, 'ini-obs') : (notaInicio(s) || inicioObs(s));
+  const iniNote = savedText(s.name, 'ini-obs') != null ? savedText(s.name, 'ini-obs') : (kamukReport ? (notaInicio(s) || inicioObs(s)) : (notaInicio(s) || ''));
   const finNote = savedText(s.name, 'media-empresa') != null ? savedText(s.name, 'media-empresa') : (s.gain || '');
   const bandCards = bands.map(row => {
     const here = row[0] === bandNow;
@@ -1929,25 +1965,36 @@ function informeView(s) {
         return sameFive(closeFive, pack.closeFive) && operativeKey(s.name) === 'alonso barrantes' && pack.storedSum !== close ? alonsoCloseSay(n) : ahoraSay(n, v);
       })+'<div class="sum">'+closeFive.map(x => x[1]).join(' + ')+' = '+closeSum+'</div>'
     : '';
+  const placeLine = kamukReport
+    ? (s.section || '10.º A')+' · Cuatro meses, del 20 de julio al 24 de noviembre de 2026'
+    : (project === 'muni' ? 'Municipalidad COR' : 'Estudiante privado')+(firstEv ? ' · '+when(firstEv.at, true)+(lastEv && lastEv !== firstEv ? ' al '+when(lastEv.at, true) : '') : '');
+  const fromWhen = kamukReport ? '20 de julio' : (firstEv ? when(firstEv.at, true) : '—');
+  const nowWhen = kamukReport ? closeLong(s) : (lastEv ? when(lastEv.at, true) : '—');
+  const fromLong = kamukReport ? 'Lunes 20 de julio de 2026 · test de entrada' : (firstEv ? when(firstEv.at)+' · evaluación' : '—');
+  const nowLong = kamukReport ? (finalRecord(s) ? closeLong(s)+' de 2026' : 'Lunes 9 de noviembre de 2026') : (lastEv ? when(lastEv.at) : '—');
+  const lead = kamukReport ? movimiento(shown) : (start === close ? primerNombre(s.name)+' tiene '+close+' de 25, '+bandOfOral(close)+'.' : movimiento(shown));
+  const timeline = kamukReport
+    ? '<ul class="tl"><li class="key"><span class="dot"></span><b>20 jul</b><div>Descripción de inicio<em>'+start+' de 25 · entra en la nota</em></div></li><li><span class="dot"></span><b>25 ago</b><div>Conversación libre<em>1:40 pm</em></div></li><li><span class="dot"></span><b>26 oct</b><div>Conversación libre<em>10:20 am</em></div></li><li class="key"><span class="dot"></span><b>9 nov</b><div>Medición<em>'+(finalRecord(s) ? s.novClose+' de 25 · '+bandOfOral(Number(s.novClose)) : close+' de 25 · '+bandNow)+'</em></div></li>'+(finalRecord(s) ? '<li class="key"><span class="dot"></span><b>'+closeShort(s)+'</b><div>Evaluación final<em>'+close+' de 25 · '+bandNow+'</em></div></li>' : '')+'</ul>'
+    : '<ul class="tl">'+evals.map((r, i) => { const oral = oralSumOf(r); const edge = i === 0 || i === evals.length - 1; return '<li'+(edge ? ' class="key"' : '')+'><span class="dot"></span><b>'+esc(when(r.at))+'</b><div>'+esc(r.prueba || 'Evaluación')+'<em>'+(oral != null ? oral+' de 25 · '+bandOfOral(oral) : '')+'</em></div></li>'; }).join('')+'</ul>';
   const shareText = informeText(s);
   const phone = String(PHONE[s.name] || '').replace(/\D/g, '');
   const wa = 'https://wa.me/'+(phone ? phone : '')+'?text='+encodeURIComponent(shareText);
   const mail = 'mailto:info@studioinfinitycr.com?subject='+encodeURIComponent('Informe de inglés · '+s.name)+'&body='+encodeURIComponent(shareText);
   return '<article class="informe"><div class="brandline">'+LOGO+'<b>EVTOOL</b><span class="tag">Informe de inglés</span><div class="share"><a class="edit" id="send-wa" href="'+wa+'" target="_blank" rel="noopener">WhatsApp</a><a class="edit" id="send-mail" href="'+mail+'">Email</a><button type="button" class="edit" id="informe-back">Volver a la ficha</button></div></div>'+
     '<h1>'+esc(s.name)+'</h1>'+
-    '<p class="who">'+esc(s.section || '10.º A')+' · Cuatro meses, del 20 de julio al 24 de noviembre de 2026</p>'+
-    '<p class="lead">'+esc(movimiento(shown))+'</p>'+
-    '<section class="hero"><div class="hc"><span>De dónde viene</span><b>'+bandOfOral(start)+'</b><small>'+start+' de 25 · 20 de julio</small></div><div class="hc"><span>Dónde está</span><b>'+bandNow+'</b><small>'+close+' de 25 · '+closeLong(s)+'</small></div><div class="hc next"><span>Para dónde va</span><b>'+goBand+'</b><small>'+(atTop ? close : toward)+' de 25 · proyección</small></div></section>'+
-    '<h2>Análisis</h2><p>'+esc(analisisDe(shown))+'</p>'+
+    '<p class="who">'+esc(placeLine)+'</p>'+
+    '<p class="lead">'+esc(lead)+'</p>'+
+    '<section class="hero"><div class="hc"><span>De dónde viene</span><b>'+bandOfOral(start)+'</b><small>'+start+' de 25 · '+fromWhen+'</small></div><div class="hc"><span>Dónde está</span><b>'+bandNow+'</b><small>'+close+' de 25 · '+nowWhen+'</small></div><div class="hc next"><span>Para dónde va</span><b>'+goBand+'</b><small>'+(atTop ? close : toward)+' de 25 · proyección</small></div></section>'+
+    '<h2>Análisis</h2><p>'+esc(kamukReport ? analisisDe(shown) : primerNombre(s.name)+' queda en '+close+' de 25, '+bandOfOral(close)+', con la evaluación del '+(lastEv ? when(lastEv.at, true) : '—')+'.')+'</p>'+
     '<h2>Qué significa</h2><p>'+esc(queSignifica(shown))+'</p>'+
     '<div class="scale">'+bandCards+'</div>'+
     '<h2>Competencias</h2>'+compBox(first, bandNow, bandNext)+
-    '<h2>De dónde viene</h2><p class="who">Lunes 20 de julio de 2026 · test de entrada</p>'+
+    '<h2>De dónde viene</h2><p class="who">'+fromLong+'</p>'+
     '<div class="score"><b>'+start+'</b><span>de 25<br>'+bandOfOral(start)+'</span></div>'+
     (iniNote ? '<p>Entró con '+start+' de 25. '+esc(iniNote)+'</p>' : '<p>Entró con '+start+' de 25.</p>')+
     startBlock+
     (iniNote ? '<div class="note"><b>Nota de inicio</b>'+esc(iniNote)+'</div>' : '')+
-    '<h2>Dónde está</h2><p class="who">'+(finalRecord(s) ? closeLong(s)+' de 2026' : 'Lunes 9 de noviembre de 2026')+'</p>'+
+    '<h2>Dónde está</h2><p class="who">'+nowLong+'</p>'+
     '<div class="score"><b>'+close+'</b><span>de 25<br>'+bandNow+' · medición</span></div>'+
     '<p>'+subida+(close === 15 && s.name === 'Alonso Barrantes' ? ' Sigue en el último punto de esa banda. Con uno más, 16, empezaría B1.' : '')+'</p>'+
     (s.name === 'Alonso Barrantes' ? '<p>En ese cierre se hace entender y genera ideas. Sabe lo que quiere decir, pero no le salen las palabras. Estructura con mucha dificultad. No habla en frases largas o continuas. El 3 de estructura del inicio no se lee como que ya organiza: ese 3 es solo secuencia funcional.</p>' : '')+
@@ -1955,7 +2002,7 @@ function informeView(s) {
     (finNote ? '<div class="note close"><b>Nota de cierre</b>'+esc(finNote)+'</div>' : '')+
     savedEvalCards(s)+
     '<h2>Los cuatro meses</h2>'+
-    '<ul class="tl"><li class="key"><span class="dot"></span><b>20 jul</b><div>Descripción de inicio<em>'+start+' de 25 · entra en la nota</em></div></li><li><span class="dot"></span><b>25 ago</b><div>Conversación libre<em>1:40 pm</em></div></li><li><span class="dot"></span><b>26 oct</b><div>Conversación libre<em>10:20 am</em></div></li><li class="key"><span class="dot"></span><b>9 nov</b><div>Medición<em>'+(finalRecord(s) ? s.novClose+' de 25 · '+bandOfOral(Number(s.novClose)) : close+' de 25 · '+bandNow)+'</em></div></li>'+(finalRecord(s) ? '<li class="key"><span class="dot"></span><b>'+closeShort(s)+'</b><div>Evaluación final<em>'+close+' de 25 · '+bandNow+'</em></div></li>' : '')+'</ul>'+
+    timeline+
     '<h2>Otra nota, otra escala</h2><div class="other">El promedio de sus materias en el curso es <b>'+(s.prom || '—')+'</b>. Esa cifra no es el '+close+'. El '+close+' de 25 es solo el inglés hablado de esta prueba.</div>'+
     '</article>';
 }
@@ -2068,7 +2115,7 @@ function render() {
     if (bodyEl) { bodyEl.classList.add('solo'); bodyEl.classList.remove('rail'); }
     if (project === 'muni') {
       form.innerHTML = informeOn
-        ? '<article class="informe"><div class="who"><div><h1>Municipalidad COR</h1><p>Reporte</p></div><div class="tools"><button type="button" class="edit" id="informe-back">Volver a la ficha</button></div></div><p class="empty">Aún no hay evaluaciones.</p></article>'
+        ? '<article class="informe"><div class="brandline">'+LOGO+'<b>EVTOOL</b><span class="tag">Informe de inglés</span><div class="share"><button type="button" class="edit" id="informe-back">Volver a la ficha</button></div></div><h1>Municipalidad COR</h1><p class="empty">Aún no hay evaluaciones.</p></article>'
         : '<div class="who"><div><h1>Municipalidad COR</h1></div><div class="tools"><button type="button" class="gen" id="informe">Generar reporte</button></div></div><div class="tabs"><button type="button" class="on">Evaluaciones</button><button type="button">Asignaciones</button><button type="button">Proyecto</button></div><div class="eval-block"><h2>Evaluaciones</h2><p class="empty">Aún no hay evaluaciones.</p></div>';
       putHold();
       return;
@@ -2311,12 +2358,8 @@ function libraryHtml(s) {
     const avance = r.kind === 'avance' || r.kind === 'guardado';
     const oral = oralSumOf(r);
     if (r.kind === 'final') return '<button type="button" class="stu'+(r.id===openId?' on':'')+'" data-rep="'+r.id+'"><b>'+esc('Evaluación final · '+when(r.at))+'</b><em>'+esc(oral != null ? 'Cierre · '+oral+' / 25 · '+bandOfOral(oral) : 'Cierre')+'</em></button>';
-    const title = project === 'kamuk'
-      ? (medicion ? 'Medición · '+when(r.at, true) : oral != null ? 'Medición · 9 nov 2026' : avance ? 'Evaluación · ilustra el avance · '+when(r.at) : (r.prueba ? r.prueba+' · ' : '')+when(r.at))
-      : ((r.prueba ? r.prueba+' · ' : 'Evaluación · ')+when(r.at));
-    const sub = project === 'kamuk'
-      ? (medicion ? ('Inicio · entra en las notas · '+r.total+' / 25') : oral != null ? ('Dónde está · '+oral+' / 25') : avance ? ('Ilustra el avance del 9 de noviembre.'+(r.mean==null?'':' · '+r.mean+' / 8')) : (r.mean==null?'Sin marcas de 1 a 8':r.mean+' / 8'))
-      : (oral != null ? (oral+' / 25') : (r.mean==null?'Sin marcas de 1 a 8':r.mean+' / 8'));
+    const title = medicion ? 'Medición · '+when(r.at, true) : oral != null ? (project === 'kamuk' ? 'Medición · 9 nov 2026' : 'Medición · '+when(r.at, true)) : avance ? 'Evaluación · ilustra el avance · '+when(r.at) : (r.prueba ? r.prueba+' · ' : '')+when(r.at);
+    const sub = medicion ? ('Inicio · entra en las notas · '+r.total+' / 25') : oral != null ? ('Dónde está · '+oral+' / 25') : avance ? ((project === 'kamuk' ? 'Ilustra el avance del 9 de noviembre.' : 'Ilustra el avance · '+when(r.at, true)+'.')+(r.mean==null?'':' · '+r.mean+' / 8')) : (r.mean==null?'Sin marcas de 1 a 8':r.mean+' / 8');
     return '<button type="button" class="stu'+(r.id===openId?' on':'')+'" data-rep="'+r.id+'"><b>'+esc(title)+'</b><em>'+esc(sub)+'</em></button>';
   }).join('');
 }
@@ -2608,10 +2651,7 @@ function medicionView(s, r) {
     '</div>';
 }
 function reportView(s, r) {
-  if (project !== 'kamuk') {
-    return '<div class="rep"><div class="who"><div><h1>'+esc(s.name)+'</h1><p>'+esc(when(r.at))+'</p></div><div class="tools"><button type="button" class="edit" id="back">Volver a la evaluación</button></div></div><div class="sheet">'+savedEvalMarkup(r)+'</div></div>';
-  }
-  if (r.kind === 'medicion') return medicionView(s, r);
+  if (project === 'kamuk' && r.kind === 'medicion') return medicionView(s, r);
   const g = r.grade;
   const hasSheet = g ? g.hasSheet : criteria.some(c => r.scores[c.id] != null);
   const lines = g
@@ -2630,14 +2670,25 @@ function reportView(s, r) {
   const avance = r.kind === 'avance' || r.kind === 'guardado';
   const oral = oralSumOf(r);
   const from = r.startScore != null && r.startScore !== '' ? r.startScore : s.start;
-  const j = journey(s, from);
-  return '<div class="rep"><div class="who"><div><h1>'+esc(s.name)+'</h1><p>'+(r.kind === 'final' ? 'Evaluación final · '+(oral != null ? oral+'/25 · '+bandOfOral(oral)+' · ' : '')+esc(when(r.at)) : oral != null ? 'Evaluación media · '+oral+'/25 · 9 de noviembre' : avance ? 'Evaluación · ilustra el avance del 9 de noviembre · '+esc(when(r.at)) : 'Reporte de desempeño'+(r.prueba ? ' · '+esc(r.prueba) : '')+' · '+esc(when(r.at)))+'</p></div><div class="tools">'+(canEdit?'<button type="button" class="edit" id="edit">Editar</button>':'')+'<button type="button" class="edit" id="back">Volver a la evaluación</button></div></div>'+
-    '<p>'+esc(yearAdvance(j.start, j.now))+'</p>'+
+  const subject = project === 'kamuk' ? s : Object.assign({}, s, { start: oral != null ? oral : s.start, close: oral != null ? oral : s.close });
+  const j = journey(subject, project === 'kamuk' ? from : (oral != null ? oral : from));
+  const stamp = project === 'kamuk' ? '9 de noviembre' : when(r.at);
+  const head = r.kind === 'final'
+    ? 'Evaluación final · '+(oral != null ? oral+'/25 · '+bandOfOral(oral)+' · ' : '')+when(r.at)
+    : oral != null
+      ? 'Evaluación media · '+oral+'/25 · '+stamp
+      : (project === 'kamuk' && avance)
+        ? 'Evaluación · ilustra el avance del 9 de noviembre · '+when(r.at)
+        : 'Reporte de desempeño'+(r.prueba ? ' · '+r.prueba : '')+' · '+when(r.at);
+  const paceLine = project === 'kamuk' ? yearAdvance(j.start, j.now) : (j.now === j.start ? 'El oral se sostuvo en '+j.now+'.' : 'El oral pasó de '+j.start+' a '+j.now+'.');
+  const aheadLine = project === 'kamuk' ? whereWillBe(j.start, j.now, j.toward) : (Number(j.now) >= 24 ? 'Sostuvo el '+j.now+' sobre 25.' : 'El siguiente queda en '+j.toward+' sobre 25.');
+  return '<div class="rep"><div class="who"><div><h1>'+esc(s.name)+'</h1><p>'+esc(head)+'</p></div><div class="tools">'+(canEdit?'<button type="button" class="edit" id="edit">Editar</button>':'')+'<button type="button" class="edit" id="back">Volver a la evaluación</button></div></div>'+
+    '<p>'+esc(paceLine)+'</p>'+
     '<section class="path"><article><span>De dónde viene</span><b>'+j.start+'</b><small>sobre 25</small><p>'+esc('El oral al inicio. '+(g ? g.oral.start : parentLevel(j.start)))+'</p></article>'+
     '<article><span>Dónde está</span><b>'+j.now+'</b><small>sobre 25</small><p>'+esc('El mismo oral, ahora. '+(g ? g.oral.now : parentLevel(j.now)))+'</p></article>'+
-    '<article class="ahead"><span>Dónde estará</span><b>'+(j.now >= 24 ? 'C1' : j.toward)+'</b><small>'+(j.now >= 24 ? 'B2+ se entiende como C1' : (j.toward !== Math.min(25, j.now + (j.gain > 0 ? j.gain : 1)) ? 'proyección' : (j.gain < 0 ? 'siguiente' : 'al mismo ritmo')))+'</small><p class="fine">'+esc(whereWillBe(j.start, j.now, j.toward))+'</p></article></section>'+
-    '<div class="chart">'+inicioAhora(s, { from: j.start, quiet: true })+'</div>'+
-    '<h3>Esta evaluación</h3><div class="result"><div><b>'+(oral != null ? oral : ((g && g.oralSum != null) ? g.oralSum : (hasSheet ? (r.mean==null?'—':r.mean) : s.total)))+'</b><span>'+(oral != null ? (r.kind === 'final' ? 'Evaluación final' : '9 de noviembre')+', sobre 25' : ((g && g.oralSum != null) ? 'KPI de esta evaluación' : (hasSheet ? 'Exposición' : 'Oral de la ficha')))+'</span></div></div>'+
+    '<article class="ahead"><span>Dónde estará</span><b>'+(j.now >= 24 ? 'C1' : j.toward)+'</b><small>'+(j.now >= 24 ? 'B2+ se entiende como C1' : (j.toward !== Math.min(25, j.now + (j.gain > 0 ? j.gain : 1)) ? 'proyección' : (j.gain < 0 ? 'siguiente' : 'al mismo ritmo')))+'</small><p class="fine">'+esc(aheadLine)+'</p></article></section>'+
+    '<div class="chart">'+inicioAhora(subject, { from: j.start, quiet: true })+'</div>'+
+    '<h3>Esta evaluación</h3><div class="result"><div><b>'+(oral != null ? oral : ((g && g.oralSum != null) ? g.oralSum : (hasSheet ? (r.mean==null?'—':r.mean) : s.total)))+'</b><span>'+(oral != null ? (r.kind === 'final' ? 'Evaluación final' : stamp)+', sobre 25' : ((g && g.oralSum != null) ? 'KPI de esta evaluación' : (hasSheet ? 'Exposición' : 'Oral de la ficha')))+'</span></div></div>'+
     (s.prom ? '<p>Promedio de la ficha: '+esc(s.prom)+'.</p>' : '')+
     '<div class="chart">'+(oral != null ? barChart(kpis.map(c => [c.name, Number(r.scores[c.id])]), 5) : ((g && g.kpis && g.kpis.length) ? barChart(g.kpis.map(line => [line.name, Number(String(line.note).split('/')[0])]), 5) : (hasSheet ? bars(r.scores) : oralBars(s))))+'</div>'+
     (g ? '<p>Calificado a partir del score.</p>' : '')+
