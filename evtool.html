@@ -1299,7 +1299,8 @@ function renderList() {
     if (!inProject(s)) return '';
     if (q && (s.name + s.company).toLowerCase().indexOf(q) < 0) return '';
     const prom = s.prom || '—';
-    return '<button class="stu' + (i===current?' on':'') + '" data-i="'+i+'"><b>'+esc(s.name)+'</b><em>'+esc(s.company)+' · '+s.start+(s.close!==s.start?' → '+s.close:'')+'/25 · '+prom+'</em></button>';
+    const oral = s.start == null ? '—' : (s.start+(s.close!=null && s.close!==s.start?' → '+s.close:'')+'/25');
+    return '<button class="stu' + (i===current?' on':'') + '" data-i="'+i+'"><b>'+esc(s.name)+'</b><em>'+esc(s.company)+' · '+oral+' · '+prom+'</em></button>';
   }).join('');
 }
 function pips(id, value, max) {
@@ -1395,9 +1396,14 @@ function julyFive(s) {
   if (!pairs.every(p => p[1] >= 1 && p[1] <= 5)) return null;
   return pairs;
 }
+function plainScore(v) {
+  if (v == null || v === '') return null;
+  const n = Number(v);
+  return isNaN(n) ? null : n;
+}
 function applySavedScores() {
   students.forEach(s => {
-    if (!s._base) s._base = { start: Number(s.start), close: Number(s.close), ideas: s.ideas, estructura: s.estructura, recuperacion: s.recuperacion, resolucion: s.resolucion, respuesta: s.respuesta };
+    if (!s._base) s._base = { start: plainScore(s.start), close: plainScore(s.close), ideas: s.ideas, estructura: s.estructura, recuperacion: s.recuperacion, resolucion: s.resolucion, respuesta: s.respuesta };
     s.start = s._base.start;
     s.close = s._base.close;
     s.ideas = s._base.ideas;
@@ -1450,6 +1456,10 @@ function sameFive(a, b) {
   return a.every((row, i) => row[0] === b[i][0] && Number(row[1]) === Number(b[i][1]));
 }
 function finalView(s) {
+  if (s.start == null) {
+    const cards = (library[s.name] || []).map(savedEvalMarkup).join('');
+    return '<div class="sheet"><div class="sheet-scroll">'+(cards || '<p class="empty">Aún no hay evaluaciones de '+esc(s.name)+'.</p>')+'</div></div>';
+  }
   const pack = recordedFives(s);
   const five = novFive(s);
   const close = Number(s.novClose != null ? s.novClose : s.close);
@@ -1856,6 +1866,10 @@ function analisisDe(s) {
   return [abre, limite, nota ? 'Al entrar: '+nota : '', espera].filter(Boolean).join(' ');
 }
 function informeView(s) {
+  if (s.start == null) {
+    const cards = (library[s.name] || []).map(savedEvalMarkup).join('');
+    return '<article class="informe"><div class="who"><div><h1>'+esc(s.name)+'</h1></div></div>'+(cards || '<p class="empty">Aún no hay evaluaciones de '+esc(s.name)+'.</p>')+'</article>';
+  }
   const first = s.name.split(' ')[0];
   const start = Number(s.start);
   const close = oralNow(s);
@@ -2261,6 +2275,7 @@ const CEFR = [
 ];
 function competenciesView(s, wins) {
   const first = s.name.split(' ')[0];
+  const known = s.start != null || s.close != null;
   const close = Number(s.close);
   const start = Number(s.start);
   const atTop = close >= 25;
@@ -2270,8 +2285,8 @@ function competenciesView(s, wins) {
   const body = CEFR.map(r => {
     const now = r[0] === bandNow;
     const later = r[0] === bandNext;
-    const pins = (now ? '<b class="pin now">Aquí está '+esc(first)+'</b>' : '')+(later ? '<b class="pin later">Aquí estará '+esc(first)+'</b>' : '');
-    const mark = now ? ' class="now"' : later ? ' class="later"' : '';
+    const pins = known ? ((now ? '<b class="pin now">Aquí está '+esc(first)+'</b>' : '')+(later ? '<b class="pin later">Aquí estará '+esc(first)+'</b>' : '')) : '';
+    const mark = known ? (now ? ' class="now"' : later ? ' class="later"' : '') : '';
     return '<tr'+mark+'><td class="lv">'+r[0]+'<span>'+esc(r[1])+'</span>'+pins+'</td><td>'+esc(r[2])+'</td><td>'+esc(r[3])+'</td><td>'+esc(r[4])+'</td><td>'+esc(r[5])+'</td><td>'+esc(r[6])+'</td></tr>';
   }).join('');
   return winOf(s, wins, 'Competencias de inglés · '+s.section)+
@@ -2292,8 +2307,9 @@ function libraryHtml(s) {
     const avance = r.kind === 'avance' || r.kind === 'guardado';
     const oral = oralSumOf(r);
     if (r.kind === 'final') return '<button type="button" class="stu'+(r.id===openId?' on':'')+'" data-rep="'+r.id+'"><b>'+esc('Evaluación final · '+when(r.at))+'</b><em>'+esc(oral != null ? 'Cierre · '+oral+' / 25 · '+bandOfOral(oral) : 'Cierre')+'</em></button>';
-    const title = medicion ? 'Medición · '+when(r.at, true) : oral != null ? 'Medición · 9 nov 2026' : avance ? 'Evaluación · ilustra el avance · '+when(r.at) : (r.prueba ? r.prueba+' · ' : '')+when(r.at);
-    const sub = medicion ? ('Inicio · entra en las notas · '+r.total+' / 25') : oral != null ? ('Dónde está · '+oral+' / 25') : avance ? ('Ilustra el avance del 9 de noviembre.'+(r.mean==null?'':' · '+r.mean+' / 8')) : (r.mean==null?'Sin marcas de 1 a 8':r.mean+' / 8');
+    const cohort = s.start != null;
+    const title = medicion ? 'Medición · '+when(r.at, true) : (oral != null && cohort) ? 'Medición · 9 nov 2026' : avance ? 'Evaluación · '+when(r.at) : (r.prueba ? r.prueba+' · ' : '')+when(r.at);
+    const sub = medicion ? ('Inicio · entra en las notas · '+r.total+' / 25') : (oral != null && cohort) ? ('Dónde está · '+oral+' / 25') : oral != null ? (oral+' / 25') : avance ? (r.mean==null?'Sin marcas de 1 a 8':r.mean+' / 8') : (r.mean==null?'Sin marcas de 1 a 8':r.mean+' / 8');
     return '<button type="button" class="stu'+(r.id===openId?' on':'')+'" data-rep="'+r.id+'"><b>'+esc(title)+'</b><em>'+esc(sub)+'</em></button>';
   }).join('');
 }
@@ -2586,6 +2602,9 @@ function medicionView(s, r) {
 }
 function reportView(s, r) {
   if (r.kind === 'medicion') return medicionView(s, r);
+  if (s.start == null) {
+    return '<div class="rep"><div class="who"><div><h1>'+esc(s.name)+'</h1></div><div class="tools"><button type="button" class="edit" id="back">Volver a la evaluación</button></div></div><div class="sheet">'+savedEvalMarkup(r)+'</div></div>';
+  }
   const g = r.grade;
   const hasSheet = g ? g.hasSheet : criteria.some(c => r.scores[c.id] != null);
   const lines = g
