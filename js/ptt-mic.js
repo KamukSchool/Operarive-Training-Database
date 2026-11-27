@@ -2,6 +2,11 @@
  * Push-to-Talk mic — hold to speak, release to send.
  * Waits for speech recognition to finish before sending (no half words).
  * Auto-restarts recognition while the button is held so long answers are not lost.
+ *
+ * Server STT (MediaRecorder → /alice/stt) is used instead of the browser recognizer when
+ * the recognizer is missing or unreliable: iPhone/iPad (all iOS browsers + home-screen app),
+ * Firefox, in-app browsers, or after the recognizer fails on this device.
+ * opts.stt: 'auto' (default) | 'browser' | 'server'. opts.sttTutor: access scope for /alice/stt.
  */
 var PttMic = (function () {
   'use strict';
@@ -14,6 +19,35 @@ var PttMic = (function () {
   var MAX_RESTART_FAILS = 4;
   var RECOVERABLE_ERRORS = { 'no-speech': 1, network: 1, aborted: 1 };
   var FATAL_ERRORS = { 'not-allowed': 1, 'service-not-allowed': 1, 'audio-capture': 1 };
+  var SWITCH_TO_SERVER_ERRORS = { 'no-sr': 1, 'service-not-allowed': 1, network: 1, 'restart-failed': 1, 'start-failed': 1, 'language-not-supported': 1 };
+
+  var UA = (typeof navigator !== 'undefined' && navigator.userAgent) || '';
+  var IS_IOS = /iP(hone|ad|od)/i.test(UA) || (typeof navigator !== 'undefined' && navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var serverPreferred = false;
+
+  function serverSttCapable() {
+    return !!(
+      typeof navigator !== 'undefined' &&
+      navigator.mediaDevices && navigator.mediaDevices.getUserMedia &&
+      window.MediaRecorder &&
+      typeof infinityFetch === 'function' &&
+      typeof getAuthToken === 'function' && getAuthToken()
+    );
+  }
+
+  function pickRecorderMime() {
+    var list = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus', 'audio/ogg'];
+    if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return '';
+    for (var i = 0; i < list.length; i++) {
+      try { if (MediaRecorder.isTypeSupported(list[i])) return list[i]; } catch (e) {}
+    }
+    return '';
+  }
+
+  function sttLang(lang) {
+    var l = String(lang || 'en-US').toLowerCase();
+    return l.indexOf('es') === 0 ? 'es' : 'en';
+  }
 
   function getInst(btn) {
     if (!btn) return null;
@@ -57,6 +91,10 @@ var PttMic = (function () {
     var lastResults = null;
     var sessionId = 0;
     var restartFails = 0;
+    var downPointerId = null;
+    var micLive = false;
+    var micLiveAt = 0;
+    var pressAt = 0;
     var srSupported = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 
     btn.style.touchAction = 'none';
@@ -66,6 +104,207 @@ var PttMic = (function () {
 
     function ui(listening) {
       if (typeof opts.onUi === 'function') opts.onUi(listening, btn);
+    }
+
+    // ── Server STT path ───────────────────────────────────────
+    var srv = { holding: false, sending: false, rec: null, stream: null, chunks: [], mime: '', sid: 0, timer: null, startedAt: 0 };
+
+    function useServer() {
+      if (opts.stt === 'browser' || !serverSttCapable()) return false;
+      if (opts.stt === 'server') return true;
+      return !srSupported || IS_IOS || serverPreferred;
+    }
+
+    function srvStopTracks() {
+      if (srv.stream) {
+        try { srv.stream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {}
+      }
+      srv.stream = null;
+    }
+
+    function srvKill() {
+      clearTimeout(srv.timer);
+      srv.timer = null;
+      var r = srv.rec;
+      srv.rec = null;
+      if (r) {
+        try {
+          r.ondataavailable = null;
+          r.onstop = null;
+          r.onerror = null;
+          if (r.state !== 'inactive') r.stop();
+        } catch (e) {}
+      }
+      srvStopTracks();
+      srv.chunks = [];
+      if (srv.holding) {
+        srv.holding = false;
+        ui(false);
+      }
+      try { btn.classList.remove('ptt-active'); } catch (e2) {}
+    }
+
+    function srvDone() {
+      srv.sending = false;
+      try { btn.classList.remove('ptt-busy', 'ptt-active'); } catch (e) {}
+      if (typeof opts.onBusy === 'function') opts.onBusy(false);
+    }
+
+    function srvFail(code) {
+      srv.sid++;
+      srvKill();
+      srvDone();
+      ui(false);
+      if (typeof opts.onError === 'function') opts.onError(code);
+    }
+
+    function srvStart() {
+      if (srv.holding || srv.sending) return;
+      srv.holding = true;
+      srv.chunks = [];
+      var sid = ++srv.sid;
+      ui(true);
+      try { btn.classList.add('ptt-active'); } catch (e) {}
+      srvOpenMic(sid, 0);
+    }
+
+    function srvOpenMic(sid, attempt) {
+      if (sid !== srv.sid || !srv.holding) return;
+      navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+      }).then(function (stream) {
+        if (sid !== srv.sid || !srv.holding) {
+          try { stream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {}
+          return;
+        }
+        srv.stream = stream;
+        var mime = pickRecorderMime();
+        var r;
+        try { r = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream); } catch (e2) {
+          srvFail('start-failed');
+          return;
+        }
+        srv.mime = r.mimeType || mime || 'audio/webm';
+        r.ondataavailable = function (ev) { if (ev.data && ev.data.size) srv.chunks.push(ev.data); };
+        r.onerror = function () { if (sid === srv.sid) srvFail('start-failed'); };
+        srv.rec = r;
+        try { r.start(); } catch (e3) {
+          srvFail('start-failed');
+          return;
+        }
+        srv.startedAt = Date.now();
+        var stOpen = document.getElementById(opts.statusId || 'alice-status');
+        if (stOpen) stOpen.textContent = 'Grabando… tocá otra vez para enviar.';
+      }).catch(function (err) {
+        if (sid !== srv.sid || !srv.holding) return;
+        var name = err && err.name;
+        var denied = name === 'NotAllowedError' || name === 'SecurityError';
+        if (!denied && attempt < 3) {
+          clearTimeout(srv.timer);
+          srv.timer = setTimeout(function () { srvOpenMic(sid, attempt + 1); }, 200);
+          return;
+        }
+        srvFail(denied ? 'not-allowed' : 'audio-capture');
+      });
+    }
+
+    function srvStop(send) {
+      if (!srv.holding) return;
+      var r = srv.rec;
+      // Tap or the permission sheet lifts the finger before the recorder exists.
+      if (send && !r) return;
+      var heldMs = r ? (Date.now() - srv.startedAt) : 0;
+      if (send && r && heldMs < 450) {
+        var stEarly = document.getElementById(opts.statusId || 'alice-status');
+        if (stEarly) stEarly.textContent = 'Grabando… tocá otra vez para enviar.';
+        return;
+      }
+      srv.holding = false;
+      clearTimeout(srv.timer);
+      srv.timer = null;
+      ui(false);
+      try { btn.classList.remove('ptt-active'); } catch (e) {}
+      srv.rec = null;
+      if (!r) {
+        srv.sid++;
+        srvStopTracks();
+        return;
+      }
+      if (!send) {
+        try {
+          r.ondataavailable = null;
+          r.onstop = null;
+          if (r.state !== 'inactive') r.stop();
+        } catch (e2) {}
+        srvStopTracks();
+        srv.chunks = [];
+        return;
+      }
+      srv.sending = true;
+      try { btn.classList.add('ptt-busy'); } catch (e3) {}
+      if (typeof opts.onBusy === 'function') opts.onBusy(true);
+      r.onstop = function () {
+        var blob = new Blob(srv.chunks, { type: srv.mime || 'audio/webm' });
+        srv.chunks = [];
+        srvStopTracks();
+        if (!blob.size || (blob.size < 800 && heldMs < 350)) {
+          srvDone();
+          if (typeof opts.onEmpty === 'function') opts.onEmpty();
+          return;
+        }
+        srvUpload(blob);
+      };
+      try {
+        if (r.state !== 'inactive') {
+          try { if (typeof r.requestData === 'function') r.requestData(); } catch (eReq) {}
+          r.stop();
+        }
+        else r.onstop();
+      } catch (e4) {
+        srvFail('start-failed');
+      }
+    }
+
+    function srvUpload(blob) {
+      var fd = new FormData();
+      var m = srv.mime || '';
+      var ext = m.indexOf('mp4') >= 0 ? 'm4a' : (m.indexOf('ogg') >= 0 ? 'ogg' : 'webm');
+      fd.append('audio', blob, 'ptt.' + ext);
+      fd.append('lang', sttLang(typeof opts.lang === 'function' ? opts.lang() : opts.lang));
+      fd.append('tutor', String(opts.sttTutor || 'any'));
+      var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      var to = setTimeout(function () { if (ctrl) ctrl.abort(); }, 30000);
+      infinityFetch('/alice/stt', { method: 'POST', body: fd, signal: ctrl ? ctrl.signal : undefined })
+        .then(function (r) {
+          if (!r.ok) {
+            var e = new Error('stt_' + r.status);
+            e.status = r.status;
+            throw e;
+          }
+          return r.json();
+        })
+        .then(function (j) {
+          clearTimeout(to);
+          srvDone();
+          var text = collapseCommittedText(String((j && j.text) || ''));
+          if (text && typeof opts.normalizeTranscript === 'function') {
+            try {
+              var normed = opts.normalizeTranscript(text);
+              text = normed == null ? '' : String(normed).trim();
+            } catch (eNorm) { /* keep raw */ }
+          }
+          if (text && typeof opts.onSend === 'function') opts.onSend(text);
+          else if (!text && typeof opts.onEmpty === 'function') opts.onEmpty();
+        })
+        .catch(function (err) {
+          clearTimeout(to);
+          srvDone();
+          if (err && err.status === 422) {
+            if (typeof opts.onEmpty === 'function') opts.onEmpty();
+            return;
+          }
+          if (typeof opts.onError === 'function') opts.onError('interrupted');
+        });
     }
 
     function clearRestartTimer() {
@@ -105,6 +344,8 @@ var PttMic = (function () {
     }
 
     function failStartPermanent(code) {
+      var wasHolding = holding;
+      var switchToServer = SWITCH_TO_SERVER_ERRORS[code] && opts.stt !== 'browser' && serverSttCapable();
       clearRestartTimer();
       clearSendTimer();
       clearMaxHold();
@@ -117,6 +358,15 @@ var PttMic = (function () {
       clearStopLockTimer();
       ui(false);
       try { btn.classList.remove('ptt-busy', 'ptt-active'); } catch (e) {}
+      if (switchToServer) {
+        // The browser recognizer is unusable on this device — keep this same hold going on server STT.
+        serverPreferred = true;
+        committed = [];
+        transcript = '';
+        if (wasHolding) { srvStart(); return; }
+        if (typeof opts.onError === 'function') opts.onError('interrupted');
+        return;
+      }
       if (typeof opts.onError === 'function') opts.onError(code || 'start-failed');
     }
 
@@ -266,6 +516,7 @@ var PttMic = (function () {
       killRec(true);
       active = false;
       holding = false;
+      micLive = false;
       stopLock = false;
       restartFails = 0;
       if (cancelSend) wantSend = false;
@@ -282,14 +533,15 @@ var PttMic = (function () {
 
     function scheduleRestart(sid) {
       clearRestartTimer();
+      var delay = Math.min(450, 160 + restartFails * 60);
       restartTimer = setTimeout(function () {
         restartTimer = null;
         if (sid !== sessionId || !shouldKeepListening()) return;
-        if (!spawnRec(sid)) {
+        if (!spawnRec(sid) && shouldKeepListening()) {
           restartFails++;
-          if (restartFails >= MAX_RESTART_FAILS) failStartPermanent('restart-failed');
+          scheduleRestart(sid);
         }
-      }, RESTART_MS);
+      }, delay);
     }
 
     function handleRecFinished(sid) {
@@ -324,6 +576,13 @@ var PttMic = (function () {
       r.lang = (typeof opts.lang === 'function') ? (opts.lang() || 'en-US') : (opts.lang || 'en-US');
       r.interimResults = true;
       r.continuous = true;
+      r.onstart = function () {
+        if (sid !== sessionId) return;
+        micLive = true;
+        micLiveAt = Date.now();
+        var stOpen = document.getElementById(opts.statusId || 'alice-status');
+        if (stOpen) stOpen.textContent = 'Grabando… tocá otra vez para enviar.';
+      };
       r.onresult = function (ev) {
         if (sid !== sessionId) return;
         lastResults = ev;
@@ -336,21 +595,21 @@ var PttMic = (function () {
       r.onerror = function (ev) {
         if (sid !== sessionId) return;
         if (ev && ev.error === 'aborted') return;
-        if (ev && FATAL_ERRORS[ev.error]) {
-          failStartPermanent(ev.error);
+        var code = ev && ev.error;
+        if (code === 'not-allowed') {
+          failStartPermanent('not-allowed');
           return;
         }
-        if (ev && RECOVERABLE_ERRORS[ev.error]) {
+        if (code === 'service-not-allowed') {
+          failStartPermanent('service-not-allowed');
+          return;
+        }
+        // no-speech, network, audio-capture: the finger is still down. Keep the take.
+        if (shouldKeepListening()) {
           handleRecFinished(sid);
           return;
         }
-        if (!shouldKeepListening()) {
-          resetSession(false);
-          return;
-        }
-        restartFails++;
-        if (restartFails >= MAX_RESTART_FAILS) failStartPermanent(ev && ev.error ? ev.error : 'recognition-error');
-        else handleRecFinished(sid);
+        resetSession(false);
       };
       try {
         r.start();
@@ -359,15 +618,7 @@ var PttMic = (function () {
       } catch (err) {
         rec = null;
         active = false;
-        if (shouldKeepListening()) {
-          restartFails++;
-          if (restartFails >= MAX_RESTART_FAILS) {
-            failStartPermanent('start-failed');
-            return false;
-          }
-          scheduleRestart(sid);
-          return false;
-        }
+        if (shouldKeepListening()) return false;
         ui(false);
         if (typeof opts.onError === 'function') opts.onError('start-failed');
         return false;
@@ -375,7 +626,6 @@ var PttMic = (function () {
     }
 
     var maxHoldTimer = null;
-    var MAX_HOLD_MS = Number(opts.maxHoldMs) || 45000;
 
     function clearMaxHold() {
       clearTimeout(maxHoldTimer);
@@ -384,6 +634,12 @@ var PttMic = (function () {
 
     function stop(send) {
       if (!holding && !active && !rec && !wantSend && !sendTimer && !restartTimer && !stopLock) return;
+      // Tap, or the permission sheet, lifts the finger before the mic is open.
+      // Do not throw the take away. The next tap sends.
+      if (send && holding && !stopLock) {
+        if (!micLive && (Date.now() - pressAt) < 1500) return;
+        if (micLive && (Date.now() - micLiveAt) < 450) return;
+      }
       // Second release while finishing STT: force complete instead of ignoring (fixes frozen mic)
       if (send && stopLock) {
         clearRestartTimer();
@@ -394,6 +650,7 @@ var PttMic = (function () {
       }
 
       holding = false;
+      micLive = false;
       clearMaxHold();
 
       if (send) {
@@ -446,6 +703,8 @@ var PttMic = (function () {
 
       sessionId++;
       clearMaxHold();
+      pressAt = Date.now();
+      micLive = false;
       resetSession(true);
       clearSendTimer();
       unlockStop();
@@ -456,11 +715,6 @@ var PttMic = (function () {
       if (typeof opts.onBeforeStart === 'function') opts.onBeforeStart();
 
       var sid = sessionId;
-      maxHoldTimer = setTimeout(function () {
-        if (sid !== sessionId) return;
-        if (holding || active || rec) stop(true);
-      }, MAX_HOLD_MS);
-
       var settle = Number(opts.settleMs) || 0;
       if (settle > 0) {
         setTimeout(function () {
@@ -472,57 +726,92 @@ var PttMic = (function () {
       }
     }
 
+    function endPress(e) {
+      if (downPointerId == null) return;
+      if (e && e.pointerId != null && e.type !== 'touchend' && e.pointerId !== downPointerId) return;
+      if (e && e.type === 'touchend' && e.touches && e.touches.length > 0) return;
+      downPointerId = null;
+      if (srv.holding) { srvStop(true); return; }
+      stop(true);
+    }
+
     function onPointerDown(e) {
       if (e.pointerType === 'mouse' && e.button !== 0) return;
+      if (e.cancelable) e.preventDefault();
+      downPointerId = e.pointerId;
       try { btn.setPointerCapture(e.pointerId); } catch (e2) {}
+      if (useServer()) {
+        if (srv.sending) { downPointerId = null; return; }
+        if (srv.holding && srv.rec && (Date.now() - srv.startedAt) >= 450) {
+          srvStop(true);
+          return;
+        }
+        if (srv.holding) return;
+        if (typeof opts.canStart === 'function' && !opts.canStart()) { downPointerId = null; return; }
+        if (typeof opts.onBeforeStart === 'function') opts.onBeforeStart();
+        srvStart();
+        return;
+      }
+      if (holding && micLive && (Date.now() - micLiveAt) >= 450) {
+        stop(true);
+        return;
+      }
       start(e);
+      if (!holding && !srv.holding) downPointerId = null;
     }
 
     function onPointerUp(e) {
       try { btn.releasePointerCapture(e.pointerId); } catch (e2) {}
-      stop(true);
+      endPress(e);
     }
 
-    function onPointerCancel() {
-      stop(true);
-    }
+    function onWindowPointerUp(e) { endPress(e); }
+    function onWindowTouchEnd(e) { endPress(e); }
 
-    function onLostPointerCapture() {
-      if (holding || active || rec) stop(true);
-    }
+    // Long-press fires pointercancel / lostpointercapture while the finger is still down.
+    // Those must not end PTT. Release is pointerup or touchend only.
 
-    function onPointerLeave(e) {
-      // Touch: only pointerup ends the take — leaving the button must not cut off speech.
-      if (isTouchPointer(e)) return;
-      if (holding && e.pointerType === 'mouse') stop(true);
-    }
+    function blockBrowserHoldGesture(e) { e.preventDefault(); }
 
+    btn.setAttribute('draggable', 'false');
     btn.addEventListener('pointerdown', onPointerDown);
     btn.addEventListener('pointerup', onPointerUp);
-    btn.addEventListener('pointercancel', onPointerCancel);
-    btn.addEventListener('lostpointercapture', onLostPointerCapture);
-    btn.addEventListener('pointerleave', onPointerLeave);
-    btn.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    btn.addEventListener('contextmenu', blockBrowserHoldGesture);
+    btn.addEventListener('dragstart', blockBrowserHoldGesture);
+    document.addEventListener('pointerup', onWindowPointerUp, true);
+    document.addEventListener('touchend', onWindowTouchEnd, true);
 
     var inst = {
-      stop: function (send) { stop(!!send); },
+      stop: function (send) {
+        if (srv.holding) { srvStop(!!send); return; }
+        stop(!!send);
+      },
       reset: function () {
         sessionId++;
+        downPointerId = null;
         clearMaxHold();
         resetSession(true);
         unlockStop();
         sent = false;
-        try { btn.classList.remove('ptt-busy', 'ptt-active'); } catch (eCls) {}
+        if (srv.holding) { srv.sid++; srvKill(); }
+        try { btn.classList.remove('ptt-active'); } catch (eCls) {}
+        if (!srv.sending) {
+          try { btn.classList.remove('ptt-busy'); } catch (eCls1) {}
+        }
       },
       destroy: function () {
         sessionId++;
+        downPointerId = null;
         clearMaxHold();
         resetSession(true);
+        srv.sid++;
+        srvKill();
+        document.removeEventListener('pointerup', onWindowPointerUp, true);
+        document.removeEventListener('touchend', onWindowTouchEnd, true);
         btn.removeEventListener('pointerdown', onPointerDown);
         btn.removeEventListener('pointerup', onPointerUp);
-        btn.removeEventListener('pointercancel', onPointerCancel);
-        btn.removeEventListener('lostpointercapture', onLostPointerCapture);
-        btn.removeEventListener('pointerleave', onPointerLeave);
+        btn.removeEventListener('contextmenu', blockBrowserHoldGesture);
+        btn.removeEventListener('dragstart', blockBrowserHoldGesture);
         delInst(btn);
         btn._pttBound = false;
         try { btn.classList.remove('ptt-busy', 'ptt-active'); } catch (eCls2) {}

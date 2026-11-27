@@ -1,7 +1,10 @@
 <!DOCTYPE html>
-<html lang="es"><!-- kamuk-portal-parity 2026-08-04 twin-of-infinity -->
+<html lang="es"><!-- kamuk-portal-parity 2026-08-04 twin-of-infinity --><!-- nexora-pure 20260910 --><!-- nexora-july02-restore -->
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
 <title>Kamuk Portal del Estudiante</title>
 <meta name="theme-color" content="#2B7EC1">
@@ -9,17 +12,17 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Kamuk Portal">
-<link rel="manifest" href="https://studioinfinitycr.com/manifest-portal.json">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="https://studioinfinitycr.com/icon-192.png?v=20260703" type="image/png">
 <link rel="apple-touch-icon" href="https://studioinfinitycr.com/icon-512.png?v=20260703">
 <link rel="stylesheet" href="https://studioinfinitycr.com/css/pwa-install.css?v=2">
-<script src="https://studioinfinitycr.com/js/site-urls.js"></script>
-<script src="https://studioinfinitycr.com/js/pwa-register.js?v=20260814refresh" defer></script>
+<script src="https://studioinfinitycr.com/js/site-urls.js?v=20260818login"></script>
+<script src="https://studioinfinitycr.com/js/pwa-register.js?v=20260910nexora" defer></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 <link rel="stylesheet" href="https://studioinfinitycr.com/css/daily-inspiration.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://studioinfinitycr.com/js/live-kpi-charts.js?v=20260814refresh"></script>
-<script src="https://studioinfinitycr.com/infinity-auth.js?v=20260814refresh"></script>
+<script src="https://studioinfinitycr.com/infinity-auth.js?v=20260818login"></script>
 <script src="https://studioinfinitycr.com/nexora-profile.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/nexora-voice-lock.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/nexora-characters.js"></script>
@@ -45,6 +48,7 @@
 <script src="https://studioinfinitycr.com/js/claire-toeic-board.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/jill-calibration.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/jill-foundations.js?v=20260814refresh"></script>
+<script src="../js/jill-tutor-path.js?v=20260825path1"></script>
 <script src="https://studioinfinitycr.com/js/trainer-drill-engine.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/jill-f0-gate.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/jill-structure-drill.js?v=20260814refresh"></script>
@@ -58,9 +62,10 @@
 <script src="https://studioinfinitycr.com/js/jill-foundations-modules.js?v=20260814refresh"></script>
 <script src="games/_shared/infinity-arcade-run.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/jill-quiz.js?v=20260814refresh"></script>
-<script src="https://studioinfinitycr.com/js/tts-chunks.js?v=20260814refresh"></script>
+<script src="https://studioinfinitycr.com/js/tts-chunks.js?v=20260904stable"></script>
 <script src="https://studioinfinitycr.com/js/nexora-stream-voice.js?v=20260814refresh"></script>
-<script src="https://studioinfinitycr.com/js/ptt-mic.js?v=20260814refresh"></script>
+<script src="js/ptt-mic.js?v=20261127mic"></script>
+<script src="js/alice-stable-mic.js?v=20261127mic"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -103,6 +108,9 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
 .btn-navy{background:var(--navy);color:white;}
 .btn-outline{background:white;color:var(--t2);border:1px solid var(--border);}
 .btn-block{width:100%;justify-content:center;}
+.login-form{display:flex;flex-direction:column;gap:0;}
+.login-form .inp{font-size:16px;min-height:48px;}
+.btn-login{min-height:48px;width:100%;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
 .btn:hover{opacity:0.9;}
 .nav-short{display:none;}
 .btn-login.is-loading{pointer-events:none;cursor:wait;opacity:0.95;animation:loginPulse 1.1s ease-in-out infinite;}
@@ -627,6 +635,34 @@ html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
 .inf-action-soft .inf-action-title{color:var(--navy);}
 .inf-action-soft .inf-action-sub{color:var(--t2);opacity:1;}
 .inf-persona-stack{display:flex;flex-direction:column;gap:10px;}
+.kh-lib{font-family:inherit;}
+.kh-lib-lead{font-size:12px;line-height:1.55;color:var(--t2);margin:0 0 12px;}
+.kh-lib-search{width:100%;min-height:48px;font-size:16px;padding:12px 14px;border:1.5px solid var(--border);border-radius:12px;font-family:inherit;margin-bottom:10px;-webkit-appearance:none;appearance:none;}
+.kh-lib-search:focus{outline:none;border-color:var(--navy);}
+.kh-lib-cats{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;margin-bottom:10px;scrollbar-width:none;}
+.kh-lib-cats::-webkit-scrollbar{display:none;}
+.kh-lib-cat{flex:0 0 auto;min-height:44px;padding:10px 14px;border-radius:999px;border:1px solid var(--border);background:#fff;color:var(--t2);font:700 12px/1 inherit;cursor:pointer;touch-action:manipulation;}
+.kh-lib-cat.is-on{background:var(--navy);border-color:var(--navy);color:#fff;}
+.kh-lib-count{font-size:11px;color:var(--t3);margin:0 0 8px;}
+.kh-lib-chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px;max-height:220px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.kh-lib-chip{min-height:52px;text-align:left;padding:10px 12px;border-radius:14px;border:1px solid var(--border);background:#fff;cursor:pointer;touch-action:manipulation;font:inherit;}
+.kh-lib-chip b{display:block;font-size:13px;color:var(--navy);line-height:1.25;}
+.kh-lib-chip small{display:block;margin-top:3px;font-size:11px;color:var(--t2);font-weight:600;}
+.kh-lib-chip.is-on{border-color:var(--navy);box-shadow:0 0 0 2px rgba(43,126,193,.25);background:var(--nl);}
+.kh-lib-panel{margin-top:10px;min-height:132px;border-radius:14px;background:var(--nl);border:1px solid var(--border);padding:14px;}
+.kh-lib-panel h4{margin:0 0 4px;font-size:16px;color:var(--navy);}
+.kh-lib-es{font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px;}
+.kh-lib-how{font-size:13px;line-height:1.55;color:var(--text);margin:0 0 8px;}
+.kh-lib-forms{margin:0 0 10px;}
+.kh-lib-forms b{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:4px;}
+.kh-lib-ex{margin:0;padding-left:18px;font-size:12px;line-height:1.55;color:var(--nd);}
+.kh-lib-empty{font-size:13px;color:var(--t2);margin:0;}
+.kh-read-grid{display:grid;grid-template-columns:1fr;gap:8px;max-height:320px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+@media(min-width:520px){.kh-read-grid{grid-template-columns:1fr 1fr;}}
+.kh-read-card{display:flex;flex-direction:column;gap:4px;min-height:88px;padding:12px 14px;border-radius:14px;border:1px solid var(--border);background:#fff;text-decoration:none;color:inherit;touch-action:manipulation;}
+.kh-read-card strong{font-size:13px;color:var(--navy);}
+.kh-read-card span{font-size:12px;line-height:1.45;color:var(--t2);}
+.kh-read-go{margin-top:auto;font-size:12px;font-weight:800;color:var(--navy);}
 /* Typing Lab — pantalla completa */
 .tt-fs{position:fixed;inset:0;z-index:2380;display:none;flex-direction:column;background:linear-gradient(165deg,#1A5A8F 0%,#2B7EC1 42%,#0F3A5C 100%);color:#fff;box-sizing:border-box;height:100%;height:100dvh;max-height:100dvh;overflow:hidden;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 .tt-fs.is-open{display:flex;}
@@ -839,12 +875,14 @@ body.inf-arcade-fs-lock,body.inf-arcade-lobby-lock{overflow:hidden;}
       <img class="login-logo" id="login-logo" src="https://studioinfinitycr.com/assets/logos/infinity-studio-cr.png?v=20260703" alt="Kamuk School">
       <div class="login-title">Portal del Estudiante</div>
       <div class="login-sub">Kamuk School · Tu Training Book, KPIs, horario y progreso, sincronizados en tiempo real.</div>
-      <input class="inp" id="l-user" placeholder="Usuario" autocomplete="username">
-      <input class="inp" id="l-pass" placeholder="Contraseña" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
-      <button type="button" class="btn btn-navy btn-block btn-login" id="btn-login" onclick="doLogin()"><i class="ti ti-login"></i>Ingresar</button>
-      <button type="button" class="btn btn-outline btn-block" style="margin-top:10px;border-color:var(--nm);color:var(--navy);" onclick="infinityPwaInstall()"><i class="ti ti-device-mobile"></i>Instalar app en el celular</button>
+      <form id="login-form" class="login-form" action="#" method="post" autocomplete="on">
+      <input class="inp" id="l-user" name="username" type="text" placeholder="Usuario" inputmode="email" autocapitalize="none" autocorrect="off" autocomplete="username" spellcheck="false" enterkeyhint="next">
+      <input class="inp" id="l-pass" name="password" placeholder="Contraseña" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="go">
+      <button type="submit" class="btn btn-navy btn-block btn-login" id="btn-login"><i class="ti ti-login"></i>Ingresar</button>
+      </form>
+      <button type="button" class="btn btn-outline btn-block" style="margin-top:10px;border-color:var(--nm);color:var(--navy);min-height:44px;" onclick="infinityPwaInstall()"><i class="ti ti-device-mobile"></i>Instalar app en el dispositivo</button>
       <div id="login-err" style="font-size:12px;color:var(--rm);margin-top:0.75rem;display:none;"></div>
-      <div style="font-size:11px;color:var(--t3);margin-top:1rem;">¿No tenés credenciales? Pedíselas a tu trainer.</div>
+      <div style="font-size:11px;color:var(--t3);margin-top:1rem;">¿No tenés credenciales? Pedíselas a tu trainer. URL oficial: studioinfinitycr.com/kamuk/</div>
     </div>
   </div>
 </div>
@@ -864,7 +902,7 @@ body.inf-arcade-fs-lock,body.inf-arcade-lobby-lock{overflow:hidden;}
   <div class="portal-nav-item active" data-tab="progreso" onclick="switchPortalTab('progreso')"><i class="ti ti-chart-radar"></i><span class="nav-full">Progreso</span><span class="nav-short">Prog.</span></div>
   <div class="portal-nav-item" data-tab="trainingbook" onclick="switchPortalTab('trainingbook')"><i class="ti ti-dumbbell"></i><span class="nav-full">Training Book</span><span class="nav-short">Book</span></div>
   <div class="portal-nav-item" data-tab="recursos" onclick="switchPortalTab('recursos')"><i class="ti ti-folder"></i>Recursos</div>
-  <div class="portal-nav-item" data-tab="notas" onclick="switchPortalTab('notas')"><i class="ti ti-notes"></i>Notas</div>
+  <div class="portal-nav-item" data-tab="simulation" onclick="switchPortalTab('simulation');setTimeout(function(){ mountKamukSimulation(); renderSimulationNexoraPanel(window._currentStudent||CURRENT_STUDENT); },0)"><i class="ti ti-headset"></i>Simulation</div>
   <div class="portal-nav-item" data-tab="news" onclick="switchPortalTab('news')"><i class="ti ti-news"></i>News</div>
   <div class="portal-nav-item" data-tab="jill" id="nav-jill" style="display:none;" onclick="switchPortalTab('jill')"><i class="ti ti-message-circle"></i>Jill</div>
   <div class="portal-nav-item" data-tab="alice" id="nav-alice" style="display:none;" onclick="switchPortalTab('alice')"><i class="ti ti-robot"></i>Alice</div>
@@ -881,16 +919,16 @@ body.inf-arcade-fs-lock,body.inf-arcade-lobby-lock{overflow:hidden;}
 <div class="toast" id="toast"></div>
 
 <div id="pwa-install-bar" class="pwa-install-bar" hidden>
-  <span class="pwa-install-msg">Instalá el Portal en tu celular</span>
+  <span class="pwa-install-msg">Instalá el Portal en tu dispositivo</span>
   <button type="button" class="pwa-install-btn" onclick="infinityPwaInstall()">Instalar</button>
   <button type="button" class="pwa-dismiss-btn" onclick="document.getElementById('pwa-install-bar').hidden=true" aria-label="Cerrar">×</button>
 </div>
 
 <div id="pwa-ios-help" class="pwa-ios-help" hidden>
   <div class="pwa-ios-help-card">
-    <h3><i class="ti ti-brand-apple"></i> Instalar en iPhone</h3>
+    <h3><i class="ti ti-brand-apple"></i> Instalar en iPhone / iPad</h3>
     <ol>
-      <li>Asegurate de estar en <strong>Safari</strong> (no Chrome).</li>
+      <li>Asegurate de estar en <strong>Safari</strong> en <strong>studioinfinitycr.com/kamuk/</strong>.</li>
       <li>Tocá <strong>Compartir</strong> (cuadrado con flecha hacia arriba).</li>
       <li>Elegí <strong>Agregar a pantalla de inicio</strong> → <strong>Agregar</strong>.</li>
     </ol>
@@ -920,42 +958,75 @@ var EXERCISES = {
 };
 
 async function dbGet(table){
-  const r=await fetch(SUPA_URL+'/rest/v1/'+table+'?select=id,data',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+  var r;
+  try {
+    r=await fetch(SUPA_URL+'/rest/v1/'+table+'?select=id,data',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+  } catch(e) {
+    var nerr = new Error('dbGet network');
+    nerr.status = 0;
+    nerr.network = true;
+    throw nerr;
+  }
   if(!r.ok){ console.error('dbGet '+table+' failed: '+r.status); return []; }
   const data = await r.json();
   return Array.isArray(data) ? data : [];
 }
 async function dbQuery(pathAndQuery){
-  const r=await fetch(SUPA_URL+'/rest/v1/'+pathAndQuery,{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+  var r;
+  try {
+    r=await fetch(SUPA_URL+'/rest/v1/'+pathAndQuery,{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+  } catch(e) {
+    var nerr = new Error('dbQuery network');
+    nerr.status = 0;
+    nerr.network = true;
+    throw nerr;
+  }
   if(!r.ok){ console.error('dbQuery failed: '+r.status); return []; }
   const data = await r.json();
   return Array.isArray(data) ? data : [];
+}
+function normalizePortalUser(value){
+  return String(value || '').replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\u00a0/g, ' ').trim().toLowerCase();
+}
+function normalizePortalPass(value){
+  return String(value == null ? '' : value).replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\u00a0/g, ' ');
+}
+function portalPassMatches(stored, password){
+  var got = normalizePortalPass(password);
+  var gotTrim = got.trim();
+  var want = String(stored == null ? '' : stored);
+  return want === got || want === gotTrim || want.trim() === gotTrim;
 }
 async function dbGetStudentRow(sid){
   if(!sid) return null;
   var rows = await dbQuery('kamuk_students?id=eq.'+encodeURIComponent(sid)+'&select=id,data&limit=1');
   return rows[0] || null;
 }
-async function dbFindStudentByPortalLogin(user, pass){
-  var login = String(user || '').trim().toLowerCase();
-  var password = String(pass == null ? '' : pass);
-  var passwordTrim = password.trim();
-  if(!login || !passwordTrim) return null;
-  var rows = await dbQuery('kamuk_students?select=id,data&data->>portalUser=ilike.'+encodeURIComponent(login)+'&limit=5');
-  if(!rows.length){
-    // Fallback exact lowercase (older rows / filters)
-    rows = await dbQuery('kamuk_students?select=id,data&data->>portalUser=eq.'+encodeURIComponent(login)+'&limit=5');
-  }
-  for(var i=0;i<rows.length;i++){
+function pickPortalStudentRow(rows, login, password){
+  for(var i=0;i<(rows||[]).length;i++){
     var r = rows[i];
-    if(!r.data) continue;
-    var stored = String(r.data.portalPass == null ? '' : r.data.portalPass);
-    if(stored === password || stored === passwordTrim){
+    if(!r || !r.data) continue;
+    if(normalizePortalUser(r.data.portalUser) !== login) continue;
+    if(portalPassMatches(r.data.portalPass, password)){
       r.data.id = r.id;
       return r.data;
     }
   }
   return null;
+}
+async function dbFindStudentByPortalLogin(user, pass){
+  var login = normalizePortalUser(user);
+  var password = normalizePortalPass(pass);
+  var passwordTrim = password.trim();
+  if(!login || !passwordTrim) return null;
+  var enc = encodeURIComponent(login);
+  var rows = await dbQuery('kamuk_students?select=id,data&data->>portalUser=eq.'+enc+'&limit=10');
+  var hit = pickPortalStudentRow(rows, login, password);
+  if(hit) return hit;
+  rows = await dbQuery('kamuk_students?select=id,data&data->>portalUser=ilike.'+enc+'&limit=10');
+  hit = pickPortalStudentRow(rows, login, password);
+  if(hit) return hit;
+  return pickPortalStudentRow(await dbGet('kamuk_students'), login, password);
 }
 async function dbSet(table,id,data){
   const r=await fetch(SUPA_URL+'/rest/v1/'+table,{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},body:JSON.stringify({id,data,updated_at:new Date().toISOString()})});
@@ -1021,21 +1092,46 @@ function setLoginLoading(on){
   if(p) p.disabled = !!on;
 }
 
-async function doLogin(){
-  var user = document.getElementById('l-user').value.trim().toLowerCase();
-  var pass = String(document.getElementById('l-pass').value || '').trim();
+function readLoginFields(){
+  var u = document.getElementById('l-user');
+  var p = document.getElementById('l-pass');
+  return {
+    user: normalizePortalUser(u && u.value),
+    pass: normalizePortalPass(p && p.value).trim()
+  };
+}
+
+async function doLogin(ev){
+  if(ev && ev.preventDefault) ev.preventDefault();
   var err = document.getElementById('login-err');
+  if(!err) return;
+  await new Promise(function(resolve){
+    requestAnimationFrame(function(){ setTimeout(resolve, 60); });
+  });
+  var fields = readLoginFields();
+  var user = fields.user;
+  var pass = fields.pass;
   if(!user || !pass){ err.textContent='Ingresá tu usuario y contraseña.'; err.style.display='block'; return; }
 
   err.style.display='none';
   setLoginLoading(true);
 
   try{
-    // 1) Auth server first (source of truth) — avoids false "incorrecto" if Supabase filter fails in browser
+    if(typeof infinityLogin !== 'function'){
+      err.textContent='El módulo de acceso no cargó. Recargá Safari en studioinfinitycr.com/kamuk/';
+      err.style.display='block';
+      setLoginLoading(false);
+      return;
+    }
+
     var loginData = null;
+    var loginErr = null;
     try {
       loginData = await infinityLogin(user, pass, 'student', { silent: true, product: 'kamuk' });
-    } catch(e) { loginData = null; }
+    } catch(e) {
+      loginErr = e;
+      loginData = null;
+    }
 
     var student = null;
     if(loginData && loginData.studentId){
@@ -1046,11 +1142,19 @@ async function doLogin(){
       }
     }
     if(!student){
-      student = await dbFindStudentByPortalLogin(user, pass);
+      try {
+        student = await dbFindStudentByPortalLogin(user, pass);
+      } catch(e) {
+        loginErr = loginErr || e;
+        student = null;
+      }
     }
 
     if(!student){
-      err.textContent='Usuario o contraseña incorrectos. Revisá mayúsculas/minúsculas y caracteres especiales (!).';
+      var netFail = loginErr && (loginErr.network || loginErr.status === 0 || (loginErr.status && loginErr.status >= 500));
+      err.textContent = netFail
+        ? 'No se pudo verificar el acceso (red o servidor). No es la contraseña — esperá 10s e intentá de nuevo.'
+        : 'Usuario o contraseña incorrectos. Usá minúsculas (ej. nombre.apellido) y la URL studioinfinitycr.com/kamuk/';
       err.style.display='block';
       setLoginLoading(false);
       return;
@@ -1070,10 +1174,7 @@ async function doLogin(){
       }
     } catch(e) { /* handled below */ }
     if(!getAuthToken()){
-      err.textContent = 'Credenciales OK, pero el servidor de voz no respondió. Esperá 10s e intentá de nuevo.';
-      err.style.display = 'block';
-      setLoginLoading(false);
-      return;
+      showToast('Entraste al portal. Alice/Jill pueden pedir reintento de voz en un minuto.','err');
     }
     warmInfinityApi();
 
@@ -1100,12 +1201,22 @@ async function doLogin(){
 
     showPortal(student);
     maybeShowPortalTermsGate(student);
+    setLoginLoading(false);
   }catch(e){
     err.textContent='Error de conexión. Intentá de nuevo.';
     err.style.display='block';
     setLoginLoading(false);
   }
 }
+
+(function bindKamukLoginForm(){
+  var form = document.getElementById('login-form');
+  if(!form) return;
+  form.addEventListener('submit', function(ev){
+    ev.preventDefault();
+    doLogin(ev);
+  });
+})();
 
 function switchPortalTab(tab){
   var s = CURRENT_STUDENT || window._currentStudent || window._portalStudent;
@@ -1331,6 +1442,8 @@ function applyServerStudentFlags(d){
   else if(d.companionEnabled == null) CURRENT_STUDENT.companionEnabled = true;
   if(typeof d.aliceEnabled !== 'boolean' && d.aliceEnabled == null) CURRENT_STUDENT.aliceEnabled = true;
   if(typeof d.jillEnabled !== 'boolean' && d.jillEnabled == null) CURRENT_STUDENT.jillEnabled = false;
+  if(typeof d.simulationEnabled === 'boolean') CURRENT_STUDENT.simulationEnabled = d.simulationEnabled;
+  else if(d.simulationEnabled == null) CURRENT_STUDENT.simulationEnabled = true;
   window._currentStudent = CURRENT_STUDENT;
   window._portalStudent = CURRENT_STUDENT;
 }
@@ -1424,7 +1537,6 @@ function showPortal(s){
     +'<div class="chart-wrap chart-interactive" style="height:180px;"><canvas id="portal-macro-bar"></canvas></div></div>'
     +'<div id="portal-kpi-detail" class="kpi-detail-panel">Tocá un KPI, barra o punto del timeline para ver el detalle.</div>';
 
-  var notes=(s.notes||[]).slice(-3).reverse();
   var cals=(s.calibrations||[]).slice(-5);
   var tb=(s.trainingBook||[]).slice().reverse();
   var hasTimeline = (cals.length >= 2)
@@ -1457,24 +1569,18 @@ function showPortal(s){
         +'</div>';
     })();
 
-  // ── TRAINING BOOK ─────────────────────────────────────
-  var trainingBookHtml = '<div class="card"><div class="card-title"><i class="ti ti-dumbbell"></i>Mi Training Book</div>'
-    +(tb.length ? tb.map(function(ex){
-        return '<div style="border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px;overflow:hidden;">'
-          +'<div style="background:var(--navy);padding:8px 12px;display:flex;align-items:center;gap:8px;">'
-          +(ex.kpi?'<span class="badge" style="background:rgba(255,255,255,0.2);color:white;">'+ex.kpi+'</span>':'')
-          +'<span style="font-size:13px;font-weight:700;color:white;flex:1;">'+ex.title+'</span>'
-          +'</div>'
-          +'<div style="padding:10px 12px;">'
-          +'<div style="font-size:13px;color:var(--text);line-height:1.7;">'+(ex.studentTask || 'Tu trainer te va a explicar la dinámica de este ejercicio en la próxima sesión.')+'</div>'
-          +(ex.freq?'<div style="font-size:11px;color:var(--t3);margin-top:6px;"><i class="ti ti-repeat"></i> '+ex.freq+'</div>':'')
-          +'</div></div>';
-      }).join('')
-      : (exercises.length?exercises.map(function(ex){ return '<div style="background:var(--gray);border-radius:var(--r);padding:1rem;margin-bottom:8px;">'
-          +'<div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px;">'+ex.title+'</div>'
-          +'<div style="font-size:12px;color:var(--t2);margin-bottom:6px;">'+ex.kpi+'</div>'
-          +'<div style="font-size:12px;color:var(--text);line-height:1.6;">'+((ex.steps&&ex.steps.length)?ex.steps.slice(0,2).join(' '):'Tu trainer te va a explicar la dinámica de este ejercicio en la próxima sesión.')+'</div></div>'; }).join('')
-        :'<div style="font-size:13px;color:var(--t3);">Tu trainer todavía no asignó ejercicios.</div>'))
+  // ── TRAINING BOOK (interactive glossary primary; PDF secondary) ──
+  var trainingBookHtml = ''
+    +'<div class="card" style="padding:0;overflow:hidden;">'
+    +'<div class="card-title" style="padding:12px 14px 8px;margin:0;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">'
+    +'<span><i class="ti ti-book-2"></i> Kamuk Holdings — glosario de nesting</span>'
+    +'<span style="display:flex;gap:8px;flex-wrap:wrap;">'
+    +'<a href="training-book/mac/machote-curso.pdf" target="_blank" rel="noopener" class="btn btn-outline btn-sm" style="text-decoration:none;"><i class="ti ti-file-type-pdf"></i> PDF</a>'
+    +'<a href="training-book/glosario/index.html" target="_blank" rel="noopener" class="btn btn-navy btn-sm" style="text-decoration:none;"><i class="ti ti-external-link"></i> Pantalla completa</a>'
+    +'</span>'
+    +'</div>'
+    +'<p style="font-size:12px;color:var(--t2);line-height:1.5;margin:0 14px 10px;">Buscá Encabezado, AMR, however o PIN. Chips Email / Phone / Método / Expresiones / Conectores / Phrasals. El PDF del manual es referencia secundaria.</p>'
+    +'<iframe title="Kamuk Holdings — glosario de nesting" src="training-book/glosario/index.html?v=20260827nest" style="width:100%;height:min(78vh,820px);border:0;display:block;background:#EAF3FB;"></iframe>'
     +'</div>';
 
   // ── RECURSOS ──────────────────────────────────────────
@@ -1489,14 +1595,11 @@ function showPortal(s){
       + '</div>'
     : '<div style="font-size:13px;color:var(--t3);">Activá Jill, Modo Libre o Alice para entrar al Arcade.</div>';
   var recursosHtml = '<div class="card"><div class="card-title"><i class="ti ti-book"></i>Lectura — Jill + leer</div>'
-    +'<div style="font-size:12px;color:var(--t2);line-height:1.65;margin-bottom:10px;">Después de practicar con Jill, leé <strong>5–10 min</strong> en voz baja o alta. Anotá palabras nuevas en tu cuaderno — entran a tu vocab activo.</div>'
-    +'<div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">'
-    +'<a href="https://www.bbc.co.uk/learningenglish/english/features/news-review" target="_blank" rel="noopener" style="color:var(--navy);font-weight:600;">BBC Learning English — News Review</a>'
-    +'<a href="https://learningenglish.voanews.com/" target="_blank" rel="noopener" style="color:var(--navy);font-weight:600;">VOA Learning English</a>'
-    +'<a href="https://www.newsinlevels.com/" target="_blank" rel="noopener" style="color:var(--navy);font-weight:600;">News in Levels</a>'
-    +'<a href="https://learnenglish.britishcouncil.org/skills/reading" target="_blank" rel="noopener" style="color:var(--navy);font-weight:600;">British Council — Reading</a>'
-    +'<a href="https://www.nacion.com/el-mundo/" target="_blank" rel="noopener" style="color:var(--navy);font-weight:600;">La Nación — resumí titular en inglés (PR/PC)</a>'
-    +'</div>'+vocabCard+'</div>'
+    +'<div id="kamuk-readings-root"></div>'+vocabCard+'</div>'
+
+    +'<div class="card"><div class="card-title"><i class="ti ti-certificate"></i> E-learning modules</div>'
+    +'<p style="font-size:12px;color:var(--t2);line-height:1.55;margin:0 0 10px;">Cada módulo: <strong>Training</strong> → <strong>Mini quiz</strong> → <strong>Certification</strong> (80%). Incluye Email composition training y el examen final.</p>'
+    +'<div id="kamuk-elearn-root"></div></div>'
 
     +'<div class="inf-skill">'
     +'<h3><i class="ti ti-keyboard"></i> Typing Lab</h3>'
@@ -1511,18 +1614,36 @@ function showPortal(s){
     +(lastTt?'<div class="inf-skill-meta">Último: '+lastTt.wpm+' WPM · '+lastTt.accuracy+'% · Coord '+lastTt.coordination+(lastTt.persona?' · '+lastTt.persona:'')+(lastTt.mode==='transcription'?' · audio':'')+' · '+fmtDate(lastTt.date)+'</div>':'')
     +'</div>'
 
+    +'<div class="inf-skill" style="background:linear-gradient(165deg,#F0F9FF,#fff);">'
+    +'<h3><i class="ti ti-grid-dots"></i> Word Lab</h3>'
+    +'<p class="inf-skill-lead">Crucigramas, sopas y Find the Word — toggle niveles, 14+ palabras, rachas y premios XP/coins. Ronda aleatoria incluida.</p>'
+    +'<button type="button" class="inf-action" onclick="openWordPuzzleLab()" style="width:100%;">'
+    +'<span class="inf-action-kicker">3 modos · 8 categorías · 14+ palabras</span>'
+    +'<span class="inf-action-title"><i class="ti ti-search"></i> Abrir Word Lab</span>'
+    +'<span class="inf-action-sub">Glosario · trainer-drills · Jill modules</span>'
+    +'</button>'
+    +'</div>'
+
+    +'<div class="inf-skill" style="background:linear-gradient(165deg,#3a0a0a 0%,#2B1055 55%,#0F3A5C 100%);border:1px solid rgba(239,68,68,.4);">'
+    +'<h3 style="color:#FFD700;"><i class="ti ti-flame"></i> Topic Duel — Concurso de Grupos</h3>'
+    +'<p class="inf-skill-lead" style="color:rgba(255,255,255,.82);">Reciben pregunta → investigan en web → analizan → <strong>todos exponen</strong> en inglés → el otro grupo pregunta. Premio en juego.</p>'
+    +'<a href="games/topic-duel/index.html?v=20260901" target="_blank" rel="noopener" style="display:block;width:100%;text-align:center;text-decoration:none;margin-top:10px;padding:14px 16px;border-radius:14px;font-weight:900;font-size:15px;color:#fff;background:linear-gradient(135deg,#ef4444,#F5A623);box-shadow:0 8px 22px rgba(239,68,68,.35);">'
+    +'<i class="ti ti-trophy"></i> Abrir Topic Duel</a>'
+    +'</div>'
+
     +'<div class="inf-skill" style="background:linear-gradient(165deg,#E8F4FC,#fff);">'
     +'<h3><i class="ti ti-cards"></i> Infinity Hub</h3>'
     +'<p class="inf-skill-lead">Hub gaming con personajes: Boss Call, STAR Arena, Speed Listen y más — paleta Infinity, LINK · IDEA · LINK.</p>'
     + arcadeGate
     +'</div>';
 
-  // ── NOTAS DE SESIÓN ───────────────────────────────────
-  var notasHtml = '<div class="card"><div class="card-title"><i class="ti ti-notes"></i>Notas de sesión</div>'
-    +(notes.length? notes.map(function(n){ return '<div style="background:var(--gray);border-radius:var(--r);padding:0.875rem;margin-bottom:8px;">'
-        +'<div style="font-size:11px;color:var(--t3);margin-bottom:4px;">'+fmtDate(n.date)+'</div>'
-        +'<div style="font-size:13px;line-height:1.6;">'+n.text+'</div></div>'; }).join('')
-      :'<div style="font-size:13px;color:var(--t3);">Todavía no hay notas de sesión.</div>')
+  // ── SIMULATION — Foundation + Nexora (trainer-gated) ───────────────
+  var simulationHtml = ''
+    +'<div id="simulation-onboarding-root"></div>'
+    +'<div id="simulation-nexora-panel" class="card" style="margin-top:16px;">'
+    +'<div class="card-title"><i class="ti ti-sparkles"></i> Nexora</div>'
+    +'<p style="font-size:13px;line-height:1.55;color:var(--t2);margin:0 0 12px;">Motor clásico de simulación (CRM lab + llamadas). <strong>No es</strong> Infinity Holdings. Sin score semanal.</p>'
+    +'<div id="simulation-nexora-body"></div>'
     +'</div>';
 
   var newsHtml = '<div class="card"><div class="card-title"><i class="ti ti-news"></i>News — Kamuk</div>'
@@ -1539,7 +1660,7 @@ function showPortal(s){
     +'<div class="tab-pane active" id="tp-progreso">'+progresoHtml+'</div>'
     +'<div class="tab-pane" id="tp-trainingbook">'+trainingBookHtml+'</div>'
     +'<div class="tab-pane" id="tp-recursos">'+recursosHtml+'</div>'
-    +'<div class="tab-pane" id="tp-notas">'+notasHtml+'</div>'
+    +'<div class="tab-pane" id="tp-simulation">'+simulationHtml+'</div>'
     +'<div class="tab-pane" id="tp-news">'+newsHtml+'</div>'
     +'<div class="tab-pane" id="tp-jill"><div id="jill-root"></div></div>'
     +'<div class="tab-pane" id="tp-alice"><div id="alice-root"></div></div>'
@@ -1548,7 +1669,7 @@ function showPortal(s){
     +'<div style="background:linear-gradient(135deg,#0a0a0f,#1a1a28);border-radius:12px;padding:1.5rem;color:white;border:1px solid rgba(245,166,35,0.2);">'
     +'<div style="font-size:10px;letter-spacing:0.2em;color:#F5A623;margin-bottom:4px;font-weight:800;">STUDIO INFINITY CR</div>'
     +'<div style="font-size:28px;font-weight:900;color:#79B9E8;letter-spacing:0.05em;">NEXORA</div>'
-    +'<div style="font-size:12px;color:rgba(255,255,255,0.88);margin-bottom:1rem;">Operational English Simulation Lab</div>'
+    +'<div style="font-size:12px;color:rgba(255,255,255,0.88);margin-bottom:1rem;">Operational Simulation Lab</div>'
     +'</div>'
     +'<div id="nexora-scenario-display" style="margin-top:1rem;"></div>'
     +'</div></div>'
@@ -1556,7 +1677,21 @@ function showPortal(s){
 
   document.getElementById('portal-content').innerHTML = html;
   switchPortalTab(opts.tab || 'progreso');
+  if(window.KamukRecursosLibrary){
+    window.KamukRecursosLibrary.mountReadings(document.getElementById('kamuk-readings-root'));
+  }
+  if(window.SimulationCorporateLearn && window.SimulationCorporateLearn.mountHub){
+    window.SimulationCorporateLearn.mountHub(document.getElementById('kamuk-elearn-root'), {
+      product: 'kamuk',
+      studentId: (s && (s.id || s.code)) || '',
+      accent: '#2B7EC1'
+    });
+  }
   // Arcade lobby opens on demand (fullscreen) — not embedded small.
+
+  // Foundation onboarding for every Kamuk student profile
+  setTimeout(mountKamukSimulation, 0);
+  setTimeout(function(){ renderSimulationNexoraPanel(s); }, 0);
 
   // Verificar si el trainer habilitó Nexora
   loadNexoraConfig(s);
@@ -1569,6 +1704,70 @@ function showPortal(s){
   setTimeout(function(){ initPortalLiveCharts(s); startPortalProgressPoll(); },100);
   afterPortalReady(s, opts);
 }
+
+function mountKamukSimulation(){
+  var onboardingRoot = document.getElementById('simulation-onboarding-root');
+  if(!onboardingRoot || !window.SimulationOnboarding) return;
+  var studentId = (CURRENT_STUDENT && (CURRENT_STUDENT.code || CURRENT_STUDENT.id)) || '';
+  SimulationOnboarding.mount(onboardingRoot, {
+    product:'kamuk',
+    studentId: studentId,
+    launchUrl:'https://studioinfinitycr.com/kamuk/kamuk-holdings-crm.html',
+    crmEnabled: !CURRENT_STUDENT || CURRENT_STUDENT.simulationEnabled !== false
+  });
+}
+
+function nexoraIndustryFromConfig(nx){
+  if(nx && nx.holdingsPack){
+    var hp=String(nx.holdingsPack).toLowerCase();
+    if(hp==='banking'||hp==='legal'||hp==='medical') return hp;
+  }
+  if(window.NEXORA_INDUSTRY && window.NEXORA_INDUSTRY.holdingsPackFor){
+    return window.NEXORA_INDUSTRY.holdingsPackFor(nx||{});
+  }
+  if(window.InfinityHoldings && window.InfinityHoldings.normalizeIndustry){
+    var raw = (nx && (nx.industry || nx.industryLabel || nx.vertical)) || 'banking';
+    return window.InfinityHoldings.normalizeIndustry(raw);
+  }
+  var t = String((nx && (nx.industry || nx.industryLabel)) || 'banking').toLowerCase();
+  if(/legal|law/.test(t)) return 'legal';
+  if(/medic|health/.test(t)) return 'medical';
+  if(/bank|financ/.test(t)) return 'banking';
+  return 'banking';
+}
+
+function openInfinityHoldingsNexoraPractice(){
+  // Holdings is NOT Nexora — Simulation Foundation desk only.
+  var student = window._currentStudent || window._portalStudent || CURRENT_STUDENT;
+  if(typeof studentPortalAccessOk === 'function' && !studentPortalAccessOk(student)){
+    showToast('Acceso suspendido.','err');
+    return;
+  }
+  var nx = window._nexoraConfig || {};
+  var industry = (typeof nexoraIndustryFromConfig === 'function') ? nexoraIndustryFromConfig(nx) : 'banking';
+  var skills = ['email','phone','chat'];
+  var href = (window.InfinityHoldings && window.InfinityHoldings.holdingsCrmHref)
+    ? window.InfinityHoldings.holdingsCrmHref({ product:'kamuk', nexora:false, industry:industry, skills:skills })
+    : ('kamuk-holdings-crm.html?product=kamuk&industry=' + encodeURIComponent(industry) + '&skills=' + encodeURIComponent(skills.join(',')));
+  window.open(href, '_blank', 'noopener');
+}
+
+function renderSimulationNexoraPanel(s){
+  var body = document.getElementById('simulation-nexora-body');
+  if(!body) return;
+  var on = studentNexoraOn(s);
+  if(!on){
+    body.innerHTML = '<div style="padding:12px;border-radius:10px;background:#f8fafc;border:1px dashed #cbd5e1;font-size:13px;color:#64748b;">'
+      +'<i class="ti ti-lock"></i> <strong>Nexora</strong> bloqueado hasta que tu trainer lo active en Engine.</div>';
+    return;
+  }
+  body.innerHTML = ''
+    +'<div style="font-size:12px;color:var(--t3);margin-bottom:10px;">Lab clásico · interfaz original (CRM + phone search). Sin Holdings.</div>'
+    +'<div style="display:flex;gap:8px;flex-wrap:wrap;">'
+    +'<button type="button" class="btn-primary" onclick="openNexoraLegacy()"><i class="ti ti-sparkles"></i> Abrir Nexora</button>'
+    +'</div>';
+}
+
 // ── TYPING TEST — WPM / Accuracy / Coordination ──────────
 // Un pasaje completo por ronda (puntos, comas, apóstrofes, dos puntos, etc.)
 var TYPING_TEST_PASSAGES = [
@@ -2704,7 +2903,9 @@ function syncAliceNavLabel(s){
   if(!nav) return;
   var compOnly = studentCompanionOn(s) && !studentAliceOn(s);
   nav.classList.toggle('companion-nav', !!compOnly);
-  if(compOnly){
+  if(s && s.aliceDisplayName){
+    nav.innerHTML = '<i class="ti ti-messages"></i>'+aliceEscapeHtml(aliceDisplayName(s));
+  } else if(compOnly){
     nav.innerHTML = '<i class="ti ti-messages"></i>Companion';
   } else {
     nav.innerHTML = '<i class="ti ti-robot"></i>Alice';
@@ -2723,12 +2924,24 @@ function syncJillNavLabel(s){
 
 async function checkNexoraAccess(s){
   var nexoraNav = document.getElementById('nav-nexora');
-  if(!nexoraNav) return;
-  if(!studentPortalAccessOk(s) || !studentNexoraOn(s)){
-    nexoraNav.style.display='none';
-    return;
+  if(nexoraNav){
+    // Nexora lives under Simulation; keep top nav as shortcut when enabled
+    if(!studentPortalAccessOk(s) || !studentNexoraOn(s)){
+      nexoraNav.style.display='none';
+    } else {
+      nexoraNav.style.display='flex';
+      nexoraNav.onclick = function(){
+        switchPortalTab('simulation');
+        setTimeout(function(){
+          mountKamukSimulation();
+          renderSimulationNexoraPanel(s);
+          var panel = document.getElementById('simulation-nexora-panel');
+          if(panel) panel.scrollIntoView({ behavior:'smooth', block:'start' });
+        }, 50);
+      };
+    }
   }
-  nexoraNav.style.display='flex';
+  renderSimulationNexoraPanel(s);
 }
 
 async function savePortalTypingResult(result){
@@ -4781,7 +4994,11 @@ function pauseAliceMedia(){
   _aliceState.listening = false;
   _aliceState.micRunning = false;
   aliceClearSilenceTimer();
-  if(typeof PttMic !== 'undefined') PttMic.reset(document.getElementById('alice-mic-btn'));
+  var pauseMic = document.getElementById('alice-mic-btn');
+  if(pauseMic && pauseMic._aliceStableApi && pauseMic._aliceStableApi.stop){
+    try { pauseMic._aliceStableApi.stop(); } catch(ePs) {}
+  }
+  if(typeof PttMic !== 'undefined') PttMic.reset(pauseMic);
   saveAliceRuntimeStorage();
 }
 
@@ -4849,6 +5066,7 @@ function getAliceStudentPayload(){
       sessionsCompleted: (s.kpiTracker || []).length,
       companionEnabled: !!s.companionEnabled,
       companionConfig: s.companionConfig || null,
+      aliceDisplayName: aliceDisplayName(s),
       trainingBook: (s.trainingBook || []).map(function(ex){
         return { title: ex.title, kpi: ex.kpi, studentTask: ex.studentTask, freq: ex.freq };
       }),
@@ -4873,6 +5091,7 @@ function getAliceStudentPayload(){
     kpiFile: s.kpiFile || null,
     companionEnabled: !!s.companionEnabled,
     companionConfig: s.companionConfig || null,
+    aliceDisplayName: aliceDisplayName(s),
     kpiScale: s.kpiScale || (s.kpiFile && s.kpiFile.scale) || null,
     info: s.info,
     aiProfile: (typeof AiProfile !== 'undefined') ? AiProfile.getAiProfile(s) : (s.aiProfile || {})
@@ -5033,7 +5252,7 @@ function aliceApplyCompanionAmbient(){
   if(!aliceCompanionUiActive()) return;
   var mood = aliceResolveAmbientMood();
   _aliceState.ambientMood = mood;
-  var amb = ALICE_COMPANION_AMBIENTS[mood] || ALICE_COMPANION_AMBIENTS.default;
+  var amb = aliceStudentPalette() || ALICE_COMPANION_AMBIENTS[mood] || ALICE_COMPANION_AMBIENTS.default;
   var card = document.getElementById('alice-companion-card');
   if(!card) return;
   card.style.background = amb.cardBg;
@@ -5042,11 +5261,108 @@ function aliceApplyCompanionAmbient(){
   card.setAttribute('data-ambient', mood);
 }
 
+/** Paleta Alice por estudiante — se activa con data.aliceTheme en kamuk_students. */
+var ALICE_STUDENT_PALETTES = {
+  redblack: {
+    cardBg: 'linear-gradient(160deg,#000000 0%,#170206 45%,#3d0a10 100%)',
+    cardShadow: '0 8px 40px rgba(220,38,38,0.42), 0 0 44px rgba(0,0,0,0.6)',
+    cardBorder: 'rgba(239,68,68,0.55)',
+    studioLabel: '#FF7A7A',
+    title: '#EF4444',
+    titleShadow: 'rgba(239,68,68,0.7)',
+    accent: '#F87171',
+    accentLight: '#FCA5A5',
+    rgb: '239,68,68',
+    btnGrad: 'linear-gradient(135deg,#450A0A,#B91C1C,#EF4444)',
+    btnShadow: '0 4px 20px rgba(239,68,68,0.5)',
+    badgeBg: 'rgba(239,68,68,0.14)',
+    msgBg: 'rgba(239,68,68,0.16)'
+  },
+  pink: {
+    cardBg: 'linear-gradient(160deg,#2a0618 0%,#4a0f2e 45%,#9d174d 100%)',
+    cardShadow: '0 8px 40px rgba(236,72,153,0.45), 0 0 44px rgba(190,24,93,0.25)',
+    cardBorder: 'rgba(244,114,182,0.55)',
+    studioLabel: '#F9A8D4',
+    title: '#F472B6',
+    titleShadow: 'rgba(244,114,182,0.75)',
+    accent: '#F9A8D4',
+    accentLight: '#FBCFE8',
+    rgb: '244,114,182',
+    btnGrad: 'linear-gradient(135deg,#9D174D,#DB2777,#F472B6)',
+    btnShadow: '0 4px 20px rgba(236,72,153,0.5)',
+    badgeBg: 'rgba(244,114,182,0.16)',
+    msgBg: 'rgba(244,114,182,0.18)'
+  },
+  black: {
+    cardBg: 'linear-gradient(160deg,#000000 0%,#0a0a0a 40%,#171717 100%)',
+    cardShadow: '0 8px 40px rgba(0,0,0,0.7), 0 0 44px rgba(255,255,255,0.08)',
+    cardBorder: 'rgba(255,255,255,0.22)',
+    studioLabel: '#E5E5E5',
+    title: '#F5F5F5',
+    titleShadow: 'rgba(255,255,255,0.35)',
+    accent: '#E5E5E5',
+    accentLight: '#FAFAFA',
+    rgb: '229,229,229',
+    btnGrad: 'linear-gradient(135deg,#0a0a0a,#262626,#525252)',
+    btnShadow: '0 4px 20px rgba(0,0,0,0.65)',
+    badgeBg: 'rgba(255,255,255,0.10)',
+    msgBg: 'rgba(255,255,255,0.12)'
+  }
+};
+
+function aliceEscapeHtml(value){
+  return String(value == null ? '' : value)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+function aliceDisplayName(student){
+  var name = String(student && student.aliceDisplayName || '').trim().replace(/\s+/g,' ');
+  return name || 'Alice';
+}
+
+async function saveAliceDisplayName(){
+  var s = CURRENT_STUDENT;
+  var input = document.getElementById('alice-name-input');
+  if(!s || !s.id || !input) return;
+  var name = String(input.value || '').trim().replace(/\s+/g,' ');
+  if(name.length > 24){
+    showToast('El nombre puede tener máximo 24 caracteres.','err');
+    return;
+  }
+  if(name && !/^[A-Za-zÀ-ÖØ-öø-ÿĀ-ž' -]+$/.test(name)){
+    showToast('Usá solamente letras, espacios, guion o apóstrofo.','err');
+    return;
+  }
+  if(name) s.aliceDisplayName = name;
+  else delete s.aliceDisplayName;
+  var saved = await dbSet('kamuk_students', s.id, s);
+  if(!saved){
+    showToast('No se pudo guardar el nombre. Intentá de nuevo.','err');
+    return;
+  }
+  ALL_STUDENTS[s.id] = s;
+  syncAliceNavLabel(s);
+  showToast(name ? 'Tu asistente ahora se llama '+name+'.' : 'Nombre restaurado a Alice.');
+  renderAlice();
+}
+
+function aliceStudentPalette(){
+  var s = CURRENT_STUDENT;
+  var key = s && s.aliceTheme;
+  if(!key) return null;
+  return ALICE_STUDENT_PALETTES[String(key).toLowerCase()] || null;
+}
+
 function aliceTheme(){
+  var pal = aliceStudentPalette();
   if(aliceCompanionUiActive()){
     var mood = (_aliceState.sessionActive ? (_aliceState.ambientMood || aliceResolveAmbientMood()) : 'default');
     var amb = ALICE_COMPANION_AMBIENTS[mood] || ALICE_COMPANION_AMBIENTS.default;
-    return {
+    return Object.assign({
       cardBg: amb.cardBg,
       cardShadow: amb.cardShadow,
       cardBorder: amb.cardBorder,
@@ -5058,13 +5374,13 @@ function aliceTheme(){
       rgb: '255,215,0',
       btnGrad: 'linear-gradient(135deg,#B45309,#EAB308,#FFD700)',
       btnShadow: '0 4px 20px rgba(255,215,0,0.55)',
-      headline: 'ALICE',
+      headline: aliceEscapeHtml(aliceDisplayName(CURRENT_STUDENT)),
       subtitle: 'Companion · Conversación + corrección on the go',
       badgeBg: 'rgba(255,215,0,0.14)',
       msgBg: 'rgba(255,215,0,0.16)'
-    };
+    }, pal || {});
   }
-  return {
+  return Object.assign({
     cardBg: 'linear-gradient(160deg,#0B1437,#1a0533,#2d1060)',
     cardShadow: '0 8px 32px rgba(43,126,193,0.35)',
     cardBorder: 'rgba(192,132,252,0.2)',
@@ -5076,11 +5392,11 @@ function aliceTheme(){
     rgb: '192,132,252',
     btnGrad: 'linear-gradient(135deg,#2B7EC1,#1F6AA8)',
     btnShadow: '0 4px 16px rgba(192,132,252,0.4)',
-    headline: 'ALICE',
+    headline: aliceEscapeHtml(aliceDisplayName(CURRENT_STUDENT)),
     subtitle: 'Intermedio/avanzado — linkers, STAR, hablar con flujo',
     badgeBg: 'rgba(192,132,252,0.07)',
     msgBg: 'rgba(192,132,252,0.1)'
-  };
+  }, pal || {});
 }
 
 function renderAlice(){
@@ -5100,7 +5416,7 @@ function renderAlice(){
       +'<div style="font-size:26px;font-weight:900;color:#e9d5ff;letter-spacing:0.04em;">RAPID DRILL · PISO</div>'
       +'<div style="font-size:11px;color:rgba(255,255,255,0.82);">Foundations bajo presión — no es Infinity Arcade</div>'
       +'</div>'
-      +'<button type="button" onclick="portalCloseRapidDrill(true)" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#e9d5ff;font-size:11px;padding:6px 12px;border-radius:8px;cursor:pointer;">← Alice</button>'
+      +'<button type="button" onclick="portalCloseRapidDrill(true)" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#e9d5ff;font-size:11px;padding:6px 12px;border-radius:8px;cursor:pointer;">← '+aliceEscapeHtml(aliceDisplayName(s))+'</button>'
       +'</div>'
       + nemesisPreview
       +'<div id="alice-quiz-zone"></div>'
@@ -5178,6 +5494,7 @@ function aliceApplyCompanionDefaults(){
 function renderAliceStart(){
   aliceApplyCompanionDefaults();
   var th = aliceTheme();
+  var assistantName = aliceEscapeHtml(aliceDisplayName(CURRENT_STUDENT));
   var hasSaved = !!_aliceState.savedSession;
   var mode = _aliceState.sessionType || 'practice';
   var companionOn = aliceCompanionEnabled();
@@ -5191,15 +5508,21 @@ function renderAliceStart(){
       +'</div>'
     : '';
   var intro = companionOnly
-    ? '<strong>Alice Modo Libre</strong> — conversación libre en inglés (cualquier tema). Corrección on the go: si te trabás, pausa, explica, ejemplo y sigue. Para quien lee/escribe/entiende pero necesita hablar.'
+    ? '<strong>'+assistantName+' Modo Libre</strong> — conversación libre en inglés (cualquier tema). Corrección on the go: si te trabás, pausa, explica, ejemplo y sigue. Para quien lee/escribe/entiende pero necesita hablar.'
     : (companionOn
-      ? '<strong>Alice Modo Tutor</strong> = conversación + linkers + STAR + transiciones. <strong>Alice Modo Libre</strong> = mismo cerebro en charla libre ilimitada. No es Jill (Foundations/MSI).'
-      : '<strong>Alice Modo Tutor</strong> — intermedio/avanzado: te sigue el ritmo, corrige en vivo y refuerza linkers, estructura avanzada e improvisación (STAR). Ideal si entendés pero no hablás fluido. <span style="opacity:.85;">Modo Libre (charla libre) es premium — pedí a tu trainer.</span>');
+      ? '<strong>'+assistantName+' Modo Tutor</strong> = conversación + linkers + STAR + transiciones. <strong>'+assistantName+' Modo Libre</strong> = mismo cerebro en charla libre ilimitada. No es Jill (Foundations/MSI).'
+      : '<strong>'+assistantName+' Modo Tutor</strong> — intermedio/avanzado: te sigue el ritmo, corrige en vivo y refuerza linkers, estructura avanzada e improvisación (STAR). Ideal si entendés pero no hablás fluido. <span style="opacity:.85;">Modo Libre (charla libre) es premium — pedí a tu trainer.</span>');
   var startLabel = companionOnly ? 'Iniciar Modo Libre' : 'Iniciar sesión';
   return '<div style="text-align:center;">'
     +'<div style="background:rgba(255,255,255,0.06);border:1px solid rgba('+th.rgb+',0.2);border-radius:14px;padding:1.25rem;margin-bottom:1.25rem;font-size:13px;color:rgba(255,255,255,0.75);line-height:1.8;">'
     +intro
     +'</div>'
+    +'<div style="background:rgba(255,255,255,0.05);border:1px solid rgba('+th.rgb+',0.2);border-radius:12px;padding:12px;margin-bottom:12px;text-align:left;">'
+    +'<label for="alice-name-input" style="display:block;font-size:11px;font-weight:700;color:'+th.accent+';margin-bottom:7px;">Nombre de tu asistente</label>'
+    +'<div style="display:flex;gap:8px;">'
+    +'<input id="alice-name-input" maxlength="24" value="'+aliceEscapeHtml(CURRENT_STUDENT && CURRENT_STUDENT.aliceDisplayName || '')+'" placeholder="Alice" class="inp" style="flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba('+th.rgb+',0.28);color:white;border-radius:10px;padding:9px 12px;" onkeydown="if(event.key===\'Enter\')saveAliceDisplayName()">'
+    +'<button type="button" onclick="saveAliceDisplayName()" style="background:'+th.btnGrad+';border:none;color:white;font-weight:700;padding:9px 14px;border-radius:10px;cursor:pointer;">Guardar</button>'
+    +'</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:6px;">Dejalo vacío para volver a Alice.</div></div>'
     +modePicker
     +((companionOn && !companionOnly && mode !== 'companion' && typeof AliceProgress !== 'undefined') ? AliceProgress.renderQuickStart(CURRENT_STUDENT, true) : '')
     +'<div style="display:flex;flex-direction:column;gap:10px;align-items:center;">'
@@ -5213,11 +5536,12 @@ function renderAliceStart(){
 
 function renderAliceSession(){
   var th = aliceTheme();
+  var assistantName = aliceEscapeHtml(aliceDisplayName(CURRENT_STUDENT));
   var msgs = aliceFormatAllMessagesHtml();
   var scn = _aliceState.scenario;
   var badgeText = (_aliceState.sessionType==='companion')
-    ? '💬 Alice Modo Libre · Charla libre · cualquier tema, sin cortes'
-    : '🎓 Alice Modo Tutor · Método Nexus';
+    ? '💬 '+assistantName+' Modo Libre · Charla libre · cualquier tema, sin cortes'
+    : '🎓 '+assistantName+' Modo Tutor · Método Nexus';
   var gameChips = (studentGamesOn(CURRENT_STUDENT) && _aliceState.sessionType !== 'companion' && studentAliceOn(CURRENT_STUDENT))
     ? '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">'
       +'<button type="button" class="jill-chip jill-chip-kaboom" onclick="portalOpenRapidDrill(\'foundations\')">⚡ Rapid drill</button>'
@@ -5496,6 +5820,7 @@ var _aliceSending = false;
 function aliceFormatMessageHtml(m){
   var isAlice = m.role==='assistant';
   var th = aliceTheme();
+  var assistantName = aliceEscapeHtml(aliceDisplayName(CURRENT_STUDENT));
   var raw = m.content;
   var clientPart = raw;
   var aliceTip = '';
@@ -5508,7 +5833,7 @@ function aliceFormatMessageHtml(m){
     .replace(/\[\[\s*BOARD_DESIGN\s*:[^\]]*\]\]/gi, '')
     .replace(/GOOD: ([^\n]*)/g,'<em style="color:#86EFAC;font-size:11px;display:block;margin-top:6px;font-weight:700;font-style:normal;">✓ $1</em>')
     .replace(/TIP: ([^\n]*)/g,'<em style="color:'+tipColor+';font-size:11px;display:block;margin-top:6px;font-weight:600;font-style:normal;">💡 $1</em>');
-  var roleLabel = (_aliceState.sessionType==='companion' && isAlice) ? 'COMPANION' : (isAlice ? 'ALICE' : 'VOS');
+  var roleLabel = isAlice ? assistantName.toUpperCase() : 'VOS';
   return '<div style="display:flex;flex-direction:column;align-items:'+(isAlice?'flex-start':'flex-end')+';margin-bottom:14px;">'
     +(isAlice
       ?'<div style="font-size:10px;color:'+th.accent+';font-weight:800;margin-bottom:4px;letter-spacing:0.1em;">'+roleLabel+'</div>'
@@ -5518,7 +5843,7 @@ function aliceFormatMessageHtml(m){
     +';border-radius:'+(isAlice?'4px 14px 14px 14px':'14px 4px 14px 14px')
     +';padding:10px 14px;font-size:13px;line-height:1.6;color:white;">'
     +clean
-    +(aliceTip?'<div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba('+th.rgb+',0.22);font-size:11px;color:'+th.accent+';">💬 <strong>Alice:</strong> '+aliceTip+'</div>':'')
+    +(aliceTip?'<div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba('+th.rgb+',0.22);font-size:11px;color:'+th.accent+';">💬 <strong>'+assistantName+':</strong> '+aliceTip+'</div>':'')
     +'</div></div>';
 }
 
@@ -5549,7 +5874,11 @@ async function sendAliceMessage(micText){
     if(statusEl) statusEl.textContent = 'Tardó demasiado — intentá de nuevo o escribí tu respuesta.';
   }, 38000);
   aliceCancelSpeech();
-  if(typeof PttMic !== 'undefined') PttMic.stop(document.getElementById('alice-mic-btn'));
+  var _sendMicBtn = document.getElementById('alice-mic-btn');
+  if(_sendMicBtn && _sendMicBtn._aliceStableApi && _sendMicBtn._aliceStableApi.stop){
+    try { _sendMicBtn._aliceStableApi.stop(); } catch(eStop) {}
+  }
+  if(typeof PttMic !== 'undefined') PttMic.stop(_sendMicBtn);
   aliceStopMic();
   _aliceMicText = '';
   if(input) input.value = '';
@@ -5599,7 +5928,7 @@ async function sendAliceMessage(micText){
   var alicePrefetchState = {};
   var aliceTurnSpoke = false;
   var ctrl = new AbortController();
-  var tid = setTimeout(function(){ ctrl.abort(); }, 55000);
+  var tid = setTimeout(function(){ ctrl.abort(); }, 90000);
 
   try {
     var resp = await infinityFetch('/alice/stream', {
@@ -5691,30 +6020,28 @@ async function sendAliceMessage(micText){
 }
 
 
-function openNexoraLab(){
+function openNexoraLegacy(){
   var student = window._currentStudent || window._portalStudent || CURRENT_STUDENT;
   if(!studentNexoraOn(student)){
     if(student && !studentPortalAccessOk(student)){
       handleStudentSuspended();
     } else {
-      showToast('Nexora no está activo en tu cuenta. Pedí a tu trainer.','err');
+      showToast('Nexora no está activo. Pedí a tu trainer.','err');
     }
     return;
   }
   var nxConfig = window._nexoraConfig;
   if(!nxConfig || !nxConfig.type){
-    showToast('No hay simulación programada. Pedí a tu trainer que asigne un escenario en Engine.','err');
-    return;
-  }
-  // Upgrade legacy pool-only configs into a pinned program when the helper is available.
-  if(typeof NEXORA_SIM_PROGRAM!=='undefined' && !nxConfig.simulationId){
+    nxConfig = {type:'customer_service',industry:'corporate',difficulty:5,typeLabel:'Nexora',industryLabel:'Corporate',standalone:true};
+  } else if(typeof NEXORA_SIM_PROGRAM!=='undefined' && !nxConfig.simulationId && !nxConfig.standalone){
     nxConfig=NEXORA_SIM_PROGRAM.buildProgram(Object.assign({},nxConfig));
   }
   localStorage.setItem('nexora_scenario', JSON.stringify(nxConfig));
-  if(typeof NEXORA_SIM_PROGRAM!=='undefined'){
+  if(nxConfig.standalone){
+    try{ localStorage.removeItem('nexora_force_scenario'); }catch(e){}
+  } else if(typeof NEXORA_SIM_PROGRAM!=='undefined'){
     localStorage.setItem('nexora_force_scenario', JSON.stringify(NEXORA_SIM_PROGRAM.programToScenario(nxConfig)));
   } else if(nxConfig.simulationId || nxConfig.pinned){
-    // Lab will resolve from the program itself.
     try{ localStorage.removeItem('nexora_force_scenario'); }catch(e){}
   }
   localStorage.setItem('nexora_agent', nexoraAgentName(student));
@@ -5726,8 +6053,9 @@ function openNexoraLab(){
       ));
     }catch(e){}
   }
-  window.open('nexora.html','_blank');
+  window.open('nexora.html?v=20260702restore','_blank');
 }
+function openNexoraLab(){ return openNexoraLegacy(); }
 
 
 var _kbFiles = [];
@@ -5866,26 +6194,16 @@ var _aliceLastSpokenText = '';
 function aliceNormalizeMicTranscript(raw){
   var text = String(raw || '').replace(/\s+/g, ' ').trim();
   if(!text) return '';
-  // Collapse 3+ identical words in a row: "hello hello hello" → "hello"
   text = text.replace(/\b([\w']+)(?:\s+\1\b){2,}/gi, '$1');
-  // Collapse 3+ identical short phrases (1–6 words)
   text = text.replace(/\b((?:[\w']+\s+){0,5}[\w']+)(?:\s+\1\b){2,}/gi, '$1');
   text = text.replace(/\s+/g, ' ').trim();
   var last = String(_aliceLastSpokenText || '').replace(/\s+/g, ' ').trim().toLowerCase();
   var now = text.toLowerCase();
-  var recent = (Date.now() - (_aliceLastSpokenAt || 0)) < 12000;
+  var recent = (Date.now() - (_aliceLastSpokenAt || 0)) < 8000;
+  // Only drop near-exact echoes of Alice's last line — never eat a real student turn
   if(recent && last && now){
     if(now === last) return '';
-    if(last.indexOf(now) >= 0 && now.length >= 4) return '';
-    if(now.indexOf(last) >= 0 && last.length >= 12 && now.length < last.length * 1.35) return '';
-    // Heavy overlap with last Alice line → treat as echo
-    var a = now.split(/\s+/).filter(Boolean);
-    var b = last.split(/\s+/).filter(Boolean);
-    if(a.length >= 2 && b.length >= 2){
-      var hit = 0;
-      a.forEach(function(w){ if(b.indexOf(w) >= 0) hit++; });
-      if(hit / a.length >= 0.85) return '';
-    }
+    if(now.length >= 16 && last.indexOf(now) >= 0 && now.length / last.length >= 0.9) return '';
   }
   return text;
 }
@@ -5984,68 +6302,103 @@ function aliceSpeak(text){
   aliceQueueFullReply(spoken);
 }
 
-// PTT mic for Alice — hold to speak, release to send
+// PTT mic for Alice — prefer MediaRecorder + /alice/stt; fallback to Web Speech
 function bindAlicePttMic(){
   var btn = document.getElementById('alice-mic-btn');
-  if(!btn || typeof PttMic === 'undefined') return;
-  if(btn._pttBound) return;
+  if(!btn) return;
   var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  function aliceMicCanStart(){
+    if(!_aliceState.sessionActive) return false;
+    if(_aliceSending){
+      var stBusy = document.getElementById('alice-status');
+      if(stBusy) stBusy.textContent = 'Esperá a que Alice termine de responder…';
+      return false;
+    }
+    return true;
+  }
+  function aliceMicBeforeStart(){
+    if(typeof unlockTtsAudio === 'function') unlockTtsAudio();
+    aliceInterruptSpeaking();
+    aliceStopMic();
+    btn.classList.remove('ptt-busy');
+  }
+  function aliceMicNormalize(raw){
+    var cleaned = aliceNormalizeMicTranscript(raw);
+    if(!cleaned && String(raw || '').trim()){
+      var stEcho = document.getElementById('alice-status');
+      if(stEcho) stEcho.textContent = 'No se captó bien — intentá de nuevo o escribí.';
+    }
+    return cleaned;
+  }
+  function aliceMicUi(listening){
+    var b = document.getElementById('alice-mic-btn');
+    var statusEl = document.getElementById('alice-status');
+    var th = aliceTheme();
+    if(b){
+      b.classList.toggle('ptt-active', !!listening);
+      if(listening){ b.style.background='rgba(255,92,92,0.3)'; b.style.borderColor='#FF5C5C'; b.style.color='white'; }
+      else { b.style.background='rgba('+th.rgb+',0.12)'; b.style.borderColor='rgba('+th.rgb+',0.35)'; b.style.color=th.accent; }
+    }
+    if(statusEl) statusEl.textContent = listening ? '🎤 Escuchando… soltá el botón cuando termines' : '';
+  }
+  function aliceMicError(code){
+    btn.classList.remove('ptt-active','ptt-busy');
+    var st = document.getElementById('alice-status');
+    if(!st) return;
+    if(code === 'not-allowed' || code === 'service-not-allowed'){
+      st.textContent = 'Permiso de micrófono denegado — habilitalo en el navegador o escribí tu respuesta.';
+    } else if(code === 'audio-capture'){
+      st.textContent = 'No se encontró micrófono (o está ocupado) — revisá el dispositivo o escribí tu respuesta.';
+    } else if(code === 'no-sr' || code === 'start-failed' || code === 'network'){
+      st.textContent = isMobile
+        ? 'Voz no disponible ahora — escribí tu respuesta abajo.'
+        : 'Micrófono no disponible — reintentá o escribí tu respuesta.';
+    } else {
+      st.textContent = 'Micrófono interrumpido — mantené presionado de nuevo o escribí tu respuesta.';
+    }
+  }
+  function aliceMicEmpty(){
+    var st = document.getElementById('alice-status');
+    if(st) st.textContent = 'No se escuchó audio — mantené más tiempo o hablá más cerca.';
+  }
+
+  // Clean rebind: destroy prior stable + Web Speech bindings
+  if(btn._aliceStableApi && btn._aliceStableApi.destroy){
+    try { btn._aliceStableApi.destroy(); } catch(eD) {}
+    btn._aliceStableApi = null;
+  }
+  if(typeof PttMic !== 'undefined') PttMic.destroy(btn);
+
+  if(typeof AliceStableMic !== 'undefined' && AliceStableMic.canUse()){
+    var api = AliceStableMic.bind({
+      btn: btn,
+      canStart: aliceMicCanStart,
+      onBeforeStart: aliceMicBeforeStart,
+      normalizeTranscript: aliceMicNormalize,
+      onUi: aliceMicUi,
+      onSend: function(text){ if(text) sendAliceMessage(text); },
+      onError: aliceMicError,
+      onEmpty: aliceMicEmpty
+    });
+    if(api){
+      btn._aliceStableApi = api;
+      return;
+    }
+  }
+
+  if(typeof PttMic === 'undefined') return;
   PttMic.bind({
     btn: btn,
-    // Accent selector affects TTS only — STT must stay English or Chrome mangles speech
     lang: 'en-US',
     settleMs: 280,
-    canStart: function(){
-      if(!_aliceState.sessionActive) return false;
-      if(_aliceSending){
-        var st = document.getElementById('alice-status');
-        if(st) st.textContent = 'Esperá a que Alice termine de responder…';
-        return false;
-      }
-      return true;
-    },
-    onBeforeStart: function(){
-      if(typeof unlockTtsAudio === 'function') unlockTtsAudio();
-      aliceInterruptSpeaking();
-      aliceStopMic();
-      btn.classList.remove('ptt-busy');
-    },
-    normalizeTranscript: function(raw){
-      var cleaned = aliceNormalizeMicTranscript(raw);
-      if(!cleaned && String(raw || '').trim()){
-        var st = document.getElementById('alice-status');
-        if(st) st.textContent = 'Eso sonó como eco de Alice — hablá de nuevo cuando ella termine.';
-      }
-      return cleaned;
-    },
-    onUi: function(listening){
-      var b = document.getElementById('alice-mic-btn');
-      var statusEl = document.getElementById('alice-status');
-      var th = aliceTheme();
-      if(b){
-        b.classList.toggle('ptt-active', !!listening);
-        if(listening){ b.style.background='rgba(255,92,92,0.3)'; b.style.borderColor='#FF5C5C'; b.style.color='white'; }
-        else { b.style.background='rgba('+th.rgb+',0.12)'; b.style.borderColor='rgba('+th.rgb+',0.35)'; b.style.color=th.accent; }
-      }
-      if(statusEl) statusEl.textContent = listening ? '🎤 Escuchando… soltá el botón cuando termines' : '';
-    },
+    maxHoldMs: 90000,
+    canStart: aliceMicCanStart,
+    onBeforeStart: aliceMicBeforeStart,
+    normalizeTranscript: aliceMicNormalize,
+    onUi: aliceMicUi,
     onSend: function(text){ if(text) sendAliceMessage(text); },
-    onError: function(code){
-      btn.classList.remove('ptt-active','ptt-busy');
-      var st = document.getElementById('alice-status');
-      if(!st) return;
-      if(code === 'not-allowed' || code === 'service-not-allowed'){
-        st.textContent = 'Permiso de micrófono denegado — habilitalo en el navegador o escribí tu respuesta.';
-      } else if(code === 'audio-capture'){
-        st.textContent = 'No se encontró micrófono (o está ocupado) — revisá el dispositivo o escribí tu respuesta.';
-      } else if(code === 'no-sr' || code === 'start-failed'){
-        st.textContent = isMobile
-          ? 'Voz no disponible en este navegador — escribí tu respuesta abajo.'
-          : 'Usá Chrome o Edge para voz, o escribí tu respuesta.';
-      } else {
-        st.textContent = 'Micrófono interrumpido — mantené presionado de nuevo o escribí tu respuesta.';
-      }
-    }
+    onError: aliceMicError
   });
 }
 
@@ -6541,6 +6894,9 @@ function aliceUnlockMicAndSend(clearStatus){
   _aliceSpeakEnabled = true;
   var btn = document.getElementById('alice-mic-btn');
   if(btn){ btn.classList.remove('ptt-busy','ptt-active'); }
+  if(btn && btn._aliceStableApi && btn._aliceStableApi.stop){
+    try { btn._aliceStableApi.stop(); } catch(eUs) {}
+  }
   if(typeof PttMic !== 'undefined'){
     if(btn) PttMic.reset(btn);
     else PttMic.resetAll();
@@ -6548,7 +6904,7 @@ function aliceUnlockMicAndSend(clearStatus){
   aliceStopMic();
   if(clearStatus !== false){
     var st = document.getElementById('alice-status');
-    if(st && (st.textContent.indexOf('Escuchando') >= 0 || st.textContent.indexOf('pensando') >= 0 || st.textContent.indexOf('conecta') >= 0)) st.textContent = '';
+    if(st && (st.textContent.indexOf('Escuchando') >= 0 || st.textContent.indexOf('pensando') >= 0 || st.textContent.indexOf('conecta') >= 0 || st.textContent.indexOf('Transcribiendo') >= 0)) st.textContent = '';
   }
 }
 
@@ -6712,26 +7068,22 @@ function renderNexoraTab(s, force){
     _nxState.active = false;
     _nxState.profile = null;
   }
-  var nxConfig = window._nexoraConfig;
-  if(!nxConfig){
-    root.innerHTML = '<div style="background:linear-gradient(135deg,#8B5CF6,#1F6AA8);border:1px solid rgba(255,255,255,0.2);border-radius:14px;padding:1.25rem;margin-top:1rem;box-shadow:0 8px 24px rgba(139,92,246,0.2);text-align:center;">'
-      +'<div style="font-size:13px;color:#FFFFFF;line-height:1.7;">Tu trainer todavía no configuró Nexora para hoy.<br>Volvé más tarde.</div></div>';
+  if(!studentNexoraOn(s)){
+    root.innerHTML = '<div style="background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:1.25rem;margin-top:1rem;text-align:center;">'
+      +'<div style="font-size:13px;color:#FFFFFF;line-height:1.7;">Nexora no está activo. Pedí a tu trainer.</div></div>';
     return;
   }
-  var typeLabels = {mock_interview:'Mock Interview',customer_service:'Customer Service Call',team_meeting:'Team Meeting',problem_solving:'Problem Solving',presentation:'Sales Presentation',negotiation:'Negotiation',stakeholder:'Stakeholder Discussion'};
-  var sessionLabel = (typeLabels[nxConfig.type] || 'Nexora Simulation').toUpperCase();
   fetch(INFINITY_API+'/').catch(function(){});
   nexoraWarmApi();
-  root.innerHTML = '<div style="background:linear-gradient(135deg,#8B5CF6,#1F6AA8);border:1px solid rgba(255,255,255,0.2);border-radius:14px;padding:1.25rem;margin-top:1rem;box-shadow:0 8px 24px rgba(139,92,246,0.25);">'
-    +'<div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.9);letter-spacing:0.1em;margin-bottom:6px;">SESIÓN DE HOY · '+sessionLabel+'</div>'
-    +'<div style="font-size:18px;font-weight:800;color:#FFFFFF;margin-bottom:4px;">'+(typeLabels[nxConfig.type]||'Nexora Simulation')+'</div>'
-    +'<div style="font-size:12px;color:rgba(255,255,255,0.92);margin-bottom:1rem;">Industria: '+(nxConfig.industryLabel||nxConfig.industry||'Corporate')+' · Dificultad '+nxConfig.difficulty+'/5</div>'
-    +'<p style="font-size:13px;color:#FFFFFF;line-height:1.7;margin-bottom:1.25rem;">Nexora simula el escenario configurado por tu trainer. Tu trabajo es responder en inglés con profesionalismo. El cliente solo usará datos que aparecen en pantalla.</p>'
-    +'<button onclick="openNexoraLab()" style="width:100%;background:#FFFFFF;border:none;color:#F5A623;padding:14px;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(0,0,0,0.12);margin-bottom:10px;"><i class="ti ti-phone-incoming"></i>Abrir Nexora Lab</button>'
-    +'<button onclick="openNexoraFinancialRoiScenario()" style="width:100%;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.35);color:#FFFFFF;padding:12px;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;"><i class="ti ti-chart-bar"></i>Análisis financiero + ROI (stakeholder)</button>'
-    +'<p style="font-size:11px;color:rgba(255,255,255,0.85);margin:8px 0 0;line-height:1.5;">Subí tu documento en el lab. El stakeholder evalúa cómo explicás el ROI y decide aprobar o rechazar.</p>'
+  root.innerHTML = '<div style="background:linear-gradient(135deg,#0a0a0f,#1a1a28);border:1px solid rgba(245,166,35,0.25);border-radius:14px;padding:1.25rem;margin-top:1rem;">'
+    +'<div style="font-size:11px;font-weight:700;color:#F5A623;letter-spacing:0.1em;margin-bottom:6px;">NEXORA · OPERATIONAL LAB</div>'
+    +'<div style="font-size:18px;font-weight:800;color:#FFFFFF;margin-bottom:4px;">Operational Simulation Lab</div>'
+    +'<p style="font-size:13px;color:rgba(255,255,255,0.88);line-height:1.7;margin-bottom:1.25rem;">Interfaz original: buscá el teléfono en el CRM, tomá la llamada y resolvé en inglés. No abre Infinity Holdings.</p>'
+    +'<button onclick="openNexoraLegacy()" style="width:100%;background:#FFFFFF;border:none;color:#F5A623;padding:14px;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(0,0,0,0.12);"><i class="ti ti-phone-incoming"></i>Abrir Nexora</button>'
     +'</div>';
   root.setAttribute('data-nx-init', '1');
+  // Auto-launch classic lab — no hybrid portal CRM
+  setTimeout(function(){ openNexoraLegacy(); }, 0);
 }
 
 // ── AUTO-IN ────────────────────────────────────────────────────
@@ -8210,14 +8562,8 @@ function _aliceTTSFlush(){
     if(fallbackStarted || finished) return;
     if(!_aliceSpeakEnabled || gen !== _aliceSpeakGen){ _aliceTTSBusy=false; clearTimeout(_aliceTtsWatchdog); _aliceState.speaking=_aliceTTSQueue.length>0; _aliceTTSFlush(); return; }
     if(!b){
-      _aliceTtsRetry[clean] = (_aliceTtsRetry[clean] || 0) + 1;
-      if(_aliceTtsRetry[clean] < 3){
-        _aliceTTSQueue.unshift(text);
-        finishAliceLine();
-        return;
-      }
+      // Do NOT re-queue the same line (caused dialogue repeats). Browser TTS once, then finish.
       delete _aliceTtsRetry[clean];
-      // ElevenLabs down / 401 / empty — still speak (browser) so Companion never goes mute
       fallbackStarted = true;
       if(alicePlayBrowserTts(clean, finishAliceLine, finishAliceLine)) return;
       finishAliceLine();
@@ -8230,12 +8576,7 @@ function _aliceTTSFlush(){
       onError: function(){
         window._aliceAudio = null;
         clearTimeout(_aliceTtsWatchdog);
-        _aliceTtsRetry[clean] = (_aliceTtsRetry[clean] || 0) + 1;
-        if(_aliceTtsRetry[clean] < 3){
-          _aliceTTSQueue.unshift(text);
-          finishAliceLine();
-          return;
-        }
+        // Blob decode/play fail → browser TTS once; never unshift the same line
         delete _aliceTtsRetry[clean];
         fallbackStarted = true;
         if(alicePlayBrowserTts(clean, finishAliceLine, finishAliceLine)) return;
@@ -8276,20 +8617,11 @@ function _aliceTTSFlush(){
   .then(playBlob)
   .catch(function(){
     clearTimeout(_aliceTtsWatchdog);
-    _aliceTtsRetry[clean] = (_aliceTtsRetry[clean] || 0) + 1;
-    if(_aliceTtsRetry[clean] < 3){
-      _aliceTTSQueue.unshift(text);
-      _aliceTTSBusy=false;
-      _aliceState.speaking=_aliceTTSQueue.length>0;
-      setTimeout(_aliceTTSFlush, 40);
-      return;
-    }
+    // Network fail → browser TTS once; never re-queue (avoids dialogue repeats)
     delete _aliceTtsRetry[clean];
     fallbackStarted = true;
     if(alicePlayBrowserTts(clean, finishAliceLine, finishAliceLine)) return;
-    _aliceTTSBusy=false;
-    _aliceState.speaking=_aliceTTSQueue.length>0;
-    setTimeout(_aliceTTSFlush, 40);
+    finishAliceLine();
   });
 }
 
@@ -8677,7 +9009,29 @@ function jillStartModuleMiniKaboom(moduleId){
           passed: !!result.passed,
           at: new Date().toISOString()
         };
+        if(!s.jillModuleProgress) s.jillModuleProgress = {};
+        s.jillModuleProgress[mid] = {
+          bestScore: Math.max((s.jillModuleProgress[mid] && s.jillModuleProgress[mid].bestScore) || 0, result.score || 0),
+          passed: !!result.passed,
+          lastAt: new Date().toISOString()
+        };
         if(s.id && typeof dbSet === 'function') dbSet('kamuk_students', s.id, s).catch(function(){});
+        if(result.passed && (result.score || 0) >= 80){
+          var api = (typeof API !== 'undefined' ? API : '') + '/jill/tutor-path/module-pass';
+          fetch(api, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (typeof getToken === 'function' ? getToken() : '') },
+            body: JSON.stringify({ student: s, moduleId: mid, score: result.score || 0 })
+          }).then(function(r){ return r.json(); }).then(function(data){
+            if(data.ok && data.snapshot){
+              s.jillTutorPath = s.jillTutorPath || {};
+              s.jillTutorPath.currentStepId = data.snapshot.currentStepId;
+              s.jillTutorPath.completedSteps = data.snapshot.completedSteps;
+              if(typeof dbSet === 'function') dbSet('kamuk_students', s.id, s).catch(function(){});
+              if(typeof showToast === 'function') showToast('Paso de ruta completado — avanzás al siguiente','ok');
+            }
+          }).catch(function(){});
+        }
         var st = document.getElementById('jill-status');
         if(st) st.textContent = result.passed
           ? ('✅ ' + mid + ' aprobado (' + result.score + '%)')
@@ -8758,6 +9112,7 @@ function renderJill(){
     +'</div>'
     +(!_jillState.sessionActive ? renderJillStart() : renderJillSession())
     +'</div>';
+  if(!_jillState.sessionActive) mountJillPathPanel();
   if(_jillState.sessionActive){
     _jillSpeakEnabled = true;
     warmInfinityApi();
@@ -8839,9 +9194,10 @@ function renderJillStart(){
   var challengeDrillBtn = '';
   var jillBlock = jillOn
     ? '<div style="background:rgba(255,255,255,0.08);border:1px solid rgba(61,220,151,0.25);border-radius:14px;padding:1.25rem;margin-bottom:1.25rem;font-size:13px;color:rgba(255,255,255,0.88);line-height:1.75;">'
-      +'<strong>Modo Tutor</strong> — Foundations guiado: pronombres, tiempos, preposiciones, gerundio, preguntas, negaciones, estructura MSI (P|M|V|C) y conectores básicos. Jill explica como clase, te hace producir y confirma que lo implementás.'
+      +'<strong>Ruta oficial Jill Tutor</strong> — <em>todos empiezan en el Paso 1</em> (abecedario). Un tema por turno: pronombres → tiempos → preposiciones → P|M|V|C → anécdota 15 min → método 15+10. Jill explica como clase, te hace producir y confirma que lo implementás.'
       +'</div>'
-      +'<button type="button" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#0a5c3c,#16a34a);border:2px solid rgba(61,220,151,0.5);color:white;font-weight:800;font-size:16px;padding:16px 32px;border-radius:14px;cursor:pointer;box-shadow:0 6px 24px rgba(61,220,151,0.4);width:100%;justify-content:center;margin-bottom:10px;" onclick="startJillSessionClick(\'tutor\')"><i class="ti ti-player-play"></i> Iniciar sesión con Jill</button>'
+      +'<div id="jill-path-mount"></div>'
+      +'<button type="button" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#0a5c3c,#16a34a);border:2px solid rgba(61,220,151,0.5);color:white;font-weight:800;font-size:16px;padding:16px 32px;border-radius:14px;cursor:pointer;box-shadow:0 6px 24px rgba(61,220,151,0.4);width:100%;justify-content:center;margin-bottom:10px;" onclick="startJillSessionClick(\'tutor\')"><i class="ti ti-player-play"></i> Iniciar sesión — Paso activo</button>'
     : '';
   var proBlock = proOn
     ? '<div style="background:rgba(255,255,255,0.08);border:1px solid rgba(167,139,250,0.35);border-radius:14px;padding:1.25rem;margin-bottom:1.25rem;font-size:13px;color:rgba(255,255,255,0.9);line-height:1.75;">'
@@ -8868,6 +9224,17 @@ function renderJillStart(){
     + (showTutor ? tutorDrillBtn : '')
     + (showPro ? challengeDrillBtn : '')
     +'</div></div>';
+}
+
+function mountJillPathPanel(){
+  var s = CURRENT_STUDENT;
+  if(!s || _jillState.sessionActive || !studentJillOn(s) || jillCompanionUiActive()) return;
+  if(typeof JillTutorPath === 'undefined') return;
+  JillTutorPath.load().then(function(){
+    JillTutorPath.ensureProgress(s);
+    var mount = document.getElementById('jill-path-mount');
+    if(mount) mount.outerHTML = JillTutorPath.renderPanel(s);
+  });
 }
 
 function renderJillSession(){
@@ -9517,6 +9884,14 @@ if(document.readyState === 'loading'){
   </div>
 </div>
 
+<script src="js/kamuk-desk-english.js?v=20260825nxlive"></script>
+<script src="js/kamuk-recursos-library.js?v=20260827nest"></script>
+<script src="../js/infinity-word-puzzles.js?v=20260910play"></script>
+<script src="js/simulation-corporate-learn.js?v=20260910email"></script>
+<script src="js/infinity-holdings-config.js?v=20260910email"></script>
+<script src="js/simulation-formato-e.js?v=20260910email"></script>
+<script src="js/simulation-crm-bridge.js?v=20260910email"></script>
+<script src="js/simulation-onboarding.js?v=20260910email"></script>
 <script src="https://studioinfinitycr.com/js/infinity-arcade-lil-games.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/infinity-casino-floor.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/infinity-modern-games.js?v=20260814refresh"></script>
