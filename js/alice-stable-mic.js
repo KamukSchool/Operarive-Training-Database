@@ -6,16 +6,15 @@
 var AliceStableMic = (function () {
   'use strict';
 
+  var UA = (typeof navigator !== 'undefined' && navigator.userAgent) || '';
+  var IS_IOS = /iP(hone|ad|od)/i.test(UA) || (typeof navigator !== 'undefined' && navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var IS_PHONE = IS_IOS || /Android|Mobile/i.test(UA);
   var instances = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
 
   function pickMime() {
-    var candidates = [
-      'audio/webm;codecs=opus',
-      'audio/webm',
-      'audio/mp4',
-      'audio/ogg;codecs=opus',
-      'audio/ogg'
-    ];
+    var candidates = IS_IOS
+      ? ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/ogg']
+      : ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus', 'audio/ogg'];
     if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return '';
     for (var i = 0; i < candidates.length; i++) {
       if (MediaRecorder.isTypeSupported(candidates[i])) return candidates[i];
@@ -199,6 +198,7 @@ var AliceStableMic = (function () {
         : (opts.busyText || 'Transcribiendo con Alice STT…');
 
       rec.onstop = function () {
+        setTimeout(function () {
         var blob = new Blob(chunks, { type: mime || 'audio/webm' });
         chunks = [];
         stopTracks();
@@ -210,6 +210,7 @@ var AliceStableMic = (function () {
           return;
         }
         uploadBlob(blob);
+        }, IS_PHONE ? 180 : 0);
       };
       try {
         if (rec.state === 'recording' || rec.state === 'paused') {
@@ -271,6 +272,7 @@ var AliceStableMic = (function () {
     }
 
     function endPress(ev) {
+      if (IS_PHONE) return;
       if (pointerId == null) return;
       if (ev && ev.pointerId != null && ev.type !== 'touchend' && ev.pointerId !== pointerId) return;
       if (ev && ev.type === 'touchend' && ev.touches && ev.touches.length > 0) return;

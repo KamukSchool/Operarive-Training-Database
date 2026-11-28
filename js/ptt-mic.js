@@ -23,6 +23,7 @@ var PttMic = (function () {
 
   var UA = (typeof navigator !== 'undefined' && navigator.userAgent) || '';
   var IS_IOS = /iP(hone|ad|od)/i.test(UA) || (typeof navigator !== 'undefined' && navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var IS_PHONE = IS_IOS || /Android|Mobile/i.test(UA);
   var serverPreferred = false;
 
   function serverSttCapable() {
@@ -36,7 +37,9 @@ var PttMic = (function () {
   }
 
   function pickRecorderMime() {
-    var list = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus', 'audio/ogg'];
+    var list = IS_IOS
+      ? ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/ogg']
+      : ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus', 'audio/ogg'];
     if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return '';
     for (var i = 0; i < list.length; i++) {
       try { if (MediaRecorder.isTypeSupported(list[i])) return list[i]; } catch (e) {}
@@ -112,7 +115,7 @@ var PttMic = (function () {
     function useServer() {
       if (opts.stt === 'browser' || !serverSttCapable()) return false;
       if (opts.stt === 'server') return true;
-      return !srSupported || IS_IOS || serverPreferred;
+      return !srSupported || IS_PHONE || serverPreferred;
     }
 
     function srvStopTracks() {
@@ -244,15 +247,17 @@ var PttMic = (function () {
       try { btn.classList.add('ptt-busy'); } catch (e3) {}
       if (typeof opts.onBusy === 'function') opts.onBusy(true);
       r.onstop = function () {
-        var blob = new Blob(srv.chunks, { type: srv.mime || 'audio/webm' });
-        srv.chunks = [];
-        srvStopTracks();
-        if (!blob.size || (blob.size < 800 && heldMs < 350)) {
-          srvDone();
-          if (typeof opts.onEmpty === 'function') opts.onEmpty();
-          return;
-        }
-        srvUpload(blob);
+        setTimeout(function () {
+          var blob = new Blob(srv.chunks, { type: srv.mime || 'audio/webm' });
+          srv.chunks = [];
+          srvStopTracks();
+          if (!blob.size || (blob.size < 800 && heldMs < 350)) {
+            srvDone();
+            if (typeof opts.onEmpty === 'function') opts.onEmpty();
+            return;
+          }
+          srvUpload(blob);
+        }, IS_PHONE ? 180 : 0);
       };
       try {
         if (r.state !== 'inactive') {
@@ -715,7 +720,7 @@ var PttMic = (function () {
       if (typeof opts.onBeforeStart === 'function') opts.onBeforeStart();
 
       var sid = sessionId;
-      var settle = Number(opts.settleMs) || 0;
+      var settle = IS_PHONE ? 0 : (Number(opts.settleMs) || 0);
       if (settle > 0) {
         setTimeout(function () {
           if (sid !== sessionId || !shouldKeepListening()) return;
@@ -727,6 +732,9 @@ var PttMic = (function () {
     }
 
     function endPress(e) {
+      // On a phone the finger lifts as soon as the tap ends. That lift must not
+      // stop the take. The next tap sends.
+      if (IS_PHONE) return;
       if (downPointerId == null) return;
       if (e && e.pointerId != null && e.type !== 'touchend' && e.pointerId !== downPointerId) return;
       if (e && e.type === 'touchend' && e.touches && e.touches.length > 0) return;

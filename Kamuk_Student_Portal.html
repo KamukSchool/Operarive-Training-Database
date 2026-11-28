@@ -64,8 +64,8 @@
 <script src="https://studioinfinitycr.com/js/jill-quiz.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/tts-chunks.js?v=20260904stable"></script>
 <script src="https://studioinfinitycr.com/js/nexora-stream-voice.js?v=20260814refresh"></script>
-<script src="js/ptt-mic.js?v=20261127mic"></script>
-<script src="js/alice-stable-mic.js?v=20261127mic"></script>
+<script src="js/ptt-mic.js?v=20261127phone"></script>
+<script src="js/alice-stable-mic.js?v=20261127phone"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -4787,7 +4787,7 @@ function bindClairePttMic(){
         if(listening){ b.style.background='rgba(255,92,92,0.3)'; b.style.borderColor='#FF5C5C'; b.style.color='white'; }
         else { b.style.background='rgba('+th.rgb+',0.12)'; b.style.borderColor='rgba('+th.rgb+',0.35)'; b.style.color=th.accent; }
       }
-      if(st) st.textContent = listening ? '🎤 Escuchando… soltá el botón cuando termines' : '';
+      if(st) st.textContent = listening ? '🎤 Grabando… tocá otra vez para enviar.' : '';
     },
     onSend: function(text){ if(text) sendClairePortalMessage(text); },
     onError: function(){
@@ -6340,7 +6340,7 @@ function bindAlicePttMic(){
       if(listening){ b.style.background='rgba(255,92,92,0.3)'; b.style.borderColor='#FF5C5C'; b.style.color='white'; }
       else { b.style.background='rgba('+th.rgb+',0.12)'; b.style.borderColor='rgba('+th.rgb+',0.35)'; b.style.color=th.accent; }
     }
-    if(statusEl) statusEl.textContent = listening ? '🎤 Escuchando… soltá el botón cuando termines' : '';
+    if(statusEl) statusEl.textContent = listening ? '🎤 Grabando… tocá otra vez para enviar.' : '';
   }
   function aliceMicError(code){
     btn.classList.remove('ptt-active','ptt-busy');
@@ -8743,7 +8743,7 @@ function bindJillPttMic(){
       if(statusEl){
         var oral = (typeof JillVisualStage !== 'undefined' && JillVisualStage.isActive && JillVisualStage.isActive());
         statusEl.textContent = listening
-          ? (oral ? '🎤 Práctica en inglés — soltá cuando termines' : '🎤 Escuchando… podés pronunciar mal, Jill interpreta — soltá al terminar')
+          ? (oral ? '🎤 Práctica en inglés — tocá otra vez para enviar.' : '🎤 Grabando… podés pronunciar mal. Tocá otra vez para enviar.')
           : '';
       }
     },
