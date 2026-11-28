@@ -1,28 +1,29 @@
 <!DOCTYPE html>
-<!-- kamuk-nexora-parity 2026-08-04 --><html lang="en">
+<!-- kamuk-nexora-parity 2026-07-02-restore -->
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nexora — Operational Simulation Lab</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 <script src="https://studioinfinitycr.com/infinity-auth.js"></script>
-<script src="https://studioinfinitycr.com/nexora-profile.js?v=voice-sync-6"></script>
-<script src="https://studioinfinitycr.com/js/nexora-voice-lock.js?v=6"></script>
-<script src="https://studioinfinitycr.com/nexora-characters.js"></script>
-<script src="js/tts-chunks.js?v=20260710fastpause"></script>
-<script src="https://studioinfinitycr.com/js/nexora-industry-map.js"></script>
-<script src="https://studioinfinitycr.com/js/nexora-scenario-bank-data.js"></script>
-<script src="https://studioinfinitycr.com/js/nexora-scenario-bank.js"></script>
-<script src="https://studioinfinitycr.com/js/nexora-scenario-rotate.js"></script>
-<script src="https://studioinfinitycr.com/js/nexora-stream-voice.js"></script>
-<script src="js/ptt-mic.js?v=20260628b"></script>
+<script src="https://studioinfinitycr.com/nexora-profile.js?v=20260702restore"></script>
+<script src="js/nexora-voice-lock.js?v=20260702restore"></script>
+<script src="https://studioinfinitycr.com/nexora-characters.js?v=20260702restore"></script>
+<script src="js/tts-chunks.js?v=20260904stable"></script>
+<script src="https://studioinfinitycr.com/js/nexora-industry-map.js?v=20260702restore"></script>
+<script src="https://studioinfinitycr.com/js/nexora-scenario-bank-data.js?v=20260702restore"></script>
+<script src="https://studioinfinitycr.com/js/nexora-scenario-bank.js?v=20260702restore"></script>
+<script src="https://studioinfinitycr.com/js/nexora-scenario-rotate.js?v=20260702restore"></script>
+<script src="https://studioinfinitycr.com/js/nexora-stream-voice.js?v=20260702restore"></script>
+<script src="js/ptt-mic.js?v=20261127mic"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --navy:#2B7EC1;--nm:#1F6AA8;--nl:#E8F4FC;
-  --green:#22C55E;--red:#EF4444;--orange:#F97316;--purple:#2B7EC1;--gold:#F7941D;
+  --navy:#5B21B6;--nm:#7C3AED;--nl:#EDE9FE;
+  --green:#22C55E;--red:#EF4444;--orange:#F97316;--purple:#5B21B6;--gold:#F5A623;
   --white:#fff;--off:#F8F8FF;--gl:#E2E8F0;
-  --text:#1E2D3D;--t2:#4A6080;--t3:#8FA4B8;
+  --text:#1E1E2E;--t2:#4A4A6A;--t3:#8888AA;
   --r:8px;--rl:12px;
 }
 body{font-family:'Inter',system-ui,sans-serif;background:var(--off);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
@@ -168,7 +169,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--off);color:var(--
 /* QA SCREEN */
 .qa-screen{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:300;display:none;align-items:center;justify-content:center;padding:1rem;}
 .qa-card{background:white;border-radius:20px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;}
-.qa-header{background:linear-gradient(135deg,var(--purple),#1F6AA8);padding:1.5rem;border-radius:20px 20px 0 0;color:white;}
+.qa-header{background:linear-gradient(135deg,var(--purple),#7C3AED);padding:1.5rem;border-radius:20px 20px 0 0;color:white;}
 .qa-score-big{font-size:56px;font-weight:900;line-height:1;}
 .qa-body{padding:1.5rem;}
 .qa-section{background:var(--off);border-radius:var(--rl);padding:1rem;margin-bottom:1rem;}
@@ -180,9 +181,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--off);color:var(--
 .metric-row{display:grid;grid-template-columns:140px 1fr 36px;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--gl);}
 .metric-row:last-child{border-bottom:none;}
 .metric-bar-bg{height:6px;background:var(--gl);border-radius:3px;overflow:hidden;}
-.metric-bar-fill{height:100%;background:linear-gradient(90deg,var(--purple),#1F6AA8);border-radius:3px;}
+.metric-bar-fill{height:100%;background:linear-gradient(90deg,var(--purple),#7C3AED);border-radius:3px;}
 .metric-score{font-size:12px;font-weight:800;color:var(--purple);text-align:right;}
-.verdict-box{background:linear-gradient(135deg,rgba(43,126,193,0.05),rgba(43,126,193,0.1));border:1px solid rgba(43,126,193,0.15);border-radius:var(--rl);padding:1rem;font-size:14px;line-height:1.8;color:var(--t2);}
+.verdict-box{background:linear-gradient(135deg,rgba(91,33,182,0.05),rgba(91,33,182,0.1));border:1px solid rgba(91,33,182,0.15);border-radius:var(--rl);padding:1rem;font-size:14px;line-height:1.8;color:var(--t2);}
 
 /* TOAST */
 .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--navy);color:white;padding:8px 20px;border-radius:50px;font-size:13px;font-weight:600;z-index:999;pointer-events:none;}
@@ -369,11 +370,6 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--off);color:var(--
       <div id="sh-stakes" style="display:flex;flex-direction:column;gap:6px;"></div>
     </div>
   </div>
-  <div id="sh-pdf-section" style="display:none;background:rgba(255,255,255,0.05);margin:0 1.5rem;border-radius:12px;padding:12px;margin-bottom:8px;">
-    <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-bottom:6px;"><i class="ti ti-file-upload"></i> Subí tu análisis financiero (PDF/TXT). El stakeholder lo lee y decide si aprueba el ROI:</div>
-    <input type="file" accept=".pdf,.txt,.md,.csv" onchange="uploadPDFForNexora(this,'sh-pdf-status')" style="font-size:12px;color:rgba(255,255,255,0.7);">
-    <div id="sh-pdf-status" style="font-size:11px;margin-top:4px;color:rgba(255,255,255,0.5);"></div>
-  </div>
   <div style="background:#161b22;padding:10px 1.5rem;display:flex;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,0.08);">
     <div style="font-size:12px;color:rgba(255,255,255,0.4);" id="sh-status"></div>
     <div style="margin-left:auto;display:flex;gap:8px;">
@@ -422,7 +418,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--off);color:var(--
 <!-- AUTO-IN SCREEN -->
 <div class="autoin-screen" id="autoin-screen">
   <div class="autoin-card">
-    <img src="https://studioinfinitycr.com/assets/logos/nexora.png" alt="Nexora">
+    <img src="assets/logos/nexora.png" alt="Nexora">
     <h2>Nexora Simulation Lab</h2>
     <p>You will receive a call from a client. Search their phone number in the CRM, navigate tabs to find relevant info, and resolve their issue — all in English.</p>
     <div id="neg-role-selector" style="display:none;margin-bottom:16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:14px;">
@@ -485,7 +481,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--off);color:var(--
   }catch(e){}
 })();
 
-// ── NEXORA VOICE POOL (see nexora-profile.js) ─────────────────
+// ── NEXORA VOICE POOL (see nexora-profile.js?v=20260702restore) ─────────────────
 
 function nexoraAccentKey(accent){
   if(typeof pickNexoraVoiceForProfile === 'function' && typeof window !== 'undefined' && window.nexoraAccentKey){
@@ -589,48 +585,15 @@ function getNexoraDemoSessionId(){
   try{return localStorage.getItem('nexora_demo_session')||'';}catch(e){return '';}
 }
 
-function showNexoraAccessGate(message){
-  var gate = document.createElement('div');
-  gate.style.cssText = 'position:fixed;inset:0;background:#2B7EC1;color:#fff;display:flex;align-items:center;justify-content:center;z-index:99999;padding:2rem;text-align:center;font-family:Inter,system-ui,sans-serif;';
-  gate.innerHTML = '<div><h2 style="margin-bottom:12px;">Acceso no disponible</h2><p style="opacity:.85;max-width:380px;line-height:1.6;">'
-    + (message || 'Ingresá al Portal del Estudiante primero. Nexora usa tu sesión segura — una copia guardada del HTML no funciona sin login.')
-    + '</p></div>';
-  document.body.appendChild(gate);
-}
-
-async function verifyNexoraStudentAccess(){
-  if(isNexoraPublicDemo()) return true;
-  if(typeof getAuthToken !== 'function' || !getAuthToken()){
-    showNexoraAccessGate('Ingresá al Portal del Estudiante primero. Nexora usa tu sesión segura — una copia guardada del HTML no funciona sin login.');
-    return false;
-  }
-  try{
-    var r = await infinityFetch('/auth/verify');
-    var d = {};
-    try{ d = await r.json(); }catch(e){}
-    if(!r.ok || d.ok === false){
-      if(typeof clearAuthToken === 'function') clearAuthToken();
-      var msg = (d && d.code === 'NEXORA_DISABLED')
-        ? 'Nexora no está activo en tu cuenta. Pedí a tu trainer que lo habilite.'
-        : 'Tu acceso ha sido suspendido o cerró la sesión. Volvé al Portal del Estudiante.';
-      showNexoraAccessGate(msg);
-      return false;
-    }
-    if(d.role === 'student' && d.nexoraEnabled === false){
-      showNexoraAccessGate('Nexora no está activo en tu cuenta. Pedí a tu trainer que lo habilite.');
-      return false;
-    }
-    return true;
-  }catch(e){
-    showNexoraAccessGate('No se pudo verificar tu acceso. Volvé al Portal del Estudiante e intentá de nuevo.');
-    return false;
-  }
-}
-
 document.addEventListener('DOMContentLoaded', function(){
   clearNexoraDemoFlagsIfPortal();
   if(isNexoraPublicDemo()) return;
-  verifyNexoraStudentAccess();
+  if(typeof getAuthToken === 'function' && !getAuthToken()){
+    var gate = document.createElement('div');
+    gate.style.cssText = 'position:fixed;inset:0;background:#5B21B6;color:#fff;display:flex;align-items:center;justify-content:center;z-index:99999;padding:2rem;text-align:center;font-family:Inter,system-ui,sans-serif;';
+    gate.innerHTML = '<div><h2 style="margin-bottom:12px;">Acceso requerido</h2><p style="opacity:.85;max-width:360px;line-height:1.6;">Ingresá al Portal del Estudiante primero. Nexora usa tu sesión segura — una copia guardada del HTML no funciona sin login.</p></div>';
+    document.body.appendChild(gate);
+  }
 });
 
 var ENGINE_TYPE_MAP={
@@ -693,8 +656,17 @@ function resetCRMTabs(){
   }
 }
 
+function nexoraStandaloneDefaultConfig(){
+  return {type:'customer_service',industry:'corporate',difficulty:5,typeLabel:'Nexora',industryLabel:'Corporate',standalone:true};
+}
 function loadNexoraEngineConfig(){
-  try{return JSON.parse(localStorage.getItem('nexora_scenario')||'null');}catch(e){return null;}
+  try{
+    var cfg=JSON.parse(localStorage.getItem('nexora_scenario')||'null');
+    if(cfg&&cfg.type) return cfg;
+  }catch(e){}
+  var d=nexoraStandaloneDefaultConfig();
+  try{localStorage.setItem('nexora_scenario',JSON.stringify(d));}catch(e){}
+  return d;
 }
 
 function invalidateNexoraLabIfConfigChanged(){
@@ -708,16 +680,9 @@ function invalidateNexoraLabIfConfigChanged(){
 }
 
 function pickScenarioFromConfig(nxConfig,prevId){
-  try{
-    var forced=JSON.parse(localStorage.getItem('nexora_force_scenario')||'null');
-    if(forced&&forced.id&&forced.type){
-      localStorage.removeItem('nexora_force_scenario');
-      return mergeEngineConfig(forced,nxConfig||{type:forced.type,industry:forced.industry||'Corporate',difficulty:forced.diff||5});
-    }
-  }catch(e){}
   if(!nxConfig){
-    showToast('No Nexora config — trainer must activate a session first');
-    return null;
+    nxConfig=nexoraStandaloneDefaultConfig();
+    try{localStorage.setItem('nexora_scenario',JSON.stringify(nxConfig));}catch(e){}
   }
   var pool=NEXORA_SCENARIO_BANK.getPool(nxConfig);
   if(!pool.length){
@@ -821,7 +786,7 @@ function genProfile(sc){
   var pool=[...servicesPoolForIndustry(nxConfig)].sort(function(){return Math.random()-0.5;});
   var svcs=pool.slice(0,1+Math.floor(Math.random()*2));
 
-  // Scenario-specific billing details — shared with portal via nexora-characters.js
+  // Scenario-specific billing details — shared with portal via nexora-characters.js?v=20260702restore
   var profile = {name:fn+' '+ln,firstName:fn,lastName:ln,phone:phone,account:acct,ssn4:ssn,
     email:fn.toLowerCase()+'.'+ln.toLowerCase()+'@email.com',address:addr,dob:dob,
     memberSince:msince,services:svcs,
@@ -1204,7 +1169,7 @@ function showInterviewDisplay(sc){
   interviewers.forEach(function(name){
     var bubble = document.createElement('div');
     bubble.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:10px;';
-    bubble.innerHTML = '<div style="width:160px;height:160px;background:linear-gradient(135deg,#2B7EC1,#1F6AA8);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;border:3px solid #1F6AA8;">'
+    bubble.innerHTML = '<div style="width:160px;height:160px;background:linear-gradient(135deg,#5B21B6,#7C3AED);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;border:3px solid #7C3AED;">'
       +'<span style="font-size:48px;">👤</span>'
       +'<div style="position:absolute;bottom:8px;left:4px;right:4px;background:rgba(0,0,0,0.7);padding:3px 6px;border-radius:6px;font-size:10px;color:white;text-align:center;">'+name+'</div>'
       +'<div style="position:absolute;top:8px;right:8px;width:10px;height:10px;background:#34a853;border-radius:50%;"></div>'
@@ -1405,26 +1370,18 @@ function endCorporate(){
   stopMic(); generateQA(false);
 }
 
-async function uploadPDFForNexora(input, statusId){
+async function uploadPDFForNexora(input){
   var file = input.files[0];
   if(!file) return;
-  var st = document.getElementById(statusId || 'corp-pdf-status') || document.getElementById('sh-pdf-status');
-  if(st){ st.style.color='rgba(255,255,255,0.5)'; st.textContent = 'Reading document...'; }
-  var text = '';
-  try{
-    text = await new Promise(function(res, rej){
-      var reader = new FileReader();
-      reader.onload = function(e){ res(e.target.result || ''); };
-      reader.onerror = function(){ rej(new Error('read_failed')); };
-      reader.readAsText(file);
-    });
-  }catch(e){
-    if(st){ st.style.color='#EF4444'; st.textContent = 'No se pudo leer el archivo. Usá TXT/MD o PDF de texto.'; }
-    return;
-  }
-  window._nxPDFContent = String(text).slice(0, 6000);
-  if(st){ st.style.color='#34a853'; st.textContent = 'Documento cargado — el stakeholder lo usará para evaluar el ROI.'; }
-  showToast('Documento listo para la simulación');
+  var st = document.getElementById('corp-pdf-status');
+  if(st) st.textContent = 'Reading PDF...';
+  var text = await new Promise(function(res){
+    var reader = new FileReader();
+    reader.onload = function(e){ res(e.target.result); };
+    reader.readAsText(file);
+  });
+  window._nxPDFContent = text.slice(0, 4000);
+  if(st){ st.style.color='#34a853'; st.textContent = 'PDF loaded — Alice will use this content.'; }
 }
 
 // ── STAKEHOLDER DISPLAY ───────────────────────────────────────
@@ -1459,9 +1416,6 @@ function showStakeholderDisplay(sc){
     }).join('');
   }
 
-  var shPdf = document.getElementById('sh-pdf-section');
-  if(shPdf) shPdf.style.display = sc.allowPDF ? 'block' : 'none';
-
   _nx.callStart = Date.now(); _nx.active = true;
   _nx.callTimer = setInterval(function(){
     if(!_nx.onHold) _nx.talkSecs++;
@@ -1476,10 +1430,7 @@ function showStakeholderDisplay(sc){
     aliceEnterMode(sc, 'sh-status', personName, 'START_STAKEHOLDER', {
       stakes: sc.stakes || [],
       participants: sc.participants,
-      role: sc.role,
-      company: sc.company,
-      pdfContent: window._nxPDFContent || null,
-      pdfPrompt: sc.pdfPrompt || null
+      role: sc.role
     });
   }, 2000);
 }
@@ -1505,7 +1456,7 @@ function showStarInterviewDisplay(sc){
   // Interviewer bubble
   var bubble = document.createElement('div');
   bubble.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:10px;';
-  bubble.innerHTML = '<div style="width:140px;height:140px;background:linear-gradient(135deg,#2B7EC1,#1F6AA8);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;border:3px solid #1F6AA8;">'
+  bubble.innerHTML = '<div style="width:140px;height:140px;background:linear-gradient(135deg,#5B21B6,#7C3AED);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;border:3px solid #7C3AED;">'
     +'<span style="font-size:40px;">👤</span>'
     +'<div style="position:absolute;bottom:8px;left:4px;right:4px;background:rgba(0,0,0,0.7);padding:3px 6px;border-radius:6px;font-size:10px;color:white;text-align:center;">'+(sc.interviewer||'Interviewer')+' — '+(sc.role||'HR')+'</div>'
     +'<div style="position:absolute;top:8px;right:8px;width:10px;height:10px;background:#34a853;border-radius:50%;"></div>'
@@ -1515,10 +1466,10 @@ function showStarInterviewDisplay(sc){
   // STAR focus panel
   if(sc.starFocus && sc.starFocus.length){
     var starPanel = document.createElement('div');
-    starPanel.style.cssText = 'background:rgba(43,126,193,0.2);border:1px solid rgba(124,58,237,0.4);border-radius:12px;padding:12px;max-width:260px;';
+    starPanel.style.cssText = 'background:rgba(91,33,182,0.2);border:1px solid rgba(124,58,237,0.4);border-radius:12px;padding:12px;max-width:260px;';
     starPanel.innerHTML = '<div style="font-size:11px;font-weight:800;color:#A78BFA;margin-bottom:8px;letter-spacing:0.05em;">STAR QUESTIONS FOCUS</div>'
       +sc.starFocus.map(function(q,i){
-        return '<div style="font-size:11px;color:rgba(255,255,255,0.7);margin-bottom:6px;padding-left:8px;border-left:2px solid #1F6AA8;">'+(i+1)+'. '+q+'</div>';
+        return '<div style="font-size:11px;color:rgba(255,255,255,0.7);margin-bottom:6px;padding-left:8px;border-left:2px solid #7C3AED;">'+(i+1)+'. '+q+'</div>';
       }).join('');
     participants.appendChild(starPanel);
   }
@@ -1559,13 +1510,13 @@ function setNegRole(role){
   var btnI = document.getElementById('neg-role-initiator');
   var btnR = document.getElementById('neg-role-receiver');
   if(btnI) {
-    btnI.style.background = role==='initiator' ? 'rgba(43,126,193,0.4)' : 'rgba(255,255,255,0.05)';
-    btnI.style.borderColor = role==='initiator' ? '#1F6AA8' : 'rgba(255,255,255,0.2)';
+    btnI.style.background = role==='initiator' ? 'rgba(91,33,182,0.4)' : 'rgba(255,255,255,0.05)';
+    btnI.style.borderColor = role==='initiator' ? '#7C3AED' : 'rgba(255,255,255,0.2)';
     btnI.style.color = role==='initiator' ? 'white' : 'rgba(255,255,255,0.7)';
   }
   if(btnR) {
-    btnR.style.background = role==='receiver' ? 'rgba(43,126,193,0.4)' : 'rgba(255,255,255,0.05)';
-    btnR.style.borderColor = role==='receiver' ? '#1F6AA8' : 'rgba(255,255,255,0.2)';
+    btnR.style.background = role==='receiver' ? 'rgba(91,33,182,0.4)' : 'rgba(255,255,255,0.05)';
+    btnR.style.borderColor = role==='receiver' ? '#7C3AED' : 'rgba(255,255,255,0.2)';
     btnR.style.color = role==='receiver' ? 'white' : 'rgba(255,255,255,0.7)';
   }
 }
@@ -2023,7 +1974,7 @@ async function nexoraDemoMessageFallback(payload){
   try{data=JSON.parse(text);}catch(e){throw new Error('demo_message_unavailable');}
   if(!r.ok){
     if(data.error==='limit') showToast('Daily demo limit reached.');
-    else if(data.error==='Session expired'||r.status===404) showToast('Session expired — reopen from the student portal or request a demo at hablemos.html.');
+    else if(data.error==='Session expired'||r.status===404) showToast('Session expired — reopen from try-nexora.html.');
     throw new Error(data.message||data.error||'demo_message_failed');
   }
   return String(data.reply||'').trim();
@@ -2231,10 +2182,7 @@ async function aliceEnter(){
   _nx.history.push({role:'assistant',content:opener});
   _nx.transcript.push('CLIENT ('+(p.firstName||'Client')+'): '+opener);
   saveNexoraLabRuntime();
-  if(isCompleteSpokenLine(opener) || nexoraReplyTtsReady(opener)){
-    if(typeof unlockTtsAudio === 'function') unlockTtsAudio();
-    speak(prepareTtsLine(opener));
-  }
+  if(isCompleteSpokenLine(opener) || nexoraReplyTtsReady(opener)) speak(prepareTtsLine(opener));
   else showToast('Client line was cut short — ask them to repeat.');
 }
 
@@ -2253,7 +2201,6 @@ async function sendToAlice(text){
     if(_nxStreamCtrl){ try{ _nxStreamCtrl.abort(); }catch(e){} _nxStreamCtrl=null; }
   }
   _nxSending=true;
-  if(typeof unlockTtsAudio === 'function') unlockTtsAudio();
   var unwatchNx=voiceSendWatchdog(function(){ return _nxSending; }, function(){ _nxSending=false; });
   nexoraHardCancelSpeech();
   var p=_nx.profile||{name:'Client',firstName:'Client',account:'N/A',services:[],billingNotes:[]};
@@ -2413,9 +2360,10 @@ function _nxTTSFlush(){
 function queueSpeak(text){ if(!text||text.trim().length<2) return; _nxTTSQueue.push(text); _nxTTSFlush(); }
 function speak(text){
   if(!text) return;
-  if(typeof unlockTtsAudio === 'function') unlockTtsAudio();
   nexoraHardCancelSpeech();
+  NexoraStreamVoice.beginTurn();
   ttsSpeakLines(text, 900).forEach(function(chunk){ queueSpeak(chunk); });
+  NexoraStreamVoice.endTurn();
 }
 
 // ── MIC (PTT) ───────────────────────────────────────────────────────
@@ -2623,11 +2571,10 @@ async function savePracticeMinutes(mins){
   try{
     var studentId=localStorage.getItem('nexora_student_id');
     if(!studentId) return;
-    var isKamuk=true; /* Kamuk-hosted nexora always kamuk store for KAM- ids */
     var table=studentId.startsWith('KAM-')?'kamuk_students':'kamuk_students';
-    var supUrl='https://lbspgbeqtcnjrbhiuucu.supabase.co';
-    var supKey='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxic3BnYmVxdGNuanJiaGl1dWN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwNDgzNzgsImV4cCI6MjA5NjYyNDM3OH0.j1NRrwxmCVipIlHgEPhkdQQfnhMZVK713mFq8LnvufM';
-    var rows=await fetch(supUrl+'/rest/v1/'+table+'?id=eq.'+encodeURIComponent(studentId),{headers:{apikey:supKey,Authorization:'Bearer '+supKey}}).then(function(r){return r.ok?r.json():[];});
+    var supUrl=studentId.startsWith('KAM-')?'https://lbspgbeqtcnjrbhiuucu.supabase.co':'https://lbspgbeqtcnjrbhiuucu.supabase.co';
+    var supKey=studentId.startsWith('KAM-')?'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxic3BnYmVxdGNuanJiaGl1dWN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwNDgzNzgsImV4cCI6MjA5NjYyNDM3OH0.j1NRrwxmCVipIlHgEPhkdQQfnhMZVK713mFq8LnvufM':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4cnV2cGZkcGdvd21wdnlkYWNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NjI3NzcsImV4cCI6MjA2MDMzODc3N30.RMexOWL9WHtQJzAOqTNbMQUZhwlf2SJr3RqEFJiLw90';
+    var rows=await fetch(supUrl+'/rest/v1/'+table+'?id=eq.'+studentId,{headers:{apikey:supKey,Authorization:'Bearer '+supKey}}).then(function(r){return r.json();});
     if(rows&&rows[0]){
       var d=rows[0].data||{};
       d.nexoraPracticeMinutes=(d.nexoraPracticeMinutes||0)+mins;
