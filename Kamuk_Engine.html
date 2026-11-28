@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kamuk School — Operational Engine</title>
-<meta name="theme-color" content="#1e3a5f">
+<meta name="theme-color" content="#2B7EC1">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -15,20 +15,15 @@
 <link rel="stylesheet" href="https://studioinfinitycr.com/css/pwa-install.css?v=2">
 <script src="https://studioinfinitycr.com/js/pwa-register.js?v=20260814refresh" defer></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://studioinfinitycr.com/css/daily-inspiration.css">
-<link rel="stylesheet" href="css/infinity-scheduler.css?v=20260825sched">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://studioinfinitycr.com/js/live-kpi-charts.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/jill-trainer-insights.js?v=20260814refresh"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="js/nexora-industry-map.js?v=20260702restore"></script>
-<script src="js/nexora-simulation-program.js?v=20260825ih"></script>
-<script src="js/infinity-holdings-config.js?v=20260910email"></script>
-<script src="js/infinity-scheduler.js?v=20260910email"></script>
+<script src="https://studioinfinitycr.com/js/nexora-industry-map.js"></script>
+<script src="https://studioinfinitycr.com/js/nexora-simulation-program.js"></script>
 <script src="https://studioinfinitycr.com/js/daily-inspiration.js"></script>
-<script src="https://studioinfinitycr.com/js/tts-chunks.js?v=20260904stable"></script>
+<script src="https://studioinfinitycr.com/js/tts-chunks.js?v=20260814refresh"></script>
 <script src="js/ptt-mic.js?v=20261127mic"></script>
 <script src="https://studioinfinitycr.com/js/alice-progress.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/alice-badges-cefr.js"></script>
@@ -37,24 +32,22 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --navy:#1e3a5f;--nl:#e6f1fb;--nm:#185fa5;--nd:#0f2744;
-  --accent:#185fa5;--accent-bg:#e6f1fb;--accent-border:#b5d4f4;
+  --navy:#2B7EC1;--nl:#E8F4FC;--nm:#1F6AA8;--nd:#1A5A8F;
   --green:#085041;--gb:#E1F5EE;--gm:#0F6E56;
   --amber:#D97706;--ab:#FAEEDA;--ad:#633806;
   --red:#791F1F;--rb:#FCEBEB;--rm:#A32D2D;
-  --purple:#3c3489;--pb:#eeedfe;--pm:#3c3489;
-  --gold:#F5A623;--gray:#f1efe8;--border:rgba(0,0,0,0.10);
-  --text:#1a1a18;--t2:#5f5e5a;--t3:#888780;
-  --r:6px;--rl:10px;
-  --bg:#f8f7f4;--surface:#ffffff;
+  --purple:#2B7EC1;--pb:#E8F4FC;--pm:#1F6AA8;
+  --gold:#F7941D;--gray:#F4F8FC;--border:#C5DDEF;
+  --text:#1E2D3D;--t2:#4A6080;--t3:#8FA4B8;
+  --r:8px;--rl:12px;
 }
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F4F8FC;color:var(--text);min-height:100vh;}
 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .fade{animation:fadeIn 0.2s ease;}
 
 /* ── TOPBAR ── */
-.topbar{background:var(--navy);padding:0 1.25rem;display:flex;align-items:center;gap:12px;height:50px;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,0.2);}
+.topbar{background:var(--navy);padding:0 1.5rem;display:flex;align-items:center;gap:12px;height:54px;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,0.2);}
 .tb-logo{height:36px;width:36px;object-fit:contain;border-radius:8px;image-rendering:auto;}
 .tb-div{width:1px;height:26px;background:rgba(255,255,255,0.2);}
 .tb-title{font-size:13px;font-weight:700;color:white;}
@@ -98,16 +91,16 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 @keyframes loginPulse{0%,100%{box-shadow:0 0 0 0 rgba(43,126,193,0.35)}50%{box-shadow:0 0 0 8px rgba(43,126,193,0)}}
 
 /* ── LAYOUT ── */
-.app-wrap{display:none;height:calc(100vh - 50px);}
+.app-wrap{display:none;height:calc(100vh - 54px);}
 .app-wrap.show{display:flex;}
-.sidebar{width:240px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;}
-.main{flex:1;overflow-y:auto;padding:1.25rem;background:var(--bg);}
+.sidebar{width:240px;flex-shrink:0;background:white;border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;}
+.main{flex:1;overflow-y:auto;padding:1.25rem;}
 
 /* ── SIDEBAR ── */
 .sb-section{padding:0.625rem 1rem 0.25rem;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--t3);}
 .sb-item{display:flex;align-items:center;gap:9px;padding:0.6rem 1rem;cursor:pointer;color:var(--t2);font-size:13px;font-weight:500;border-left:3px solid transparent;transition:all 0.15s;}
 .sb-item:hover{background:var(--gray);color:var(--text);}
-.sb-item.active{background:var(--accent-bg);color:var(--accent);border-left-color:var(--accent);font-weight:600;}
+.sb-item.active{background:var(--nl);color:var(--navy);border-left-color:var(--navy);font-weight:700;}
 .sb-item i{font-size:16px;flex-shrink:0;}
 .sb-badge{margin-left:auto;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700;background:var(--rb);color:var(--rm);}
 .sb-badge.blue{background:var(--nl);color:var(--nd);}
@@ -654,15 +647,16 @@ textarea.inp{resize:vertical;min-height:80px;}
   </div>
 </div>
 
-<!-- MODAL NEXORA INDIVIDUAL -->
+<!-- MODAL NEXORA INDIVIDUAL — programador de simulación -->
 <div class="modal-bg" id="modal-nexora-justify">
-  <div class="modal" style="max-width:500px;">
-    <div class="modal-title"><i class="ti ti-sparkles" style="color:#C084FC;"></i>Configurar Nexora para este estudiante</div>
+  <div class="modal" style="max-width:640px;max-height:90vh;overflow:auto;">
+    <div class="modal-title"><i class="ti ti-sparkles" style="color:#79B9E8;"></i>Programar simulación Nexora</div>
     <input type="hidden" id="nexora-sid">
-    <div class="ib ib-navy">Seleccioná el escenario de simulación (versión 2 jul 2026). Alice asumirá ese rol cuando el estudiante entre a Nexora.</div>
+    <input type="hidden" id="nexora-simulation-id">
+    <div class="ib ib-navy">Nexora ejecuta <strong>exactamente</strong> este programa. Plantilla por tipo — editá roles, preguntas y criterios antes de guardar.</div>
     <div class="form-group">
       <label class="form-label">Tipo de simulación</label>
-      <select class="inp" id="nexora-type" onchange="syncNexoraEngineIndustryUI()">
+      <select class="inp" id="nexora-type" onchange="nexoraEngineApplyTemplate()">
         <option value="mock_interview">STAR Mock Interview — Entrevista conductual (S→T→A→R)</option>
         <option value="customer_service">Customer Service — Atención al cliente</option>
         <option value="team_meeting">Team Meeting / Team Presentation — Reunión de equipo</option>
@@ -674,7 +668,7 @@ textarea.inp{resize:vertical;min-height:80px;}
     </div>
     <div class="form-group" id="nexora-industry-group">
       <label class="form-label">Industria / Contexto</label>
-      <select class="inp" id="nexora-industry" onchange="syncNexoraEngineIndustryUI()"></select>
+      <select class="inp" id="nexora-industry" onchange="nexoraEngineApplyTemplate()"></select>
       <div id="nexora-industry-hint" style="font-size:11px;color:var(--t2);margin-top:6px;line-height:1.5;"></div>
     </div>
     <div class="form-group">
@@ -687,13 +681,43 @@ textarea.inp{resize:vertical;min-height:80px;}
         <option value="5">5 — Desafiante</option>
       </select>
     </div>
+    <div class="form-group" id="nexora-role-group">
+      <label class="form-label">Puesto a examinar / target role</label>
+      <input class="inp" id="nexora-target-role" placeholder="Customer Support Specialist" onchange="nexoraEngineRefreshQuestions()">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Título del escenario</label>
+      <input class="inp" id="nexora-title" placeholder="Título que verá el estudiante">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descripción / contexto</label>
+      <textarea class="inp" id="nexora-desc" style="min-height:56px;" placeholder="Contexto de la simulación"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Participantes (2–4 para paneles; 1 para CS) — una línea: Nombre — Rol</label>
+      <textarea class="inp" id="nexora-participants" style="min-height:72px;font-family:ui-monospace,monospace;font-size:12px;"></textarea>
+    </div>
+    <div class="form-group" id="nexora-questions-group">
+      <label class="form-label">Plan de preguntas (STAR) — una por línea</label>
+      <textarea class="inp" id="nexora-questions" style="min-height:100px;font-family:ui-monospace,monospace;font-size:12px;"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Objetivos (uno por línea)</label>
+      <textarea class="inp" id="nexora-objectives" style="min-height:64px;"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Puntaje mínimo para aprobar (0–100)</label>
+      <input class="inp" id="nexora-pass-score" type="number" min="0" max="100" value="70">
+    </div>
     <div class="form-group">
       <label class="form-label">Justificación (opcional)</label>
-      <textarea class="inp" id="nexora-justify" placeholder="Por qué este estudiante está listo para Nexora..." style="min-height:70px;"></textarea>
+      <textarea class="inp" id="nexora-justify" placeholder="Por qué este estudiante está listo para Nexora..." style="min-height:56px;"></textarea>
     </div>
-    <div class="modal-footer">
+    <div class="modal-footer" style="flex-wrap:wrap;gap:8px;">
       <button class="btn btn-outline" onclick="closeModal('modal-nexora-justify')">Cancelar</button>
-      <button class="btn btn-navy" style="background:#7C3AED;" onclick="confirmStudentNexora()"><i class="ti ti-sparkles"></i>Activar Nexora</button>
+      <button class="btn btn-outline" id="nexora-deactivate-btn" style="display:none;color:#EF4444;border-color:#EF4444;" onclick="deactivateStudentNexoraFromModal()"><i class="ti ti-power"></i>Desactivar</button>
+      <button class="btn btn-outline" onclick="previewNexoraFromModal()"><i class="ti ti-eye"></i>Preview</button>
+      <button class="btn btn-navy" style="background:#1F6AA8;" id="nexora-save-btn" onclick="confirmStudentNexora()"><i class="ti ti-sparkles"></i>Guardar programa</button>
     </div>
   </div>
 </div>
@@ -1066,7 +1090,6 @@ async function loadCoreData(){
   (studentRows||[]).forEach(function(r){ if(r.data) DB[r.id]=r.data; });
   RESOURCES = {};
   (videoRows||[]).forEach(function(r){ if(r.data) RESOURCES[r.id]=r.data; });
-  await ensureJohnnyInfinityHoldingsOn();
   var sb = document.getElementById('sb-count');
   if(sb) sb.textContent = allStudents().length;
 }
@@ -1563,7 +1586,6 @@ function openStudent(id){
     +(isMaster?('<button data-sid="'+id+'" class="btn btn-sm" style="background:'+(studentClaireOn(s)?'rgba(139,92,246,0.2)':'rgba(255,255,255,0.05)')+';border:1px solid '+(studentClaireOn(s)?'#A8D4F5':'rgba(255,255,255,0.3)')+';color:'+(studentClaireOn(s)?'#DDD6FE':'var(--t2)')+';font-weight:700;" onclick="toggleStudentClaire(this.dataset.sid)"><i class="ti ti-headphones"></i> Claire TOEIC '+(studentClaireOn(s)?'✓ ON':'OFF')+'</button>'):'')
     +(isMaster?('<button data-sid="'+id+'" class="btn btn-sm" style="background:'+(s.nexoraEnabled?'rgba(245,166,35,0.18)':'rgba(255,255,255,0.05)')+';border:1px solid '+(s.nexoraEnabled?'#F5A623':'rgba(255,255,255,0.3)')+';color:'+(s.nexoraEnabled?'#F5A623':'var(--t2)')+';font-weight:700;" onclick="toggleStudentNexora(this.dataset.sid)"><i class="ti ti-sparkles"></i> Nexora '+(s.nexoraEnabled?'✓ ON':'OFF')+'</button>'):'')
     +(isMaster?('<button data-sid="'+id+'" class="btn btn-sm" style="background:'+(s.companionEnabled?'rgba(134,239,172,0.18)':'rgba(255,255,255,0.05)')+';border:1px solid '+(s.companionEnabled?'#86EFAC':'rgba(255,255,255,0.3)')+';color:'+(s.companionEnabled?'#86EFAC':'var(--t2)')+';font-weight:700;" onclick="toggleStudentCompanion(this.dataset.sid)"><i class="ti ti-messages"></i> Alice Libre '+(s.companionEnabled?'✓ ON':'OFF')+'</button>'):'')
-    +(isMaster?('<button data-sid="'+id+'" class="btn btn-sm" title="Infinity Holdings · banking training (Simulation Foundation + desk)" style="background:'+(studentInfinityHoldingsOn(s)?'rgba(31,106,168,0.22)':'rgba(255,255,255,0.05)')+';border:1px solid '+(studentInfinityHoldingsOn(s)?'#79B9E8':'rgba(255,255,255,0.3)')+';color:'+(studentInfinityHoldingsOn(s)?'#79B9E8':'var(--t2)')+';font-weight:700;" onclick="toggleStudentInfinityHoldings(this.dataset.sid)"><i class="ti ti-building-bank"></i> Infinity Holdings '+(studentInfinityHoldingsOn(s)?'✓ ON':'OFF')+'</button>'):'')
 
     +'<div class="profile-header">'
     +'<div><div class="ph-name">'+((s.info&&s.info.name)||'—')+'</div>'
@@ -1709,7 +1731,7 @@ function switchTab(id, btn){
   }
 }
 
-var STUDENT_PORTAL_URL = 'https://studioinfinitycr.com/kamuk/';
+var STUDENT_PORTAL_URL = 'https://kamukschool.github.io/Operarive-Training-Database/Kamuk_Student_Portal.html';
 var _pendingPaymentAfterShare = null;
 
 function normalizeWaPhone(phone){
@@ -2361,99 +2383,90 @@ async function loadCalendar(){
   try{ hydrateFromSessionRows(await dbGetSessionsCached()); }catch(e){}
 }
 
-var _infSchedApi = null;
-
-function studentsForSchedulerTrainer(trainerUser){
-  var name = ((trainerUser && trainerUser.name) || '').trim().toLowerCase();
-  return allStudents().filter(function(s){
-    return (((s.info && s.info.trainer) || '').trim().toLowerCase() === name);
-  }).slice(0, 12);
-}
-
-async function saveSchedulerPayload(payload){
-  var id = 'EVT-' + Date.now();
-  var evt = {
-    id: id,
-    studentId: null,
-    studentName: payload.studentName || null,
-    title: payload.title || payload.uiType || 'Session',
-    trainer: payload.trainer || (SESSION && SESSION.name) || '',
-    trainerId: payload.trainerId || '',
-    date: payload.date,
-    time: payload.time || '09:00',
-    durationMinutes: payload.durationMinutes || 90,
-    type: payload.type || 'session',
-    notes: payload.notes || '',
-    source: 'scheduler'
-  };
-  CALENDAR_EVENTS[id] = evt;
-  await dbSet('infinity_sessions', id, evt);
-  await logAction('Agendó evento (Scheduler)', evt.title + ' — ' + evt.date);
-  if(_infSchedApi && typeof _infSchedApi.refresh === 'function') _infSchedApi.refresh(CALENDAR_EVENTS);
-  showToast('Evento agendado');
-  return evt;
-}
-
 function renderCalendar(m){
-  loadCalendar().then(function(){
-    var isMaster = SESSION && SESSION.role === 'master';
-    var upcomingEvts = Object.values(CALENDAR_EVENTS).filter(function(e){
-      return e && e.date && new Date(e.date) >= new Date(new Date().toDateString());
-    }).sort(function(a,b){ return new Date(a.date) - new Date(b.date); }).slice(0, 8);
-    var typeLabel = { session:'Sesión', calibration:'Calibración', evaluation:'Evaluación', internal:'Interno', unavail:'Bloqueo' };
+  var now = new Date();
+  var year = now.getFullYear();
+  var month = now.getMonth();
+  renderCalendarMonth(m, year, month);
+}
 
-    var swapHtml = (function(){
+function navCalendar(y,mo){renderCalendarMonth(document.getElementById('main-content'),y,mo);}
+function renderCalendarMonth(m, year, month){
+  var monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var firstDay = new Date(year, month, 1).getDay();
+  var daysInMonth = new Date(year, month+1, 0).getDate();
+  var today = new Date();
+  var isMaster = SESSION && SESSION.role === 'master';
+
+  var evts = Object.values(CALENDAR_EVENTS).filter(function(e){
+    var d=new Date(e.date); return d.getFullYear()===year && d.getMonth()===month;
+  });
+
+  var dayNames=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  var header = dayNames.map(function(d){ return '<div style="text-align:center;font-size:11px;font-weight:700;color:var(--t3);padding:6px 0;">'+d+'</div>'; }).join('');
+
+  var cells='';
+  for(var i=0;i<firstDay;i++) cells+='<div></div>';
+  for(var d=1;d<=daysInMonth;d++){
+    var isToday = d===today.getDate()&&month===today.getMonth()&&year===today.getFullYear();
+    var dayEvts = evts.filter(function(e){ return new Date(e.date).getDate()===d; });
+    var dateStr = year+'-'+String(month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var evtHtml = dayEvts.map(function(e){
+      var col={session:'var(--nm)',calibration:'var(--gm)',evaluation:'var(--amber)',internal:'var(--purple)'}[e.type]||'var(--nm)';
+      var div=document.createElement('div');
+      div.dataset.evid=e.id;
+      div.setAttribute('style','font-size:10px;background:'+col+';color:white;border-radius:3px;padding:1px 4px;margin-bottom:1px;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;');
+      div.setAttribute('title',(e.studentName||e.title||''));
+      div.onclick=function(){deleteCalendarEvent(this.dataset.evid);};
+      div.textContent=e.studentName||e.title||'?';
+      return div.outerHTML;
+    }).join('');
+    var addBtn='';
+    if(true){var ab=document.createElement('div');ab.dataset.dt=dateStr;ab.setAttribute('style','position:absolute;bottom:2px;right:2px;cursor:pointer;color:var(--t3);font-size:14px;');ab.onclick=function(){openNewCalendarEvent(this.dataset.dt);};ab.textContent='+';addBtn=ab.outerHTML;}
+    cells += '<div style="min-height:64px;border:1px solid var(--border);border-radius:6px;padding:4px;background:'+(isToday?'var(--nl)':'white')+';position:relative;"><div style="font-size:11px;font-weight:'+(isToday?'800':'600')+';color:'+(isToday?'var(--navy)':'var(--t2)')+';margin-bottom:2px;">'+d+'</div>'+evtHtml+addBtn+'</div>';
+  }
+
+  var upcomingEvts = Object.values(CALENDAR_EVENTS).filter(function(e){ return new Date(e.date)>=new Date(); }).sort(function(a,b){ return new Date(a.date)-new Date(b.date); }).slice(0,8);
+  var typeLabel={session:'Sesión',calibration:'Calibración',evaluation:'Evaluación',internal:'Interno'};
+
+  var prevYear = month===0?year-1:year; var prevMonth = month===0?11:month-1;
+  var nextYear = month===11?year+1:year; var nextMonth = month===11?0:month+1;
+
+  m.innerHTML = '<div class="fade">'
+    +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">'
+    +'<button class="btn btn-outline btn-sm" onclick="navCalendar('+prevYear+','+prevMonth+')"><i class="ti ti-chevron-left"></i></button>'
+    +'<h2 style="font-size:16px;font-weight:700;color:var(--navy);flex:1;text-align:center;">Calendario interno — '+monthNames[month]+' '+year+'</h2>'
+    +'<button class="btn btn-outline btn-sm" onclick="navCalendar('+nextYear+','+nextMonth+')"><i class="ti ti-chevron-right"></i></button>'
+    +'<button class="btn btn-navy btn-sm" onclick="openNewCalendarEvent(\'\')"><i class="ti ti-plus"></i>Nueva sesión</button>'
+    +'</div>'
+    +'<div class="ib ib-navy">Calendario interno de Kamuk School — trainers y actividades. Los estudiantes ven su propio horario en su Training Book.</div>'
+    +(function(){
       var mySwaps = getMySwaps();
       if(!mySwaps.length) return '';
-      return '<div class="ib ib-amber" style="margin-bottom:12px;"><strong><i class="ti ti-replace"></i> Solicitudes de swap pendientes:</strong><br>'
-        + mySwaps.map(function(sw){
+      return '<div class="ib ib-amber"><strong><i class="ti ti-replace"></i> Solicitudes de swap pendientes para vos:</strong><br>'
+        +mySwaps.map(function(sw){
           return '<div style="margin-top:6px;display:flex;align-items:center;gap:8px;">'
-            + '<span style="flex:1;">'+sw.from+' te pasa: '+sw.desc+(sw.note?(' — "'+sw.note+'"'):'')+'</span>'
-            + '<button data-id="'+sw.id+'" class="btn btn-green btn-sm" onclick="respondSwap(this.dataset.id,true)"><i class="ti ti-check"></i>Aceptar</button>'
-            + '<button data-id="'+sw.id+'" class="btn btn-red btn-sm" onclick="respondSwap(this.dataset.id,false)"><i class="ti ti-x"></i>Rechazar</button>'
-            + '</div>';
+            +'<span style="flex:1;">'+sw.from+' te pasa: '+sw.desc+(sw.note?(' — "'+sw.note+'"'):'')+'</span>'
+            +'<button data-id="'+sw.id+'" class="btn btn-green btn-sm" onclick="respondSwap(this.dataset.id,true)"><i class="ti ti-check"></i>Aceptar</button>'
+            +'<button data-id="'+sw.id+'" class="btn btn-red btn-sm" onclick="respondSwap(this.dataset.id,false)"><i class="ti ti-x"></i>Rechazar</button>'
+            +'</div>';
         }).join('')
-        + '</div>';
-    })();
-
-    m.innerHTML = '<div class="fade">'
-      + '<div class="ib ib-navy" style="margin-bottom:12px;">Studio Infinity CR — Scheduler · trainers y actividades. Los estudiantes ven su horario en el Training Book.</div>'
-      + swapHtml
-      + '<div id="infinity-scheduler-root"></div>'
-      + '<div class="card" style="margin-top:12px;"><div class="card-title"><i class="ti ti-clock"></i>Próximos eventos</div>'
-      + (upcomingEvts.length
-        ? '<table class="tbl"><thead><tr><th>Fecha</th><th>Hora</th><th>Detalle</th><th>Trainer</th><th>Tipo</th><th></th></tr></thead><tbody>'
-          + upcomingEvts.map(function(e){
-            return '<tr><td>'+fmtDate(e.date)+'</td><td>'+(e.time||'—')+'</td><td><strong>'+(e.studentName||e.title||'—')+'</strong></td><td>'+(e.trainer||'—')+'</td><td>'+(typeLabel[e.type]||e.type)+'</td>'
-              + '<td style="display:flex;gap:4px;">'
-              + ((e.trainer===SESSION.name)?'<button class="btn btn-outline btn-sm" data-evid="'+e.id+'" onclick="openSwapModal(this.dataset.evid)" title="Solicitar swap"><i class="ti ti-replace"></i></button>':'')
-              + ((isMaster||e.trainer===SESSION.name)?'<button class="btn btn-red btn-sm" data-evid="'+e.id+'" onclick="deleteCalendarEvent(this.dataset.evid)"><i class="ti ti-trash"></i></button>':'')
-              + '</td></tr>';
-          }).join('')+'</tbody></table>'
-        : '<div style="font-size:13px;color:var(--t3);">No hay sesiones programadas esta semana — usá New session en el Scheduler.</div>')
-      + '</div></div>';
-
-    if(window.InfinityScheduler && typeof InfinityScheduler.mount === 'function'){
-      var trainers = InfinityScheduler.adaptTrainers(TRAINERS, studentsForSchedulerTrainer);
-      _infSchedApi = InfinityScheduler.mount({
-        root: document.getElementById('infinity-scheduler-root'),
-        trainers: trainers,
-        events: CALENDAR_EVENTS,
-        getEvents: function(){ return CALENDAR_EVENTS; },
-        onSave: saveSchedulerPayload,
-        onBlock: saveSchedulerPayload,
-        onDelete: function(id){ deleteCalendarEvent(id); },
-        onToast: function(msg){ showToast(msg); }
-      });
-    } else {
-      document.getElementById('infinity-scheduler-root').innerHTML =
-        '<div class="ib ib-amber">Scheduler script no cargó. Verificá css/js/infinity-scheduler.</div>';
-    }
-  });
+        +'</div>';
+    })()
+    +'<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:1rem;">'+header+cells+'</div>'
+    +'<div class="card"><div class="card-title"><i class="ti ti-clock"></i>Próximos eventos</div>'
+    +(upcomingEvts.length
+      ? '<table class="tbl"><thead><tr><th>Fecha</th><th>Hora</th><th>Estudiante</th><th>Trainer</th><th>Tipo</th><th></th></tr></thead><tbody>'
+        +upcomingEvts.map(function(e){
+          return '<tr><td>'+fmtDate(e.date)+'</td><td>'+(e.time||'—')+'</td><td><strong>'+(e.studentName||e.title||'—')+'</strong></td><td>'+(e.trainer||'—')+'</td><td>'+(typeLabel[e.type]||e.type)+'</td>'
+            +'<td style="display:flex;gap:4px;">'
+            +((e.trainer===SESSION.name)?'<button class="btn btn-outline btn-sm" data-evid="'+e.id+'" onclick="openSwapModal(this.dataset.evid)" title="Solicitar swap"><i class="ti ti-replace"></i></button>':'')
+            +((isMaster||e.trainer===SESSION.name)?'<button class="btn btn-red btn-sm" data-evid="'+e.id+'" onclick="deleteCalendarEvent(this.dataset.evid)"><i class="ti ti-trash"></i></button>':'')
+            +'</td></tr>';
+        }).join('')+'</tbody></table>'
+      : '<div style="font-size:13px;color:var(--t3);">No hay sesiones programadas.</div>')
+    +'</div></div>';
 }
-
-function navCalendar(){ renderCalendar(document.getElementById('main-content')); }
-function renderCalendarMonth(m){ renderCalendar(m); }
 
 function toggleCalEvType(){
   var type = document.getElementById('cal-ev-type').value;
@@ -2508,13 +2521,13 @@ async function saveCalendarEvent(){
     };
   }
   CALENDAR_EVENTS[id]=evt;
-  await dbSet('infinity_sessions', id, evt);
+  await dbSet('kamuk_sessions', id, evt);
   await logAction('Agendó evento de calendario', isInternal?evt.title:(evt.studentName+' — '+evt.date));
   closeModal('modal-calendar');
   showToast('Evento agendado');
   if(!isInternal && evt.phone){
     try{
-      var msg = 'Hola '+(evt.studentName||'')+',\nRecordatorio de cita Infinity Studio CR:\n'+evt.date+' a las '+(evt.time||'')+'\nSi necesitás reprogramar, respondé a este chat.';
+      var msg = 'Hola '+(evt.studentName||'')+',\nRecordatorio de cita Kamuk School:\n'+evt.date+' a las '+(evt.time||'')+'\nSi necesitás reprogramar, respondé a este chat.';
       await enqueueWhatsAppMessage(evt.phone, msg, s&&s.info&&s.info.email);
       showToast('Cita guardada + recordatorio WA encolado');
     }catch(e){
@@ -2526,10 +2539,10 @@ async function saveCalendarEvent(){
 
 function deleteCalendarEvent(id){
   var e = CALENDAR_EVENTS[id];
-  confirmAction('Eliminar sesión', '¿Eliminar la sesión'+(e?(' de '+(e.studentName||e.title||'')+' el '+fmtDate(e.date)):'')+'?', async function(){
-    await dbDel('infinity_sessions', id);
+  confirmAction('Eliminar sesión', '¿Eliminar la sesión'+(e?(' de '+(e.studentName||'')+' el '+fmtDate(e.date)):'')+'?', async function(){
+    await dbDel('kamuk_sessions', id);
     delete CALENDAR_EVENTS[id];
-    await logAction('Eliminó sesión de calendario', e?(e.studentName||e.title||'')+' — '+e.date:id);
+    await logAction('Eliminó sesión de calendario', e?(e.studentName+' — '+e.date):id);
     showToast('Sesión eliminada');
     renderCalendar(document.getElementById('main-content'));
   });
@@ -4836,68 +4849,6 @@ function studentClaireOn(s){
   return !!(s && s.claireEnabled === true);
 }
 
-function flagTruth(v){
-  return v === true || v === 'true' || v === 1;
-}
-function normalizeStudentNameKey(n){
-  return String(n||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();
-}
-function isJohnnyRamirezStudent(s){
-  if(!s) return false;
-  var n = normalizeStudentNameKey(s.info && s.info.name);
-  if(n === 'johnny ramirez' || n === 'john ramirez') return true;
-  var user = String(s.portalUser||'').toLowerCase();
-  if(user === 'johnny.ramirez' || user === 'john.ramirez') return true;
-  return false;
-}
-function studentInfinityHoldingsOn(s){
-  if(!s) return false;
-  var sim = s.infinitySimulation || {};
-  if(flagTruth(sim.enabled) || flagTruth(sim.crmEnabled)) return true;
-  var kh = s.kamukHoldings || {};
-  if(flagTruth(kh.enabled) || flagTruth(kh.crmEnabled)) return true;
-  return flagTruth(s.simulationEnabled);
-}
-function setStudentInfinityHoldings(s, on){
-  if(!s) return s;
-  s.simulationEnabled = !!on;
-  s.infinitySimulation = Object.assign({}, s.infinitySimulation || {}, { enabled: !!on, crmEnabled: !!on });
-  s.kamukHoldings = Object.assign({}, s.kamukHoldings || {}, { enabled: !!on });
-  return s;
-}
-async function ensureJohnnyInfinityHoldingsOn(){
-  var ids = Object.keys(DB||{});
-  for(var i=0;i<ids.length;i++){
-    var id = ids[i];
-    var s = DB[id];
-    if(!isJohnnyRamirezStudent(s) || studentInfinityHoldingsOn(s)) continue;
-    setStudentInfinityHoldings(s, true);
-    var ok = await dbSet('kamuk_students', id, s);
-    if(ok !== false) DB[id] = s;
-  }
-}
-
-function toggleStudentInfinityHoldings(sid){
-  if(!hasMasterAccess()) return;
-  var s = DB[sid]; if(!s) return;
-  var on = studentInfinityHoldingsOn(s);
-  var name = (s.info&&s.info.name)||'este estudiante';
-  if(on){
-    confirmAction('Apagar Infinity Holdings', '¿Apagar entrenamiento Infinity Holdings (Simulation Foundation + desk) para '+name+'?', async function(){
-      setStudentInfinityHoldings(s, false);
-      await dbSet('kamuk_students', sid, s); DB[sid]=s;
-      showToast('Infinity Holdings OFF'); openStudent(sid);
-    }, 'Apagar');
-  } else {
-    setStudentInfinityHoldings(s, true);
-    dbSet('kamuk_students', sid, s).then(function(){
-      DB[sid]=s;
-      showToast('Infinity Holdings ON');
-      openStudent(sid);
-    }).catch(function(){ showToast('Error al guardar','err'); });
-  }
-}
-
 function toggleStudentTutor(sid, tutor){
   if(!hasMasterAccess()) return;
   var s = DB[sid]; if(!s) return;
@@ -4996,6 +4947,22 @@ function requestModeChange(sid){
   );
 }
 
+function nexoraEngineFormIds(){
+  return {
+    type:'nexora-type',
+    industry:'nexora-industry',
+    difficulty:'nexora-difficulty',
+    targetRole:'nexora-target-role',
+    title:'nexora-title',
+    desc:'nexora-desc',
+    participants:'nexora-participants',
+    questions:'nexora-questions',
+    objectives:'nexora-objectives',
+    passScore:'nexora-pass-score',
+    justify:'nexora-justify'
+  };
+}
+
 function syncNexoraEngineIndustryUI(){
   var typeEl=document.getElementById('nexora-type');
   var indEl=document.getElementById('nexora-industry');
@@ -5013,56 +4980,125 @@ function syncNexoraEngineIndustryUI(){
   if(groupEl){
     groupEl.style.opacity= NEXORA_INDUSTRY&&NEXORA_INDUSTRY.industryAffectsScenarioPool(type)?'1':'0.85';
   }
+  var isStar=type==='mock_interview';
+  var roleG=document.getElementById('nexora-role-group');
+  var qG=document.getElementById('nexora-questions-group');
+  if(roleG) roleG.style.display=isStar?'block':'none';
+  if(qG) qG.style.display=isStar?'block':'none';
+}
+
+function nexoraEngineApplyTemplate(){
+  syncNexoraEngineIndustryUI();
+  if(typeof NEXORA_SIM_PROGRAM==='undefined') return;
+  var typeEl=document.getElementById('nexora-type');
+  var indEl=document.getElementById('nexora-industry');
+  NEXORA_SIM_PROGRAM.applyTemplateToForm(
+    typeEl?typeEl.value:'customer_service',
+    indEl?indEl.value:'corporate',
+    nexoraEngineFormIds()
+  );
+  syncNexoraEngineIndustryUI();
+}
+
+function nexoraEngineRefreshQuestions(){
+  if(typeof NEXORA_SIM_PROGRAM==='undefined') return;
+  var role=(document.getElementById('nexora-target-role')||{}).value||'Customer Support Specialist';
+  var bank=NEXORA_SIM_PROGRAM.ROLE_QUESTION_BANKS[role]||NEXORA_SIM_PROGRAM.ROLE_QUESTION_BANKS['Customer Support Specialist'];
+  var qEl=document.getElementById('nexora-questions');
+  if(qEl&&bank) qEl.value=bank.join('\n');
+}
+
+function openNexoraProgramModal(sid){
+  var s=DB[sid]; if(!s) return;
+  document.getElementById('nexora-sid').value=sid;
+  var deact=document.getElementById('nexora-deactivate-btn');
+  var saveBtn=document.getElementById('nexora-save-btn');
+  if(deact) deact.style.display=s.nexoraEnabled?'inline-flex':'none';
+  if(saveBtn) saveBtn.innerHTML=s.nexoraEnabled
+    ? '<i class="ti ti-device-floppy"></i>Actualizar programa'
+    : '<i class="ti ti-sparkles"></i>Activar y guardar';
+  syncNexoraEngineIndustryUI();
+  if(s.nexoraConfig&&typeof NEXORA_SIM_PROGRAM!=='undefined'){
+    document.getElementById('nexora-simulation-id').value=s.nexoraConfig.simulationId||'';
+    NEXORA_SIM_PROGRAM.fillEngineFormFromProgram(s.nexoraConfig, nexoraEngineFormIds());
+    if(s.nexoraJustification) document.getElementById('nexora-justify').value=s.nexoraJustification;
+  } else {
+    document.getElementById('nexora-simulation-id').value='';
+    document.getElementById('nexora-justify').value='';
+    nexoraEngineApplyTemplate();
+  }
+  syncNexoraEngineIndustryUI();
+  showModal('modal-nexora-justify');
 }
 
 function toggleStudentNexora(sid){
   if(!hasMasterAccess()) return;
   var s = DB[sid]; if(!s) return;
-  if(s.nexoraEnabled){
-    confirmAction('Desactivar Nexora', '¿Desactivar el acceso a Nexora para '+((s.info&&s.info.name)||'este estudiante')+'?', async function(){
-      s.nexoraEnabled = false; s.nexoraJustification = '';
-      await dbSet('kamuk_students', sid, s); DB[sid]=s;
-      showToast('Nexora OFF'); openStudent(sid);
-    }, 'Sí, desactivar');
-  } else {
-    document.getElementById('nexora-sid').value = sid;
-    document.getElementById('nexora-justify').value = '';
-    syncNexoraEngineIndustryUI();
-    showModal('modal-nexora-justify');
-  }
+  openNexoraProgramModal(sid);
+}
+
+async function deactivateStudentNexoraFromModal(){
+  var sid=document.getElementById('nexora-sid').value;
+  var s=DB[sid]; if(!s) return;
+  confirmAction('Desactivar Nexora', '¿Desactivar Nexora y limpiar el programa para '+((s.info&&s.info.name)||'este estudiante')+'?', async function(){
+    s.nexoraEnabled=false;
+    s.nexoraJustification='';
+    s.nexoraConfig=null;
+    await dbSet('kamuk_students', sid, s); DB[sid]=s;
+    closeModal('modal-nexora-justify');
+    showToast('Nexora desactivado — programa eliminado');
+    openStudent(sid);
+  }, 'Sí, desactivar');
 }
 
 async function confirmStudentNexora(){
   var sid = document.getElementById('nexora-sid').value;
-  var justification = document.getElementById('nexora-justify').value.trim();
-  var type = document.getElementById('nexora-type').value;
-  var industry = document.getElementById('nexora-industry').value;
-  var difficulty = parseInt(document.getElementById('nexora-difficulty').value, 10);
   var s = DB[sid]; if(!s) return;
-
-  var typeLabels = {mock_interview:'STAR Mock Interview',customer_service:'Customer Service',team_meeting:'Team Meeting',problem_solving:'Problem Solving',presentation:'Executive Presentation',negotiation:'Negotiation',stakeholder:'Stakeholder Discussion'};
+  if(typeof NEXORA_SIM_PROGRAM==='undefined'){
+    showToast('Falta nexora-simulation-program.js','err');
+    return;
+  }
+  var existingId=(document.getElementById('nexora-simulation-id')||{}).value||(s.nexoraConfig&&s.nexoraConfig.simulationId)||'';
+  var program=NEXORA_SIM_PROGRAM.readEngineForm(nexoraEngineFormIds(), {
+    simulationId: existingId || undefined,
+    setBy: SESSION.name
+  });
+  program.justification=(document.getElementById('nexora-justify')||{}).value||'';
+  program.setAt=new Date().toISOString();
+  program.setBy=SESSION.name;
 
   s.nexoraEnabled = true;
-  s.nexoraJustification = justification;
-  s.nexoraConfig = {
-    type: type,
-    typeLabel: typeLabels[type]||type,
-    industry: industry,
-    industryLabel: (typeof NEXORA_INDUSTRY!=='undefined'?NEXORA_INDUSTRY.labelForEngineValue(industry):industry),
-    difficulty: difficulty,
-    poolKey: (typeof NEXORA_INDUSTRY!=='undefined'?NEXORA_INDUSTRY.scenarioPoolKey({type:type,industry:industry}):null),
-    setAt: new Date().toISOString(),
-    setBy: SESSION.name
-  };
+  s.nexoraJustification = program.justification;
+  s.nexoraConfig = program;
 
   if(!s.notes) s.notes=[];
-  s.notes.push({ date:new Date().toISOString(), trainer:SESSION.name, text:'Nexora activado — Escenario: '+(typeLabels[type]||type)+' · '+(s.nexoraConfig.industryLabel||industry)+' · Dificultad '+difficulty+'/5'+(justification?' · '+justification:''), phase:parseInt((s.info&&s.info.phase))||1 });
+  s.notes.push({
+    date:new Date().toISOString(),
+    trainer:SESSION.name,
+    text:'Nexora programado — '+(program.typeLabel||program.type)+' · '+(program.targetRole||program.industryLabel||'')+' · pin '+program.simulationId+' · Dificultad '+program.difficulty+'/5'+(program.justification?' · '+program.justification:''),
+    phase:parseInt((s.info&&s.info.phase))||1
+  });
   await dbSet('kamuk_students', sid, s); DB[sid]=s;
-  await logAction('Activó Nexora individual', ((s.info&&s.info.name)||sid)+' — '+(typeLabels[type]||type));
+  await logAction('Programó Nexora', ((s.info&&s.info.name)||sid)+' — '+(program.typeLabel||program.type)+' · '+program.simulationId);
   closeModal('modal-nexora-justify');
-  showToast('Nexora ON — '+(typeLabels[type]||type));
+  showToast('Programa Nexora guardado — '+(program.typeLabel||program.type));
   openStudent(sid);
 }
+
+function previewNexoraFromModal(){
+  if(typeof NEXORA_SIM_PROGRAM==='undefined') return;
+  var program=NEXORA_SIM_PROGRAM.readEngineForm(nexoraEngineFormIds(), {
+    simulationId:(document.getElementById('nexora-simulation-id')||{}).value||undefined,
+    setBy:SESSION.name
+  });
+  var sc=NEXORA_SIM_PROGRAM.programToScenario(program);
+  localStorage.setItem('nexora_scenario', JSON.stringify(program));
+  localStorage.setItem('nexora_force_scenario', JSON.stringify(sc));
+  localStorage.setItem('nexora_agent', SESSION.name||'Trainer');
+  window.open('nexora.html','NexoraPreview','width=1200,height=800,resizable=yes');
+}
+
+
 
 function populateCompanionKpiOptions(selected){
   var box = document.getElementById('companion-focus-kpis');
@@ -7411,7 +7447,7 @@ function previewNexora(s){
     localStorage.setItem('nexora_force_scenario', JSON.stringify(NEXORA_SIM_PROGRAM.programToScenario(cfg)));
   }
   localStorage.setItem('nexora_agent', SESSION.name||'Trainer');
-  window.open('nexora.html?v=20260702restore','NexoraPreview','width=1200,height=800,resizable=yes');
+  window.open('nexora.html','NexoraPreview','width=1200,height=800,resizable=yes');
 }
 
 // ── FEATURE 1: KB UPLOAD — Archivos e imágenes ────────────
@@ -7728,7 +7764,7 @@ runAIAnalysis = async function(){
 
 </script>
 <script src="https://studioinfinitycr.com/infinity-auth.js"></script>
-<script src="js/simulation-supervisor.js?v=20260910email"></script>
+<script src="js/simulation-supervisor.js?v=20260818audit"></script>
 <script src="https://studioinfinitycr.com/js/jill-f0-gate.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/js/johnny-class-recorder.js?v=20260814refresh"></script>
 <script src="https://studioinfinitycr.com/nexus-unified.js"></script>
